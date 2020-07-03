@@ -25,7 +25,7 @@ SECRET_KEY = '$0+k15+_qw!%t3%t!!^@gy((rnhbch95yxxx0rm8j4uvnr9lg9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['34.64.147.240']
 
 
 # Application definition
@@ -75,8 +75,12 @@ WSGI_APPLICATION = 'tutor.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'tutorDB',
+        'USER': 'root',
+        'PASSWORD': 'wkdak1317',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 
