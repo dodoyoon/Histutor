@@ -5,8 +5,8 @@ from django.urls import reverse
 from django.db.models import F
 from django.views import generic
 
-from .models import Post, Topic
-from .forms import PostForm
+from .models import Post, Topic, User
+from .forms import PostForm, ReportForm
 
 
 class IndexView(generic.ListView):
@@ -15,12 +15,29 @@ class IndexView(generic.ListView):
         #returns the last five published questions
         return Post.objects.order_by('-pub_date')[:5]
 
-<<<<<<< HEAD
 def tutorReport(request):
-    report = Post.objects.last()
+    if request.method == "POST":
+        form = ReportForm(request.POST)
+        if form.is_valid():
+            print("VALID")
+            post = form.save(commit=False)
+            post.tutor = User.objects.last()
+            post.tutee = User.objects.last()
+            post.post = Post.objects.last()
+            post.tutee_feedback = "asdasdasd"
+            post.save()
+        else:
+            print("NOT VALID")
+    else: 
+        form = ReportForm()
 
-    return render(request, 'matching/tutor_report.html', {'report': report})
-=======
+    report = Post.objects.last()
+    ctx = {
+        'report': report,
+        'form': form,
+    }
+
+    return render(request, 'matching/tutor_report.html', ctx)
 
 def post_new(request):
     ctx={}

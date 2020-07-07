@@ -6,6 +6,17 @@
 
 {% block content %}
 
-    {{report.title}}
+    주제 {{report.topic}} </br>
+    제목 {{report.title}} </br>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <p class="fields">
+            <label for="id_{{field.name}}">{{field.name}}</label>
+            {{field}}
+        </p>
+        {% endfor %}
+        <button id="" type="submit">등록</button>
+     </form>
 
 {% endblock %}
