@@ -41,4 +41,3 @@ def post_new(request):
     ctx['form'] = form
 
     return render(request, 'matching/post_edit.html', ctx)
->>>>>>> 1ed0f3e11cc887ac0dfc2727b5a9770ac67e5cf6
