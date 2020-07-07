@@ -1,14 +1,22 @@
 from django.db import models
+from django import forms
 
+def student_number_validator(value):
+   if len(str(value)) != 8:
+      raise forms.ValidationError('학번을 다시 입력해주세요')
+   
 class User(models.Model):
-   name = models.CharField(max_length=200, null=True)
-   nickname = models.CharField(max_length=200, null=True)
-   password = models.CharField(max_length=200, null=True)
-   student_number = models.IntegerField(null=True)
-   phone = models.CharField(max_length=200, null=True)
-   email = models.EmailField(null=True)
-   is_tutor = models.NullBooleanField(default=False)
-   is_staff = models.NullBooleanField(default=False)
+   name = models.CharField(max_length=200)
+   nickname = models.CharField(max_length=200, unique=True)
+   password = models.CharField(max_length=200)
+   student_number = models.IntegerField(unique = True, validators=[student_number_validator])
+   phone = models.CharField(max_length=200)
+   email = models.EmailField()
+   is_tutor = models.NullBooleanField()
+   is_staff = models.NullBooleanField()
+
+   def __str__(self):
+      return self.name + ' ' + str(self.student_number)
    
 class Topic(models.Model):
    name = models.CharField(max_length=200)
@@ -35,6 +43,6 @@ class Report(models.Model):
    meeting_date = models.DateTimeField()
    meeting_duration_time = models.IntegerField()
    pub_date = models.DateTimeField(auto_now_add=True)
-   tutee_feedback = models.TextField(null=True)
-   is_confirmed = models.NullBooleanField(default=False)
-   content = models.TextField()
+   tutee_feedback = models.TextField()
+   is_confirmed = models.NullBooleanField()
+
