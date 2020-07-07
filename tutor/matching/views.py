@@ -13,4 +13,6 @@ class IndexView(generic.ListView):
         return Post.objects.order_by('-pub_date')[:5]
 
 def tutorReport(request):
-    return render(request, 'matching/tutor_report.html', {})
+    report = Post.objects.last()
+
+    return render(request, 'matching/tutor_report.html', {'report': report})
