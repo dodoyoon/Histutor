@@ -15,12 +15,10 @@ class IndexView(generic.ListView):
         #returns the last five published questions
         return Post.objects.order_by('-pub_date')[:5]
 
-<<<<<<< HEAD
 def tutorReport(request):
     report = Post.objects.last()
 
     return render(request, 'matching/tutor_report.html', {'report': report})
-=======
 
 def post_new(request):
     ctx={}
