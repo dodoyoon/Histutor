@@ -37,7 +37,6 @@ def post_new(request):
         form = PostForm()
 
 
-
     ctx['form'] = form
 
     return render(request, 'matching/post_edit.html', ctx)
