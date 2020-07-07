@@ -5,8 +5,12 @@ from django.urls import reverse
 from django.db.models import F
 from django.views import generic
 from .models import Post
+
 class IndexView(generic.ListView):
     template_name = 'matching/main.html'
     def get_queryset(self):
         #returns the last five published questions
         return Post.objects.order_by('-pub_date')[:5]
+
+def tutorReport(request):
+    return render(request, 'matching/tutor_report.html', {})
