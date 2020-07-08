@@ -7,4 +7,5 @@ myvenv
 *.jpg
 *.gif
 *.png
+**/migrations/**
 
