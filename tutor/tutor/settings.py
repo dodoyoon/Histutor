@@ -113,21 +113,14 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'Asia/Seoul'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
-
 STATIC_URL = '/static/'
 
 AUTHENTICATION_BACKENDS = (
@@ -136,3 +129,6 @@ AUTHENTICATION_BACKENDS = (
 )
 
 SITE_ID = 3
+ACCOUNT_LOGOUT_REDIRECT_URL ="/matching"
+LOGIN_REDIRECT_URL = '/matching'
+ACCOUNT_LOGOUT_ON_GET = True
