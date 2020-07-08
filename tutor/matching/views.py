@@ -4,15 +4,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.db.models import F
 from django.views import generic
-<<<<<<< HEAD
-
 from .models import Post, Topic, User
-from .forms import PostForm, ReportForm
-
-=======
-from .models import User, Post, Topic
-from .forms import SignupForm, PostForm
->>>>>>> 8fc4fb73b74c49c4d3543be6aec6020600369c14
+from .forms import PostForm, ReportForm, SignupForm
 
 class IndexView(generic.ListView):
     template_name = 'matching/main.html'
@@ -20,8 +13,6 @@ class IndexView(generic.ListView):
         #returns the last five published questions
         return Post.objects.order_by('-pub_date')[:5]
 
-<<<<<<< HEAD
-=======
 def signup(request):
     if request.method == 'POST':
         form = SignupForm(request.POST, request.FILES)
@@ -35,34 +26,25 @@ def signup(request):
         'form' : form,
     })
 
->>>>>>> 8fc4fb73b74c49c4d3543be6aec6020600369c14
 def tutorReport(request):
+    post = Post.objects.last()
     if request.method == "POST":
         form = ReportForm(request.POST)
         if form.is_valid():
-            print("VALID")
-            post = form.save(commit=False)
-            post.tutor = User.objects.last()
-            post.tutee = User.objects.last()
-            post.post = Post.objects.last()
-            post.tutee_feedback = "asdasdasd"
-            post.save()
-        else:
-            print("NOT VALID")
+            report = form.save(commit=False)
+            report.tutor = User.objects.last()
+            report.tutee = User.objects.get(id = post.user.id)
+            report.post = Post.objects.get(id = post.id)
+            report.save()
     else: 
         form = ReportForm()
 
-    report = Post.objects.last()
     ctx = {
-        'report': report,
+        'post': post,
         'form': form,
     }
 
-<<<<<<< HEAD
     return render(request, 'matching/tutor_report.html', ctx)
-=======
-    return render(request, 'matching/tutor_report.html', {'report': report})
->>>>>>> 8fc4fb73b74c49c4d3543be6aec6020600369c14
 
 def post_new(request):
     ctx={}

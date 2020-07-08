@@ -6,15 +6,27 @@
 
 {% block content %}
 
-    주제 {{report.topic}} </br>
-    제목 {{report.title}} </br>
+    주제 {{post.topic.name}} </br>
+    제목 {{post.title}} </br>
     <form method="post">
         {% csrf_token %}
         {% for field in form %}
-        <p class="fields">
-            <label for="id_{{field.name}}">{{field.name}}</label>
-            {{field}}
-        </p>
+            {% if field.name == "meeting_date" %}
+            <p class="fields">
+                <label for="id_{{field.name}}">학습날짜</label>
+                {{field}}
+            </p>
+            {% elif field.name == "meeting_duration_time" %}
+            <p class="fields">
+                <label for="id_{{field.name}}">학습시간</label>
+                {{field}}
+            </p>
+            {% else %}
+            <p class="fields">
+                <label for="id_{{field.name}}">내용</label>
+                {{field}}
+            </p>
+            {% endif %}
         {% endfor %}
         <button id="" type="submit">등록</button>
      </form>
