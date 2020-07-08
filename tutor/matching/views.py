@@ -7,11 +7,12 @@ from django.views import generic
 from .models import Post, Topic, User
 from .forms import PostForm, ReportForm, SignupForm
 
-class IndexView(generic.ListView):
-    template_name = 'matching/main.html'
-    def get_queryset(self):
-        #returns the last five published questions
-        return Post.objects.order_by('-pub_date')[:5]
+# DEFAULT PAGE
+def index(request):
+    if request.user.is_authenticated:
+        return redirect('tutee_home/')
+    else:
+        return redirect('/accounts/login/')
 
 def signup(request):
     if request.method == 'POST':
@@ -64,3 +65,6 @@ def post_new(request):
     ctx['form'] = form
 
     return render(request, 'matching/post_edit.html', ctx)
+
+def tutee_home(request):
+    return render(request, 'matching/tutee_home.html', {})

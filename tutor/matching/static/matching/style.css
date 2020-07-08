@@ -1,0 +1,12 @@
+/* TUTEE HOME*/
+#tutee_home{
+    border: 1px solid red;
+    width: 100vw;
+    height: 100vh;
+}
+
+#create_post{
+    position: absolute;
+    left: 50vw;
+    top: 50vh;
+}
