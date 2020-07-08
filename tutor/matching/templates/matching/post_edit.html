@@ -2,7 +2,17 @@
 
 {% block content %}
     <h1>New post</h1>
-    <form method="POST" class="post-form">{% csrf_token %}
+    <form method="POST" class="post-form">
+        {% csrf_token %}
+        <span>
+			<h6>Topic</h6>
+            <select name="topic" id="topic">
+                <option val="None">None</option>
+                {% for item in topic_list %}
+                <option val="{{ item.name }}"> {{ item.name }} </option>
+                {% endfor %}
+            </select>
+		</span>
         {{ form.as_p }}
         <button type="submit" class="save btn btn-default">Save</button>
     </form>

@@ -36,7 +36,7 @@ def tutorReport(request):
             report.tutee = User.objects.get(id = post.user.id)
             report.post = Post.objects.get(id = post.id)
             report.save()
-    else: 
+    else:
         form = ReportForm()
 
     ctx = {
@@ -49,12 +49,18 @@ def tutorReport(request):
 def post_new(request):
     ctx={}
 
+    topic_list = Topic.objects.all()
+    ctx['topic_list'] = topic_list
+
     if request.method == "POST":
         form = PostForm(request.POST)
+
         if form.is_valid():
+            topic = request.POST['topic']
             post = form.save(commit=False)
-            # post.author = request.user
-            # post.published_date = timezone.now()
+            post.topic = Topic.objects.get(name=topic)
+            user_obj = User.objects.get(name=request.user.username)
+            post.user = user_obj
             post.save()
             # return redirect('post_detail', pk=post.pk)
     else:
