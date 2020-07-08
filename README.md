@@ -1,2 +1,2 @@
-# tutor_match
-Website for tutoring match - to be named
+# HisTutor
+Website for tutoring match
