@@ -132,3 +132,16 @@ SITE_ID = 3
 ACCOUNT_LOGOUT_REDIRECT_URL ="/matching"
 LOGIN_REDIRECT_URL = '/matching'
 ACCOUNT_LOGOUT_ON_GET = True
+
+SOCIALACCOUNT_QUERY_EMAIL =True
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online'
+        }
+    }
+}
