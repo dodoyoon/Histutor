@@ -1,28 +1,35 @@
 from django.db import models
 from django import forms
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
-def student_number_validator(value):
-   if len(str(value)) != 8:
-      raise forms.ValidationError('학번을 다시 입력해주세요')
-   
-class User(models.Model):
-   name = models.CharField(max_length=200)
-   nickname = models.CharField(max_length=200, unique=True)
-   password = models.CharField(max_length=200)
-   student_number = models.IntegerField(unique = True, validators=[student_number_validator])
-   phone = models.CharField(max_length=200)
-   email = models.EmailField()
-   is_tutor = models.NullBooleanField(default=False)
-   is_staff = models.NullBooleanField(default=False)
+
+class Profile(models.Model):
+   user = models.OneToOneField(User, on_delete=models.CASCADE)
+   nickname = models.CharField(null=True,max_length=200, unique=True)
+   phone = models.CharField(null=True, blank=True,max_length=200)
+   is_tutor = models.BooleanField(null=True,blank=True)
+   signin = models.BooleanField(default=False)
+
 
    def __str__(self):
-      return self.name + ' ' + str(self.student_number)
-   
+      return self.user.username + ' ' + self.user.last_name
+
+   @receiver(post_save, sender=User)
+   def create_user_profile(sender, instance, created, **kwargs):
+      if created:
+         Profile.objects.create(user=instance)
+
+   @receiver(post_save, sender=User)
+   def save_user_profile(sender, instance, **kwargs):
+      instance.profile.save()
+
 class Topic(models.Model):
    name = models.CharField(max_length=200)
 
 class Post(models.Model):
-   user = models.ForeignKey(User, on_delete=models.CASCADE)
+   user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="post_relation")
    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
    title = models.CharField(max_length=200)
    content = models.TextField()
