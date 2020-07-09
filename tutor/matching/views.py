@@ -64,6 +64,7 @@ def post_new(request):
             post.topic = Topic.objects.get(name=topic)
             user_obj = User.objects.get(name=request.user.username)
             post.user = user_obj
+            post.finding_match = True
             post.save()
             # return redirect('post_detail', pk=post.pk)
     else:
