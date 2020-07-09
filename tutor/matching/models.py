@@ -12,8 +12,8 @@ class User(models.Model):
    student_number = models.IntegerField(unique = True, validators=[student_number_validator])
    phone = models.CharField(max_length=200)
    email = models.EmailField()
-   is_tutor = models.NullBooleanField()
-   is_staff = models.NullBooleanField()
+   is_tutor = models.NullBooleanField(default=False)
+   is_staff = models.NullBooleanField(default=False)
 
    def __str__(self):
       return self.name + ' ' + str(self.student_number)
@@ -26,9 +26,12 @@ class Post(models.Model):
    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
    title = models.CharField(max_length=200)
    content = models.TextField()
-   finding_match = models.NullBooleanField(default=False)
+   finding_match = models.NullBooleanField(default=True)
    pub_date = models.DateTimeField(auto_now_add=True)
    cancel_reason = models.TextField(null=True)
+
+   def __str__(self):
+      return self.topic + ' ' + self.title
 
 class Comment(models.Model):
    user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -44,6 +47,6 @@ class Report(models.Model):
    meeting_duration_time = models.IntegerField()
    pub_date = models.DateTimeField(auto_now_add=True)
    tutee_feedback = models.TextField()
-   is_confirmed = models.NullBooleanField()
+   is_confirmed = models.NullBooleanField(default=False)
    content = models.TextField()
 
