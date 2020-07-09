@@ -1,0 +1,13 @@
+#navigationBar {
+    background-color: #6C639C;
+}
+
+#logout{
+    position: relative;
+    right: 10px;
+    color: white;
+}
+
+#tutor{
+    color: white;
+}

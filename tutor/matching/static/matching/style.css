@@ -1,0 +1,38 @@
+/* TUTEE HOME*/
+#tutee_home{
+    border: 1px solid red;
+    width: 100vw;
+    height: 100vh;
+}
+
+#create_post{
+    position: absolute;
+    left: 50vw;
+    top: 50vh;
+}
+
+/* TUTOR HOME */
+#tableDiv {
+    position: relative;
+    top: 50px;
+    margin: auto;
+    width: calc(100vw - 200px);
+}
+
+.dot {
+    position: relative;
+    top: 2px;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+#finding{
+    background-color: green;
+}
+
+#found{
+    background-color: #bbb;
+}
+

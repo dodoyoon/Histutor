@@ -10,11 +10,14 @@ from .forms import PostForm, ReportForm, ProfileForm
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 
-class IndexView(generic.ListView):
-    template_name = 'matching/main.html'
-    def get_queryset(self):
-        #returns the last five published questions
-        return Post.objects.order_by('-pub_date')[:5]
+
+
+# DEFAULT PAGE
+def index(request):
+    if request.user.is_authenticated:
+        return redirect('tutee_home/')
+    else:
+        return redirect('/accounts/login/')
 
 @login_required
 @transaction.atomic
@@ -54,14 +57,14 @@ def user_check(request):
         return HttpResponseRedirect(reverse('matching:index'))
 
 def tutorReport(request):
-    post = Post.objects.last()
+    post = tutor_models.Post.objects.last()
     if request.method == "POST":
         form = ReportForm(request.POST)
         if form.is_valid():
             report = form.save(commit=False)
-            report.tutor = User.objects.last()
-            report.tutee = User.objects.get(id = post.user.id)
-            report.post = Post.objects.get(id = post.id)
+            report.tutor = tutor_models.User.objects.last()
+            report.tutee = tutor_models.User.objects.get(id = post.user.id)
+            report.post = tutor_models.Post.objects.get(id = post.id)
             report.save()
     else:
         form = ReportForm()
@@ -76,7 +79,7 @@ def tutorReport(request):
 def post_new(request):
     ctx={}
 
-    topic_list = Topic.objects.all()
+    topic_list = tutor_models.Topic.objects.all()
     ctx['topic_list'] = topic_list
 
     if request.method == "POST":
@@ -85,15 +88,44 @@ def post_new(request):
         if form.is_valid():
             topic = request.POST['topic']
             post = form.save(commit=False)
-            post.topic = Topic.objects.get(name=topic)
-            user_obj = User.objects.get(name=request.user.username)
+            post.topic = tutor_models.Topic.objects.get(name=topic)
+            user_obj = tutor_models.User.objects.get(name=request.user.username)
             post.user = user_obj
+            post.finding_match = True
             post.save()
-            # return redirect('post_detail', pk=post.pk)
+            print(">>> pk: " + str(post.pk))
+            return redirect('matching:post_detail', pk=post.pk)
     else:
         form = PostForm()
 
 
     ctx['form'] = form
 
-    return render(request, 'matching/post_edit.html', ctx)
+    return render(request, 'matching/post_new.html', ctx)
+
+def post_detail(request, pk):
+    ctx={}
+
+    try:
+        post = get_object_or_404(tutor_models.Post, pk=pk)
+    except Notice.DoesNotExist:
+        return HttpResponse("채용공고가 없습니다.")
+
+    ctx['post'] = post
+
+    return render(request, 'matching/post_detail.html', ctx)
+
+def tutee_home(request):
+    return render(request, 'matching/tutee_home.html', {})
+
+def tutor_home(request):
+    recruiting = tutor_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
+    recruited = tutor_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
+    #posts = tutor_models.Post.objects.order_by('-pub_date')
+    posts = list(chain(recruiting, recruited))
+
+    ctx = {
+        'posts': posts,
+    }
+
+    return render(request, 'matching/tutor_home.html', ctx)

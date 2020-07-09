@@ -4,12 +4,14 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+
 class Profile(models.Model):
    user = models.OneToOneField(User, on_delete=models.CASCADE)
    nickname = models.CharField(null=True,max_length=200, unique=True)
    phone = models.CharField(null=True, blank=True,max_length=200)
    is_tutor = models.BooleanField(null=True,blank=True)
    signin = models.BooleanField(default=False)
+
 
    def __str__(self):
       return self.user.username + ' ' + self.user.last_name
@@ -31,9 +33,12 @@ class Post(models.Model):
    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
    title = models.CharField(max_length=200)
    content = models.TextField()
-   finding_match = models.NullBooleanField(default=False)
+   finding_match = models.NullBooleanField(default=True)
    pub_date = models.DateTimeField(auto_now_add=True)
    cancel_reason = models.TextField(null=True)
+
+   def __str__(self):
+      return self.topic + ' ' + self.title
 
 class Comment(models.Model):
    user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -49,6 +54,6 @@ class Report(models.Model):
    meeting_duration_time = models.IntegerField()
    pub_date = models.DateTimeField(auto_now_add=True)
    tutee_feedback = models.TextField()
-   is_confirmed = models.NullBooleanField()
+   is_confirmed = models.NullBooleanField(default=False)
    content = models.TextField()
 
