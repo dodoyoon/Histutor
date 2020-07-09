@@ -32,8 +32,8 @@
 			  <ul class="navbar-nav mr-auto">
 				  <li class="nav-item">
 					{% if user.is_authenticated %}
-						<a id="tutor" href="/matching/tutorHome/">Tutor</a>
-						<a id="tutee" href="/matching/tutee_home/">Tutee</a>
+						<a id="tutor" href="{% url 'matching:tutor_home' %}">Tutor</a>
+						<a id="tutee" href="{% url 'matching:tutee_home' %}">Tutee</a>
 					{% endif %}
 				  </li>
 				<!--

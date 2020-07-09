@@ -4,18 +4,19 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.db.models import F
 from django.views import generic
-from .models import Post, Topic, Profile
 from django.contrib.auth.models import User
 from .forms import PostForm, ReportForm, ProfileForm
 from django.contrib.auth.decorators import login_required
+from matching import models as matching_models
 from django.db import transaction
+from itertools import chain
 
 
 
 # DEFAULT PAGE
 def index(request):
     if request.user.is_authenticated:
-        return redirect('tutee_home/')
+        return redirect('tuteeHome/')
     else:
         return redirect('/accounts/login/')
 
@@ -23,7 +24,7 @@ def index(request):
 @transaction.atomic
 def save_profile(request, pk):
     if request.method == 'POST':
-        user = User.objects.get(pk=pk)
+        user = matching_models.User.objects.get(pk=pk)
         profile_form = ProfileForm(request.POST, instance= user.profile)
         if profile_form.is_valid():
             profile = profile_form.save(commit=False)
@@ -41,7 +42,7 @@ def user_check(request):
     if "handong.edu" in request.user.email:
         print("handong student")
         try:
-            user = User.objects.get(pk=request.user.pk)
+            user = matching_models.User.objects.get(pk=request.user.pk)
             if user.profile.signin == False:
                 print("redirect to signin page")
                 return HttpResponseRedirect(reverse('matching:profile', args=(request.user.pk,)))
@@ -49,22 +50,22 @@ def user_check(request):
                 return HttpResponseRedirect(reverse('matching:index'))
             else:
                 return HttpResponseRedirect(reverse('matching:index')) #TODO : redirect to tutee_home
-        except(KeyError, User.DoesNotExist):
+        except(KeyError, matching_models.User.DoesNotExist):
             return HttpResponseRedirect(reverse('matching:index'))
     else:
         print("not valid email address")
-        User.objects.filter(pk=request.user.pk).delete()
+        matching_models.User.objects.filter(pk=request.user.pk).delete()
         return HttpResponseRedirect(reverse('matching:index'))
 
 def tutorReport(request):
-    post = tutor_models.Post.objects.last()
+    post = matching_models.Post.objects.last()
     if request.method == "POST":
         form = ReportForm(request.POST)
         if form.is_valid():
             report = form.save(commit=False)
-            report.tutor = tutor_models.User.objects.last()
-            report.tutee = tutor_models.User.objects.get(id = post.user.id)
-            report.post = tutor_models.Post.objects.get(id = post.id)
+            report.tutor = matching_models.User.objects.last()
+            report.tutee = matching_models.User.objects.get(id = post.user.id)
+            report.post = matching_models.Post.objects.get(id = post.id)
             report.save()
     else:
         form = ReportForm()
@@ -79,7 +80,7 @@ def tutorReport(request):
 def post_new(request):
     ctx={}
 
-    topic_list = tutor_models.Topic.objects.all()
+    topic_list = matching_models.Topic.objects.all()
     ctx['topic_list'] = topic_list
 
     if request.method == "POST":
@@ -88,8 +89,8 @@ def post_new(request):
         if form.is_valid():
             topic = request.POST['topic']
             post = form.save(commit=False)
-            post.topic = tutor_models.Topic.objects.get(name=topic)
-            user_obj = tutor_models.User.objects.get(name=request.user.username)
+            post.topic = matching_models.Topic.objects.get(name=topic)
+            user_obj = matching_models.User.objects.get(name=request.user.username)
             post.user = user_obj
             post.finding_match = True
             post.save()
@@ -107,7 +108,7 @@ def post_detail(request, pk):
     ctx={}
 
     try:
-        post = get_object_or_404(tutor_models.Post, pk=pk)
+        post = get_object_or_404(matching_models.Post, pk=pk)
     except Notice.DoesNotExist:
         return HttpResponse("채용공고가 없습니다.")
 
@@ -119,8 +120,8 @@ def tutee_home(request):
     return render(request, 'matching/tutee_home.html', {})
 
 def tutor_home(request):
-    recruiting = tutor_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
-    recruited = tutor_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
+    recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
+    recruited = matching_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
     #posts = tutor_models.Post.objects.order_by('-pub_date')
     posts = list(chain(recruiting, recruited))
 
