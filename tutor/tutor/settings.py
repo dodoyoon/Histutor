@@ -31,7 +31,6 @@ ALLOWED_HOSTS = ['34.64.147.240', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
-    'matching.apps.MatchingConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-
+    'matching.apps.MatchingConfig',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -128,9 +127,9 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-SITE_ID = 3
+SITE_ID = 5
 ACCOUNT_LOGOUT_REDIRECT_URL ="/matching"
-LOGIN_REDIRECT_URL = '/matching'
+LOGIN_REDIRECT_URL = "/matching/userCheck"
 ACCOUNT_LOGOUT_ON_GET = True
 
 SOCIALACCOUNT_QUERY_EMAIL =True
@@ -145,3 +144,4 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
+

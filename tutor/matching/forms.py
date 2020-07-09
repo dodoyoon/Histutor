@@ -1,11 +1,12 @@
 from django import forms
-from .models import Post, Topic, Report, User
+from .models import Post, Topic, Report, Profile
 from django.forms import ModelChoiceField
 
-class SignupForm(forms.ModelForm):
+
+class ProfileForm(forms.ModelForm):
     class Meta:
-        model = User
-        fields = ['name', 'student_number','nickname', 'phone', 'email']
+        model = Profile
+        fields = ['nickname','phone'] 
 
 class PostForm(forms.ModelForm):
     class Meta:
