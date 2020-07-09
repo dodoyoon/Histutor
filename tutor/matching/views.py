@@ -90,11 +90,11 @@ def post_new(request):
             topic = request.POST['topic']
             post = form.save(commit=False)
             post.topic = matching_models.Topic.objects.get(name=topic)
-            user_obj = matching_models.User.objects.get(name=request.user.username)
+            user_obj = matching_models.User.objects.get(username=request.user.username)
             post.user = user_obj
             post.finding_match = True
             post.save()
-            print(">>> pk: " + str(post.pk))
+            #print(">>> pk: " + str(post.pk))
             return redirect('matching:post_detail', pk=post.pk)
     else:
         form = PostForm()
