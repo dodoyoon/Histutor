@@ -11,8 +11,6 @@ from matching import models as matching_models
 from django.db import transaction
 from itertools import chain
 
-
-
 # DEFAULT PAGE
 def index(request):
     if request.user.is_authenticated:

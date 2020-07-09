@@ -27,7 +27,7 @@
                     {% else %}
                     <td> <span id="found" class="dot"></span> &nbsp;&nbsp;{{post.title}}</td>
                     {% endif %}
-                    <td class="text-center">{{post.user.nickname}}</td>
+                    <td class="text-center">{{post.user.profile.nickname}}</td>
                     <td class="text-center">{{post.pub_date}}</td>
                 </tr>
             {% endfor %}
