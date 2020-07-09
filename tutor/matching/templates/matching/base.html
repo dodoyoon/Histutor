@@ -25,8 +25,10 @@
 		<nav id="navigationBar" class="navbar navbar-dark">
 			<a class="navbar-brand" href="#">HisTutor</a>
 			{% if user.is_authenticated %}
-				<a class="navbar-brand">{{ user.username }}</a>
-				<a href="{% url 'account_logout' %}">Logout</a>
+				<ul class="nav navbar-nav nav-bar right">
+					<li><a href="{% url 'account_logout' %}">Logout</a></li>
+					<li><a class="navbar-brand">{{ user.username }}</a></li>
+				</ul>
 			{% else %}
 				<a href="{% provider_login_url 'google' %}">Login with Google</a>
 			{% endif %}

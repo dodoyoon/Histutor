@@ -4,8 +4,10 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.db.models import F
 from django.views import generic
+from itertools import chain
 from .models import Post, Topic, User
 from .forms import PostForm, ReportForm, SignupForm
+
 
 # DEFAULT PAGE
 def index(request):
@@ -68,3 +70,15 @@ def post_new(request):
 
 def tutee_home(request):
     return render(request, 'matching/tutee_home.html', {})
+
+def tutor_home(request):
+    recruiting = Post.objects.filter(finding_match = True).order_by('-pub_date')
+    recruited = Post.objects.filter(finding_match = False).order_by('-pub_date')
+    #posts = Post.objects.order_by('-pub_date')
+    posts = list(chain(recruiting, recruited))
+
+    ctx = {
+        'posts': posts, 
+    }
+
+    return render(request, 'matching/tutor_home.html', ctx)
