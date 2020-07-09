@@ -23,7 +23,7 @@
                     <td class="text-center"> {{forloop.counter}}</td>
                     <td scope="row" class="text-center">{{post.topic.name}}</td>
                     {% if post.finding_match ==  True %}
-                    <td> <span id="finding" class="dot"></span> &nbsp;&nbsp;{{post.title}}</td>
+                    <td> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
                     {% else %}
                     <td> <span id="found" class="dot"></span> &nbsp;&nbsp;{{post.title}}</td>
                     {% endif %}
