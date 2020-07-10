@@ -165,3 +165,22 @@ def tutor_home(request):
     }
 
     return render(request, 'matching/tutor_home.html', ctx)
+
+def tutee_accept_report(request):
+    report = matching_models.Report.objects.last()
+    print(report)
+    if request.method == "POST":
+        acceptForm = AcceptReportForm(request.POST, instance=report)
+        if acceptForm.is_valid():
+            report = acceptForm.save(commit=False)
+            report.is_confirmed = True
+            report.save()
+    else:
+        acceptForm = AcceptReportForm()
+
+    ctx = {
+        'report': report,
+        'form': acceptForm,
+    }
+
+    return render(request, 'matching/tutee_accept_report.html', ctx)

@@ -6,7 +6,7 @@ from django.forms import ModelChoiceField
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['nickname','phone'] 
+        fields = ['nickname','phone']
 
 class PostForm(forms.ModelForm):
     class Meta:
@@ -23,4 +23,7 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ('content',)
 
-
+class ReportForm(forms.ModelForm):
+    class Meta:
+        model = Report
+        fields = ('meeting_date','meeting_duration_time','content')
