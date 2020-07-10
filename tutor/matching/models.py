@@ -26,9 +26,6 @@ class Profile(models.Model):
       instance.profile.save()
 
 
-   def __str__(self):
-      return self.name
-
 class Post(models.Model):
    TOPIC_CHOICES = (
       ('python', '파이썬'), ('c', 'C'), ('comp_arc','컴퓨터구조'),
