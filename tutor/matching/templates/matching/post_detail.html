@@ -6,4 +6,18 @@
     <h6>Title: {{ post.title }}</h6>
     <h6>Content: {{ post.content }}</h6>
 </div>
+<br>
+<div>
+    <h5>Comments</h5>
+    {% for comment in cmt %}
+    <p>{{ comment.user }} : {{ comment.content }}</p>
+    {% endfor %}
+    
+
+    <form method="POST" class="comment-form">
+        {% csrf_token %}
+        {{ form.content }}
+        <button type="submit" class="save btn btn-default">댓글</button>
+    </form>
+</div>
 {% endblock %}

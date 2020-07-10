@@ -9,7 +9,7 @@ class Profile(models.Model):
    user = models.OneToOneField(User, on_delete=models.CASCADE)
    nickname = models.CharField(null=True,max_length=200, unique=True)
    phone = models.CharField(null=True, blank=True,max_length=200)
-   is_tutor = models.BooleanField(null=True,blank=True)
+   is_tutor = models.BooleanField(null=True,blank=True, default=False)
    signin = models.BooleanField(default=False)
 
 
@@ -25,6 +25,9 @@ class Profile(models.Model):
    def save_user_profile(sender, instance, **kwargs):
       instance.profile.save()
 
+
+   def __str__(self):
+      return self.name
 
 class Post(models.Model):
    TOPIC_CHOICES = (

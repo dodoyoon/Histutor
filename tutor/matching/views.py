@@ -5,24 +5,25 @@ from django.urls import reverse
 from django.db.models import F
 from django.views import generic
 from django.contrib.auth.models import User
-from .forms import PostForm, ReportForm, ProfileForm
+from .forms import PostForm, ReportForm, ProfileForm, CommentForm
 from django.contrib.auth.decorators import login_required
 from matching import models as matching_models
 from django.db import transaction
 from itertools import chain
 
-
-
 # DEFAULT PAGE
 def index(request):
     if request.user.is_authenticated:
-        return redirect('tuteeHome/')
+        return redirect('tutee_home/')
     else:
         return redirect('/accounts/login/')
 
 @login_required
 @transaction.atomic
 def save_profile(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('/accounts/login/')
+
     if request.method == 'POST':
         user = matching_models.User.objects.get(pk=pk)
         profile_form = ProfileForm(request.POST, instance= user.profile)
@@ -33,12 +34,12 @@ def save_profile(request, pk):
             return redirect('/matching') # redirect으로 tutee home으로 이동
     else:
         profile_form = ProfileForm(instance=request.user.profile)
-    return render(request, 'matching/signup.html', {
+    return render(request, 'matching/save_profile.html', {
         'profile_form' : profile_form
     })
 
 def user_check(request):
-    
+
     if "handong.edu" in request.user.email:
         print("handong student")
         try:
@@ -57,7 +58,10 @@ def user_check(request):
         matching_models.User.objects.filter(pk=request.user.pk).delete()
         return HttpResponseRedirect(reverse('matching:index'))
 
-def tutorReport(request):
+def tutor_report(request):
+    if not request.user.is_authenticated:
+        return redirect('/accounts/login/')
+
     post = matching_models.Post.objects.last()
     if request.method == "POST":
         form = ReportForm(request.POST)
@@ -78,6 +82,9 @@ def tutorReport(request):
     return render(request, 'matching/tutor_report.html', ctx)
 
 def post_new(request):
+    if not request.user.is_authenticated:
+        return redirect('/accounts/login/')
+
     ctx={}
     if request.method == "POST":
         form = PostForm(request.POST)
@@ -98,6 +105,9 @@ def post_new(request):
     return render(request, 'matching/post_new.html', ctx)
 
 def post_detail(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('/accounts/login/')
+
     ctx={}
 
     try:
@@ -107,12 +117,44 @@ def post_detail(request, pk):
 
     ctx['post'] = post
 
+    cmt = matching_models.Comment.objects.filter(post=post)
+    ctx['cmt'] = cmt
+
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.post = post
+            comment.save()
+            #print(">>> pk: " + str(post.pk))
+            return redirect('matching:post_detail', pk=post.pk)
+    else:
+        form = CommentForm()
+
+    ctx['form'] = form
+
     return render(request, 'matching/post_detail.html', ctx)
 
 def tutee_home(request):
+    if not request.user.is_authenticated:
+        return redirect('/accounts/login/')
+
     return render(request, 'matching/tutee_home.html', {})
 
 def tutor_home(request):
+    if not request.user.is_authenticated:
+        return redirect('/accounts/login/')
+
+
+    user = matching_models.User.objects.get(pk=request.user.pk)
+
+    if not user.profile.is_tutor is True:
+        print(">>>Not a tutor!!")
+        return redirect(reverse('matching:tutee_home'))
+
+
     recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
     recruited = matching_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
     #posts = tutor_models.Post.objects.order_by('-pub_date')
