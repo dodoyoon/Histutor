@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.db.models import F
 from django.views import generic
 from django.contrib.auth.models import User
-from .forms import PostForm, ReportForm, ProfileForm
+from .forms import PostForm, ReportForm, ProfileForm, CommentForm
 from django.contrib.auth.decorators import login_required
 from matching import models as matching_models
 from django.db import transaction
@@ -123,6 +123,24 @@ def post_detail(request, pk):
         return HttpResponse("채용공고가 없습니다.")
 
     ctx['post'] = post
+
+    cmt = matching_models.Comment.objects.filter(post=post)
+    ctx['cmt'] = cmt
+
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.post = post
+            comment.save()
+            #print(">>> pk: " + str(post.pk))
+            return redirect('matching:post_detail', pk=post.pk)
+    else:
+        form = CommentForm()
+
+    ctx['form'] = form
 
     return render(request, 'matching/post_detail.html', ctx)
 

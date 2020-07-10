@@ -1,5 +1,5 @@
 from django import forms
-from .models import Post, Topic, Report, Profile
+from .models import Post, Topic, Report, Profile, Comment
 from django.forms import ModelChoiceField
 
 
@@ -17,3 +17,10 @@ class ReportForm(forms.ModelForm):
     class Meta:
         model = Report
         fields = ('meeting_date','meeting_duration_time','content')
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ('content',)
+
+
