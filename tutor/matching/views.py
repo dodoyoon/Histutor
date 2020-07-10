@@ -89,7 +89,7 @@ def post_new(request):
     if request.method == "POST":
         form = PostForm(request.POST)
         if form.is_valid():
-            print('form data : ', form.cleaned_data) ; 
+            print('form data : ', form.cleaned_data) ;
             post = form.save(commit=False)
             user_obj = matching_models.User.objects.get(username=request.user.username)
             post.user = user_obj
@@ -140,8 +140,12 @@ def post_detail(request, pk):
 def tutee_home(request):
     if not request.user.is_authenticated:
         return redirect('/accounts/login/')
-
-    return render(request, 'matching/tutee_home.html', {})
+    else:
+        post = matching_models.Post.objects.filter(user = request.user, finding_match = True)
+        if not post:
+            return render(request, 'matching/tutee_home.html', {})
+        else:
+            return redirect('matching:post_detail', pk=post[0].pk)
 
 def tutor_home(request):
     if not request.user.is_authenticated:
