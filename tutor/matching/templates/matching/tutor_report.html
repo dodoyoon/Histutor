@@ -6,7 +6,7 @@
 
 {% block content %}
 
-    주제 {{post.topic.name}} </br>
+    주제 {{post.get_topic_display }} </br>
     제목 {{post.title}} </br>
     <form method="post">
         {% csrf_token %}

@@ -79,22 +79,15 @@ def tutorReport(request):
 
 def post_new(request):
     ctx={}
-
-    topic_list = matching_models.Topic.objects.all()
-    ctx['topic_list'] = topic_list
-
     if request.method == "POST":
         form = PostForm(request.POST)
-
         if form.is_valid():
-            topic = request.POST['topic']
+            print('form data : ', form.cleaned_data) ; 
             post = form.save(commit=False)
-            post.topic = matching_models.Topic.objects.get(name=topic)
             user_obj = matching_models.User.objects.get(username=request.user.username)
             post.user = user_obj
             post.finding_match = True
             post.save()
-            #print(">>> pk: " + str(post.pk))
             return redirect('matching:post_detail', pk=post.pk)
     else:
         form = PostForm()

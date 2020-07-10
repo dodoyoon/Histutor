@@ -1,5 +1,5 @@
 from django import forms
-from .models import Post, Topic, Report, Profile
+from .models import Post, Report, Profile
 from django.forms import ModelChoiceField
 
 
@@ -11,7 +11,7 @@ class ProfileForm(forms.ModelForm):
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'content']
+        fields = ['title', 'topic','content']
 
 class ReportForm(forms.ModelForm):
     class Meta:

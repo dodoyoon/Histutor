@@ -2,7 +2,7 @@
 
 {% block content %}
 <div>
-    <h6>Topic: {{ post.topic.name }}</h6>
+    <h6>Topic: {{ post.get_topic_display }}</h6>
     <h6>Title: {{ post.title }}</h6>
     <h6>Content: {{ post.content }}</h6>
 </div>

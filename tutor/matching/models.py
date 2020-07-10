@@ -25,12 +25,17 @@ class Profile(models.Model):
    def save_user_profile(sender, instance, **kwargs):
       instance.profile.save()
 
-class Topic(models.Model):
-   name = models.CharField(max_length=200)
 
 class Post(models.Model):
+   TOPIC_CHOICES = (
+      ('python', '파이썬'), ('c', 'C'), ('comp_arc','컴퓨터구조'),
+      ('os', '운영체제'), ('ds', '데이타구조'), ('LD', '논리설계'),
+      ('algo', '알고리즘'), ('java','자바'), ('database', '데이타베이스'),
+      ('compiler', '컴파일러'), ('oodp', '객체지향'), ('elec_circuit', '전자회로'),
+      ('circuit_theory', '회로이론'), ('etc', '기타')
+   )
    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="post_relation")
-   topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
+   topic = models.CharField(choices=TOPIC_CHOICES, max_length=200, default='etc')
    title = models.CharField(max_length=200)
    content = models.TextField()
    finding_match = models.NullBooleanField(default=True)
@@ -38,7 +43,7 @@ class Post(models.Model):
    cancel_reason = models.TextField(null=True)
 
    def __str__(self):
-      return self.topic + ' ' + self.title
+      return self.get_topic_display() + ' ' + self.title
 
 class Comment(models.Model):
    user = models.ForeignKey(User, on_delete=models.CASCADE)
