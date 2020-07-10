@@ -23,4 +23,8 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ('content',)
 
+class AcceptReportForm(forms.ModelForm):
+    class Meta:
+        model = Report
+        fields = ('tutee_feedback',)
 
