@@ -183,4 +183,8 @@ def tutee_accept_report(request):
         'form': acceptForm,
     }
 
+<<<<<<< HEAD
     return render(request, 'matching/tutee_accept_report.html', ctx)
+=======
+    return render(request, 'matching/tutee_accept_report.html', ctx)
+>>>>>>> e68da6f225cbd6fa63084bc2c7e11e95dbac315d
