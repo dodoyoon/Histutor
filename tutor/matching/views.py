@@ -188,3 +188,11 @@ def tutee_accept_report(request):
     }
 
     return render(request, 'matching/tutee_accept_report.html', ctx)
+
+
+def tutee_mypage(request):
+    post = matching_models.Post.objects.filter(user=request.user)
+    ctx = {
+        'posts' : post,
+    }
+    return render(request, 'matching/tutee_mypage.html', ctx)
