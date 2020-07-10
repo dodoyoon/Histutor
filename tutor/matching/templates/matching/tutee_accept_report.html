@@ -1,0 +1,26 @@
+{% extends "matching/base.html" %}
+
+{% block title %}
+<title>Tutee Accept Report</title>
+{% endblock %}
+
+{% block content %}
+
+  주제 {{report.post.topic.name}} </br>
+  제목 {{report.post.title}} </br>
+  학습날짜 {{report.meeting_date}} </br>
+  학습시간 {{report.meeting_duration_time}} </br>
+  내용 {{report.post.content}} </br>
+  <form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+      <p class="fields">
+          <label for="id_{{field.name}}">피드백</label>
+          {{field}}
+      </p>
+    {% endfor %}
+    <button id="" type="submit">승인</button>
+  </form>
+
+
+{% endblock %}
