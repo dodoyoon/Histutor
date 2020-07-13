@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.db.models import F
 from django.views import generic
 from django.contrib.auth.models import User
-from .forms import PostForm, ReportForm, ProfileForm, CommentForm, AcceptReportForm
+from .forms import PostForm, ReportForm, ProfileForm, CommentForm, AcceptReportForm, CancelForm
 from django.contrib.auth.decorators import login_required
 from matching import models as matching_models
 from django.db import transaction
@@ -133,8 +133,8 @@ def post_detail(request, pk):
     ctx['cmt'] = cmt
 
     if request.method == "POST":
+        print("********************post_detail , post")
         form = CommentForm(request.POST)
-
         if form.is_valid():
             comment = form.save(commit=False)
             comment.user = request.user
@@ -143,6 +143,7 @@ def post_detail(request, pk):
             #print(">>> pk: " + str(post.pk))
             return redirect('matching:post_detail', pk=post.pk)
     else:
+        cancel_form = CancelForm()
         form = CommentForm()
 
     if request.user == post.user:
@@ -156,7 +157,8 @@ def post_detail(request, pk):
         ctx['hastutor'] = True
 
     ctx['form'] = form
-
+    ctx['cancel_form'] = cancel_form ; 
+ 
     return render(request, 'matching/post_detail.html', ctx)
 
 
@@ -182,21 +184,15 @@ def post_edit(request, pk):
         return redirect('/accounts/login/')
 
     ctx={}
-
     post = matching_models.Post.objects.get(pk=pk)
-
-
+    form = PostForm(request.POST)
     if request.method == "POST":
-        topic = request.POST['topic']
-        title = request.POST['title']
-        content = request.POST['content']
-
-        post.topic = topic
-        post.title = title
-        post.content = content
-        post.save()
-
-        return redirect('matching:post_detail', pk=post.pk)
+        if form.is_valid():
+            post.topic = form.cleaned_data['topic']
+            post.title = form.cleaned_data['title']
+            post.content = form.cleaned_data['content']
+            post.save()
+            return redirect('matching:post_detail', pk=post.pk)
     else:
         ctx['post'] = post
 
@@ -280,6 +276,24 @@ def tutee_accept_report(request):
 
     return render(request, 'matching/tutee_accept_report.html', ctx)
 
+def close_post(request, pk):
+    if request.method == 'POST':
+        print("close_post : POST")
+        form = CancelForm(request.POST, request.FILES)
+        if form.is_valid():
+            print("form valid")
+            post = matching_models.Post.objects.get(pk=pk)
+            post.cancel_reason = form.cleaned_data['cancel_reason']
+            post.finding_match = False 
+            post.save()
+            return redirect(reverse('matching:tutee_home'))
+        else:
+            print("form invalid")
+
+    else:
+        print("close_post : GET")
+        form = CancelForm()
+        return render(request, 'matching/post_detail.html')
 
 def tutee_mypage(request):
     post = matching_models.Post.objects.filter(user=request.user)

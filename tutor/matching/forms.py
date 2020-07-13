@@ -2,7 +2,11 @@ from django import forms
 from .models import Post, Report, Profile, Comment
 from django.forms import ModelChoiceField
 
-
+class CancelForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['cancel_reason']
+        
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
