@@ -6,9 +6,11 @@
     <h6>Title: {{ post.title }}</h6>
     <h6>Content: {{ post.content }}</h6>
 
+    {% if user.pk == post.user.pk %}
     <div>
         <button type="button" onclick="location.href='{% url 'matching:post_edit' post.pk %}'">수정</button>
     </div>
+    {% endif %}
 </div>
 <br>
 <div>

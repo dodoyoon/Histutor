@@ -14,7 +14,11 @@ from itertools import chain
 # DEFAULT PAGE
 def index(request):
     if request.user.is_authenticated:
-        return redirect('tutee_home/')
+        user = matching_models.User.objects.get(pk=request.user.pk)
+        if not user.profile.is_tutor is True:
+            return redirect(reverse('matching:tutee_home'))
+        else:
+            return redirect(reverse('matching:tutor_home'))
     else:
         return redirect('/accounts/login/')
 
@@ -110,6 +114,9 @@ def post_detail(request, pk):
 
     ctx={}
 
+    user = matching_models.User.objects.get(pk=request.user.pk)
+    ctx['user'] = user
+
     try:
         post = get_object_or_404(matching_models.Post, pk=pk)
     except matching_models.Post.DoesNotExist:
@@ -194,6 +201,32 @@ def tutor_home(request):
     }
 
     return render(request, 'matching/tutor_home.html', ctx)
+
+
+def admin_home(request):
+    if not request.user.is_authenticated:
+        return redirect('/accounts/login/')
+
+
+    user = matching_models.User.objects.get(pk=request.user.pk)
+
+    print(user.is_staff)
+
+    if not user.is_staff:
+        return redirect(reverse('matching:tutee_home'))
+
+
+    recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
+    recruited = matching_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
+    #posts = tutor_models.Post.objects.order_by('-pub_date')
+    posts = list(chain(recruiting, recruited))
+
+    ctx = {
+        'posts': posts,
+    }
+
+    return render(request, 'matching/admin_home.html', ctx)
+
 
 def tutee_accept_report(request):
     report = matching_models.Report.objects.last()
