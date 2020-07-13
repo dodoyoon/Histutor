@@ -35,6 +35,7 @@ class Post(models.Model):
       ('circuit_theory', '회로이론'), ('etc', '기타')
    )
    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="post_relation")
+   tutor = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
    topic = models.CharField(choices=TOPIC_CHOICES, max_length=200, default='etc')
    title = models.CharField(max_length=200)
    content = models.TextField()
