@@ -36,7 +36,7 @@ class Post(models.Model):
    )
    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="post_relation")
    tutor = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-   report = models.ForeignKey(Report, on_delete=models.CASCADE, null=True)
+   report = models.OneToOneField(Report, on_delete=models.CASCADE, null=True)
    topic = models.CharField(choices=TOPIC_CHOICES, max_length=200, default='etc')
    title = models.CharField(max_length=200)
    content = models.TextField()
