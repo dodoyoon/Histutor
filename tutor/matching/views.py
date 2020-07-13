@@ -112,8 +112,8 @@ def post_detail(request, pk):
 
     try:
         post = get_object_or_404(matching_models.Post, pk=pk)
-    except Notice.DoesNotExist:
-        return HttpResponse("채용공고가 없습니다.")
+    except matching_models.Post.DoesNotExist:
+        return HttpResponse("게시물이 존재하지 않습니다.")
 
     ctx['post'] = post
 
@@ -137,6 +137,32 @@ def post_detail(request, pk):
 
     return render(request, 'matching/post_detail.html', ctx)
 
+
+def post_edit(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('/accounts/login/')
+
+    ctx={}
+
+    post = matching_models.Post.objects.get(pk=pk)
+
+
+    if request.method == "POST":
+        topic = request.POST['topic']
+        title = request.POST['title']
+        content = request.POST['content']
+
+        post.topic = topic
+        post.title = title
+        post.content = content
+        post.save()
+
+        return redirect('matching:post_detail', pk=post.pk)
+    else:
+        ctx['post'] = post
+
+    return render(request, 'matching/post_edit.html', ctx)
+
 def tutee_home(request):
     if not request.user.is_authenticated:
         return redirect('/accounts/login/')
@@ -155,7 +181,6 @@ def tutor_home(request):
     user = matching_models.User.objects.get(pk=request.user.pk)
 
     if not user.profile.is_tutor is True:
-        print(">>>Not a tutor!!")
         return redirect(reverse('matching:tutee_home'))
 
 
