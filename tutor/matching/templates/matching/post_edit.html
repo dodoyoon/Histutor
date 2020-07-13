@@ -1,0 +1,20 @@
+{% extends 'matching/base.html' %}
+
+{% block content %}
+<h1>Edit post</h1>
+<form method="POST" class="post-form">
+    {% csrf_token %}
+
+    <span>Topic: </span>
+    <select name="topic">
+        {% for topic in post.TOPIC_CHOICES %}
+            <option value="{{topic.0}}">{{topic.1}}</option>
+        {% endfor %}
+    </select>
+    <br>
+    <span>Title: </span><input type="text" name="title" value="{{ post.title }}"/><br>
+    <span>Content: </span><input type="text" name="content" value="{{ post.content }}"/><br>
+
+    <button type="submit" class="save btn btn-default">Save</button>
+</form>
+{% endblock %}
