@@ -122,6 +122,8 @@ def post_detail(request, pk):
 
     try:
         post = get_object_or_404(matching_models.Post, pk=pk)
+    except post.DoesNotExist:
+        return HttpResponse("포스트가 없습니다.")
     except matching_models.Post.DoesNotExist:
         return HttpResponse("게시물이 존재하지 않습니다.")
 
@@ -143,9 +145,36 @@ def post_detail(request, pk):
     else:
         form = CommentForm()
 
+    if request.user == post.user:
+        ctx['showbut'] = True
+    else:
+        ctx['showbut'] = False
+
+    if post.tutor is None:
+        ctx['hastutor'] = False
+    else:
+        ctx['hastutor'] = True
+
     ctx['form'] = form
 
     return render(request, 'matching/post_detail.html', ctx)
+
+
+def set_tutor(request, postpk, userpk):
+    try:
+        post = get_object_or_404(matching_models.Post, pk=postpk)
+    except post.DoesNotExist:
+        return HttpResponse("포스트가 없습니다.")
+
+    try:
+        tutor = get_object_or_404(User, pk=userpk)
+    except tutor.DoesNotExist:
+        return HttpResponse("사용자가 없습니다.")
+
+    post.tutor = tutor
+    post.save()
+
+    return redirect('matching:post_detail', pk=post.pk)
 
 
 def post_edit(request, pk):
@@ -172,6 +201,7 @@ def post_edit(request, pk):
         ctx['post'] = post
 
     return render(request, 'matching/post_edit.html', ctx)
+
 
 def tutee_home(request):
     if not request.user.is_authenticated:
