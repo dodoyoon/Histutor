@@ -165,8 +165,8 @@ def post_detail(request, pk):
         ctx['hastutor'] = True
 
     ctx['form'] = form
-    ctx['cancel_form'] = cancel_form ; 
- 
+    ctx['cancel_form'] = cancel_form ;
+
     return render(request, 'matching/post_detail.html', ctx)
 
 
@@ -293,7 +293,7 @@ def close_post(request, pk):
             print("form valid")
             post = matching_models.Post.objects.get(pk=pk)
             post.cancel_reason = form.cleaned_data['cancel_reason']
-            post.finding_match = False 
+            post.finding_match = False
             post.save()
             return redirect(reverse('matching:tutee_home'))
         else:
@@ -306,7 +306,13 @@ def close_post(request, pk):
 
 def tutee_mypage(request):
     post = matching_models.Post.objects.filter(user=request.user)
+
+    recruiting = post.filter(finding_match = True).order_by('-pub_date')
+    recruited = post.filter(finding_match = False).order_by('-pub_date')
+    #posts = tutor_models.Post.objects.order_by('-pub_date')
+    posts = list(chain(recruiting, recruited))
+
     ctx = {
-        'posts' : post,
+        'posts' : posts,
     }
     return render(request, 'matching/tutee_mypage.html', ctx)
