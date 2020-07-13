@@ -182,6 +182,7 @@ def set_tutor(request, postpk, userpk):
         return HttpResponse("사용자가 없습니다.")
 
     post.tutor = tutor
+    post.finding_match = False
     post.save()
 
     return redirect('matching:post_detail', pk=post.pk)
