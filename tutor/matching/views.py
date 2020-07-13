@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.db.models import F
 from django.views import generic
 from django.contrib.auth.models import User
-from .forms import PostForm, ReportForm, ProfileForm, CommentForm, AcceptReportForm
+from .forms import PostForm, ReportForm, ProfileForm, CommentForm, AcceptReportForm, CancelForm
 from django.contrib.auth.decorators import login_required
 from matching import models as matching_models
 from django.db import transaction
@@ -121,8 +121,8 @@ def post_detail(request, pk):
     ctx['cmt'] = cmt
 
     if request.method == "POST":
+        print("********************post_detail , post")
         form = CommentForm(request.POST)
-
         if form.is_valid():
             comment = form.save(commit=False)
             comment.user = request.user
@@ -131,10 +131,12 @@ def post_detail(request, pk):
             #print(">>> pk: " + str(post.pk))
             return redirect('matching:post_detail', pk=post.pk)
     else:
+        cancel_form = CancelForm()
         form = CommentForm()
 
     ctx['form'] = form
-
+    ctx['cancel_form'] = cancel_form ; 
+ 
     return render(request, 'matching/post_detail.html', ctx)
 
 def tutee_home(request):
@@ -184,3 +186,15 @@ def tutee_accept_report(request):
     }
 
     return render(request, 'matching/tutee_accept_report.html', ctx)
+
+def close_post(request, pk):
+    if request.method == 'POST':
+        form = CancelForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = matching_models.Post.objects.get(pk=pk)
+            post.cancel_reason = form.cleaned_data['cancel_reason']
+            post.save()
+            return redirect('matching:tutor_home')
+    else:
+        form = CancelForm()
+        return render(request, 'matching/post_detail.html')

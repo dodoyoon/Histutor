@@ -14,4 +14,5 @@ urlpatterns = [
   path('tutor_home/', views.tutor_home, name='tutor_home'),
   path('tutee_home/', views.tutee_home, name='tutee_home'),
   path('tutee_accept_report/', views.tutee_accept_report, name='tutee_accept_report'),
+  path('post/detail/close_post/<int:pk>', views.close_post, name='close_post'),
 ]
