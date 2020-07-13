@@ -1,0 +1,7 @@
+{% extends 'matching/base.html' %}
+
+{% load account socialaccount %}
+
+{% block content %}
+    <p><a href="{% provider_login_url 'google' %}">Google</a></p>
+{% endblock %}

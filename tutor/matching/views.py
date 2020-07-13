@@ -20,7 +20,10 @@ def index(request):
         else:
             return redirect(reverse('matching:tutor_home'))
     else:
-        return redirect('/accounts/login/')
+        return redirect('login/')
+
+def login(request):
+    return render(request, 'matching/account_login.html', {})
 
 @login_required
 @transaction.atomic
