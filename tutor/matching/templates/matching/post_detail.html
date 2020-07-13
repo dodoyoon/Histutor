@@ -7,6 +7,7 @@
     <h6>Topic: {{ post.get_topic_display }}</h6>
     <h6>Title: {{ post.title }}</h6>
     <h6>Content: {{ post.content }}</h6>
+{% if user.pk == post.user.pk %}
 <!-- Trigger the modal with a button -->
 <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">모집종료</button>
 
@@ -34,6 +35,11 @@
 
   </div>
 </div>
+    <div>
+        <button type="button" onclick="location.href='{% url 'matching:post_edit' post.pk %}'">수정</button>
+    </div>
+    {% endif %}
+    
 </div>
 <br>
 
@@ -42,7 +48,7 @@
     {% for comment in cmt %}
     <p>{{ comment.user }} : {{ comment.content }}</p>
     {% endfor %}
-    
+
 
     <form method="POST" class="comment-form">
         {% csrf_token %}

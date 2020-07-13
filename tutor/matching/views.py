@@ -14,9 +14,16 @@ from itertools import chain
 # DEFAULT PAGE
 def index(request):
     if request.user.is_authenticated:
-        return redirect('tutee_home/')
+        user = matching_models.User.objects.get(pk=request.user.pk)
+        if not user.profile.is_tutor is True:
+            return redirect(reverse('matching:tutee_home'))
+        else:
+            return redirect(reverse('matching:tutor_home'))
     else:
-        return redirect('/accounts/login/')
+        return redirect('login/')
+
+def login(request):
+    return render(request, 'matching/account_login.html', {})
 
 @login_required
 @transaction.atomic
@@ -89,7 +96,7 @@ def post_new(request):
     if request.method == "POST":
         form = PostForm(request.POST)
         if form.is_valid():
-            print('form data : ', form.cleaned_data) ; 
+            print('form data : ', form.cleaned_data) ;
             post = form.save(commit=False)
             user_obj = matching_models.User.objects.get(username=request.user.username)
             post.user = user_obj
@@ -110,10 +117,13 @@ def post_detail(request, pk):
 
     ctx={}
 
+    user = matching_models.User.objects.get(pk=request.user.pk)
+    ctx['user'] = user
+
     try:
         post = get_object_or_404(matching_models.Post, pk=pk)
-    except Notice.DoesNotExist:
-        return HttpResponse("채용공고가 없습니다.")
+    except matching_models.Post.DoesNotExist:
+        return HttpResponse("게시물이 존재하지 않습니다.")
 
     ctx['post'] = post
 
@@ -139,11 +149,35 @@ def post_detail(request, pk):
  
     return render(request, 'matching/post_detail.html', ctx)
 
-def tutee_home(request):
+
+def post_edit(request, pk):
     if not request.user.is_authenticated:
         return redirect('/accounts/login/')
 
-    return render(request, 'matching/tutee_home.html', {})
+    ctx={}
+    post = matching_models.Post.objects.get(pk=pk)
+    form = PostForm(request.POST)
+    if request.method == "POST":
+        if form.is_valid():
+            post.topic = form.cleaned_data['topic']
+            post.title = form.cleaned_data['title']
+            post.content = form.cleaned_data['content']
+            post.save()
+            return redirect('matching:post_detail', pk=post.pk)
+    else:
+        ctx['post'] = post
+
+    return render(request, 'matching/post_edit.html', ctx)
+
+def tutee_home(request):
+    if not request.user.is_authenticated:
+        return redirect('/accounts/login/')
+    else:
+        post = matching_models.Post.objects.filter(user = request.user, finding_match = True)
+        if not post:
+            return render(request, 'matching/tutee_home.html', {})
+        else:
+            return redirect('matching:post_detail', pk=post[0].pk)
 
 def tutor_home(request):
     if not request.user.is_authenticated:
@@ -153,7 +187,6 @@ def tutor_home(request):
     user = matching_models.User.objects.get(pk=request.user.pk)
 
     if not user.profile.is_tutor is True:
-        print(">>>Not a tutor!!")
         return redirect(reverse('matching:tutee_home'))
 
 
@@ -167,6 +200,32 @@ def tutor_home(request):
     }
 
     return render(request, 'matching/tutor_home.html', ctx)
+
+
+def admin_home(request):
+    if not request.user.is_authenticated:
+        return redirect('/accounts/login/')
+
+
+    user = matching_models.User.objects.get(pk=request.user.pk)
+
+    print(user.is_staff)
+
+    if not user.is_staff:
+        return redirect(reverse('matching:tutee_home'))
+
+
+    recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
+    recruited = matching_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
+    #posts = tutor_models.Post.objects.order_by('-pub_date')
+    posts = list(chain(recruiting, recruited))
+
+    ctx = {
+        'posts': posts,
+    }
+
+    return render(request, 'matching/admin_home.html', ctx)
+
 
 def tutee_accept_report(request):
     report = matching_models.Report.objects.last()
@@ -189,12 +248,26 @@ def tutee_accept_report(request):
 
 def close_post(request, pk):
     if request.method == 'POST':
+        print("close_post : POST")
         form = CancelForm(request.POST, request.FILES)
         if form.is_valid():
+            print("form valid")
             post = matching_models.Post.objects.get(pk=pk)
             post.cancel_reason = form.cleaned_data['cancel_reason']
+            post.finding_match = False 
             post.save()
-            return redirect('matching:tutor_home')
+            return redirect(reverse('matching:tutee_home'))
+        else:
+            print("form invalid")
+
     else:
+        print("close_post : GET")
         form = CancelForm()
         return render(request, 'matching/post_detail.html')
+
+def tutee_mypage(request):
+    post = matching_models.Post.objects.filter(user=request.user)
+    ctx = {
+        'posts' : post,
+    }
+    return render(request, 'matching/tutee_mypage.html', ctx)
