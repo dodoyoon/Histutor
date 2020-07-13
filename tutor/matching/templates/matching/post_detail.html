@@ -5,12 +5,26 @@
     <h6>Topic: {{ post.get_topic_display }}</h6>
     <h6>Title: {{ post.title }}</h6>
     <h6>Content: {{ post.content }}</h6>
+    {% if hastutor %}
+    <h6>Tutor: {{ post.tutor }}</h6>
+    {% endif %}
 </div>
 <br>
+
 <div>
     <h5>Comments</h5>
     {% for comment in cmt %}
-    <p>{{ comment.user }} : {{ comment.content }}</p>
+    <p>{{ comment.user }} : {{ comment.content }}
+        {% if not hastutor %}
+        {% if showbut %}
+        {% if comment.user.profile.is_tutor %}
+        <a  href="{% url 'matching:set_tutor' post.pk comment.user.pk %}">
+        <button type="button" class="btn btn-outline-dark">tutor로 지정</button>
+        </a>
+        {% endif %}
+        {% endif %}
+        {% endif %}
+    </p>
     {% endfor %}
     
 
