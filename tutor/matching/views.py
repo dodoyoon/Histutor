@@ -14,9 +14,16 @@ from itertools import chain
 # DEFAULT PAGE
 def index(request):
     if request.user.is_authenticated:
-        return redirect('tutee_home/')
+        user = matching_models.User.objects.get(pk=request.user.pk)
+        if not user.profile.is_tutor is True:
+            return redirect(reverse('matching:tutee_home'))
+        else:
+            return redirect(reverse('matching:tutor_home'))
     else:
-        return redirect('/accounts/login/')
+        return redirect('login/')
+
+def login(request):
+    return render(request, 'matching/account_login.html', {})
 
 @login_required
 @transaction.atomic
@@ -110,10 +117,15 @@ def post_detail(request, pk):
 
     ctx={}
 
+    user = matching_models.User.objects.get(pk=request.user.pk)
+    ctx['user'] = user
+
     try:
         post = get_object_or_404(matching_models.Post, pk=pk)
     except post.DoesNotExist:
         return HttpResponse("포스트가 없습니다.")
+    except matching_models.Post.DoesNotExist:
+        return HttpResponse("게시물이 존재하지 않습니다.")
 
     ctx['post'] = post
 
@@ -147,6 +159,7 @@ def post_detail(request, pk):
 
     return render(request, 'matching/post_detail.html', ctx)
 
+
 def set_tutor(request, postpk, userpk):
     try:
         post = get_object_or_404(matching_models.Post, pk=postpk)
@@ -162,6 +175,33 @@ def set_tutor(request, postpk, userpk):
     post.save()
 
     return redirect('matching:post_detail', pk=post.pk)
+
+
+def post_edit(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('/accounts/login/')
+
+    ctx={}
+
+    post = matching_models.Post.objects.get(pk=pk)
+
+
+    if request.method == "POST":
+        topic = request.POST['topic']
+        title = request.POST['title']
+        content = request.POST['content']
+
+        post.topic = topic
+        post.title = title
+        post.content = content
+        post.save()
+
+        return redirect('matching:post_detail', pk=post.pk)
+    else:
+        ctx['post'] = post
+
+    return render(request, 'matching/post_edit.html', ctx)
+
 
 def tutee_home(request):
     if not request.user.is_authenticated:
@@ -181,7 +221,6 @@ def tutor_home(request):
     user = matching_models.User.objects.get(pk=request.user.pk)
 
     if not user.profile.is_tutor is True:
-        print(">>>Not a tutor!!")
         return redirect(reverse('matching:tutee_home'))
 
 
@@ -195,6 +234,32 @@ def tutor_home(request):
     }
 
     return render(request, 'matching/tutor_home.html', ctx)
+
+
+def admin_home(request):
+    if not request.user.is_authenticated:
+        return redirect('/accounts/login/')
+
+
+    user = matching_models.User.objects.get(pk=request.user.pk)
+
+    print(user.is_staff)
+
+    if not user.is_staff:
+        return redirect(reverse('matching:tutee_home'))
+
+
+    recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
+    recruited = matching_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
+    #posts = tutor_models.Post.objects.order_by('-pub_date')
+    posts = list(chain(recruiting, recruited))
+
+    ctx = {
+        'posts': posts,
+    }
+
+    return render(request, 'matching/admin_home.html', ctx)
+
 
 def tutee_accept_report(request):
     report = matching_models.Report.objects.last()
