@@ -65,11 +65,11 @@ def user_check(request):
         matching_models.User.objects.filter(pk=request.user.pk).delete()
         return HttpResponseRedirect(reverse('matching:index'))
 
-def tutor_report(request):
+def tutor_report(request, pk):
     if not request.user.is_authenticated:
         return redirect('/accounts/login/')
 
-    post = matching_models.Post.objects.last()
+    post = matching_models.Post.objects.get(pk=pk)
     if request.method == "POST":
         form = ReportForm(request.POST)
         if form.is_valid():
@@ -78,6 +78,7 @@ def tutor_report(request):
             report.tutee = matching_models.User.objects.get(id = post.user.id)
             report.post = matching_models.Post.objects.get(id = post.id)
             report.save()
+            return redirect('matching:report_detail', pk=report.pk)
     else:
         form = ReportForm()
 
@@ -87,6 +88,13 @@ def tutor_report(request):
     }
 
     return render(request, 'matching/tutor_report.html', ctx)
+
+def report_detail(request, pk):
+    report = matching_models.Report.objects.get(pk=pk)
+    ctx = {
+        'report': report,
+    }
+    return render(request, 'matching/report_detail.html', ctx)
 
 def post_new(request):
     if not request.user.is_authenticated:
