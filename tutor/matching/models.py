@@ -36,7 +36,6 @@ class Post(models.Model):
    )
    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="post_relation")
    tutor = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-   report = models.OneToOneField(Report, on_delete=models.CASCADE, null=True)
    topic = models.CharField(choices=TOPIC_CHOICES, max_length=200, default='etc')
    title = models.CharField(max_length=200)
    content = models.TextField()
@@ -56,7 +55,7 @@ class Comment(models.Model):
 class Report(models.Model):
    tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutor")
    tutee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutee")
-   post = models.ForeignKey(Post, on_delete=models.CASCADE)
+   post = models.OneToOneField(Post, on_delete=models.CASCADE, related_name="report")
    meeting_date = models.DateTimeField()
    meeting_duration_time = models.IntegerField()
    pub_date = models.DateTimeField(auto_now_add=True)
