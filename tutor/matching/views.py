@@ -137,6 +137,11 @@ def post_detail(request, pk):
 
     ctx['post'] = post
 
+    if hasattr(post, 'report'):
+        ctx['report_exist'] = True ;
+    else:
+        ctx['report_exist'] = False ;
+
     cmt = matching_models.Comment.objects.filter(post=post)
     ctx['cmt'] = cmt
 
