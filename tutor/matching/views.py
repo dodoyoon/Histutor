@@ -70,6 +70,13 @@ def tutor_report(request, pk):
         return redirect('/accounts/login/')
 
     post = matching_models.Post.objects.get(pk=pk)
+
+    if request.user.profile.id != post.tutor.profile.id:
+        if request.user.profile.is_tutor == True:
+            return redirect('matching:tutor_home')
+        else:
+            return redirect('matching:tutee_home')
+
     if request.method == "POST":
         form = ReportForm(request.POST)
         if form.is_valid():
@@ -198,6 +205,10 @@ def post_edit(request, pk):
 
     ctx={}
     post = matching_models.Post.objects.get(pk=pk)
+
+    if post.user.profile.id != request.user.profile.id:
+        return redirect('matching:post_detail', pk=post.pk)
+
     form = PostForm(request.POST)
     if request.method == "POST":
         if form.is_valid():
