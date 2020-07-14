@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.db.models import F
 from django.views import generic
 from django.contrib.auth.models import User
-from .forms import PostForm, ReportForm, ProfileForm, CommentForm, AcceptReportForm, CancelForm
+from .forms import PostForm, ReportForm, ProfileForm, CommentForm, AcceptReportForm, CancelForm, AccuseForm
 from django.contrib.auth.decorators import login_required
 from matching import models as matching_models
 from django.db import transaction
@@ -91,9 +91,27 @@ def tutor_report(request, pk):
 
 def report_detail(request, pk):
     report = matching_models.Report.objects.get(pk=pk)
+    if request.method == "POST":
+        form = AccuseForm(request.POST)
+        if form.is_valid():
+            print("report accuse")
+            
+            report.tutee_feedback = form.cleaned_data['tutee_feedback']
+            report.save()
+            print("null? ", report.tutee_feedback == None)
+            return redirect('matching:report_detail', pk=report.pk)
+    else:
+        form = AccuseForm()
+    if request.user.pk == report.tutee.pk:
+        is_post_writer = True
+    else: 
+        is_post_writer = False
     ctx = {
         'report': report,
+        'form' : form,
+        'is_post_writer' : is_post_writer,
     }
+
     return render(request, 'matching/report_detail.html', ctx)
 
 def post_new(request):

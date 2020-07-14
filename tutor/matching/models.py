@@ -59,6 +59,9 @@ class Report(models.Model):
    meeting_date = models.DateTimeField()
    meeting_duration_time = models.IntegerField()
    pub_date = models.DateTimeField(auto_now_add=True)
-   tutee_feedback = models.TextField()
+   tutee_feedback = models.TextField(null=True)
    is_confirmed = models.NullBooleanField(default=False)
    content = models.TextField()
+
+   def __str__(self):
+      return self.post.get_topic_display() + ' ' + self.post.title

@@ -2,6 +2,11 @@ from django import forms
 from .models import Post, Report, Profile, Comment
 from django.forms import ModelChoiceField
 
+class AccuseForm(forms.ModelForm):
+    class Meta:
+        model = Report
+        fields = ['tutee_feedback']
+
 class CancelForm(forms.ModelForm):
     class Meta:
         model = Post
