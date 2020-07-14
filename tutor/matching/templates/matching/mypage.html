@@ -39,12 +39,16 @@
                         <tr>
                             <td class="text-center"> {{forloop.counter}}</td>
                             <td scope="row" class="text-center">{{post.get_topic_display}}</td>
+                            {% if post.finding_match ==  True %}
                             <td> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
+                            {% else %}
+                            <td> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
+                            {% endif %}
                             <td class="text-center">{{post.user.profile.nickname}}</td>
                             <td class="text-center">{{post.pub_date}}</td>
                             <td class="text-center">
                               {% if post.report %}
-                              <a href="{% url 'matching:report_detail' post.pk %}">
+                              <a href="{% url 'matching:report_detail' post.report.pk %}">
                               <p>보고서</p>
                               </a>
                               {% endif %}
@@ -79,10 +83,10 @@
                         <tr>
                             <td class="text-center"> {{forloop.counter}}</td>
                             <td scope="row" class="text-center">{{report.post.get_topic_display}}</td>
-                            {% if post.finding_match ==  True %}
+                            {% if report.post.finding_match ==  True %}
                             <td> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' report.post.pk %}">{{report.post.title}}</a></td>
                             {% else %}
-                            <td> <span id="found" class="dot"></span> &nbsp;&nbsp;{{report.post.title}}</td>
+                            <td> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' report.post.pk %}">{{report.post.title}}</a></td>
                             {% endif %}
                             <td class="text-center">{{report.post.user.profile.nickname}}</td>
                             <td class="text-center">{{report.post.pub_date}}</td>
@@ -120,9 +124,9 @@
                             <td class="text-center"> {{forloop.counter}}</td>
                             <td scope="row" class="text-center">{{post.get_topic_display}}</td>
                             {% if post.finding_match ==  True %}
-                            <td> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{report.post.title}}</a></td>
+                            <td> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
                             {% else %}
-                            <td> <span id="found" class="dot"></span> &nbsp;&nbsp;{{post.title}}</td>
+                            <td> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
                             {% endif %}
                             <td class="text-center">{{post.user.profile.nickname}}</td>
                             <td class="text-center">{{post.pub_date}}</td>
