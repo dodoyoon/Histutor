@@ -338,8 +338,8 @@ def close_post(request, pk):
         form = CancelForm()
         return render(request, 'matching/post_detail.html')
 
-def tutee_mypage(request):
-    ctx={}
+def mypage(request):
+    ctx = {}
     post = matching_models.Post.objects.filter(user=request.user)
 
     if hasattr(post, 'report'):
@@ -355,6 +355,14 @@ def tutee_mypage(request):
     #posts = tutor_models.Post.objects.order_by('-pub_date')
     posts = list(chain(recruiting, recruited))
 
-    ctx['posts'] = posts
+    report = matching_models.Report.objects.filter(tutor=request.user).order_by('-pub_date')
+    #print(report)
 
-    return render(request, 'matching/tutee_mypage.html', ctx)
+    empty_report = matching_models.Post.objects.filter(tutor=request.user).filter(report__isnull=True)
+
+    ctx = {
+        'posts' : posts,
+        'reports': report,
+        'emptyreports': empty_report,
+    }
+    return render(request, 'matching/mypage.html', ctx)
