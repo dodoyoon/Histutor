@@ -10,24 +10,19 @@
     제목 {{post.title}} </br>
     <form method="post">
         {% csrf_token %}
-        {% for field in form %}
-            {% if field.name == "meeting_date" %}
-            <p class="fields">
-                <label for="id_{{field.name}}">학습날짜</label>
-                {{field}}
-            </p>
-            {% elif field.name == "meeting_duration_time" %}
-            <p class="fields">
-                <label for="id_{{field.name}}">학습시간</label>
-                {{field}}
-            </p>
-            {% else %}
-            <p class="fields">
-                <label for="id_{{field.name}}">내용</label>
-                {{field}}
-            </p>
-            {% endif %}
-        {% endfor %}
+        <p class="fields">
+            <label for="id_{{field.name}}">학습날짜</label>
+            {{ form.meeting_date}}
+        </p>
+        <p class="fields">
+            <label for="id_{{field.name}}">학습시간</label>
+            {{ form.meeting_duration_time}}
+        </p>
+        <p class="fields">
+            <label for="id_{{field.name}}">내용</label>
+            {{ form.content }}
+        </p>
+
         <button id="" type="submit">등록</button>
      </form>
 
