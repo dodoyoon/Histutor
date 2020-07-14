@@ -91,9 +91,11 @@
                             <td class="text-center">{{report.post.user.profile.nickname}}</td>
                             <td class="text-center">{{report.post.pub_date}}</td>
                             <td class="text-center">
-                                <a href="{% url 'matching:report_detail' report.post.pk %}">
-                                <p>보고서</p>
-                                </a>
+                              {% if post.report %}
+                              <a href="{% url 'matching:report_detail' report.pk %}">
+                              <p>보고서</p>
+                              </a>
+                              {% endif %}
                             </td>
                         </tr>
                     {% endfor %}
@@ -131,9 +133,11 @@
                             <td class="text-center">{{post.user.profile.nickname}}</td>
                             <td class="text-center">{{post.pub_date}}</td>
                             <td class="text-center">
-                                <a href="{% url 'matching:tutor_report' post.pk %}">
-                                <p>보고서 쓰기</p>
-                                </a>
+                              {% if post.report %}
+                              <a href="{% url 'matching:report_detail' post.report.pk %}">
+                              <p>보고서</p>
+                              </a>
+                              {% endif %}
                             </td>
                         </tr>
                     {% endfor %}
