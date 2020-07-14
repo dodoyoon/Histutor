@@ -31,7 +31,7 @@
                     <td class="text-center">{{post.user.profile.nickname}}</td>
                     <td class="text-center">{{post.pub_date}}</td>
                     <td class="text-center">
-                        <a href="{% url 'matching:report_detail' post.pk %}">
+                        <a href="{% url 'matching:report_detail' post.report.pk %}">
                         <p>보고서</p>
                         </a>
                     </td>
