@@ -87,7 +87,7 @@
                             <td class="text-center">{{report.post.user.profile.nickname}}</td>
                             <td class="text-center">{{report.post.pub_date}}</td>
                             <td class="text-center">
-                                <a href="{% url 'matching:report_detail' report.pk %}">
+                                <a href="{% url 'matching:report_detail' report.post.pk %}">
                                 <p>보고서</p>
                                 </a>
                             </td>
