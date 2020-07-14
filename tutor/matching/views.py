@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from matching import models as matching_models
 from django.db import transaction
 from itertools import chain
-
+URL_LOGIN = "/matching"
 # DEFAULT PAGE
 def index(request):
     if request.user.is_authenticated:
@@ -25,7 +25,7 @@ def index(request):
 def login(request):
     return render(request, 'matching/account_login.html', {})
 
-@login_required
+@login_required(login_url=URL_LOGIN)
 @transaction.atomic
 def save_profile(request, pk):
     if not request.user.is_authenticated:
@@ -64,10 +64,8 @@ def user_check(request):
         matching_models.User.objects.filter(pk=request.user.pk).delete()
         return HttpResponseRedirect(reverse('matching:index'))
 
+@login_required(login_url=URL_LOGIN)
 def tutor_report(request, pk):
-    if not request.user.is_authenticated:
-        return redirect('/accounts/login/')
-
     post = matching_models.Post.objects.get(pk=pk)
 
     if request.user.profile.id != post.tutor.profile.id:
@@ -95,6 +93,7 @@ def tutor_report(request, pk):
 
     return render(request, 'matching/tutor_report.html', ctx)
 
+@login_required(login_url=URL_LOGIN)
 def report_detail(request, pk):
     report = matching_models.Report.objects.get(pk=pk)
     if request.method == "POST":
@@ -120,10 +119,8 @@ def report_detail(request, pk):
 
     return render(request, 'matching/report_detail.html', ctx)
 
+@login_required(login_url=URL_LOGIN)
 def post_new(request):
-    if not request.user.is_authenticated:
-        return redirect('/accounts/login/')
-
     ctx={}
     if request.method == "POST":
         form = PostForm(request.POST)
@@ -143,10 +140,8 @@ def post_new(request):
 
     return render(request, 'matching/post_new.html', ctx)
 
+@login_required(login_url=URL_LOGIN)
 def post_detail(request, pk):
-    if not request.user.is_authenticated:
-        return redirect('/accounts/login/')
-
     ctx={}
 
     user = matching_models.User.objects.get(pk=request.user.pk)
@@ -170,7 +165,6 @@ def post_detail(request, pk):
     ctx['cmt'] = cmt
 
     if request.method == "POST":
-        print("********************post_detail , post")
         form = CommentForm(request.POST)
         if form.is_valid():
             comment = form.save(commit=False)
@@ -198,7 +192,6 @@ def post_detail(request, pk):
 
     return render(request, 'matching/post_detail.html', ctx)
 
-
 def set_tutor(request, postpk, userpk):
     try:
         post = get_object_or_404(matching_models.Post, pk=postpk)
@@ -216,11 +209,8 @@ def set_tutor(request, postpk, userpk):
 
     return redirect('matching:post_detail', pk=post.pk)
 
-
+@login_required(login_url=URL_LOGIN)
 def post_edit(request, pk):
-    if not request.user.is_authenticated:
-        return redirect('/accounts/login/')
-
     ctx={}
     post = matching_models.Post.objects.get(pk=pk)
 
@@ -240,22 +230,16 @@ def post_edit(request, pk):
 
     return render(request, 'matching/post_edit.html', ctx)
 
-
+@login_required(login_url=URL_LOGIN)
 def tutee_home(request):
-    if not request.user.is_authenticated:
-        return redirect('/accounts/login/')
+    post = matching_models.Post.objects.filter(user = request.user, finding_match = True)
+    if not post:
+        return render(request, 'matching/tutee_home.html', {})
     else:
-        post = matching_models.Post.objects.filter(user = request.user, finding_match = True)
-        if not post:
-            return render(request, 'matching/tutee_home.html', {})
-        else:
-            return redirect('matching:post_detail', pk=post[0].pk)
+        return redirect('matching:post_detail', pk=post[0].pk)
 
+@login_required(login_url=URL_LOGIN)
 def tutor_home(request):
-    if not request.user.is_authenticated:
-        return redirect('/accounts/login/')
-
-
     user = matching_models.User.objects.get(pk=request.user.pk)
 
     if not user.profile.is_tutor is True:
@@ -276,12 +260,8 @@ def tutor_home(request):
 
     return render(request, 'matching/tutor_home.html', ctx)
 
-
+@login_required(login_url=URL_LOGIN)
 def admin_home(request):
-    if not request.user.is_authenticated:
-        return redirect('/accounts/login/')
-
-
     user = matching_models.User.objects.get(pk=request.user.pk)
 
     print(user.is_staff)
@@ -340,6 +320,7 @@ def close_post(request, pk):
         form = CancelForm()
         return render(request, 'matching/post_detail.html')
 
+@login_required(login_url=URL_LOGIN)
 def tutee_mypage(request):
     post = matching_models.Post.objects.filter(user=request.user)
 

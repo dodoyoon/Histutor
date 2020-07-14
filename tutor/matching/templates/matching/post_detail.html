@@ -55,7 +55,7 @@
 <div>
     <h5>Comments</h5>
     {% for comment in cmt %}
-    <p>{{ comment.user }} : {{ comment.content }}
+    <p>{{ comment.user.profile.nickname }} : {{ comment.content }}
         {% if not hastutor %}
         {% if showbut %}
         {% if comment.user.profile.is_tutor and not comment.user.pk == user.pk %}
