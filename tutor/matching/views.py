@@ -65,11 +65,11 @@ def user_check(request):
         matching_models.User.objects.filter(pk=request.user.pk).delete()
         return HttpResponseRedirect(reverse('matching:index'))
 
-def tutor_report(request):
+def tutor_report(request, pk):
     if not request.user.is_authenticated:
         return redirect('/accounts/login/')
 
-    post = matching_models.Post.objects.last()
+    post = matching_models.Post.objects.get(pk=pk)
     if request.method == "POST":
         form = ReportForm(request.POST)
         if form.is_valid():
@@ -78,6 +78,7 @@ def tutor_report(request):
             report.tutee = matching_models.User.objects.get(id = post.user.id)
             report.post = matching_models.Post.objects.get(id = post.id)
             report.save()
+            return redirect('matching:report_detail', pk=report.pk)
     else:
         form = ReportForm()
 
@@ -87,6 +88,13 @@ def tutor_report(request):
     }
 
     return render(request, 'matching/tutor_report.html', ctx)
+
+def report_detail(request, pk):
+    report = matching_models.Report.objects.get(pk=pk)
+    ctx = {
+        'report': report,
+    }
+    return render(request, 'matching/report_detail.html', ctx)
 
 def post_new(request):
     if not request.user.is_authenticated:
@@ -157,8 +165,8 @@ def post_detail(request, pk):
         ctx['hastutor'] = True
 
     ctx['form'] = form
-    ctx['cancel_form'] = cancel_form ; 
- 
+    ctx['cancel_form'] = cancel_form ;
+
     return render(request, 'matching/post_detail.html', ctx)
 
 
@@ -219,6 +227,8 @@ def tutor_home(request):
     if not user.profile.is_tutor is True:
         return redirect(reverse('matching:tutee_home'))
 
+    report = matching_models.Post.objects.filter(tutor=request.user).filter(report__isnull=True)
+    #print(report)
 
     recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
     recruited = matching_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
@@ -227,6 +237,7 @@ def tutor_home(request):
 
     ctx = {
         'posts': posts,
+        'reports': report,
     }
 
     return render(request, 'matching/tutor_home.html', ctx)
@@ -284,7 +295,7 @@ def close_post(request, pk):
             print("form valid")
             post = matching_models.Post.objects.get(pk=pk)
             post.cancel_reason = form.cleaned_data['cancel_reason']
-            post.finding_match = False 
+            post.finding_match = False
             post.save()
             return redirect(reverse('matching:tutee_home'))
         else:
@@ -297,7 +308,13 @@ def close_post(request, pk):
 
 def tutee_mypage(request):
     post = matching_models.Post.objects.filter(user=request.user)
+
+    recruiting = post.filter(finding_match = True).order_by('-pub_date')
+    recruited = post.filter(finding_match = False).order_by('-pub_date')
+    #posts = tutor_models.Post.objects.order_by('-pub_date')
+    posts = list(chain(recruiting, recruited))
+
     ctx = {
-        'posts' : post,
+        'posts' : posts,
     }
     return render(request, 'matching/tutee_mypage.html', ctx)

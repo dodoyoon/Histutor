@@ -51,15 +51,14 @@ class Comment(models.Model):
    post = models.ForeignKey(Post, on_delete=models.CASCADE)
    pub_date = models.DateTimeField(auto_now_add=True)
    content = models.TextField()
-   
+
 class Report(models.Model):
    tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutor")
    tutee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutee")
-   post = models.ForeignKey(Post, on_delete=models.CASCADE)
+   post = models.OneToOneField(Post, on_delete=models.CASCADE, related_name="report")
    meeting_date = models.DateTimeField()
    meeting_duration_time = models.IntegerField()
    pub_date = models.DateTimeField(auto_now_add=True)
    tutee_feedback = models.TextField()
    is_confirmed = models.NullBooleanField(default=False)
    content = models.TextField()
-
