@@ -43,8 +43,8 @@
     <div>
         <button type="button" onclick="location.href='{% url 'matching:post_edit' post.pk %}'">수정</button>
     </div>
-    {% elif user.pk == post.tutor.pk %}
-    <a  href="{% url 'matching:tutor_report' post.report.pk %}">
+    {% elif user.pk == post.tutor.pk and not report_exist %}
+    <a  href="{% url 'matching:tutor_report' post.pk %}">
         <button type="button" class="btn btn-outline-dark">보고서 쓰기</button>
     </a>
     {% endif %}
@@ -58,7 +58,7 @@
     <p>{{ comment.user }} : {{ comment.content }}
         {% if not hastutor %}
         {% if showbut %}
-        {% if comment.user.profile.is_tutor %}
+        {% if comment.user.profile.is_tutor and not comment.user.pk == user.pk %}
         <a  href="{% url 'matching:set_tutor' post.pk comment.user.pk %}">
         <button type="button" class="btn btn-outline-dark">tutor로 지정</button>
         </a>
