@@ -15,7 +15,7 @@ class CancelForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['nickname','phone']
+        fields = ['nickname']
 
 class PostForm(forms.ModelForm):
     class Meta:

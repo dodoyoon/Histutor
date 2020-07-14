@@ -30,15 +30,15 @@ def login(request):
 def save_profile(request, pk):
     if not request.user.is_authenticated:
         return redirect('/accounts/login/')
-
     if request.method == 'POST':
         user = matching_models.User.objects.get(pk=pk)
         profile_form = ProfileForm(request.POST, instance= user.profile)
         if profile_form.is_valid():
             profile = profile_form.save(commit=False)
             profile.signin = True
+            profile.phone = "010" + str(request.POST['phone1']) + str(request.POST['phone2'])
             profile.save()
-            return redirect('/matching') # redirect으로 tutee home으로 이동
+            return redirect(reverse('matching:tutee_home'))
     else:
         profile_form = ProfileForm(instance=request.user.profile)
     return render(request, 'matching/save_profile.html', {
