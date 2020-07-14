@@ -10,7 +10,9 @@
 
 {% if user.pk == post.user.pk %}
 <!-- Trigger the modal with a button -->
-<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">모집종료</button>
+{% if not post.tutor %}
+  <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">모집종료</button>
+{% endif %}
 
 <!-- Modal -->
 <div id="myModal" class="modal fade" role="dialog">
@@ -38,7 +40,7 @@
 </div>
 
     {% if hastutor %}
-    <h6>Tutor: {{ post.tutor }}</h6>
+    <h6>Tutor: {{ post.tutor.profile.nickname }}</h6>
     {% endif %}
     <div>
         <button type="button" onclick="location.href='{% url 'matching:post_edit' post.pk %}'">수정</button>

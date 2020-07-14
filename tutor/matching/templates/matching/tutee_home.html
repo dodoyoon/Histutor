@@ -7,8 +7,8 @@
 {% block content %}
 
     <div id="tutee_home">
-        <button id="create_post" type="submit">
-            <a href="{% url 'matching:post_new' %}">+</a>
+        <button id="create_post" type="submit" onclick="location.href='{% url 'matching:post_new' %}'">
+            <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
         </button>
     </div>
 
