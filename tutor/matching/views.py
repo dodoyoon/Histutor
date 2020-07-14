@@ -227,6 +227,8 @@ def tutor_home(request):
     if not user.profile.is_tutor is True:
         return redirect(reverse('matching:tutee_home'))
 
+    report = matching_models.Post.objects.filter(tutor=request.user).filter(report__isnull=True)
+    #print(report)
 
     recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
     recruited = matching_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
@@ -235,6 +237,7 @@ def tutor_home(request):
 
     ctx = {
         'posts': posts,
+        'reports': report,
     }
 
     return render(request, 'matching/tutor_home.html', ctx)
