@@ -52,12 +52,11 @@ def user_check(request):
         try:
             user = matching_models.User.objects.get(pk=request.user.pk)
             if user.profile.signin == False:
-                print("redirect to signin page")
                 return HttpResponseRedirect(reverse('matching:profile', args=(request.user.pk,)))
-            elif user.profile.is_tutor is True: #TODO : redirect to tutor_home
-                return HttpResponseRedirect(reverse('matching:index'))
+            elif user.profile.is_tutor is True: 
+                return HttpResponseRedirect(reverse('matching:tutor_home'))
             else:
-                return HttpResponseRedirect(reverse('matching:index')) #TODO : redirect to tutee_home
+                return HttpResponseRedirect(reverse('matching:tutee_home'))
         except(KeyError, matching_models.User.DoesNotExist):
             return HttpResponseRedirect(reverse('matching:index'))
     else:
