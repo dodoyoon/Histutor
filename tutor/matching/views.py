@@ -96,12 +96,12 @@ def tutor_report(request, pk):
     return render(request, 'matching/tutor_report.html', ctx)
 
 def report_detail(request, pk):
-    report = matching_models.Report.objects.get(pk=pk)
+    report = matching_models.Report.objects.get(post_id=pk)
     if request.method == "POST":
         form = AccuseForm(request.POST)
         if form.is_valid():
             print("report accuse")
-            
+
             report.tutee_feedback = form.cleaned_data['tutee_feedback']
             report.save()
             print("null? ", report.tutee_feedback == None)
@@ -110,7 +110,7 @@ def report_detail(request, pk):
         form = AccuseForm()
     if request.user.pk == report.tutee.pk:
         is_post_writer = True
-    else: 
+    else:
         is_post_writer = False
     ctx = {
         'report': report,
@@ -170,14 +170,12 @@ def post_detail(request, pk):
     ctx['cmt'] = cmt
 
     if request.method == "POST":
-        print("********************post_detail , post")
         form = CommentForm(request.POST)
         if form.is_valid():
             comment = form.save(commit=False)
             comment.user = request.user
             comment.post = post
             comment.save()
-            #print(">>> pk: " + str(post.pk))
             return redirect('matching:post_detail', pk=post.pk)
     else:
         cancel_form = CancelForm()
@@ -341,14 +339,22 @@ def close_post(request, pk):
         return render(request, 'matching/post_detail.html')
 
 def tutee_mypage(request):
+    ctx={}
     post = matching_models.Post.objects.filter(user=request.user)
+
+    if hasattr(post, 'report'):
+        ctx['report_exist'] = True ;
+    else:
+        ctx['report_exist'] = False ;
+
+    print(">>> report_exist: ")
+    print(ctx['report_exist'])
 
     recruiting = post.filter(finding_match = True).order_by('-pub_date')
     recruited = post.filter(finding_match = False).order_by('-pub_date')
     #posts = tutor_models.Post.objects.order_by('-pub_date')
     posts = list(chain(recruiting, recruited))
 
-    ctx = {
-        'posts' : posts,
-    }
+    ctx['posts'] = posts
+
     return render(request, 'matching/tutee_mypage.html', ctx)
