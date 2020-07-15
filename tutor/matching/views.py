@@ -85,7 +85,7 @@ def tutor_report(request, pk):
             report.tutee = matching_models.User.objects.get(pk = post.user.pk)
             report.post = matching_models.Post.objects.get(pk = post.pk)
             report.save()
-            return redirect('matching:report_detail', pk=post.pk)
+            return redirect('matching:report_detail', pk=report.pk)
         else:
             print("report form *invalid*")
 
