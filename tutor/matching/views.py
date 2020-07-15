@@ -330,29 +330,47 @@ def close_post(request, pk):
 @login_required(login_url=URL_LOGIN)
 def mypage(request):
     ctx = {}
-    post = matching_models.Post.objects.filter(user=request.user)
-
-    if hasattr(post, 'report'):
-        ctx['report_exist'] = True ;
+    
+    print(request.user.profile.is_tutor)
+    if request.user.profile.is_tutor:
+        return redirect(reverse('matching:mypage_report'))
+    elif request.user.is_staff:
+        pass
     else:
-        ctx['report_exist'] = False ;
+        return redirect(reverse('matching:mypage_post'))
 
-    print(">>> report_exist: ")
-    print(ctx['report_exist'])
+    return render(request, 'matching/mypage.html', ctx)
+
+@login_required(login_url=URL_LOGIN)
+def mypage_post(request):
+    ctx = {}
+    post = matching_models.Post.objects.filter(user=request.user)
 
     recruiting = post.filter(finding_match = True).order_by('-pub_date')
     recruited = post.filter(finding_match = False).order_by('-pub_date')
     #posts = tutor_models.Post.objects.order_by('-pub_date')
     posts = list(chain(recruiting, recruited))
 
-    report = matching_models.Report.objects.filter(tutor=request.user).order_by('-pub_date')
-    print(report)
-
-    empty_report = matching_models.Post.objects.filter(tutor=request.user).filter(report__isnull=True)
-
     ctx = {
         'posts' : posts,
-        'reports': report,
-        'emptyreports': empty_report,
     }
-    return render(request, 'matching/mypage.html', ctx)
+    return render(request, 'matching/mypage_post.html', ctx)
+
+
+@login_required(login_url=URL_LOGIN)
+def mypage_report(request):
+    ctx = {}
+
+    report = matching_models.Report.objects.filter(tutor=request.user).order_by('-pub_date')
+    ctx['reports'] = report
+
+    return render(request, 'matching/mypage_report.html', ctx)
+
+@login_required(login_url=URL_LOGIN)
+def mypage_incomplete(request):
+    ctx = {}
+
+    empty_report = matching_models.Post.objects.filter(tutor=request.user).filter(report__isnull=True)
+    ctx['emptyreports'] = empty_report
+    
+    return render(request, 'matching/mypage_incomplete.html', ctx)

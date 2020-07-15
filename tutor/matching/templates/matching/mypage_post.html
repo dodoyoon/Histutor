@@ -1,0 +1,47 @@
+{% extends "matching/mypage.html" %}
+
+{% block table %}
+
+{% if posts %}
+            <div id="tableDiv">
+            <h3>내가 작성한 Post</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="text-center">번호</th>
+                            <th scope="col" class="text-center">주제</th>
+                            <th scope="col" class="text-center">제목</th>
+                            <th scope="col" class="text-center">닉네임</th>
+                            <th scope="col" class="text-center">시간</th>
+                            <th scope="col" class="text-center">보고서</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for post in posts %}
+                        <tr>
+                            <td class="text-center"> {{forloop.counter}}</td>
+                            <td scope="row" class="text-center">{{post.get_topic_display}}</td>
+                            {% if post.finding_match ==  True %}
+                            <td> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
+                            {% else %}
+                            <td> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
+                            {% endif %}
+                            <td class="text-center">{{post.user.profile.nickname}}</td>
+                            <td class="text-center">{{post.pub_date|date:'Y-m-d'}}</td>
+                            <td class="text-center">
+                              {% if post.report %}
+                              <a href="{% url 'matching:report_detail' post.pk %}">
+                              <p>보고서</p>
+                              </a>
+                              {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p>등록된 post가 없음</p>
+            {% endif %}
+
+{% endblock %}
