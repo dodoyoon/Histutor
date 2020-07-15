@@ -72,7 +72,7 @@
                     <td> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
                     {% endif %}
                     <td class="text-center">{{post.user.profile.nickname}}</td>
-                    <td class="text-center">{{post.pub_date}}</td>
+                    <td class="text-center">{{post.pub_date|date:'Y-m-d'}}</td>
                 </tr>
             {% endfor %}
             </tbody>

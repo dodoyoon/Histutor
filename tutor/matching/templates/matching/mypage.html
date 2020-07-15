@@ -45,7 +45,7 @@
                             <td> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
                             {% endif %}
                             <td class="text-center">{{post.user.profile.nickname}}</td>
-                            <td class="text-center">{{post.pub_date}}</td>
+                            <td class="text-center">{{post.pub_date|date:'Y-m-d'}}</td>
                             <td class="text-center">
                               {% if post.report %}
                               <a href="{% url 'matching:report_detail' post.pk %}">
@@ -89,7 +89,7 @@
                             <td> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' report.post.pk %}">{{report.post.title}}</a></td>
                             {% endif %}
                             <td class="text-center">{{report.post.user.profile.nickname}}</td>
-                            <td class="text-center">{{report.post.pub_date}}</td>
+                            <td class="text-center">{{report.post.pub_date|date:'Y-m-d'}}</td>
                             <td class="text-center">
                               {% if post.report %}
                               <a href="{% url 'matching:report_detail' report.pk %}">
@@ -131,7 +131,7 @@
                             <td> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
                             {% endif %}
                             <td class="text-center">{{post.user.profile.nickname}}</td>
-                            <td class="text-center">{{post.pub_date}}</td>
+                            <td class="text-center">{{post.pub_date|date:'Y-m-d'}}</td>
                             <td class="text-center">
                               {% if post.report %}
                               <a href="{% url 'matching:report_detail' post.report.pk %}">
