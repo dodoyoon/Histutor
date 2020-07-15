@@ -3,7 +3,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
+from django.urls import reverse
 
 class Profile(models.Model):
    user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -65,3 +65,6 @@ class Report(models.Model):
 
    def __str__(self):
       return self.post.get_topic_display() + ' ' + self.post.title
+   
+   def get_absolute_url(self):
+      return reverse('matching:report_detail', args=[self.pk])

@@ -10,6 +10,7 @@ urlpatterns = [
   path('userCheck/', views.user_check , name='user_check'),
   path('report/<int:pk>/', views.tutor_report, name='tutor_report'),
   path('report/detail/<int:pk>/', views.report_detail, name='report_detail'),
+  path('report/edit/<int:pk>/', views.ReportUpdate.as_view(), name='report_update'),
   path('post/new/', views.post_new, name='post_new'),
   path('post/detail/<int:pk>/', views.post_detail, name='post_detail'),
   path('post/edit/<int:pk>/', views.post_edit, name='post_edit'),
