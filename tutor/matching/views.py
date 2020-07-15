@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from matching import models as matching_models
 from django.db import transaction
 from itertools import chain
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 URL_LOGIN = "/matching"
 # DEFAULT PAGE
 def index(request):
@@ -53,7 +54,7 @@ def user_check(request):
             user = matching_models.User.objects.get(pk=request.user.pk)
             if user.profile.signin == False:
                 return HttpResponseRedirect(reverse('matching:profile', args=(request.user.pk,)))
-            elif user.profile.is_tutor is True: 
+            elif user.profile.is_tutor is True:
                 return HttpResponseRedirect(reverse('matching:tutor_home'))
             else:
                 return HttpResponseRedirect(reverse('matching:tutee_home'))
@@ -87,6 +88,7 @@ def tutor_report(request, pk):
             return redirect('matching:report_detail', pk=post.pk)
         else:
             print("report form *invalid*")
+
     else:
         form = ReportForm()
 
@@ -99,7 +101,7 @@ def tutor_report(request, pk):
 
 @login_required(login_url=URL_LOGIN)
 def report_detail(request, pk):
-    report = matching_models.Report.objects.get(post_id=pk)
+    report = matching_models.Report.objects.get(pk=pk)
     if request.method == "POST":
         form = AccuseForm(request.POST)
         if form.is_valid():
@@ -256,6 +258,16 @@ def tutor_home(request):
     #posts = tutor_models.Post.objects.order_by('-pub_date')
     posts = list(chain(recruiting, recruited))
 
+    post_page = request.GET.get('page', 1)
+
+    post_paginator = Paginator(posts, 10)
+    try:
+        posts = post_paginator.page(post_page)
+    except PageNotAnInteger:
+        posts = post_paginator.page(1)
+    except EmptyPage:
+        posts = post_paginator.page(post_paginator.num_pages)
+
     ctx = {
         'posts': posts,
         'reports': report,
@@ -277,6 +289,16 @@ def admin_home(request):
     recruited = matching_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
     #posts = tutor_models.Post.objects.order_by('-pub_date')
     posts = list(chain(recruiting, recruited))
+
+    post_page = request.GET.get('page', 1)
+
+    post_paginator = Paginator(posts, 10)
+    try:
+        posts = post_paginator.page(post_page)
+    except PageNotAnInteger:
+        posts = post_paginator.page(1)
+    except EmptyPage:
+        posts = post_paginator.page(post_paginator.num_pages)
 
     ctx = {
         'posts': posts,
@@ -324,7 +346,7 @@ def mypage(request):
     posts = list(chain(recruiting, recruited))
 
     report = matching_models.Report.objects.filter(tutor=request.user).order_by('-pub_date')
-    #print(report)
+    print(report)
 
     empty_report = matching_models.Post.objects.filter(tutor=request.user).filter(report__isnull=True)
 
