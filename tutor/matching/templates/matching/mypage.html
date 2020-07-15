@@ -12,6 +12,7 @@
         <p>내가 작성한 Post</p>
         </a>
     </th>
+    {% if user.profile.is_tutor %}
     <th>
         <a href="{% url 'matching:mypage_report' %}">
         <p>내가 작성한 Report</p>
@@ -22,6 +23,7 @@
         <p>작성해야 하는 Report</p>
         </a>
     </th>
+    {% endif %}
 </table>
 
 {% block table %}
