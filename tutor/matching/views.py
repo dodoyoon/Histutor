@@ -258,19 +258,40 @@ def tutor_home(request):
     #posts = tutor_models.Post.objects.order_by('-pub_date')
     posts = list(chain(recruiting, recruited))
 
-    post_page = request.GET.get('page', 1)
+    current_post_page = request.GET.get('page', 1)
 
     post_paginator = Paginator(posts, 10)
     try:
-        posts = post_paginator.page(post_page)
+        posts = post_paginator.page(current_post_page)
     except PageNotAnInteger:
         posts = post_paginator.page(1)
     except EmptyPage:
         posts = post_paginator.page(post_paginator.num_pages)
 
+    neighbors = 10
+    if post_paginator.num_pages > 2*neighbors:
+        start_index = max(1, int(current_post_page)-neighbors)
+        end_index = min(int(current_post_page)+neighbors, post_paginator.num_pages)
+        if end_index < start_index + 2*neighbors:
+            end_index = start_index + 2*neighbors
+        elif start_index > end_index - 2*neighbors:
+            start_index = end_index - 2*neighbors
+        if start_index < 1:
+            end_index -= start_index
+            start_index = 1
+        elif end_index > post_paginator.num_pages:
+            start_index -= end_index - post_paginator.num_pages
+            end_index = post_paginator.num_pages
+        paginatorRange = [f for f in range(start_index, end_index+1)]
+        paginatorRange[:(2*neighbors + 1)]
+    else:
+        paginatorRange = range(1, post_paginator.num_pages+1)
+
     ctx = {
         'posts': posts,
         'reports': report,
+        'postPaginator': post_paginator,
+        'paginatorRange': paginatorRange,
     }
 
     return render(request, 'matching/tutor_home.html', ctx)
@@ -330,7 +351,7 @@ def close_post(request, pk):
 @login_required(login_url=URL_LOGIN)
 def mypage(request):
     ctx = {}
-    
+
     print(request.user.profile.is_tutor)
     if request.user.profile.is_tutor:
         return redirect(reverse('matching:mypage_report'))
@@ -351,8 +372,39 @@ def mypage_post(request):
     #posts = tutor_models.Post.objects.order_by('-pub_date')
     posts = list(chain(recruiting, recruited))
 
+    current_post_page = request.GET.get('page', 1)
+
+    post_paginator = Paginator(posts, 10)
+    try:
+        posts = post_paginator.page(current_post_page)
+    except PageNotAnInteger:
+        posts = post_paginator.page(1)
+    except EmptyPage:
+        posts = post_paginator.page(post_paginator.num_pages)
+
+    neighbors = 10
+    if post_paginator.num_pages > 2*neighbors:
+        start_index = max(1, int(current_post_page)-neighbors)
+        end_index = min(int(current_post_page)+neighbors, post_paginator.num_pages)
+        if end_index < start_index + 2*neighbors:
+            end_index = start_index + 2*neighbors
+        elif start_index > end_index - 2*neighbors:
+            start_index = end_index - 2*neighbors
+        if start_index < 1:
+            end_index -= start_index
+            start_index = 1
+        elif end_index > post_paginator.num_pages:
+            start_index -= end_index - post_paginator.num_pages
+            end_index = post_paginator.num_pages
+        paginatorRange = [f for f in range(start_index, end_index+1)]
+        paginatorRange[:(2*neighbors + 1)]
+    else:
+        paginatorRange = range(1, post_paginator.num_pages+1)
+
     ctx = {
         'posts' : posts,
+        'postPaginator': post_paginator,
+        'paginatorRange': paginatorRange,
     }
     return render(request, 'matching/mypage_post.html', ctx)
 
@@ -361,8 +413,42 @@ def mypage_post(request):
 def mypage_report(request):
     ctx = {}
 
-    report = matching_models.Report.objects.filter(tutor=request.user).order_by('-pub_date')
-    ctx['reports'] = report
+    reports = matching_models.Report.objects.filter(tutor=request.user).order_by('-pub_date')
+
+    current_report_page = request.GET.get('page', 1)
+
+    report_paginator = Paginator(reports, 10)
+    try:
+        reports = report_paginator.page(current_report_page)
+    except PageNotAnInteger:
+        reports = report_paginator.page(1)
+    except EmptyPage:
+        reports = report_paginator.page(report_paginator.num_pages)
+
+    neighbors = 10
+    if report_paginator.num_pages > 2*neighbors:
+        start_index = max(1, int(current_report_page)-neighbors)
+        end_index = min(int(current_report_page)+neighbors, report_paginator.num_pages)
+        if end_index < start_index + 2*neighbors:
+            end_index = start_index + 2*neighbors
+        elif start_index > end_index - 2*neighbors:
+            start_index = end_index - 2*neighbors
+        if start_index < 1:
+            end_index -= start_index
+            start_index = 1
+        elif end_index > report_paginator.num_pages:
+            start_index -= end_index - report_paginator.num_pages
+            end_index = report_paginator.num_pages
+        paginatorRange = [f for f in range(start_index, end_index+1)]
+        paginatorRange[:(2*neighbors + 1)]
+    else:
+        paginatorRange = range(1, report_paginator.num_pages+1)
+
+    ctx = {
+        'reports': reports,
+        'reportPaginator': report_paginator,
+        'paginatorRange': paginatorRange,
+    }
 
     return render(request, 'matching/mypage_report.html', ctx)
 
@@ -370,7 +456,42 @@ def mypage_report(request):
 def mypage_incomplete(request):
     ctx = {}
 
-    empty_report = matching_models.Post.objects.filter(tutor=request.user).filter(report__isnull=True)
-    ctx['emptyreports'] = empty_report
-    
+    empty_reports = matching_models.Post.objects.filter(tutor=request.user).filter(report__isnull=True)
+
+    current_empty_report_page = request.GET.get('page', 1)
+
+    empty_report_paginator = Paginator(empty_reports, 10)
+    try:
+        empty_reports = empty_report_paginator.page(current_empty_report_page)
+    except PageNotAnInteger:
+        empty_reports = empty_report_paginator.page(1)
+    except EmptyPage:
+        empty_reports = empty_report_paginator.page(empty_report_paginator.num_pages)
+
+    neighbors = 10
+    if empty_report_paginator.num_pages > 2*neighbors:
+        start_index = max(1, int(current_empty_report_page)-neighbors)
+        end_index = min(int(current_empty_report_page)+neighbors, empty_report_paginator.num_pages)
+        if end_index < start_index + 2*neighbors:
+            end_index = start_index + 2*neighbors
+        elif start_index > end_index - 2*neighbors:
+            start_index = end_index - 2*neighbors
+        if start_index < 1:
+            end_index -= start_index
+            start_index = 1
+        elif end_index > empty_report_paginator.num_pages:
+            start_index -= end_index - empty_report_paginator.num_pages
+            end_index = empty_report_paginator.num_pages
+        paginatorRange = [f for f in range(start_index, end_index+1)]
+        paginatorRange[:(2*neighbors + 1)]
+    else:
+        paginatorRange = range(1, empty_report_paginator.num_pages+1)
+
+
+    ctx = {
+        'emptyreports': empty_reports,
+        'reportPaginator': empty_report_paginator,
+        'paginatorRange': paginatorRange,
+    }
+
     return render(request, 'matching/mypage_incomplete.html', ctx)
