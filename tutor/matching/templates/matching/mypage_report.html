@@ -29,11 +29,9 @@
                             <td class="text-center">{{report.post.user.profile.nickname}}</td>
                             <td class="text-center">{{report.post.pub_date|date:'Y-m-d'}}</td>
                             <td class="text-center">
-                              {% if post.report %}
                               <a href="{% url 'matching:report_detail' report.pk %}">
                               <p>보고서</p>
                               </a>
-                              {% endif %}
                             </td>
                         </tr>
                     {% endfor %}
