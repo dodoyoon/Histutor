@@ -21,11 +21,17 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['title', 'topic','content']
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
 
 class ReportForm(forms.ModelForm):
     class Meta:
         model = Report
-        fields = ('meeting_date','meeting_duration_time','content')
+        fields = ( 'meeting_date', 'meeting_duration_time','content')
+        widgets= {
+            'meeting_date' : DateInput(),
+        }
 
 class CommentForm(forms.ModelForm):
     class Meta:

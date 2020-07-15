@@ -66,9 +66,10 @@ def user_check(request):
 
 @login_required(login_url=URL_LOGIN)
 def tutor_report(request, pk):
+    print("pk : ", pk)
     post = matching_models.Post.objects.get(pk=pk)
 
-    if request.user.profile.id != post.tutor.profile.id:
+    if request.user.pk != post.tutor.pk :
         if request.user.profile.is_tutor == True:
             return redirect('matching:tutor_home')
         else:
@@ -77,12 +78,15 @@ def tutor_report(request, pk):
     if request.method == "POST":
         form = ReportForm(request.POST)
         if form.is_valid():
+            print("report form valid")
             report = form.save(commit=False)
-            report.tutor = matching_models.User.objects.last()
-            report.tutee = matching_models.User.objects.get(id = post.user.id)
-            report.post = matching_models.Post.objects.get(id = post.id)
+            report.tutor = matching_models.User.objects.get(pk = request.user.pk)
+            report.tutee = matching_models.User.objects.get(pk = post.user.pk)
+            report.post = matching_models.Post.objects.get(pk = post.pk)
             report.save()
-            return redirect('matching:report_detail', pk=report.pk)
+            return redirect('matching:report_detail', pk=post.pk)
+        else:
+            print("report form *invalid*")
     else:
         form = ReportForm()
 
@@ -280,25 +284,6 @@ def admin_home(request):
 
     return render(request, 'matching/admin_home.html', ctx)
 
-
-def tutee_accept_report(request):
-    report = matching_models.Report.objects.last()
-    print(report)
-    if request.method == "POST":
-        acceptForm = AcceptReportForm(request.POST, instance=report)
-        if acceptForm.is_valid():
-            report = acceptForm.save(commit=False)
-            report.is_confirmed = True
-            report.save()
-    else:
-        acceptForm = AcceptReportForm()
-
-    ctx = {
-        'report': report,
-        'form': acceptForm,
-    }
-
-    return render(request, 'matching/tutee_accept_report.html', ctx)
 
 def close_post(request, pk):
     if request.method == 'POST':

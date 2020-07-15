@@ -12,11 +12,12 @@
         {% csrf_token %}
         <p class="fields">
             <label for="id_{{field.name}}">학습날짜</label>
-            {{ form.meeting_date}}
+            {{ form.meeting_date }}
         </p>
+
         <p class="fields">
             <label for="id_{{field.name}}">학습시간</label>
-            {{ form.meeting_duration_time}}
+            {{ form.meeting_duration_time }} 분
         </p>
         <p class="fields">
             <label for="id_{{field.name}}">내용</label>
@@ -25,5 +26,15 @@
 
         <button id="" type="submit">등록</button>
      </form>
-
+     <script>
+        $(function() {
+          $( ".datepicker" ).datepicker({
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "2020:2030",
+            // You can put more options here.
+      
+          });
+        });
+        </script>
 {% endblock %}

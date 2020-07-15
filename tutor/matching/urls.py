@@ -16,7 +16,6 @@ urlpatterns = [
   path('mypage/', views.mypage, name='mypage'),
   path('tutor_home/', views.tutor_home, name='tutor_home'),
   path('tutee_home/', views.tutee_home, name='tutee_home'),
-  path('tutee_accept_report/', views.tutee_accept_report, name='tutee_accept_report'),
   path('post/detail/close_post/<int:pk>', views.close_post, name='close_post'),
   path('post/settutor/<int:postpk>/<int:userpk>/', views.set_tutor, name='set_tutor'),
   path('login/', views.login, name='login'),

@@ -41,7 +41,7 @@
                             <td scope="row" class="text-center">{{post.get_topic_display}}</td>
                             <td> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
                             <td class="text-center">{{post.user.profile.nickname}}</td>
-                            <td class="text-center">{{post.pub_date}}</td>
+                            <td class="text-center">{{post.pub_date|date:'Y-m-d'}}</td>
                             <td class="text-center">
                               {% if post.report %}
                               <a href="{% url 'matching:report_detail' post.pk %}">
@@ -85,7 +85,7 @@
                             <td> <span id="found" class="dot"></span> &nbsp;&nbsp;{{report.post.title}}</td>
                             {% endif %}
                             <td class="text-center">{{report.post.user.profile.nickname}}</td>
-                            <td class="text-center">{{report.post.pub_date}}</td>
+                            <td class="text-center">{{report.post.pub_date|date:'Y-m-d'}}</td>
                             <td class="text-center">
                                 <a href="{% url 'matching:report_detail' report.post.pk %}">
                                 <p>보고서</p>
@@ -125,7 +125,7 @@
                             <td> <span id="found" class="dot"></span> &nbsp;&nbsp;{{post.title}}</td>
                             {% endif %}
                             <td class="text-center">{{post.user.profile.nickname}}</td>
-                            <td class="text-center">{{post.pub_date}}</td>
+                            <td class="text-center">{{post.pub_date|date:'Y-m-d'}}</td>
                             <td class="text-center">
                                 <a href="{% url 'matching:tutor_report' post.pk %}">
                                 <p>보고서 쓰기</p>

@@ -6,8 +6,8 @@
 <p>튜티: {{report.post.user.profile.nickname }}</p>
 <p>튜터: {{report.post.tutor.profile.nickname }}</p>
 
-<p>날짜: {{report.meeting_date}}</p>
-<p>지속시간: {{report.meeting_duration_time}}</p>
+<p>날짜: {{report.meeting_date|date:'Y-m-d'}}</p>
+<p>학습시간: {{report.meeting_duration_time}} 분</p>
 <p>내용: {{report.content}}</p>
 {% if is_post_writer and report.tutee_feedback == None %}
 <!-- Trigger the modal with a button -->
