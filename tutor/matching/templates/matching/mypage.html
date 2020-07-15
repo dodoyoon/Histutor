@@ -48,7 +48,7 @@
                             <td class="text-center">{{post.pub_date}}</td>
                             <td class="text-center">
                               {% if post.report %}
-                              <a href="{% url 'matching:report_detail' post.report.pk %}">
+                              <a href="{% url 'matching:report_detail' post.pk %}">
                               <p>보고서</p>
                               </a>
                               {% endif %}
