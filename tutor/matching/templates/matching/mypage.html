@@ -6,149 +6,25 @@
 
 {% block content %}
 
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
-        <li class="nav-item" role="presentation">
-          <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">내가 쓴 post</a>
-        </li>
-        {% if user.profile.is_tutor %}
-        <li class="nav-item" role="presentation">
-          <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">내가 쓴 report</a>
-        </li>
-        <li class="nav-item" role="presentation">
-          <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">작성해야 하는 report</a>
-        </li>
-        {% endif %}
-      </ul>
-      <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-            {% if posts %}
-            <div id="tableDiv">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col" class="text-center">번호</th>
-                            <th scope="col" class="text-center">주제</th>
-                            <th scope="col" class="text-center">제목</th>
-                            <th scope="col" class="text-center">닉네임</th>
-                            <th scope="col" class="text-center">시간</th>
-                            <th scope="col" class="text-center">보고서</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for post in posts %}
-                        <tr>
-                            <td class="text-center"> {{forloop.counter}}</td>
-                            <td scope="row" class="text-center">{{post.get_topic_display}}</td>
-                            {% if post.finding_match ==  True %}
-                            <td> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
-                            {% else %}
-                            <td> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
-                            {% endif %}
-                            <td class="text-center">{{post.user.profile.nickname}}</td>
-                            <td class="text-center">{{post.pub_date|date:'Y-m-d'}}</td>
-                            <td class="text-center">
-                              {% if post.report %}
-                              <a href="{% url 'matching:report_detail' post.pk %}">
-                              <p>보고서</p>
-                              </a>
-                              {% endif %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-            <p>등록된 post가 없음</p>
-            {% endif %}
-        </div>
+<table class="table">
+    <th>
+        <a href="{% url 'matching:mypage_post' %}">
+        <p>내가 작성한 Post</p>
+        </a>
+    </th>
+    <th>
+        <a href="{% url 'matching:mypage_report' %}">
+        <p>내가 작성한 Report</p>
+        </a>
+    </th>
+    <th>
+        <a href="{% url 'matching:mypage_incomplete' %}">
+        <p>작성해야 하는 Report</p>
+        </a>
+    </th>
+</table>
 
-        {% if user.profile.is_tutor %}
-        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-            {% if reports %}
-            <div id="tableDiv">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col" class="text-center">번호</th>
-                            <th scope="col" class="text-center">주제</th>
-                            <th scope="col" class="text-center">제목</th>
-                            <th scope="col" class="text-center">닉네임</th>
-                            <th scope="col" class="text-center">시간</th>
-                            <th scope="col" class="text-center">보고서</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for report in reports %}
-                        <tr>
-                            <td class="text-center"> {{forloop.counter}}</td>
-                            <td scope="row" class="text-center">{{report.post.get_topic_display}}</td>
-                            {% if report.post.finding_match ==  True %}
-                            <td> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' report.post.pk %}">{{report.post.title}}</a></td>
-                            {% else %}
-                            <td> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' report.post.pk %}">{{report.post.title}}</a></td>
-                            {% endif %}
-                            <td class="text-center">{{report.post.user.profile.nickname}}</td>
-                            <td class="text-center">{{report.post.pub_date|date:'Y-m-d'}}</td>
-                            <td class="text-center">
-                              {% if post.report %}
-                              <a href="{% url 'matching:report_detail' report.pk %}">
-                              <p>보고서</p>
-                              </a>
-                              {% endif %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-            <p>작성한 report가 없음</p>
-            {% endif %}
-        </div>
-        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-            {% if emptyreports %}
-            <div id="tableDiv">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col" class="text-center">번호</th>
-                            <th scope="col" class="text-center">주제</th>
-                            <th scope="col" class="text-center">제목</th>
-                            <th scope="col" class="text-center">닉네임</th>
-                            <th scope="col" class="text-center">시간</th>
-                            <th scope="col" class="text-center">보고서</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for post in emptyreports %}
-                        <tr>
-                            <td class="text-center"> {{forloop.counter}}</td>
-                            <td scope="row" class="text-center">{{post.get_topic_display}}</td>
-                            {% if post.finding_match ==  True %}
-                            <td> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
-                            {% else %}
-                            <td> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
-                            {% endif %}
-                            <td class="text-center">{{post.user.profile.nickname}}</td>
-                            <td class="text-center">{{post.pub_date|date:'Y-m-d'}}</td>
-                            <td class="text-center">
-                              {% if post.report %}
-                              <a href="{% url 'matching:report_detail' post.report.pk %}">
-                              <p>보고서</p>
-                              </a>
-                              {% endif %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-            <p>작성해야 하는 report가 없음</p>
-            {% endif %}
-        </div>
-        {% endif %}
-      </div>
+{% block table %}
+{% endblock %}
 
 {% endblock %}
