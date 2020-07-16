@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -150,4 +151,14 @@ SOCIALACCOUNT_PROVIDERS = {
             'access_type': 'online'
         }
     }
+}
+
+ASGI_APPLICATION = 'tutor.routing.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
 }
