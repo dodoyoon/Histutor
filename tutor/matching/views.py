@@ -16,6 +16,9 @@ from asgiref.sync import async_to_sync
 from matching.models import TOPIC_CHOICES
 import json
 from django.core.serializers.json import DjangoJSONEncoder
+from django.views.generic.edit import UpdateView
+from .models import Report
+
 URL_LOGIN = "/matching"
 # DEFAULT PAGE
 
@@ -71,9 +74,20 @@ def user_check(request):
         matching_models.User.objects.filter(pk=request.user.pk).delete()
         return HttpResponseRedirect(reverse('matching:index'))
 
+#TODO : method decorator should be added
+class ReportUpdate(UpdateView):
+    model = Report
+    context_object_name = 'report'
+    form_class = ReportForm
+    template_name = 'matching/report_edit.html'
+
+    def get_object(self):
+        report = get_object_or_404(Report, pk=self.kwargs['pk'])
+        return report
+
+
 @login_required(login_url=URL_LOGIN)
 def tutor_report(request, pk):
-    print("pk : ", pk)
     post = matching_models.Post.objects.get(pk=pk)
 
     if request.user.pk != post.tutor.pk :
@@ -119,14 +133,11 @@ def report_detail(request, pk):
             return redirect('matching:report_detail', pk=report.pk)
     else:
         form = AccuseForm()
-    if request.user.pk == report.tutee.pk:
-        is_post_writer = True
-    else:
-        is_post_writer = False
+
     ctx = {
+        'user' : request.user,
         'report': report,
         'form' : form,
-        'is_post_writer' : is_post_writer,
     }
 
     return render(request, 'matching/report_detail.html', ctx)
@@ -240,7 +251,7 @@ def post_edit(request, pk):
     ctx={}
     post = matching_models.Post.objects.get(pk=pk)
 
-    if post.user.profile.id != request.user.profile.id:
+    if post.user.pk != request.user.pk:
         return redirect('matching:post_detail', pk=post.pk)
 
     form = PostForm(request.POST)
