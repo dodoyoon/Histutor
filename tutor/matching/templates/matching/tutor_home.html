@@ -25,7 +25,7 @@
             <tbody>
             {% for report in reports %}
                 <tr>
-                    <td class="text-center"> {{forloop.counter}}</td>
+                    <td class="text-center"> {{report.pk}}</td>
                     <td scope="row" class="text-center">{{report.get_topic_display}}</td>
                     {% if report.finding_match ==  True %}
                     <td> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' report.pk %}">{{report.title}}</a></td>
@@ -51,7 +51,7 @@
 
     <div id="tableDiv">
     <h3>Post List</h3>
-        <table class="table">
+        <table id="post_table" class="table">
             <thead>
             <tr>
                 <th scope="col" class="text-center">번호</th>
@@ -64,7 +64,7 @@
             <tbody>
             {% for post in posts %}
                 <tr>
-                    <td class="text-center"> {{forloop.counter|add:posts.start_index|add:"-1"}} </td>
+                    <td class="text-center"> {{post.pk}} </td>
                     <td scope="row" class="text-center">{{post.get_topic_display}}</td>
                     {% if post.finding_match ==  True %}
                     <td> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
@@ -114,5 +114,59 @@
     {% if not posts %}
         <p>등록된 post가 없음</p>
     {% endif %}
+
+    <script>
+      const websocket = new WebSocket('ws://' + window.location.host + '/ws/tutorhome/');
+
+      websocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+
+        // Set table structure
+        var table = document.getElementById("post_table");
+        var row = table.insertRow(1);
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        var cell3 = row.insertCell(2);
+        var cell4 = row.insertCell(3);
+        var cell5 = row.insertCell(4);
+
+        // post number
+        cell1.className = "text-center";
+        cell1.innerHTML = data.id;
+
+        // topic
+        cell2.scope = "row";
+        cell2.className = "text-center";
+        cell2.innerHTML = data.topic;
+
+        // title
+        var findingIcon = document.createElement("SPAN");
+        if (data.finding == true){
+          findingIcon.id = "finding";
+        } else {
+          findingIcon.id = "found";
+        }
+        findingIcon.className = "dot";
+        cell3.append(findingIcon);
+        cell3.innerHTML += "&nbsp;&nbsp;&nbsp;";
+        var postDetail = document.createElement("A");
+        postDetail.href=`/matching/post/detail/${data.id}`;
+        postDetail.innerHTML = data.title;
+        cell3.append(postDetail);
+
+        // nickname
+        cell4.className = "text-center";
+        cell4.innerHTML = data.nickname;
+
+        // time
+        cell5.className = "text-center";
+        cell5.innerHTML = data.pub_date.substring(1, 11);
+      };
+
+      websocket.onclose = function(e){
+        console.error('Chat socket closed unexpectedly');
+      };
+
+    </script>
 
 {% endblock %}

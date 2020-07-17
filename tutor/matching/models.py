@@ -25,20 +25,20 @@ class Profile(models.Model):
    def save_user_profile(sender, instance, **kwargs):
       instance.profile.save()
 
-
-class Post(models.Model):
-   TOPIC_CHOICES = (
+TOPIC_CHOICES = (
       ('python', '파이썬'), ('c', 'C'), ('comp_arc','컴퓨터구조'),
       ('os', '운영체제'), ('ds', '데이타구조'), ('LD', '논리설계'),
       ('algo', '알고리즘'), ('java','자바'), ('database', '데이타베이스'),
       ('compiler', '컴파일러'), ('oodp', '객체지향'), ('elec_circuit', '전자회로'),
       ('circuit_theory', '회로이론'), ('etc', '기타')
-   )
+)
+
+class Post(models.Model):
    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="post_relation")
    tutor = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
    topic = models.CharField(choices=TOPIC_CHOICES, max_length=200, default='etc')
    title = models.CharField(max_length=200)
-   content = models.TextField()
+   content = models.TextField(null=True)
    finding_match = models.NullBooleanField(default=True)
    pub_date = models.DateTimeField(auto_now_add=True)
    cancel_reason = models.TextField(null=True)

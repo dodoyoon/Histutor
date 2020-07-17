@@ -11,6 +11,11 @@ from matching import models as matching_models
 from django.db import transaction
 from itertools import chain
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+from matching.models import TOPIC_CHOICES
+import json
+from django.core.serializers.json import DjangoJSONEncoder
 URL_LOGIN = "/matching"
 # DEFAULT PAGE
 
@@ -132,12 +137,27 @@ def post_new(request):
     if request.method == "POST":
         form = PostForm(request.POST)
         if form.is_valid():
-            print('form data : ', form.cleaned_data) ;
+            print('form data : ', form.cleaned_data)
             post = form.save(commit=False)
             user_obj = matching_models.User.objects.get(username=request.user.username)
             post.user = user_obj
             post.finding_match = True
             post.save()
+
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                'new_post',
+                {
+                    'type': 'new_post',
+                    'id': post.pk,
+                    'title': post.title,
+                    'finding': post.finding_match,
+                    'pub_date': json.dumps(post.pub_date, cls=DjangoJSONEncoder),
+                    'topic': dict(TOPIC_CHOICES).get(post.topic),
+                    'nickname': post.user.profile.nickname,
+                }
+            )
+
             return redirect('matching:post_detail', pk=post.pk)
     else:
         form = PostForm()
