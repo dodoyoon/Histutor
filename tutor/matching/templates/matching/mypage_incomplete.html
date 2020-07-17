@@ -19,7 +19,7 @@
                     <tbody>
                     {% for post in emptyreports %}
                         <tr>
-                            <td class="text-center"> {{forloop.counter|add:emptyreports.start_index|add:"-1"}}</td>
+                            <td class="text-center"> {{post.pk}}</td>
                             <td scope="row" class="text-center">{{post.get_topic_display}}</td>
                             {% if post.finding_match ==  True %}
                             <td> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>

@@ -2,14 +2,13 @@ import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 
-class ChatConsumer(WebsocketConsumer):
+class NewPostConsumer(WebsocketConsumer):
     def connect(self):
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = 'chat_%s' % self.room_name
+        self.group_name = 'new_post'
 
         # Join room group
         async_to_sync(self.channel_layer.group_add)(
-            self.room_group_name,
+            self.group_name,
             self.channel_name
         )
 
@@ -18,29 +17,50 @@ class ChatConsumer(WebsocketConsumer):
     def disconnect(self, close_code):
         # Leave room group
         async_to_sync(self.channel_layer.group_discard)(
-            self.room_group_name,
+            self.group_name,
             self.channel_name
         )
 
     # Receive message from WebSocket
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        message = text_data_json['message']
+        id = text_data_json['id']
+        title = text_data_json['title']
+        finding = text_data_json['finding']
+        pub_date = text_data_json['pub_date']
+        topic = text_data_json['topic']
+        nickname = text_data_json['nickname']
 
         # Send message to room group
         async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name,
+            self.group_name,
             {
-                'type': 'chat_message',
-                'message': message
+                'type': 'new_post',
+                'id': id,
+                'title': title,
+                'finding': finding,
+                'pub_date': pub_date,
+                'topic': topic,
+                'nickname': nickname,
             }
         )
 
     # Receive message from room group
-    def chat_message(self, event):
-        message = event['message']
+    def new_post(self, event):
+        id = event['id']
+        title = event['title']
+        finding = event['finding']
+        pub_date = event['pub_date']
+        topic = event['topic']
+        nickname = event['nickname']
 
         # Send message to WebSocket
         self.send(text_data=json.dumps({
-            'message': message
+            'type': 'new_post',
+            'id': id,
+            'title': title,
+            'finding': finding,
+            'pub_date': pub_date,
+            'topic': topic,
+            'nickname': nickname,
         }))
