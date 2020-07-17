@@ -12,6 +12,7 @@ from django.db import transaction
 from itertools import chain
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic.edit import UpdateView
+from django.views.generic.detail import DetailView
 from .models import Report
 
 
@@ -77,11 +78,6 @@ class ReportUpdate(UpdateView):
     form_class = ReportForm
     template_name = 'matching/report_edit.html'
 
-    def get_object(self):
-        report = get_object_or_404(Report, pk=self.kwargs['pk'])
-        return report
-
-
 @login_required(login_url=URL_LOGIN)
 def tutor_report(request, pk):
     post = matching_models.Post.objects.get(pk=pk)
@@ -115,28 +111,25 @@ def tutor_report(request, pk):
 
     return render(request, 'matching/tutor_report.html', ctx)
 
-@login_required(login_url=URL_LOGIN)
-def report_detail(request, pk):
-    report = matching_models.Report.objects.get(pk=pk)
-    if request.method == "POST":
-        form = AccuseForm(request.POST)
+class ReportDetail(DetailView):
+    model = Report
+
+    def get_context_data(self, **kwargs):
+        context = super(ReportDetail, self).get_context_data(**kwargs)
+        context['form'] = AccuseForm
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = AccuseForm(request.POST, request.FILES)
+
         if form.is_valid():
-            print("report accuse")
+            return self.form_valid(form, self.object)
+    
+    def form_valid(self, form, report):
+        report.tutee_feedback = form.cleaned_data['tutee_feedback']
+        report.save()
 
-            report.tutee_feedback = form.cleaned_data['tutee_feedback']
-            report.save()
-            print("null? ", report.tutee_feedback == None)
-            return redirect('matching:report_detail', pk=report.pk)
-    else:
-        form = AccuseForm()
-
-    ctx = {
-        'user' : request.user,
-        'report': report,
-        'form' : form,
-    }
-
-    return render(request, 'matching/report_detail.html', ctx)
 
 @login_required(login_url=URL_LOGIN)
 def post_new(request):
@@ -430,13 +423,13 @@ def mypage_report(request):
 
     current_report_page = request.GET.get('page', 1)
 
-    report_paginator = Paginator(reports, 10)
+    report_paginator = Paginator(report, 10)
     try:
-        reports = post_paginator.page(current_report_page)
+        reports = report_paginator.page(current_report_page)
     except PageNotAnInteger:
-        reports = post_paginator.page(1)
+        reports = report_paginator.page(1)
     except EmptyPage:
-        reports = post_paginator.page(report_paginator.num_pages)
+        reports = report_paginator.page(report_paginator.num_pages)
 
     neighbors = 10
     if report_paginator.num_pages > 2*neighbors:
@@ -458,8 +451,8 @@ def mypage_report(request):
         paginatorRange = range(1, report_paginator.num_pages+1)
 
     ctx = {
-        'reports': report,
-        'reportPaginator': post_paginator,
+        'reports': reports,
+        'reportPaginator': report_paginator,
         'paginatorRange': paginatorRange,
     }
 
