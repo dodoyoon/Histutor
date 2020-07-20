@@ -37,12 +37,20 @@
 
 <!--
 <div>
+  {% if not hastutor %}
+  {% if user.profile.is_tutor %}
+  <a  href="{% url 'matching:set_tutor' post.pk user.pk %}">
+    <button type="button" class="btn btn-outline-dark">tutor 하기</button>
+  </a>
+  {% endif %}
+  {% endif %}
+
   <h6>Topic: {{ post.get_topic_display }}</h6>
   <h6>Title: {{ post.title }}</h6>
   <h6>Content: {{ post.content }}</h6>
   {% if hastutor %}
   <h6>Tutor: {{ post.tutor.profile.nickname }}</h6>
-  {% elif user.pk == post.tutor.pk and not report_exist %}
+  {% if user.pk == post.tutor.pk and not report_exist %}
   <a  href="{% url 'matching:tutor_report' post.pk %}">
     <button type="button" class="btn btn-outline-dark">보고서 쓰기</button>
   </a>
@@ -88,17 +96,7 @@
 <div>
   <h5>Comments</h5>
   {% for comment in cmt %}
-  <p>{{ comment.user.profile.nickname }} : {{ comment.content }}
-    {% if not hastutor %}
-    {% if showbut %}
-    {% if comment.user.profile.is_tutor and not comment.user.pk == user.pk %}
-    <a  href="{% url 'matching:set_tutor' post.pk comment.user.pk %}">
-      <button type="button" class="btn btn-outline-dark">tutor로 지정</button>
-    </a>
-    {% endif %}
-    {% endif %}
-    {% endif %}
-  </p>
+  <p>{{ comment.user.profile.nickname }} : {{ comment.content }}</p>
   {% endfor %}
 
   <form method="POST" class="comment-form">
