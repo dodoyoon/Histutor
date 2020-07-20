@@ -1,8 +1,41 @@
 {% extends 'matching/base.html' %}
-<button id="create_post" type="submit">
-    <a href="{% url 'matching:post_new' %}">+</a>
-</button>
+
+{% load static %}
+{% block style %}
+  <link rel="stylesheet" type="text/css" href="{% static 'matching/chat.css' %}">
+{% endblock %}
+
 {% block content %}
+
+  <div class="mesgs">
+    <div class="msg_history">
+      <div class="incoming_msg">
+        <!--<div class="incoming_msg_img"> <img src="" alt=""> </div>-->
+        <div class="received_msg">
+          <div class="received_with_msg">
+            <p>Test which is a new approach to have all
+              solutions</p>
+            <span class="received_time_date"> 11:01 AM    |    June 9</span>
+          </div>
+        </div>
+      </div>
+      <div class="outgoing_msg">
+        <div class="sent_msg">
+          <p>Test which is a new approach to have all
+            solutions</p>
+          <span class="sent_time_date"> 11:01 AM    |    June 9</span> </div>
+      </div>
+    </div>
+    <div class="type_msg">
+      <div class="input_msg_write">
+        <input type="text" class="write_msg" placeholder="Type a message" />
+        <button class="msg_send_btn" type="button"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+      </div>
+    </div>
+  </div>
+
+
+<!--
 <div>
   <h6>Topic: {{ post.get_topic_display }}</h6>
   <h6>Title: {{ post.title }}</h6>
@@ -14,18 +47,18 @@
     <button type="button" class="btn btn-outline-dark">보고서 쓰기</button>
   </a>
   {% endif %}
-    
+
   {% if user.pk == post.user.pk %}
-  <!-- Trigger the modal with a button -->
+  <!-- Trigger the modal with a button
   {% if not post.tutor %}
   <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">모집종료</button>
   {% endif %}
 
-  <!-- Modal -->
+  <!-- Modal
   <div id="myModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
       <form action="{% url 'matching:close_post' post.pk %}" method="POST">
-      <!-- Modal content-->
+      <!-- Modal content
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -37,7 +70,7 @@
               {{ cancel_form.cancel_reason }}
             </div>
             <div class="modal-footer">
-            <!-- <button type="submit" class="btn btn-default" data-dismiss="modal">Submit</button> -->
+            <!-- <button type="submit" class="btn btn-default" data-dismiss="modal">Submit</button>
               <button type="submit" class="btn btn-default">Submit</button>
             </div>
         </div>
@@ -74,4 +107,5 @@
     <button type="submit" class="save btn btn-default">댓글</button>
   </form>
 </div>
+-->
 {% endblock %}

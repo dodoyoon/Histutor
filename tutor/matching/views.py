@@ -153,7 +153,7 @@ def post_new(request):
                     'title': post.title,
                     'finding': post.finding_match,
                     'pub_date': json.dumps(post.pub_date, cls=DjangoJSONEncoder),
-                    'topic': dict(TOPIC_CHOICES).get(post.topic),
+                    #'topic': dict(TOPIC_CHOICES).get(post.topic),
                     'nickname': post.user.profile.nickname,
                 }
             )
@@ -246,9 +246,8 @@ def post_edit(request, pk):
     form = PostForm(request.POST)
     if request.method == "POST":
         if form.is_valid():
-            post.topic = form.cleaned_data['topic']
+            #post.topic = form.cleaned_data['topic']
             post.title = form.cleaned_data['title']
-            post.content = form.cleaned_data['content']
             post.save()
             return redirect('matching:post_detail', pk=post.pk)
     else:
@@ -270,6 +269,33 @@ def tutor_home(request):
 
     if not user.profile.is_tutor is True:
         return redirect(reverse('matching:tutee_home'))
+
+    if request.method == "POST":
+        form = PostForm(request.POST)
+        if form.is_valid():
+            print('form data : ', form.cleaned_data)
+            post = form.save(commit=False)
+            user_obj = matching_models.User.objects.get(username=request.user.username)
+            post.user = user_obj
+            post.finding_match = True
+            post.save()
+
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                'new_post',
+                {
+                    'type': 'new_post',
+                    'id': post.pk,
+                    'title': post.title,
+                    'finding': post.finding_match,
+                    'pub_date': json.dumps(post.pub_date, cls=DjangoJSONEncoder),
+                    #'topic': dict(TOPIC_CHOICES).get(post.topic),
+                    'nickname': post.user.profile.nickname,
+                }
+            )
+            return redirect('matching:post_detail', pk=post.pk)
+    else:
+        form = PostForm()
 
     report = matching_models.Post.objects.filter(tutor=request.user).filter(report__isnull=True)
     #print(report)
@@ -313,6 +339,7 @@ def tutor_home(request):
         'reports': report,
         'postPaginator': post_paginator,
         'paginatorRange': paginatorRange,
+        'form': form,
     }
 
     return render(request, 'matching/tutor_home.html', ctx)
