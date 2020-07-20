@@ -13,7 +13,6 @@ img{ max-width:100%;}
 }
 .top_spac{ margin: 20px 0 0;}
 
-
 .recent_heading {float: left; width:40%;}
 .srch_bar {
   display: inline-block;
@@ -97,14 +96,27 @@ img{ max-width:100%;}
   position: relative;
 }
 
-.mesgs {
+.received_name{
+  display: block;
+  color: #6e6e6e;
+  font-size: 13px;
+  margin: 4px 0 0;
   position: relative;
+}
+
+.sent_name{
+  display: block;
+  color: #6e6e6e;
+  font-size: 13px;
+  margin: 4px 0 0;
+  position: relative;
+  text-align: right;
+}
+
+.mesgs {
   float: left;
-  padding: 30px 15px 0 15px;
-  width: 60%;
-  left: 20%;
-  border: 1px solid gray;
-  margin-top: 50px;
+  width: 100%;
+  padding: 15px 15px 5px 15px;
 }
 
  .sent_msg p {
@@ -153,6 +165,26 @@ img{ max-width:100%;}
 }
 .messaging { padding: 0 0 50px 0;}
 .msg_history {
-  height: 516px;
+  height: 550px;
   overflow-y: auto;
+}
+
+.chat{
+  position: relative;
+  float: left;
+  width: 60%;
+  left: 20%;
+  margin-top: 50px;
+  border: 1px solid gray;
+}
+
+.title{
+  position: relative;
+  top: 10%;
+  width: 100%;
+  background-color: #8f86c4;
+  color: #fff;
+  font-size: 20px;
+  padding: 5px 10px 5px 10px;
+  text-align: center;
 }
