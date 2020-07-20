@@ -185,40 +185,15 @@ def post_detail(request, pk):
     except matching_models.Post.DoesNotExist:
         return HttpResponse("게시물이 존재하지 않습니다.")
 
-    ctx['post'] = post
-
     if hasattr(post, 'report'):
         ctx['report_exist'] = True ;
     else:
         ctx['report_exist'] = False ;
 
-    cmt = matching_models.Comment.objects.filter(post=post)
-    ctx['cmt'] = cmt
+    comment_list = matching_models.Comment.objects.filter(post=post)
 
-    if request.method == "POST":
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.user = request.user
-            comment.post = post
-            comment.save()
-            return redirect('matching:post_detail', pk=post.pk)
-    else:
-        cancel_form = CancelForm()
-        form = CommentForm()
-
-    if request.user == post.user:
-        ctx['showbut'] = True
-    else:
-        ctx['showbut'] = False
-
-    if post.tutor is None:
-        ctx['hastutor'] = False
-    else:
-        ctx['hastutor'] = True
-
-    ctx['form'] = form
-    ctx['cancel_form'] = cancel_form ;
+    ctx['post'] = post
+    ctx['comment_list'] = comment_list
 
     return render(request, 'matching/post_detail.html', ctx)
 

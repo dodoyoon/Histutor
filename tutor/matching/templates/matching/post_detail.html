@@ -9,22 +9,32 @@
 
   <div class="mesgs">
     <div class="msg_history">
-      <div class="incoming_msg">
-        <!--<div class="incoming_msg_img"> <img src="" alt=""> </div>-->
-        <div class="received_msg">
-          <div class="received_with_msg">
-            <p>Test which is a new approach to have all
-              solutions</p>
-            <span class="received_time_date"> 11:01 AM    |    June 9</span>
+
+      {% for comment in comment_list %}
+      {% if comment.post.tutor %}
+        {% if comment.post.tutor.pk == comment.user.pk %}
+        <div class="incoming_msg">
+          <!--<div class="incoming_msg_img"> <img src="" alt=""> </div>-->
+          <div class="received_msg">
+            <div class="received_with_msg">
+              <p>{{ comment.content }}</p>
+              <span class="received_time_date"> {{ comment.pub_date|date:"P"}}   | {{ comment.pub_date|date:"m.d"}} </span>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="outgoing_msg">
-        <div class="sent_msg">
-          <p>Test which is a new approach to have all
-            solutions</p>
-          <span class="sent_time_date"> 11:01 AM    |    June 9</span> </div>
-      </div>
+        {% endif %} 
+      {% endif %} 
+      {% if comment.post.user %}
+        {% if comment.post.user.pk == comment.user.pk %}
+        <div class="outgoing_msg">
+          <div class="sent_msg">
+            <p>{{ comment.content }}</p>
+            <span class="sent_time_date"> {{ comment.pub_date|date:"P"}}    |  {{ comment.pub_date|date:"m.d"}} </span> </div>
+        </div>
+        {% endif %}
+      {% endif %}
+      {% endfor %}
+
     </div>
     <div class="type_msg">
       <div class="input_msg_write">
