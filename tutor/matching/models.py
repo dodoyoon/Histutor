@@ -51,6 +51,9 @@ class Comment(models.Model):
    pub_date = models.DateTimeField(auto_now_add=True)
    content = models.TextField()
 
+   def __str__(self):
+      return self.post.title + '    '+self.user.profile.nickname + '    ' + str(self.pub_date)
+
 class Report(models.Model):
    tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutor")
    tutee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutee")
