@@ -38,7 +38,6 @@ class Post(models.Model):
    tutor = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
    topic = models.CharField(choices=TOPIC_CHOICES, max_length=200, default='etc')
    title = models.CharField(max_length=200)
-   content = models.TextField(null=True)
    finding_match = models.NullBooleanField(default=True)
    pub_date = models.DateTimeField(auto_now_add=True)
    cancel_reason = models.TextField(null=True)
@@ -65,6 +64,6 @@ class Report(models.Model):
 
    def __str__(self):
       return self.post.get_topic_display() + ' ' + self.post.title
-   
+
    def get_absolute_url(self):
       return reverse('matching:report_detail', args=[self.pk])

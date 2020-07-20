@@ -20,7 +20,8 @@ class ProfileForm(forms.ModelForm):
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'topic','content']
+        fields = ['title']
+
 class DateInput(forms.DateInput):
     input_type = 'date'
 
@@ -28,7 +29,7 @@ class DateInput(forms.DateInput):
 class ReportForm(forms.ModelForm):
     class Meta:
         model = Report
-        fields = ( 'meeting_date', 'meeting_duration_time','content')
+        fields = ( 'meeting_date', 'meeting_duration_time')
         widgets= {
             'meeting_date' : DateInput(),
         }
