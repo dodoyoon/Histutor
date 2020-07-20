@@ -16,6 +16,10 @@ from asgiref.sync import async_to_sync
 from matching.models import TOPIC_CHOICES
 import json
 from django.core.serializers.json import DjangoJSONEncoder
+from django.views.generic.edit import UpdateView
+from django.views.generic.detail import DetailView
+from .models import Report
+
 URL_LOGIN = "/matching"
 # DEFAULT PAGE
 
@@ -71,9 +75,15 @@ def user_check(request):
         matching_models.User.objects.filter(pk=request.user.pk).delete()
         return HttpResponseRedirect(reverse('matching:index'))
 
+#TODO : method decorator should be added
+class ReportUpdate(UpdateView):
+    model = Report
+    context_object_name = 'report'
+    form_class = ReportForm
+    template_name = 'matching/report_edit.html'
+
 @login_required(login_url=URL_LOGIN)
 def tutor_report(request, pk):
-    print("pk : ", pk)
     post = matching_models.Post.objects.get(pk=pk)
 
     if request.user.pk != post.tutor.pk :
@@ -105,31 +115,25 @@ def tutor_report(request, pk):
 
     return render(request, 'matching/tutor_report.html', ctx)
 
-@login_required(login_url=URL_LOGIN)
-def report_detail(request, pk):
-    report = matching_models.Report.objects.get(pk=pk)
-    if request.method == "POST":
-        form = AccuseForm(request.POST)
+class ReportDetail(DetailView):
+    model = Report
+
+    def get_context_data(self, **kwargs):
+        context = super(ReportDetail, self).get_context_data(**kwargs)
+        context['form'] = AccuseForm
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = AccuseForm(request.POST, request.FILES)
+
         if form.is_valid():
-            print("report accuse")
+            return self.form_valid(form, self.object)
+    
+    def form_valid(self, form, report):
+        report.tutee_feedback = form.cleaned_data['tutee_feedback']
+        report.save()
 
-            report.tutee_feedback = form.cleaned_data['tutee_feedback']
-            report.save()
-            print("null? ", report.tutee_feedback == None)
-            return redirect('matching:report_detail', pk=report.pk)
-    else:
-        form = AccuseForm()
-    if request.user.pk == report.tutee.pk:
-        is_post_writer = True
-    else:
-        is_post_writer = False
-    ctx = {
-        'report': report,
-        'form' : form,
-        'is_post_writer' : is_post_writer,
-    }
-
-    return render(request, 'matching/report_detail.html', ctx)
 
 @login_required(login_url=URL_LOGIN)
 def post_new(request):
@@ -240,7 +244,7 @@ def post_edit(request, pk):
     ctx={}
     post = matching_models.Post.objects.get(pk=pk)
 
-    if post.user.profile.id != request.user.profile.id:
+    if post.user.pk != request.user.pk:
         return redirect('matching:post_detail', pk=post.pk)
 
     form = PostForm(request.POST)
@@ -465,13 +469,13 @@ def mypage_report(request):
 
     current_report_page = request.GET.get('page', 1)
 
-    report_paginator = Paginator(reports, 10)
+    report_paginator = Paginator(report, 10)
     try:
-        reports = post_paginator.page(current_report_page)
+        reports = report_paginator.page(current_report_page)
     except PageNotAnInteger:
-        reports = post_paginator.page(1)
+        reports = report_paginator.page(1)
     except EmptyPage:
-        reports = post_paginator.page(report_paginator.num_pages)
+        reports = report_paginator.page(report_paginator.num_pages)
 
     neighbors = 10
     if report_paginator.num_pages > 2*neighbors:
@@ -493,8 +497,8 @@ def mypage_report(request):
         paginatorRange = range(1, report_paginator.num_pages+1)
 
     ctx = {
-        'reports': report,
-        'reportPaginator': post_paginator,
+        'reports': reports,
+        'reportPaginator': report_paginator,
         'paginatorRange': paginatorRange,
     }
 
