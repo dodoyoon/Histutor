@@ -7,11 +7,16 @@
 
 {% block content %}
 
+<div class="chat">
+  <div class="title">
+    {{ post.title }}
+  </div>
   <div class="mesgs">
     <div class="msg_history">
       <div class="incoming_msg">
         <!--<div class="incoming_msg_img"> <img src="" alt=""> </div>-->
         <div class="received_msg">
+          <p class="received_name">Gladi</p>
           <div class="received_with_msg">
             <p>Test which is a new approach to have all
               solutions</p>
@@ -20,6 +25,7 @@
         </div>
       </div>
       <div class="outgoing_msg">
+        <p class="sent_name">Dodo</p>
         <div class="sent_msg">
           <p>Test which is a new approach to have all
             solutions</p>
@@ -33,6 +39,7 @@
       </div>
     </div>
   </div>
+</div>
 
 
 <!--
