@@ -69,11 +69,13 @@
   top: 100px;
 }
 
-#mainpage_table tbody tr:hover{
-  background-color: #d1d1d1;
+#post-top{
+    margin-left:1200px;
+    margin-top:10px;
+    margin-bottom:10px;
 }
 
-.set_tutor {
+#mybutton  {
 	background-color:white;
 	-webkit-border-top-left-radius:28px;
 	-moz-border-radius-topleft:28px;
@@ -100,12 +102,10 @@ height:50px;
 width:140px;
 	text-decoration:none;
 	text-align:center;
-
-    margin-top:10px;
-    margin-left:1200px;
-}.set_tutor:hover {
+    margin : 5px;
+}#mybutton:hover {
     background-color:#e9e6f5;
-}.set_tutor:active {
+}#mybutton:active {
 	position:relative;
 	top:1px;
 }

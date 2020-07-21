@@ -7,22 +7,19 @@
 
 {% block content %}
 
-
-{% if user.pk == post.user.pk %}
-  {% if not post.tutor %}
-  <a href="{% url 'matching:close_post' post.pk %}" class="btn btn-info btn-lg">모집종료</a>
-  {% else %}
-  <a href="{% url 'matching:close_post' post.pk %}" class="btn btn-info btn-lg disabled">모집종료</a>
-  {% endif %}
+<div id="post-top">
+{% if user.pk == post.user.pk and post.finding_match == true %}
+  <a href="{% url 'matching:close_post' post.pk %}"><button id="mybutton" type="submit">모집 종료</button></a>
 {% endif %}
 
-  {% if post.tutor is null %}
-    <form action="{% url 'matching:set_tutor' postpk=post.pk userpk=user.pk  %}"  method="POST">
-      {% csrf_token %}
-      <button class="set_tutor" type="submit">튜터링 시작</button>
-    </form>
-  {% endif %}
-  <hr style="border-top:2px solid #bbb;">
+{% if post.tutor is null and user != post.user %}
+  <form action="{% url 'matching:set_tutor' postpk=post.pk userpk=user.pk  %}"  method="POST">
+    {% csrf_token %}
+    <button id="mybutton" type="submit">튜터링 시작</button>
+  </form>
+{% endif %}
+</div>
+<hr style="border-top:2px solid #bbb;">
 
 
 
