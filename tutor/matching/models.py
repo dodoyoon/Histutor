@@ -45,6 +45,7 @@ class Post(models.Model):
    start_time = models.DateTimeField(null=True)
    fin_time = models.DateTimeField(null=True)
 
+
    def __str__(self):
       return self.get_topic_display() + ' ' + self.title
 
