@@ -61,12 +61,16 @@
 
 #post_table_div{
   position: relative;
-  top: 50px;
+  top: 15px;
 }
 
 #mainpage_table_div{
   position: relative;
   top: 100px;
+}
+
+#mainpage_table tbody tr:hover{
+  background-color: #d1d1d1;
 }
 
 .set_tutor {
