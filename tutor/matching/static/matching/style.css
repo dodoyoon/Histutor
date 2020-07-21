@@ -12,11 +12,12 @@
 }
 
 /* TUTOR HOME */
-#tableDiv {
+.tableDiv {
     position: relative;
     top: 50px;
     margin: auto;
     width: calc(100vw - 200px);
+    border: 1px solid #d1d1d1;
 }
 
 .dot {
@@ -35,4 +36,3 @@
 #found{
     background-color: #bbb;
 }
-
