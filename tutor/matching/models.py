@@ -40,7 +40,6 @@ class Post(models.Model):
    title = models.CharField(max_length=200)
    finding_match = models.NullBooleanField(default=True)
    pub_date = models.DateTimeField(auto_now_add=True)
-   cancel_reason = models.TextField(null=True)
 
    def __str__(self):
       return self.get_topic_display() + ' ' + self.title
