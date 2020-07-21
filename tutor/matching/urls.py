@@ -18,12 +18,13 @@ urlpatterns = [
   path('mypage/post/', views.mypage_post, name='mypage_post'),
   path('mypage/report/', views.mypage_report, name='mypage_report'),
   path('mypage/incomplete/', views.mypage_incomplete, name='mypage_incomplete'),
-  path('tutor_home/', views.tutor_home, name='tutor_home'),
-  path('tutee_home/', views.tutee_home, name='tutee_home'),
+  #path('tutor_home/', views.tutor_home, name='tutor_home'),
+  #path('tutee_home/', views.tutee_home, name='tutee_home'),
   path('post/detail/close_post/<int:pk>', views.close_post, name='close_post'),
   path('post/settutor/<int:postpk>/<int:userpk>/', views.set_tutor, name='set_tutor'),
   path('login/', views.login, name='login'),
   path('admin_home/', views.admin_home, name='admin_home'),
+  path('main/', views.mainpage, name='mainpage')
   #path('', views.index, name='index'),
   #path('<str:room_name>/', views.room, name='room'),
 ]

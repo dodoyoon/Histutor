@@ -85,7 +85,7 @@ img{ max-width:100%;}
   color: #747474;
   display: block;
   font-size: 12px;
-  margin: 4px 0 0;
+  margin: 4px 0 8px 0;
   position: relative;
 }
 .sent_time_date {

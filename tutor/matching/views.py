@@ -25,11 +25,7 @@ URL_LOGIN = "/matching"
 
 def index(request):
     if request.user.is_authenticated:
-        user = matching_models.User.objects.get(pk=request.user.pk)
-        if not user.profile.is_tutor is True:
-            return redirect(reverse('matching:tutee_home'))
-        else:
-            return redirect(reverse('matching:tutor_home'))
+        return redirect('matching:mainpage')
     else:
         return redirect('login/')
 
@@ -137,7 +133,6 @@ class ReportDetail(DetailView):
 
 @login_required(login_url=URL_LOGIN)
 def post_new(request):
-    ctx={}
     if request.method == "POST":
         form = PostForm(request.POST)
         if form.is_valid():
@@ -378,24 +373,10 @@ def admin_home(request):
 
 
 def close_post(request, pk):
-    if request.method == 'POST':
-        print("close_post : POST")
-        form = CancelForm(request.POST, request.FILES)
-        if form.is_valid():
-            print("form valid")
-            post = matching_models.Post.objects.get(pk=pk)
-            post.cancel_reason = form.cleaned_data['cancel_reason']
-            post.finding_match = False
-            post.save()
-            return redirect(reverse('matching:tutee_home'))
-        else:
-            print("form invalid")
-
-    else:
-        print("close_post : GET")
-        form = CancelForm()
-        return render(request, 'matching/post_detail.html')
-
+    post = matching_models.Post.objects.get(pk=pk)
+    post.finding_match = False
+    post.save()
+    return redirect(reverse('matching:mainpage'))
 
 @login_required(login_url=URL_LOGIN)
 def mypage(request):
@@ -509,6 +490,92 @@ def mypage_incomplete(request):
     ctx['emptyreports'] = empty_report
 
     return render(request, 'matching/mypage_incomplete.html', ctx)
+
+@login_required(login_url=URL_LOGIN)
+def mainpage(request):
+    post = matching_models.Post.objects.filter(user = request.user, finding_match = True)
+    post_exist = False
+    if post:
+        post_exist = True
+
+    user = matching_models.User.objects.get(pk=request.user.pk)
+
+    if not user.profile.is_tutor is True:
+        return redirect(reverse('matching:tutee_home'))
+
+    if request.method == "POST":
+        form = PostForm(request.POST)
+        if form.is_valid():
+            print('form data : ', form.cleaned_data)
+            post = form.save(commit=False)
+            user_obj = matching_models.User.objects.get(username=request.user.username)
+            post.user = user_obj
+            post.finding_match = True
+            post.save()
+
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                'new_post',
+                {
+                    'type': 'new_post',
+                    'id': post.pk,
+                    'title': post.title,
+                    'finding': post.finding_match,
+                    'pub_date': json.dumps(post.pub_date, cls=DjangoJSONEncoder),
+                    #'topic': dict(TOPIC_CHOICES).get(post.topic),
+                    'nickname': post.user.profile.nickname,
+                }
+            )
+            return redirect('matching:post_detail', pk=post.pk)
+    else:
+        form = PostForm()
+
+    recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
+    recruited = matching_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
+    #posts = tutor_models.Post.objects.order_by('-pub_date')
+    posts = list(chain(recruiting, recruited))
+
+    current_post_page = request.GET.get('page', 1)
+
+    post_paginator = Paginator(posts, 10)
+    try:
+        posts = post_paginator.page(current_post_page)
+    except PageNotAnInteger:
+        posts = post_paginator.page(1)
+    except EmptyPage:
+        posts = post_paginator.page(post_paginator.num_pages)
+
+    neighbors = 10
+    if post_paginator.num_pages > 2*neighbors:
+        start_index = max(1, int(current_post_page)-neighbors)
+        end_index = min(int(current_post_page)+neighbors, post_paginator.num_pages)
+        if end_index < start_index + 2*neighbors:
+            end_index = start_index + 2*neighbors
+        elif start_index > end_index - 2*neighbors:
+            start_index = end_index - 2*neighbors
+        if start_index < 1:
+            end_index -= start_index
+            start_index = 1
+        elif end_index > post_paginator.num_pages:
+            start_index -= end_index - post_paginator.num_pages
+            end_index = post_paginator.num_pages
+        paginatorRange = [f for f in range(start_index, end_index+1)]
+        paginatorRange[:(2*neighbors + 1)]
+    else:
+        paginatorRange = range(1, post_paginator.num_pages+1)
+
+    ctx = {
+        'user': user,
+        'posts': posts,
+        'postPaginator': post_paginator,
+        'paginatorRange': paginatorRange,
+        'form': form,
+        'post_exist': post_exist,
+    }
+
+    print(post_exist)
+    return render(request, 'matching/main.html', ctx)
+
 
 '''
 def index(request):

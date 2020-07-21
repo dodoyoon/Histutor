@@ -13,11 +13,22 @@
 
 /* TUTOR HOME */
 .tableDiv {
-    position: relative;
-    top: 50px;
     margin: auto;
-    width: calc(100vw - 200px);
-    border: 1px solid #d1d1d1;
+    width: calc(100vw - 250px);
+}
+
+.tableDiv tr {
+  border-right: 1px solid #d1d1d1;
+  border-left: 1px solid #d1d1d1;
+  border-bottom: 1px solid #d1d1d1;
+}
+
+.tableDiv th {
+  padding: 10px;
+}
+
+.tableDiv td {
+  padding: 10px;
 }
 
 .dot {
@@ -35,6 +46,27 @@
 
 #found{
     background-color: #bbb;
+}
+
+#createRoomBtn {
+  position: relative;
+  float: right;
+  top: 55px;
+  right: calc((100vw - (100vw - 250px))/2);
+  width: 80px;
+  height: 40px;
+  font-size: 15px;
+  padding: 8px 10px 8px 10px;
+}
+
+#post_table_div{
+  position: relative;
+  top: 50px;
+}
+
+#mainpage_table_div{
+  position: relative;
+  top: 100px;
 }
 
 .set_tutor {
@@ -64,7 +96,7 @@ height:50px;
 width:140px;
 	text-decoration:none;
 	text-align:center;
-    
+
     margin-top:10px;
     margin-left:1200px;
 }.set_tutor:hover {
@@ -73,4 +105,3 @@ width:140px;
 	position:relative;
 	top:1px;
 }
-
