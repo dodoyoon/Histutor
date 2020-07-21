@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.db.models import F
 from django.views import generic
 from django.contrib.auth.models import User
-from .forms import PostForm, ReportForm, ProfileForm, CommentForm, AcceptReportForm, CancelForm, AccuseForm
+from .forms import PostForm, ReportForm, ProfileForm, CommentForm, AcceptReportForm, AccuseForm
 from django.contrib.auth.decorators import login_required
 from matching import models as matching_models
 from django.db import transaction
@@ -45,7 +45,7 @@ def save_profile(request, pk):
             profile.signin = True
             profile.phone = "010" + str(request.POST['phone1']) + str(request.POST['phone2'])
             profile.save()
-            return redirect(reverse('matching:tutee_home'))
+            return redirect(reverse('matching:mainpage'))
     else:
         profile_form = ProfileForm(instance=request.user.profile)
     return render(request, 'matching/save_profile.html', {
@@ -60,10 +60,8 @@ def user_check(request):
             user = matching_models.User.objects.get(pk=request.user.pk)
             if user.profile.signin == False:
                 return HttpResponseRedirect(reverse('matching:profile', args=(request.user.pk,)))
-            elif user.profile.is_tutor is True:
-                return HttpResponseRedirect(reverse('matching:tutor_home'))
             else:
-                return HttpResponseRedirect(reverse('matching:tutee_home'))
+                return HttpResponseRedirect(reverse('matching:mainpage'))
         except(KeyError, matching_models.User.DoesNotExist):
             return HttpResponseRedirect(reverse('matching:index'))
     else:
@@ -83,10 +81,7 @@ def tutor_report(request, pk):
     post = matching_models.Post.objects.get(pk=pk)
 
     if request.user.pk != post.tutor.pk :
-        if request.user.profile.is_tutor == True:
-            return redirect('matching:tutor_home')
-        else:
-            return redirect('matching:tutee_home')
+        return redirect('matching:mainpage')
 
     if request.method == "POST":
         form = ReportForm(request.POST)
@@ -232,94 +227,7 @@ def post_edit(request, pk):
 
     return render(request, 'matching/post_edit.html', ctx)
 
-@login_required(login_url=URL_LOGIN)
-def tutee_home(request):
-    post = matching_models.Post.objects.filter(user = request.user, finding_match = True)
-    if not post:
-        return render(request, 'matching/tutee_home.html', {})
-    else:
-        return redirect('matching:post_detail', pk=post[0].pk)
 
-@login_required(login_url=URL_LOGIN)
-def tutor_home(request):
-    user = matching_models.User.objects.get(pk=request.user.pk)
-
-    if not user.profile.is_tutor is True:
-        return redirect(reverse('matching:tutee_home'))
-
-    if request.method == "POST":
-        form = PostForm(request.POST)
-        if form.is_valid():
-            print('form data : ', form.cleaned_data)
-            post = form.save(commit=False)
-            user_obj = matching_models.User.objects.get(username=request.user.username)
-            post.user = user_obj
-            post.finding_match = True
-            post.save()
-
-            channel_layer = get_channel_layer()
-            async_to_sync(channel_layer.group_send)(
-                'new_post',
-                {
-                    'type': 'new_post',
-                    'id': post.pk,
-                    'title': post.title,
-                    'finding': post.finding_match,
-                    'pub_date': json.dumps(post.pub_date, cls=DjangoJSONEncoder),
-                    #'topic': dict(TOPIC_CHOICES).get(post.topic),
-                    'nickname': post.user.profile.nickname,
-                }
-            )
-            return redirect('matching:post_detail', pk=post.pk)
-    else:
-        form = PostForm()
-
-    report = matching_models.Post.objects.filter(tutor=request.user).filter(report__isnull=True)
-    #print(report)
-
-    recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
-    recruited = matching_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
-    #posts = tutor_models.Post.objects.order_by('-pub_date')
-    posts = list(chain(recruiting, recruited))
-
-    current_post_page = request.GET.get('page', 1)
-
-    post_paginator = Paginator(posts, 10)
-    try:
-        posts = post_paginator.page(current_post_page)
-    except PageNotAnInteger:
-        posts = post_paginator.page(1)
-    except EmptyPage:
-        posts = post_paginator.page(post_paginator.num_pages)
-
-    neighbors = 10
-    if post_paginator.num_pages > 2*neighbors:
-        start_index = max(1, int(current_post_page)-neighbors)
-        end_index = min(int(current_post_page)+neighbors, post_paginator.num_pages)
-        if end_index < start_index + 2*neighbors:
-            end_index = start_index + 2*neighbors
-        elif start_index > end_index - 2*neighbors:
-            start_index = end_index - 2*neighbors
-        if start_index < 1:
-            end_index -= start_index
-            start_index = 1
-        elif end_index > post_paginator.num_pages:
-            start_index -= end_index - post_paginator.num_pages
-            end_index = post_paginator.num_pages
-        paginatorRange = [f for f in range(start_index, end_index+1)]
-        paginatorRange[:(2*neighbors + 1)]
-    else:
-        paginatorRange = range(1, post_paginator.num_pages+1)
-
-    ctx = {
-        'posts': posts,
-        'reports': report,
-        'postPaginator': post_paginator,
-        'paginatorRange': paginatorRange,
-        'form': form,
-    }
-
-    return render(request, 'matching/tutor_home.html', ctx)
 
 @login_required(login_url=URL_LOGIN)
 def admin_home(request):
@@ -328,7 +236,7 @@ def admin_home(request):
     print(user.is_staff)
 
     if not user.is_staff:
-        return redirect(reverse('matching:tutee_home'))
+        return redirect(reverse('matching:mainpage'))
 
     recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
     recruited = matching_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
@@ -499,9 +407,6 @@ def mainpage(request):
         post_exist = True
 
     user = matching_models.User.objects.get(pk=request.user.pk)
-
-    if not user.profile.is_tutor is True:
-        return redirect(reverse('matching:tutee_home'))
 
     if request.method == "POST":
         form = PostForm(request.POST)

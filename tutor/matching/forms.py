@@ -7,11 +7,6 @@ class AccuseForm(forms.ModelForm):
         model = Report
         fields = ['tutee_feedback']
 
-class CancelForm(forms.ModelForm):
-    class Meta:
-        model = Post
-        fields = ['cancel_reason']
-        
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
@@ -43,4 +38,3 @@ class AcceptReportForm(forms.ModelForm):
     class Meta:
         model = Report
         fields = ('tutee_feedback',)
-
