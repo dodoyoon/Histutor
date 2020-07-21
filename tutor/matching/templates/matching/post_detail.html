@@ -7,6 +7,7 @@
 
 {% block content %}
 
+
 {% if user.pk == post.user.pk %}
   {% if not post.tutor %}
   <a href="{% url 'matching:close_post' post.pk %}" class="btn btn-info btn-lg">모집종료</a>
@@ -15,12 +16,21 @@
   {% endif %}
 {% endif %}
 
+  {% if post.tutor is null %}
+    <form action="{% url 'matching:set_tutor' postpk=post.pk userpk=user.pk  %}"  method="POST">
+      {% csrf_token %}
+      <button class="set_tutor" type="submit">튜터링 시작</button>
+    </form>
+  {% endif %}
+  <hr style="border-top:2px solid #bbb;">
+
 
 
 <div class="chat">
   <div class="title">
     {{ post.title }}
   </div>
+
   <div class="mesgs">
     <div class="msg_history">
 
