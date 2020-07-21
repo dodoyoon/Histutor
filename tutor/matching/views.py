@@ -129,7 +129,7 @@ class ReportDetail(DetailView):
 
         if form.is_valid():
             return self.form_valid(form, self.object)
-    
+
     def form_valid(self, form, report):
         report.tutee_feedback = form.cleaned_data['tutee_feedback']
         report.save()
@@ -332,7 +332,6 @@ def admin_home(request):
     if not user.is_staff:
         return redirect(reverse('matching:tutee_home'))
 
-
     recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
     recruited = matching_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
     #posts = tutor_models.Post.objects.order_by('-pub_date')
@@ -348,8 +347,28 @@ def admin_home(request):
     except EmptyPage:
         posts = post_paginator.page(post_paginator.num_pages)
 
+    neighbors = 10
+    if post_paginator.num_pages > 2*neighbors:
+        start_index = max(1, int(current_post_page)-neighbors)
+        end_index = min(int(current_post_page)+neighbors, post_paginator.num_pages)
+        if end_index < start_index + 2*neighbors:
+            end_index = start_index + 2*neighbors
+        elif start_index > end_index - 2*neighbors:
+            start_index = end_index - 2*neighbors
+        if start_index < 1:
+            end_index -= start_index
+            start_index = 1
+        elif end_index > post_paginator.num_pages:
+            start_index -= end_index - post_paginator.num_pages
+            end_index = post_paginator.num_pages
+        paginatorRange = [f for f in range(start_index, end_index+1)]
+        paginatorRange[:(2*neighbors + 1)]
+    else:
+        paginatorRange = range(1, post_paginator.num_pages+1)
+
     ctx = {
         'posts': posts,
+        'paginatorRange': paginatorRange,
     }
 
     return render(request, 'matching/admin_home.html', ctx)
