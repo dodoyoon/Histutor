@@ -36,3 +36,39 @@
     background-color: #bbb;
 }
 
+.set_tutor {
+	background-color:white;
+	-webkit-border-top-left-radius:28px;
+	-moz-border-radius-topleft:28px;
+	border-top-left-radius:28px;
+	-webkit-border-top-right-radius:28px;
+	-moz-border-radius-topright:28px;
+	border-top-right-radius:28px;
+	-webkit-border-bottom-right-radius:28px;
+	-moz-border-radius-bottomright:28px;
+	border-bottom-right-radius:28px;
+	-webkit-border-bottom-left-radius:28px;
+	-moz-border-radius-bottomleft:28px;
+	border-bottom-left-radius:28px;
+text-indent:0;
+	border:1px solid #5246a0;
+	display:inline-block;
+	color:#52527a;
+	font-family:arial;
+	font-size:15px;
+	font-weight:bold;
+	font-style:normal;
+height:50px;
+	line-height:50px;
+width:140px;
+	text-decoration:none;
+	text-align:center;
+    
+    margin-top:10px;
+    margin-left:1200px;
+}.set_tutor:hover {
+    background-color:#e9e6f5;
+}.set_tutor:active {
+	position:relative;
+	top:1px;
+}

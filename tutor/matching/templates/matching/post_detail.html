@@ -6,7 +6,13 @@
 {% endblock %}
 
 {% block content %}
-
+  {% if post.tutor is null %}
+    <form action="{% url 'matching:set_tutor' postpk=post.pk userpk=user.pk  %}"  method="POST">
+      {% csrf_token %}
+      <button class="set_tutor" type="submit">튜터링 시작</button>
+    </form>
+  {% endif %}
+  <hr style="border-top:2px solid #bbb;">
   <div class="mesgs">
     <div class="msg_history">
 
