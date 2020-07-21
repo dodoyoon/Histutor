@@ -208,6 +208,9 @@ def set_tutor(request, postpk, userpk):
     except tutor.DoesNotExist:
         return HttpResponse("사용자가 없습니다.")
 
+    if tutor.pk == post.user.pk:
+        #포스트 작성자가 직접 튜터가 될 수 없음.
+        return redirect('matching:post_detail', pk=post.pk)
     post.tutor = tutor
     post.finding_match = False
     post.save()
