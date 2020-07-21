@@ -35,14 +35,12 @@
 				  <li class="nav-item">
 					{% if user.is_authenticated %}
 						{% if user.is_staff %}
-						<button class="status">admin</button>
-						<a id="admin" href="{% url 'matching:admin_home' %}">Admin</a>
-						{% endif %}
-
-						{% if user.profile.is_tutor %}
+						<a id="admin" href="{% url 'matching:admin_home' %}"><button class="status">Admin</button></a>
+						{% elif user.profile.is_tutor %}
 						<button class="status">tutor</button>
-						{% endif %}
+						{% else %}
 						<button class="status">tutee</button>
+						{% endif %}
 
 						<a id="mypage" href="{% url 'matching:mypage' %}">My Page</a>
 					{% endif %}

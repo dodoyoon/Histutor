@@ -11,7 +11,7 @@
 #tutor{
     color: white;
 }
-  
+
   /* GENERAL BUTTON STYLING */
 .status,
 .status::after {
@@ -40,4 +40,3 @@
     position: absolute;
     z-index: -1;
 }
-  
