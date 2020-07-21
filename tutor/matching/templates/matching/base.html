@@ -25,7 +25,7 @@
 	{% load socialaccount %}
 	<body>
 		<nav id="navigationBar" class="navbar navbar-expand-lg navbar-dark">
-			<a class="navbar-brand" href="{% url 'matching:index'%}">HisTutor</a>
+			<a class="navbar-brand" href="{% url 'matching:mainpage'%}">HisTutor</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 			  <span class="navbar-toggler-icon"></span>
 			</button>
@@ -38,12 +38,14 @@
 						<button class="status">admin</button>
 						<a id="admin" href="{% url 'matching:admin_home' %}">Admin</a>
 						{% endif %}
+
 						{% if user.profile.is_tutor %}
 						<button class="status">tutor</button>
 						<a id="tutor" href="{% url 'matching:tutor_home' %}">Tutor</a>
 						<a id="tutee" href="{% url 'matching:tutee_home' %}">Tutee</a>
 						{% endif %}
 						<button class="status">tutee</button>
+
 						<a id="mypage" href="{% url 'matching:mypage' %}">My Page</a>
 					{% endif %}
 				  </li>

@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block content %}
+
   {% if post.tutor is null %}
     <form action="{% url 'matching:set_tutor' postpk=post.pk userpk=user.pk  %}"  method="POST">
       {% csrf_token %}
@@ -13,6 +14,13 @@
     </form>
   {% endif %}
   <hr style="border-top:2px solid #bbb;">
+
+
+<div class="chat">
+  <div class="title">
+    {{ post.title }}
+  </div>
+
   <div class="mesgs">
     <div class="msg_history">
 
@@ -22,14 +30,15 @@
         <div class="incoming_msg">
           <!--<div class="incoming_msg_img"> <img src="" alt=""> </div>-->
           <div class="received_msg">
+            <p class="received_name">{{comment.user.profile.nickname}}</p>
             <div class="received_with_msg">
               <p>{{ comment.content }}</p>
               <span class="received_time_date"> {{ comment.pub_date|date:"P"}}   | {{ comment.pub_date|date:"m.d"}} </span>
             </div>
           </div>
         </div>
-        {% endif %} 
-      {% endif %} 
+        {% endif %}
+      {% endif %}
       {% if comment.post.user %}
         {% if comment.post.user.pk == comment.user.pk %}
         <div class="outgoing_msg">
@@ -49,5 +58,6 @@
       </div>
     </div>
   </div>
+</div>
 
 {% endblock %}
