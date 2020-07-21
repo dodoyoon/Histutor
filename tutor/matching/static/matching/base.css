@@ -11,3 +11,33 @@
 #tutor{
     color: white;
 }
+  
+  /* GENERAL BUTTON STYLING */
+.status,
+.status::after {
+    -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+    -o-transition: all 0.3s;
+        transition: all 0.3s;
+}
+
+.status {
+    background: none;
+    border: 3px solid #fff;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 1em;
+    font-weight: bold;
+    padding: 10 10;
+    position: relative;
+    text-transform: uppercase;
+}
+
+.status::before,
+.status::after {
+    background: #fff;
+    content: '';
+    position: absolute;
+    z-index: -1;
+}
+  
