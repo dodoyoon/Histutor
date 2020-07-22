@@ -521,7 +521,7 @@ def mainpage(request):
 
     current_post_page = request.GET.get('page', 1)
 
-    post_paginator = Paginator(posts, 10)
+    post_paginator = Paginator(posts, 9)
     try:
         posts = post_paginator.page(current_post_page)
     except PageNotAnInteger:

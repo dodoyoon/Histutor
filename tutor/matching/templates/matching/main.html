@@ -15,57 +15,42 @@
 {% endblock %}
 
 {% block content %}
-{% if ongoing_tutoring %}
-<div>
-  <div id="mainpage_ongoing_table_div" class="tableDiv">
-  <table id="mainpage_table" class="table">
-    <thead>
-      <tr>
-        <th colspan="3" scope="col" class="text-center">진행중인 튜터링</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>튜티 : {{ ongoing_tutoring.user.profile.nickname }}</td>
-        <td>제목 : {{ ongoing_tutoring.title }}</td>
-        <td>
-          <form action="{% url 'matching:fin_tutoring' ongoing_tutoring.pk %}"  method="POST">
-            {% csrf_token %}
-            <button id="mybutton" type="submit">튜터링 종료</button>
-          </form>
-        </td>
-      </tr>
-    </tbody>
-  </div>
-  </table>
-</div>
-{% endif %}
 
-{% if ongoing_post %}
 <div>
   <div id="mainpage_ongoing_table_div" class="tableDiv">
-  <table id="mainpage_table" class="table">
-    <thead>
-      <tr>
-        <th colspan="3" scope="col" class="text-center">모집중인 튜터링</th>
-      </tr>
-    </thead>
+  <table id="mainpage_ongoing_table" class="table table-bordered w-auto">
     <tbody>
+      {% if ongoing_post %}
       <tr>
-        <td>튜터 : {{ ongoing_post.user.profile.nickname }}</td>
-        <td>제목 : {{ ongoing_post.title }}</td>
-        <td>
-          <form action="{% url 'matching:close_post' ongoing_post.pk %}"  method="POST">
+        <th class="align-middle text-center text-nowrap">모집중인 튜터링</th>
+        <td class="align-middle text-center text-nowrap">튜터 : {{ ongoing_post.user.profile.nickname }}</td>
+        <td class="align-middle">제목 : {{ ongoing_post.title }}</td>
+        <td class="align-middle text-center">
+          <form class="align-middle" action="{% url 'matching:close_post' ongoing_post.pk %}"  method="POST">
             {% csrf_token %}
             <button id="mybutton" type="submit">모집종료</button>
           </form>
         </td>
       </tr>
+      {% endif %}
+      {% if ongoing_tutoring %}
+      <tr>
+        <th class="align-middle text-center text-nowrap">진행중인 튜터링</th>
+        <td class="align-middle text-center text-nowrap">튜티 : {{ ongoing_tutoring.user.profile.nickname }}</td>
+        <td class="align-middle">제목 : {{ ongoing_tutoring.title }}</td>
+        <td class="align-middle text-center">
+          <form class="align-middle" action="{% url 'matching:fin_tutoring' ongoing_tutoring.pk %}"  method="POST">
+            {% csrf_token %}
+            <button id="mybutton" type="submit">튜터링 종료</button>
+          </form>
+        </td>
+      </tr>
+      {% endif %}
     </tbody>
   </div>
   </table>
 </div>
-{% endif %}
+
 
 {% if post_exist == False %}
 <button id="createRoomBtn" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">방만들기</button>
@@ -104,27 +89,27 @@
     <table id="mainpage_table" class="table">
         <thead>
         <tr>
-            <th scope="col" class="text-center">번호</th>
+            <th scope="col" style="min-width:80px" class="text-center">번호</th>
             <!--<th scope="col" class="text-center">주제</th>-->
             <th scope="col" class="text-center">방 이름</th>
-            <th scope="col" class="text-center">닉네임</th>
-            <th scope="col" class="text-center">시간</th>
+            <th scope="col" style="min-width:100px" class="text-center">닉네임</th>
+            <th scope="col" style="min-width:150px" class="text-center">시간</th>
         </tr>
         </thead>
         <tbody>
         {% for post in posts %}
             <tr>
-                <td class="text-center"> {{post.pk}} </td>
+                <td class="text-center text-nowrap align-middle"> {{post.pk}} </td>
                 <!--<td scope="row" class="text-center">{{post.get_topic_display}}</td>-->
                 {% if post.finding_match ==  True %}
-                <td> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
+                <td class="align-middle"> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
                 {% elif post.start_time != Null and post.fin_time == Null %}
-                <td> <span id="ongoing" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
+                <td class="align-middle"> <span id="ongoing" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
                 {% else %}
-                <td> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
+                <td class="align-middle"> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
                 {% endif %}
-                <td class="text-center">{{post.user.profile.nickname}}</td>
-                <td class="text-center">{{post.pub_date|date:'Y-m-d'}}</td>
+                <td class="text-center text-nowrap align-middle">{{post.user.profile.nickname}}</td>
+                <td class="text-center text-nowrap align-middle">{{post.pub_date|date:'Y-m-d'}}</td>
             </tr>
         {% endfor %}
         </tbody>
