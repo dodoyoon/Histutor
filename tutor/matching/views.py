@@ -403,15 +403,6 @@ def mypage_report(request):
     return render(request, 'matching/mypage_report.html', ctx)
 
 @login_required(login_url=URL_LOGIN)
-def mypage_incomplete(request):
-    ctx = {}
-
-    empty_report = matching_models.Post.objects.filter(tutor=request.user).filter(report__isnull=True)
-    ctx['emptyreports'] = empty_report
-
-    return render(request, 'matching/mypage_incomplete.html', ctx)
-
-@login_required(login_url=URL_LOGIN)
 def mainpage(request):
     post = matching_models.Post.objects.filter(user = request.user, finding_match = True)
     post_exist = False
@@ -505,14 +496,3 @@ def mainpage(request):
 
     print(post_exist)
     return render(request, 'matching/main.html', ctx)
-
-
-'''
-def index(request):
-    return render(request, 'matching/index.html', {})
-
-def room(request, room_name):
-    return render(request, 'matching/room.html', {
-        'room_name': room_name
-    })
-'''
