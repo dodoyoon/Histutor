@@ -24,11 +24,11 @@
 }
 
 .tableDiv th {
-  padding: 10px;
+  padding: 8px;
 }
 
 .tableDiv td {
-  padding: 10px;
+  padding: 8px;
 }
 
 .dot {
@@ -55,7 +55,7 @@
 #createRoomBtn {
   position: relative;
   float: right;
-  top: 55px;
+  top: 35px;
   right: calc((100vw - (100vw - 250px))/2);
   width: 80px;
   height: 40px;
@@ -70,7 +70,7 @@
 
 #mainpage_table_div{
   position: relative;
-  top: 100px;
+  top: 80px;
 }
 
 #post-top{
@@ -98,15 +98,14 @@ text-indent:0;
 	display:inline-block;
 	color:#52527a;
 	font-family:arial;
-	font-size:15px;
+	font-size:13px;
 	font-weight:bold;
 	font-style:normal;
-height:50px;
-	line-height:50px;
-width:140px;
+height:30px;
+	line-height:30px;
+width:90px;
 	text-decoration:none;
 	text-align:center;
-    margin : 5px;
 }#mybutton:hover {
     background-color:#e9e6f5;
 }#mybutton:active {
@@ -117,4 +116,12 @@ width:140px;
 #mainpage_ongoing_table_div {
   position: relative;
   top: 40px;
+}
+
+#mainpage_ongoing_table{
+  font-size: 13px;
+}
+
+.table {
+  padding: 10px;
 }
