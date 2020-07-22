@@ -457,9 +457,11 @@ def mainpage(request):
         form = PostForm()
 
     recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
+    onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True).order_by('-pub_date')
     recruited = matching_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
+    recruited = recruited.exclude(start_time__isnull = False, fin_time__isnull = True)
     #posts = tutor_models.Post.objects.order_by('-pub_date')
-    posts = list(chain(recruiting, recruited))
+    posts = list(chain(recruiting, onprocess, recruited))
 
     current_post_page = request.GET.get('page', 1)
 
