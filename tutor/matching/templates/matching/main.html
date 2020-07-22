@@ -108,6 +108,8 @@
                 <!--<td scope="row" class="text-center">{{post.get_topic_display}}</td>-->
                 {% if post.finding_match ==  True %}
                 <td> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
+                {% elif post.start_time != Null and post.fin_time == Null %}
+                <td> <span id="ongoing" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
                 {% else %}
                 <td> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
                 {% endif %}
