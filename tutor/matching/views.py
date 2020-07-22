@@ -129,6 +129,62 @@ def user_check(request):
 #         report.save()
 
 
+#TODO : method decorator should be added
+class ReportUpdate(UpdateView):
+    model = Report
+    context_object_name = 'report'
+    form_class = ReportForm
+    template_name = 'matching/report_edit.html'
+
+@login_required(login_url=URL_LOGIN)
+def tutee_report(request, pk):
+    post = matching_models.Post.objects.get(pk=pk)
+
+    if request.user.pk != post.tutor.pk :
+        return redirect('matching:mainpage')
+
+    if request.method == "POST":
+        form = ReportForm(request.POST)
+        if form.is_valid():
+            print("report form valid")
+            report = form.save(commit=False)
+            report.tutor = matching_models.User.objects.get(pk = request.user.pk)
+            report.tutee = matching_models.User.objects.get(pk = post.user.pk)
+            report.post = matching_models.Post.objects.get(pk = post.pk)
+            report.save()
+            return redirect('matching:report_detail', pk=report.pk)
+        else:
+            print("report form *invalid*")
+
+    else:
+        form = ReportForm()
+
+    ctx = {
+        'post': post,
+        'form': form,
+    }
+
+    return render(request, 'matching/tutee_report.html', ctx)
+
+class ReportDetail(DetailView):
+    model = Report
+
+    def get_context_data(self, **kwargs):
+        context = super(ReportDetail, self).get_context_data(**kwargs)
+        context['form'] = AccuseForm
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = AccuseForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            return self.form_valid(form, self.object)
+
+    def form_valid(self, form, report):
+        report.tutee_feedback = form.cleaned_data['tutee_feedback']
+        report.save()
+
 
 @login_required(login_url=URL_LOGIN)
 def post_new(request):
