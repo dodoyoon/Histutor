@@ -77,7 +77,7 @@ class ReportUpdate(UpdateView):
     template_name = 'matching/report_edit.html'
 
 @login_required(login_url=URL_LOGIN)
-def tutor_report(request, pk):
+def tutee_report(request, pk):
     post = matching_models.Post.objects.get(pk=pk)
 
     if request.user.pk != post.tutor.pk :
@@ -104,7 +104,7 @@ def tutor_report(request, pk):
         'form': form,
     }
 
-    return render(request, 'matching/tutor_report.html', ctx)
+    return render(request, 'matching/tutee_report.html', ctx)
 
 class ReportDetail(DetailView):
     model = Report
