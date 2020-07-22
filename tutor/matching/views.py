@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.db.models import F
 from django.views import generic
 from django.contrib.auth.models import User
-from .forms import PostForm, ProfileForm, CommentForm, AcceptReportForm, CancelForm, AccuseForm
+from .forms import PostForm, ProfileForm, CommentForm, AcceptReportForm, AccuseForm
 from django.contrib.auth.decorators import login_required
 from matching import models as matching_models
 from django.db import transaction
@@ -415,12 +415,12 @@ def mypage_incomplete(request):
 def mainpage(request):
     post = matching_models.Post.objects.filter(user = request.user, finding_match = True)
     post_exist = False
-    
+
     if post:
         post_exist = True
 
     user = matching_models.User.objects.get(pk=request.user.pk)
-    
+
     ongoing_tutoring = matching_models.Post.objects.filter(tutor=user).filter(fin_time__isnull=True)
     if ongoing_tutoring.exists():
         ongoing_tutoring = ongoing_tutoring[:1].get()

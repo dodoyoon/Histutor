@@ -109,3 +109,8 @@ width:140px;
 	position:relative;
 	top:1px;
 }
+
+#mainpage_ongoing_table_div {
+  position: relative;
+  top: 40px;
+}
