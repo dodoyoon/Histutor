@@ -8,7 +8,7 @@
 {% block content %}
 
 <div id="post-top">
-{% if user.pk == post.user.pk and post.finding_match == true %}
+{% if user.pk == post.user.pk and post.finding_match == True %}
   <a href="{% url 'matching:close_post' post.pk %}"><button id="mybutton" type="submit">모집 종료</button></a>
 {% endif %}
 

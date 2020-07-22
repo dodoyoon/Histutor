@@ -9,18 +9,15 @@
                     <thead>
                         <tr>
                             <th scope="col" class="text-center">번호</th>
-                            <th scope="col" class="text-center">주제</th>
                             <th scope="col" class="text-center">제목</th>
                             <th scope="col" class="text-center">닉네임</th>
                             <th scope="col" class="text-center">시간</th>
-                            <th scope="col" class="text-center">보고서</th>
                         </tr>
                     </thead>
                     <tbody>
                     {% for report in reports %}
                         <tr>
                             <td class="text-center"> {{report.pk}} </td>
-                            <td scope="row" class="text-center">{{report.post.get_topic_display}}</td>
                             {% if report.post.finding_match ==  True %}
                             <td> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' report.post.pk %}">{{report.post.title}}</a></td>
                             {% else %}
@@ -28,11 +25,6 @@
                             {% endif %}
                             <td class="text-center">{{report.post.user.profile.nickname}}</td>
                             <td class="text-center">{{report.post.pub_date|date:'Y-m-d'}}</td>
-                            <td class="text-center">
-                              <a href="{% url 'matching:report_detail' report.pk %}">
-                              <p>보고서</p>
-                              </a>
-                            </td>
                         </tr>
                     {% endfor %}
                     </tbody>

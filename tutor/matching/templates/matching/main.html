@@ -5,6 +5,32 @@
 {% endblock %}
 
 {% block content %}
+{% if ongoing_tutoring %}
+<div class="on_going_tutoring">
+  <div id="mainpage_ongoing_table_div" class="tableDiv">
+  <table id="mainpage_table" class="table">
+    <thead>
+      <tr>
+        <th colspan="3" scope="col" class="text-center">진행중인 튜터링</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>튜티 : {{ ongoing_tutoring.user.profile.nickname }}</td>
+        <td>제목 : {{ ongoing_tutoring.title }}</td>
+        <td>
+          <form action="{% url 'matching:fin_tutoring' ongoing_tutoring.pk %}"  method="POST">
+            {% csrf_token %}
+            <button id="mybutton" type="submit">튜터링 종료</button>
+          </form>
+        </td>
+      </tr>
+    </tbody>
+  </div>
+  </table>
+</div>
+{% endif %}
+
 {% if post_exist == False %}
 <button id="createRoomBtn" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">방만들기</button>
 {% else %}
@@ -36,31 +62,6 @@
 
   </div>
 </div>
-{% if ongoing_tutoring %}
-<div class="on_going_tutoring">
-  <div id="mainpage_table_div" class="tableDiv">
-  <table id="mainpage_table" class="table">
-    <thead>
-      <tr>
-        <th colspan="3" scope="col" class="text-center">진행중인 튜터링</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>튜티 : {{ ongoing_tutoring.user.profile.nickname }}</td>
-        <td>제목 : {{ ongoing_tutoring.title }}</td>
-        <td>
-          <form action="{% url 'matching:fin_tutoring' ongoing_tutoring.pk %}"  method="POST">
-            {% csrf_token %}
-            <button id="mybutton" type="submit">튜터링 종료</button>
-          </form>
-        </td>
-      </tr>
-    </tbody>
-  </div>
-  </table>
-</div>
-{% endif %}
 
 
 <div id="mainpage_table_div" class="tableDiv">
