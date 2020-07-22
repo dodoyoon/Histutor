@@ -171,9 +171,6 @@ def post_new(request):
 def post_detail(request, pk):
     ctx={}
 
-    user = matching_models.User.objects.get(pk=request.user.pk)
-    ctx['user'] = user
-
     try:
         post = get_object_or_404(matching_models.Post, pk=pk)
     except post.DoesNotExist:
