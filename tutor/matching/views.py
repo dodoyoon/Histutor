@@ -425,6 +425,10 @@ def mainpage(request):
     if ongoing_tutoring.exists():
         ongoing_tutoring = ongoing_tutoring[:1].get()
 
+    ongoing_post = matching_models.Post.objects.filter(user=user).filter(finding_match=True)
+    if ongoing_post.exists():
+        ongoing_post = ongoing_post[:1].get()
+
     if request.method == "POST":
         form = PostForm(request.POST)
         if form.is_valid():
@@ -488,6 +492,7 @@ def mainpage(request):
 
     ctx = {
         'ongoing_tutoring' : ongoing_tutoring,
+        'ongoing_post': ongoing_post,
         'user': user,
         'posts': posts,
         'postPaginator': post_paginator,
