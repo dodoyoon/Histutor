@@ -2,68 +2,79 @@
 
 {% block table %}
 
-{% if posts %}
-            <div id="tableDiv">
-            <h3>내가 작성한 Post</h3>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col" class="text-center">번호</th>
-                            <th scope="col" class="text-center">제목</th>
-                            <th scope="col" class="text-center">닉네임</th>
-                            <th scope="col" class="text-center">시간</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for post in posts %}
-                        <tr>
-                            <td class="text-center"> {{post.pk}} </td>
-                            {% if post.finding_match ==  True %}
-                            <td> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
-                            {% else %}
-                            <td> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
-                            {% endif %}
-                            <td class="text-center">{{post.user.profile.nickname}}</td>
-                            <td class="text-center">{{post.pub_date|date:'Y-m-d'}}</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
 
-                {% if posts.has_other_pages %}
-                  <ul class="pagination">
-                    {% if posts.number == 1 %}
-                      <li class="disabled"><span>⇤</span></li>
-                    {% else %}
-                      <li><a class="page-link" href="?page=1">⇤</a></li>
-                    {% endif %}
-                    {% if posts.has_previous %}
-                      <li><a class="page-link" href="?page={{ posts.previous_page_number }}">&laquo;</a></li>
-                    {% else %}
-                      <li class="disabled"><span>&laquo;</span></li>
-                    {% endif %}
-                    {% for i in paginatorRange %}
-                      {% if posts.number == i %}
-                        <li class="active"><span>{{ i }}<span class="sr-only">(current)</span></span></li>
-                      {% else %}
-                        <li><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-                      {% endif %}
-                    {% endfor %}
-                    {% if posts.has_next %}
-                    <li><a class="page-link" href="?page={{posts.next_page_number}}">&raquo;</a></li>
-                    {% else %}
-                    <li class="disabled"><span>&raquo;</span></li>
-                    {% endif %}
-                    {% if posts.number == postPaginator.num_pages %}
-                      <li class="disabled"><span>⇥</span></li>
-                    {% else %}
-                      <li><a class="page-link" href="?page={{postPaginator.num_pages}}">⇥</a></li>
-                    {% endif %}
-                  </ul>
-                {% endif %}
-            </div>
-            {% else %}
-            <p>등록된 post가 없음</p>
-            {% endif %}
+<div id="post_table_div" class="tableDiv">
+<h3>Post List</h3>
+    <table id="post_table" class="table">
+        <thead>
+        <tr>
+          <th scope="col" style="width:100px" class="text-center">번호</th>
+          <!--<th scope="col" class="text-center">주제</th>-->
+          <th scope="col" class="text-center">방 이름</th>
+          <th scope="col" style="width:150px" class="text-center">닉네임</th>
+          <th scope="col" style="width:150px" class="text-center">시간</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if posts %}
+        {% for post in posts %}
+          <tr>
+              <td class="text-center text-nowrap align-middle"> {{post.pk}} </td>
+              <!--<td scope="row" class="text-center">{{post.get_topic_display}}</td>-->
+              {% if post.finding_match ==  True %}
+              <td class="align-middle"> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
+              {% elif post.start_time != Null and post.fin_time == Null %}
+              <td class="align-middle"> <span id="ongoing" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
+              {% else %}
+              <td class="align-middle"> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
+              {% endif %}
+              <td class="text-center text-nowrap align-middle">{{post.user.profile.nickname}}</td>
+              <td class="text-center text-nowrap align-middle">{{post.pub_date|date:'Y-m-d'}}</td>
+          </tr>
+        {% endfor %}
+        {% else %}
+          <tr>
+              <td class="col-4"> No post </td>
+          </tr>
+        {% endif %}
+        </tbody>
+    </table>
+
+    {% if posts %}
+    {% if posts.has_other_pages %}
+    <nav aria-label="...">
+      <ul class="pagination">
+        {% if posts.number == 1 %}
+          <li class="page-item"><span class="page-link">⇤<span class="sr-only">(current)</span></span></li>
+        {% else %}
+          <li class="page-item"><a class="page-link" href="?page=1">⇤</a></li>
+        {% endif %}
+        {% if posts.has_previous %}
+          <li class="page-item"><a class="page-link" href="?page={{ posts.previous_page_number }}">&laquo;</a></li>
+        {% else %}
+          <li class="page-item"><span class="page-link">&laquo;<span class="sr-only">(current)</span></span></li>
+        {% endif %}
+        {% for i in paginatorRange %}
+          {% if posts.number == i %}
+            <li class="page-item active"><span class="page-link">{{ i }}<span class="sr-only">(current)</span></span></li>
+          {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+          {% endif %}
+        {% endfor %}
+        {% if posts.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{posts.next_page_number}}">&raquo;</a></li>
+        {% else %}
+        <li class="page-item"><span class="page-link">&raquo;<span class="sr-only">(current)</span></span></li>
+        {% endif %}
+        {% if posts.number == postPaginator.num_pages %}
+          <li class="page-item"><span class="page-link">⇥<span class="sr-only">(current)</span></span></li>
+        {% else %}
+          <li class="page-item"><a class="page-link" href="?page={{postPaginator.num_pages}}">⇥</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
+    {% endif %}
+</div>
 
 {% endblock %}
