@@ -15,6 +15,58 @@
 {% endblock %}
 
 {% block content %}
+{% if ongoing_tutoring %}
+<div>
+  <div id="mainpage_ongoing_table_div" class="tableDiv">
+  <table id="mainpage_table" class="table">
+    <thead>
+      <tr>
+        <th colspan="3" scope="col" class="text-center">진행중인 튜터링</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>튜티 : {{ ongoing_tutoring.user.profile.nickname }}</td>
+        <td>제목 : {{ ongoing_tutoring.title }}</td>
+        <td>
+          <form action="{% url 'matching:fin_tutoring' ongoing_tutoring.pk %}"  method="POST">
+            {% csrf_token %}
+            <button id="mybutton" type="submit">튜터링 종료</button>
+          </form>
+        </td>
+      </tr>
+    </tbody>
+  </div>
+  </table>
+</div>
+{% endif %}
+
+{% if ongoing_post %}
+<div>
+  <div id="mainpage_ongoing_table_div" class="tableDiv">
+  <table id="mainpage_table" class="table">
+    <thead>
+      <tr>
+        <th colspan="3" scope="col" class="text-center">모집중인 튜터링</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>튜터 : {{ ongoing_post.user.profile.nickname }}</td>
+        <td>제목 : {{ ongoing_post.title }}</td>
+        <td>
+          <form action="{% url 'matching:close_post' ongoing_post.pk %}"  method="POST">
+            {% csrf_token %}
+            <button id="mybutton" type="submit">모집종료</button>
+          </form>
+        </td>
+      </tr>
+    </tbody>
+  </div>
+  </table>
+</div>
+{% endif %}
+
 {% if post_exist == False %}
 <button id="createRoomBtn" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">방만들기</button>
 {% else %}
@@ -47,6 +99,7 @@
   </div>
 </div>
 
+
 <div id="mainpage_table_div" class="tableDiv">
     <table id="mainpage_table" class="table">
         <thead>
@@ -65,6 +118,8 @@
                 <!--<td scope="row" class="text-center">{{post.get_topic_display}}</td>-->
                 {% if post.finding_match ==  True %}
                 <td> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
+                {% elif post.start_time != Null and post.fin_time == Null %}
+                <td> <span id="ongoing" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
                 {% else %}
                 <td> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
                 {% endif %}
@@ -76,35 +131,37 @@
     </table>
 
     {% if posts.has_other_pages %}
+    <nav aria-label="...">
       <ul class="pagination">
         {% if posts.number == 1 %}
-          <li class="disabled"><span>⇤</span></li>
+          <li class="page-item"><span class="page-link">⇤<span class="sr-only">(current)</span></span></li>
         {% else %}
-          <li><a class="page-link" href="?page=1">⇤</a></li>
+          <li class="page-item"><a class="page-link" href="?page=1">⇤</a></li>
         {% endif %}
         {% if posts.has_previous %}
-          <li><a class="page-link" href="?page={{ posts.previous_page_number }}">&laquo;</a></li>
+          <li class="page-item"><a class="page-link" href="?page={{ posts.previous_page_number }}">&laquo;</a></li>
         {% else %}
-          <li class="disabled"><span>&laquo;</span></li>
+          <li class="page-item"><span class="page-link">&laquo;<span class="sr-only">(current)</span></span></li>
         {% endif %}
         {% for i in paginatorRange %}
           {% if posts.number == i %}
-            <li class="active"><span>{{ i }}<span class="sr-only">(current)</span></span></li>
+            <li class="page-item active"><span class="page-link">{{ i }}<span class="sr-only">(current)</span></span></li>
           {% else %}
-            <li><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
           {% endif %}
         {% endfor %}
         {% if posts.has_next %}
-        <li><a class="page-link" href="?page={{posts.next_page_number}}">&raquo;</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{posts.next_page_number}}">&raquo;</a></li>
         {% else %}
-        <li class="disabled"><span>&raquo;</span></li>
+        <li class="page-item"><span class="page-link">&raquo;<span class="sr-only">(current)</span></span></li>
         {% endif %}
         {% if posts.number == postPaginator.num_pages %}
-          <li class="disabled"><span>⇥</span></li>
+          <li class="page-item"><span class="page-link">⇥<span class="sr-only">(current)</span></span></li>
         {% else %}
-          <li><a class="page-link" href="?page={{postPaginator.num_pages}}">⇥</a></li>
+          <li class="page-item"><a class="page-link" href="?page={{postPaginator.num_pages}}">⇥</a></li>
         {% endif %}
       </ul>
+    </nav>
     {% endif %}
 </div>
 

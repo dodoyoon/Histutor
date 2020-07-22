@@ -21,6 +21,7 @@ urlpatterns = [
   #path('tutor_home/', views.tutor_home, name='tutor_home'),
   #path('tutee_home/', views.tutee_home, name='tutee_home'),
   path('post/detail/close_post/<int:pk>', views.close_post, name='close_post'),
+  path('post/detail/fin_tutoring/<int:pk>', views.fin_tutoring, name='fin_tutoring'),
   path('post/settutor/<int:postpk>/<int:userpk>/', views.set_tutor, name='set_tutor'),
   path('login/', views.login, name='login'),
   path('admin_home/', views.admin_home, name='admin_home'),

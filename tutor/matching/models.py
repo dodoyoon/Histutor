@@ -5,6 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
 
+
 class Profile(models.Model):
    user = models.OneToOneField(User, on_delete=models.CASCADE)
    nickname = models.CharField(null=True,max_length=200, unique=True)
@@ -40,6 +41,10 @@ class Post(models.Model):
    title = models.CharField(max_length=200)
    finding_match = models.NullBooleanField(default=True)
    pub_date = models.DateTimeField(auto_now_add=True)
+   cancel_reason = models.TextField(null=True)
+   start_time = models.DateTimeField(null=True)
+   fin_time = models.DateTimeField(null=True)
+
 
    def __str__(self):
       return self.get_topic_display() + ' ' + self.title
@@ -57,8 +62,6 @@ class Report(models.Model):
    tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutor")
    tutee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutee")
    post = models.OneToOneField(Post, on_delete=models.CASCADE, related_name="report")
-   meeting_date = models.DateTimeField()
-   meeting_duration_time = models.PositiveIntegerField(default=0)
    pub_date = models.DateField(auto_now_add=True)
    tutee_feedback = models.TextField(null=True)
    is_confirmed = models.NullBooleanField(default=False)

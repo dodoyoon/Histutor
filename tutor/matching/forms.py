@@ -21,13 +21,6 @@ class DateInput(forms.DateInput):
     input_type = 'date'
 
 
-class ReportForm(forms.ModelForm):
-    class Meta:
-        model = Report
-        fields = ( 'meeting_date', 'meeting_duration_time')
-        widgets= {
-            'meeting_date' : DateInput(),
-        }
 
 class CommentForm(forms.ModelForm):
     class Meta:

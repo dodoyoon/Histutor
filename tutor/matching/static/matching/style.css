@@ -44,6 +44,10 @@
     background-color: green;
 }
 
+#ongoing{
+    background-color: #fcba03;
+}
+
 #found{
     background-color: #bbb;
 }
@@ -61,7 +65,7 @@
 
 #post_table_div{
   position: relative;
-  top: 50px;
+  top: 15px;
 }
 
 #mainpage_table_div{
@@ -69,7 +73,13 @@
   top: 100px;
 }
 
-.set_tutor {
+#post-top{
+    margin-left:1200px;
+    margin-top:10px;
+    margin-bottom:10px;
+}
+
+#mybutton  {
 	background-color:white;
 	-webkit-border-top-left-radius:28px;
 	-moz-border-radius-topleft:28px;
@@ -96,12 +106,15 @@ height:50px;
 width:140px;
 	text-decoration:none;
 	text-align:center;
-
-    margin-top:10px;
-    margin-left:1200px;
-}.set_tutor:hover {
+    margin : 5px;
+}#mybutton:hover {
     background-color:#e9e6f5;
-}.set_tutor:active {
+}#mybutton:active {
 	position:relative;
 	top:1px;
+}
+
+#mainpage_ongoing_table_div {
+  position: relative;
+  top: 40px;
 }

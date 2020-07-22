@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.db.models import F
 from django.views import generic
 from django.contrib.auth.models import User
-from .forms import PostForm, ReportForm, ProfileForm, CommentForm, AcceptReportForm, AccuseForm
+from .forms import PostForm, ProfileForm, CommentForm, AcceptReportForm, AccuseForm
 from django.contrib.auth.decorators import login_required
 from matching import models as matching_models
 from django.db import transaction
@@ -19,6 +19,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.views.generic.edit import UpdateView
 from django.views.generic.detail import DetailView
 from .models import Report
+from django.utils import timezone
 
 URL_LOGIN = "/matching"
 # DEFAULT PAGE
@@ -68,6 +69,65 @@ def user_check(request):
         print("not valid email address")
         matching_models.User.objects.filter(pk=request.user.pk).delete()
         return HttpResponseRedirect(reverse('matching:index'))
+# #TODO : method decorator should be added
+# class ReportUpdate(UpdateView):
+#     model = Report
+#     context_object_name = 'report'
+#     form_class = ReportForm
+#     template_name = 'matching/report_edit.html'
+
+# @login_required(login_url=URL_LOGIN)
+# def tutor_report(request, pk):
+#     post = matching_models.Post.objects.get(pk=pk)
+
+#     if request.user.pk != post.tutor.pk :
+#         if request.user.profile.is_tutor == True:
+#             return redirect('matching:tutor_home')
+#         else:
+#             return redirect('matching:tutee_home')
+
+    # if request.method == "POST":
+    #     form = ReportForm(request.POST)
+    #     if form.is_valid():
+    #         print("report form valid")
+    #         report = form.save(commit=False)
+    #         report.tutor = matching_models.User.objects.get(pk = request.user.pk)
+    #         report.tutee = matching_models.User.objects.get(pk = post.user.pk)
+    #         report.post = matching_models.Post.objects.get(pk = post.pk)
+    #         report.save()
+    #         return redirect('matching:report_detail', pk=report.pk)
+    #     else:
+    #         print("report form *invalid*")
+
+    # else:
+    #     form = ReportForm()
+
+    # ctx = {
+    #     'post': post,
+    #     'form': form,
+    # }
+
+    # return render(request, 'matching/tutor_report.html', ctx)
+
+# class ReportDetail(DetailView):
+#     model = Report
+
+#     def get_context_data(self, **kwargs):
+#         context = super(ReportDetail, self).get_context_data(**kwargs)
+#         context['form'] = AccuseForm
+#         return context
+
+#     def post(self, request, *args, **kwargs):
+#         self.object = self.get_object()
+#         form = AccuseForm(request.POST, request.FILES)
+
+#         if form.is_valid():
+#             return self.form_valid(form, self.object)
+
+#     def form_valid(self, form, report):
+#         report.tutee_feedback = form.cleaned_data['tutee_feedback']
+#         report.save()
+
 
 #TODO : method decorator should be added
 class ReportUpdate(UpdateView):
@@ -203,6 +263,7 @@ def set_tutor(request, postpk, userpk):
         return redirect('matching:post_detail', pk=post.pk)
     post.tutor = tutor
     post.finding_match = False
+    post.start_time = timezone.localtime()
     post.save()
 
     return redirect('matching:post_detail', pk=post.pk)
@@ -285,6 +346,13 @@ def close_post(request, pk):
     post.finding_match = False
     post.save()
     return redirect(reverse('matching:mainpage'))
+
+def fin_tutoring(request, pk):
+    post = matching_models.Post.objects.get(pk=pk)
+    post.fin_time = timezone.localtime()
+    post.save()
+    return redirect(reverse('matching:mainpage'))
+
 
 @login_required(login_url=URL_LOGIN)
 def mypage(request):
@@ -403,10 +471,19 @@ def mypage_incomplete(request):
 def mainpage(request):
     post = matching_models.Post.objects.filter(user = request.user, finding_match = True)
     post_exist = False
+
     if post:
         post_exist = True
 
     user = matching_models.User.objects.get(pk=request.user.pk)
+
+    ongoing_tutoring = matching_models.Post.objects.filter(tutor=user).filter(fin_time__isnull=True)
+    if ongoing_tutoring.exists():
+        ongoing_tutoring = ongoing_tutoring[:1].get()
+
+    ongoing_post = matching_models.Post.objects.filter(user=user).filter(finding_match=True)
+    if ongoing_post.exists():
+        ongoing_post = ongoing_post[:1].get()
 
     if request.method == "POST":
         form = PostForm(request.POST)
@@ -436,9 +513,11 @@ def mainpage(request):
         form = PostForm()
 
     recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
+    onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True).order_by('-pub_date')
     recruited = matching_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
+    recruited = recruited.exclude(start_time__isnull = False, fin_time__isnull = True)
     #posts = tutor_models.Post.objects.order_by('-pub_date')
-    posts = list(chain(recruiting, recruited))
+    posts = list(chain(recruiting, onprocess, recruited))
 
     current_post_page = request.GET.get('page', 1)
 
@@ -470,6 +549,8 @@ def mainpage(request):
         paginatorRange = range(1, post_paginator.num_pages+1)
 
     ctx = {
+        'ongoing_tutoring' : ongoing_tutoring,
+        'ongoing_post': ongoing_post,
         'user': user,
         'posts': posts,
         'postPaginator': post_paginator,
