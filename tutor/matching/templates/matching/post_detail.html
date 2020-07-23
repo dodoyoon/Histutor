@@ -85,6 +85,9 @@
   <script>
     document.getElementById("msg_send_btn").addEventListener("click", sendMessage);
 
+    var storage = document.getElementById("msg_history");
+    storage.scrollTop = storage.scrollHeight;
+
     const websocket = new WebSocket('ws://' + window.location.host + '/ws/post/' + "{{post.pk}}" + '/');
     
     websocket.onmessage = function(e) {
@@ -92,10 +95,11 @@
     var req_username = "{{request.user.username}}";
     
     // Set table structure
-    var storage = document.getElementById("msg_history");
-    console.log(storage);
+    /*var storage = document.getElementById("msg_history");
+    alert(storage.scrollHeight);
+    storage.scrollTop = storage.scrollHeight;*/
     if(data['username']==req_username){
-      console.log("outgoing");
+      //console.log("outgoing");
 
       var msg = document.createElement("div");
       msg.className = "outgoing_msg";
@@ -113,7 +117,7 @@
       storage.append(msg);
 
     }else{
-      console.log("incoming");
+      //console.log("incoming");
       var msg = document.createElement("div");
       msg.className = "incoming_msg";
       var inner_msg = document.createElement("div");
