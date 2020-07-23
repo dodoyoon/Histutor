@@ -63,7 +63,6 @@ class Report(models.Model):
    tutee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutee")
    post = models.OneToOneField(Post, on_delete=models.CASCADE, related_name="report")
    pub_date = models.DateField(auto_now_add=True)
-   tutee_feedback = models.TextField(null=True)
    is_confirmed = models.NullBooleanField(default=False)
    content = models.TextField()
 
