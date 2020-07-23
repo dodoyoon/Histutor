@@ -1,9 +1,21 @@
-{% extends "matching/mypage.html" %}
+{% extends "matching/base.html" %}
 
-{% block table %}
+{% block content %}
 
-<div id="post_table_div" class="tableDiv">
-<h3>Report List</h3>
+<div class="tableDiv mypage_table">
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'matching:mypage_post' %}">모집한 튜터링</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link active">작성한 후기</a>
+    </li>
+    {% if user.profile.is_tutor == True %}
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'matching:mypage_tutor_post' %}">진행한 튜터링</a>
+    </li>
+    {% endif %}
+  </ul>
     <table id="post_table" class="table">
         <thead>
         <tr>

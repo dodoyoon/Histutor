@@ -2,18 +2,17 @@
 
 {% block content %}
 
-
 <div class="tableDiv mypage_table">
   <ul class="nav nav-tabs">
     <li class="nav-item">
-      <a class="nav-link active">모집한 튜터링</a>
+      <a class="nav-link" href="{% url 'matching:mypage_post' %}">모집한 튜터링</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" href="{% url 'matching:mypage_report' %}">작성한 후기</a>
     </li>
     {% if user.profile.is_tutor == True %}
     <li class="nav-item">
-      <a class="nav-link" href="{% url 'matching:mypage_tutor_post' %}">진행한 튜터링</a>
+      <a class="nav-link active">진행한 튜터링</a>
     </li>
     {% endif %}
   </ul>
