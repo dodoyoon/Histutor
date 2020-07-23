@@ -49,15 +49,14 @@
     </tbody>
   </div>
   </table>
-</div>
-
-
-{% if post_exist == False %}
-<button id="createRoomBtn" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">방만들기</button>
-{% else %}
-<button id="createRoomBtn" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal" disabled>방만들기</button>
-{% endif %}
-<!-- Modal -->
+  <div class="create_room">
+    {% if post_exist == False %}
+    <button id="mybutton" type="button"  data-toggle="modal" data-target="#myModal">방 만들기</button>
+    {% else %}
+    <button id="mybutton" type="button"  data-toggle="modal" data-target="#myModal" disabled>방 만들기</button>
+    {% endif %}
+  </div>
+  <!-- Modal -->
 <div id="myModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <form action="" method="POST">
@@ -83,17 +82,20 @@
 
   </div>
 </div>
+</div>
+
+
 
 
 <div id="mainpage_table_div" class="tableDiv">
     <table id="mainpage_table" class="table">
         <thead>
         <tr>
-          <th scope="col" style="width:100px" class="text-center">번호</th>
+          <th scope="col" style="width:100px" class="text-center">No.</th>
           <!--<th scope="col" class="text-center">주제</th>-->
-          <th scope="col" class="text-center">방 이름</th>
-          <th scope="col" style="width:150px" class="text-center">닉네임</th>
-          <th scope="col" style="width:150px" class="text-center">시간</th>
+          <th scope="col" class="text-center">제목</th>
+          <th scope="col" style="width:150px" class="text-center">작성자</th>
+          <th scope="col" style="width:150px" class="text-center">작성일</th>
         </tr>
         </thead>
         <tbody>

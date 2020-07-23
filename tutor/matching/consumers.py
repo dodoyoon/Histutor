@@ -103,6 +103,7 @@ class PostDetailConsumer(WebsocketConsumer):
         comment = matching_models.Comment.objects.get(pk=id)
         username = comment.user.username
         date = comment.pub_date
+        profile = matching_models.Profile.objects.get(user=comment.user)
 
         # Send message to WebSocket
         self.send(text_data=json.dumps({
@@ -111,4 +112,5 @@ class PostDetailConsumer(WebsocketConsumer):
             'content': comment.content,
             'username': username,
             'date': str(date),
+            'nickname': profile.nickname,
         }))

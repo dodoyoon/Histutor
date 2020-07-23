@@ -68,7 +68,7 @@ img{ max-width:100%;}
   vertical-align: top;
   width: 55%;
  }
- .received_with_msg p {
+ .received_with_msg  {
   background: #ebebeb none repeat scroll 0 0;
   border-radius: 3px;
   color: #646464;
@@ -77,17 +77,24 @@ img{ max-width:100%;}
   padding: 5px 12px 5px 12px;
   text-align: left;
   display: inline-block;
-  /*width: auto;*/
+  width:auto;
 }
-.received_with_msg {/*width: 100%;*/}
+
+
 
 .received_time_date {
   color: #747474;
-  display: block;
+  display: inline-block;
   font-size: 12px;
-  margin: 4px 0 8px 0;
-  position: relative;
+  margin: 4px 0 8px 20px;
+  position: absolute;
 }
+.date{
+  color: #adacac;
+  font-size : 12px;
+  text-align: center;
+}
+
 .sent_time_date {
   color: #747474;
   display: block;
@@ -119,7 +126,7 @@ img{ max-width:100%;}
   padding: 15px 15px 5px 15px;
 }
 
- .sent_msg p {
+ .sent_msg #msg_box {
   background: #8f86c4 none repeat scroll 0 0;
   border-radius: 3px;
   font-size: 14px;
@@ -131,9 +138,9 @@ img{ max-width:100%;}
 }
 .outgoing_msg{
   overflow:hidden;
-  margin:15px 0 15px;
+  margin:0;
   float: right;
-  width: 60%;
+  width: 100%;
 }
 .sent_msg {
   float: right;

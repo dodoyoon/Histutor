@@ -73,7 +73,7 @@
 
 #mainpage_table_div{
   position: relative;
-  top: 80px;
+  top: 50px;
 }
 
 #post-top{
@@ -104,7 +104,7 @@ text-indent:0;
 	font-size:13px;
 	font-weight:bold;
 	font-style:normal;
-height:30px;
+height:40px;
 	line-height:30px;
 width:90px;
 	text-decoration:none;
@@ -129,6 +129,19 @@ width:90px;
   padding: 10px;
 }
 
+.create_room{
+    position:relative;
+    top:50%;
+    margin-left:85%;
+}
+
+a{
+    color:black;
+}
+a:hover{
+    color:#261597;
+    text-decoration:underline;
+}
 .mypage_table{
   position: relative;
   top: 60px;
