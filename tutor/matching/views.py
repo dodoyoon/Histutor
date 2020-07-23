@@ -129,6 +129,62 @@ def user_check(request):
 #         report.save()
 
 
+# #TODO : method decorator should be added
+# class ReportUpdate(UpdateView):
+#     model = Report
+#     context_object_name = 'report'
+#     form_class = ReportForm
+#     template_name = 'matching/report_edit.html'
+
+@login_required(login_url=URL_LOGIN)
+def tutee_report(request, pk):
+    post = matching_models.Post.objects.get(pk=pk)
+
+    if request.user.pk != post.tutor.pk :
+        return redirect('matching:mainpage')
+
+    if request.method == "POST":
+        form = ReportForm(request.POST)
+        if form.is_valid():
+            print("report form valid")
+            report = form.save(commit=False)
+            report.tutor = matching_models.User.objects.get(pk = request.user.pk)
+            report.tutee = matching_models.User.objects.get(pk = post.user.pk)
+            report.post = matching_models.Post.objects.get(pk = post.pk)
+            report.save()
+            return redirect('matching:report_detail', pk=report.pk)
+        else:
+            print("report form *invalid*")
+
+    else:
+        form = ReportForm()
+
+    ctx = {
+        'post': post,
+        'form': form,
+    }
+
+    return render(request, 'matching/tutee_report.html', ctx)
+
+class ReportDetail(DetailView):
+    model = Report
+
+    def get_context_data(self, **kwargs):
+        context = super(ReportDetail, self).get_context_data(**kwargs)
+        context['form'] = AccuseForm
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = AccuseForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            return self.form_valid(form, self.object)
+
+    def form_valid(self, form, report):
+        report.tutee_feedback = form.cleaned_data['tutee_feedback']
+        report.save()
+
 
 @login_required(login_url=URL_LOGIN)
 def post_new(request):
@@ -399,27 +455,22 @@ def mypage_report(request):
     return render(request, 'matching/mypage_report.html', ctx)
 
 @login_required(login_url=URL_LOGIN)
-def mypage_incomplete(request):
-    ctx = {}
-
-    empty_report = matching_models.Post.objects.filter(tutor=request.user).filter(report__isnull=True)
-    ctx['emptyreports'] = empty_report
-
-    return render(request, 'matching/mypage_incomplete.html', ctx)
-
-@login_required(login_url=URL_LOGIN)
 def mainpage(request):
     post = matching_models.Post.objects.filter(user = request.user, finding_match = True)
     post_exist = False
-    
+
     if post:
         post_exist = True
 
     user = matching_models.User.objects.get(pk=request.user.pk)
-    
+
     ongoing_tutoring = matching_models.Post.objects.filter(tutor=user).filter(fin_time__isnull=True)
     if ongoing_tutoring.exists():
         ongoing_tutoring = ongoing_tutoring[:1].get()
+
+    ongoing_post = matching_models.Post.objects.filter(user=user).filter(finding_match=True)
+    if ongoing_post.exists():
+        ongoing_post = ongoing_post[:1].get()
 
     if request.method == "POST":
         form = PostForm(request.POST)
@@ -449,13 +500,15 @@ def mainpage(request):
         form = PostForm()
 
     recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
+    onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True).order_by('-pub_date')
     recruited = matching_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
+    recruited = recruited.exclude(start_time__isnull = False, fin_time__isnull = True)
     #posts = tutor_models.Post.objects.order_by('-pub_date')
-    posts = list(chain(recruiting, recruited))
+    posts = list(chain(recruiting, onprocess, recruited))
 
     current_post_page = request.GET.get('page', 1)
 
-    post_paginator = Paginator(posts, 10)
+    post_paginator = Paginator(posts, 9)
     try:
         posts = post_paginator.page(current_post_page)
     except PageNotAnInteger:
@@ -484,6 +537,7 @@ def mainpage(request):
 
     ctx = {
         'ongoing_tutoring' : ongoing_tutoring,
+        'ongoing_post': ongoing_post,
         'user': user,
         'posts': posts,
         'postPaginator': post_paginator,
@@ -494,14 +548,3 @@ def mainpage(request):
 
     print(post_exist)
     return render(request, 'matching/main.html', ctx)
-
-
-'''
-def index(request):
-    return render(request, 'matching/index.html', {})
-
-def room(request, room_name):
-    return render(request, 'matching/room.html', {
-        'room_name': room_name
-    })
-'''
