@@ -10,7 +10,7 @@
     $(window).on('load',function(){
         if('{{report_exist}}' == 'True'){
             console.log( "REPORT EXIST" );
-            $('#reportModal').modal({"backdrop": "static"});
+            $('#reportModal').modal({backdrop: 'static', keyboard: false});
         }
         else{
             console.log( "REPORT NOT EXIST" ) ;
@@ -92,9 +92,7 @@
 
 
 
-<!-- <button id="createRoomBtn" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#reportModal">보고서쓰기</button> -->
 
-{% if report_post_pk %}
 <!-- Report Modal -->
 <div id="reportModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
@@ -121,7 +119,8 @@
 
   </div>
 </div>
-{% endif %}
+<!-- Report Modal End -->
+
 
 <div id="mainpage_table_div" class="tableDiv">
     <table id="mainpage_table" class="table">
