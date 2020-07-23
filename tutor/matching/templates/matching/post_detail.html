@@ -98,6 +98,11 @@
     /*var storage = document.getElementById("msg_history");
     alert(storage.scrollHeight);
     storage.scrollTop = storage.scrollHeight;*/
+    var at_bottom = false;
+    if(storage.scrollTop == storage.scrollHeight - storage.offsetHeight){
+      at_bottom = true;
+    }
+
     if(data['username']==req_username){
       //console.log("outgoing");
 
@@ -137,6 +142,12 @@
       msg.append(inner_msg);
       storage.append(msg);
     }
+
+    if(at_bottom){
+      storage.scrollTop = storage.scrollHeight;
+    }
+
+    
     };
     
     websocket.onclose = function(e){
