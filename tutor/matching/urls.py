@@ -19,5 +19,8 @@ urlpatterns = [
   path('post/settutor/<int:postpk>/<int:userpk>/', views.set_tutor, name='set_tutor'),
   path('login/', views.login, name='login'),
   path('admin_home/', views.admin_home, name='admin_home'),
-  path('main/', views.mainpage, name='mainpage')
+  path('send_message/', views.send_message, name='send_message'),
+  #path('', views.index, name='index'),
+  #path('<str:room_name>/', views.room, name='room'),
+  path('main/', views.mainpage, name='mainpage'),
 ]

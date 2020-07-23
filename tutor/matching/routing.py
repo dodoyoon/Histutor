@@ -4,4 +4,5 @@ from . import consumers
 
 websocket_urlpatterns = [
     re_path(r'ws/tutorhome/$', consumers.NewPostConsumer),
+    re_path(r'ws/post/(?P<postId>\d+)/$', consumers.PostDetailConsumer),
 ]
