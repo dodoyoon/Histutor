@@ -132,3 +132,11 @@ width:90px;
     top:50%;
     margin-left:85%;
 }
+
+a{
+    color:black;
+}
+a:hover{
+    color:#261597;
+    text-decoration:underline;
+}
