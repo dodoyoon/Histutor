@@ -133,3 +133,24 @@ width:90px;
   position: relative;
   top: 60px;
 }
+
+.form-signin .btn {
+  font-size: 90%;
+  border-radius: 5rem;
+  letter-spacing: .1rem;
+  font-weight: bold;
+  padding: 1rem;
+  transition: all 0.2s;
+  width: 300px;
+}
+
+.btn-google {
+  color: white;
+  background-color: #db3d30;
+}
+
+#google {
+  position: relative;
+  left: calc(50% - 150px);
+  top: 300px;
+}
