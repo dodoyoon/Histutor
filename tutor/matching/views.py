@@ -19,6 +19,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.views.generic.edit import UpdateView
 from django.views.generic.detail import DetailView
 from .models import Report
+from django.utils import timezone
 
 URL_LOGIN = "/matching"
 # DEFAULT PAGE
@@ -213,6 +214,17 @@ def set_tutor(request, postpk, userpk):
     post.save()
 
     return redirect('matching:post_detail', pk=post.pk)
+
+@login_required
+def send_message(request):
+    if request.method == "GET":
+        post = matching_models.Post.objects.get(pk=request.GET['postid'])
+        new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=timezone.now(), content=request.GET['content'])
+        new_cmt.save()
+        return HttpResponse(new_cmt.id)
+    else:
+        return HttpResponse('NOT A GET REQUEST')
+
 
 @login_required(login_url=URL_LOGIN)
 def post_edit(request, pk):
