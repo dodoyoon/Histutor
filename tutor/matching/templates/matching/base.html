@@ -53,7 +53,6 @@
 						{% else %}
 						<button class="status">tutee</button>
 						{% endif %}
-						<a id="mypage" href="{% url 'matching:mypage' %}">My Page</a>
 					{% endif %}
 				  </li>
 				<!--
@@ -73,6 +72,7 @@
 					<a href="{% provider_login_url 'google' %}">Login with Google</a>
 				{% endif %}
 			  </form>
+			  <a id="mypage" href="{% url 'matching:mypage' %}"><button class="status">My Page</button></a>
 			</div>
 		  </nav>
 
