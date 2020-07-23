@@ -129,12 +129,12 @@ def user_check(request):
 #         report.save()
 
 
-#TODO : method decorator should be added
-class ReportUpdate(UpdateView):
-    model = Report
-    context_object_name = 'report'
-    form_class = ReportForm
-    template_name = 'matching/report_edit.html'
+# #TODO : method decorator should be added
+# class ReportUpdate(UpdateView):
+#     model = Report
+#     context_object_name = 'report'
+#     form_class = ReportForm
+#     template_name = 'matching/report_edit.html'
 
 @login_required(login_url=URL_LOGIN)
 def tutee_report(request, pk):
