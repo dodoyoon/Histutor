@@ -7,11 +7,6 @@ class AccuseForm(forms.ModelForm):
         model = Report
         fields = ['tutee_feedback']
 
-class CancelForm(forms.ModelForm):
-    class Meta:
-        model = Post
-        fields = ['cancel_reason']
-        
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
@@ -26,13 +21,6 @@ class DateInput(forms.DateInput):
     input_type = 'date'
 
 
-class ReportForm(forms.ModelForm):
-    class Meta:
-        model = Report
-        fields = ( 'meeting_date', 'meeting_duration_time')
-        widgets= {
-            'meeting_date' : DateInput(),
-        }
 
 class CommentForm(forms.ModelForm):
     class Meta:
@@ -43,4 +31,3 @@ class AcceptReportForm(forms.ModelForm):
     class Meta:
         model = Report
         fields = ('tutee_feedback',)
-

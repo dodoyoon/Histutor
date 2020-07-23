@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.db.models import F
 from django.views import generic
 from django.contrib.auth.models import User
-from .forms import PostForm, ReportForm, ProfileForm, CommentForm, AcceptReportForm, CancelForm, AccuseForm
+from .forms import PostForm, ProfileForm, CommentForm, AcceptReportForm, AccuseForm
 from django.contrib.auth.decorators import login_required
 from matching import models as matching_models
 from django.db import transaction
@@ -26,11 +26,7 @@ URL_LOGIN = "/matching"
 
 def index(request):
     if request.user.is_authenticated:
-        user = matching_models.User.objects.get(pk=request.user.pk)
-        if not user.profile.is_tutor is True:
-            return redirect(reverse('matching:tutee_home'))
-        else:
-            return redirect(reverse('matching:tutor_home'))
+        return redirect('matching:mainpage')
     else:
         return redirect('login/')
 
@@ -50,7 +46,7 @@ def save_profile(request, pk):
             profile.signin = True
             profile.phone = "010" + str(request.POST['phone1']) + str(request.POST['phone2'])
             profile.save()
-            return redirect(reverse('matching:tutee_home'))
+            return redirect(reverse('matching:mainpage'))
     else:
         profile_form = ProfileForm(instance=request.user.profile)
     return render(request, 'matching/save_profile.html', {
@@ -65,16 +61,73 @@ def user_check(request):
             user = matching_models.User.objects.get(pk=request.user.pk)
             if user.profile.signin == False:
                 return HttpResponseRedirect(reverse('matching:profile', args=(request.user.pk,)))
-            elif user.profile.is_tutor is True:
-                return HttpResponseRedirect(reverse('matching:tutor_home'))
             else:
-                return HttpResponseRedirect(reverse('matching:tutee_home'))
+                return HttpResponseRedirect(reverse('matching:mainpage'))
         except(KeyError, matching_models.User.DoesNotExist):
             return HttpResponseRedirect(reverse('matching:index'))
     else:
         print("not valid email address")
         matching_models.User.objects.filter(pk=request.user.pk).delete()
         return HttpResponseRedirect(reverse('matching:index'))
+# #TODO : method decorator should be added
+# class ReportUpdate(UpdateView):
+#     model = Report
+#     context_object_name = 'report'
+#     form_class = ReportForm
+#     template_name = 'matching/report_edit.html'
+
+# @login_required(login_url=URL_LOGIN)
+# def tutor_report(request, pk):
+#     post = matching_models.Post.objects.get(pk=pk)
+
+#     if request.user.pk != post.tutor.pk :
+#         if request.user.profile.is_tutor == True:
+#             return redirect('matching:tutor_home')
+#         else:
+#             return redirect('matching:tutee_home')
+
+    # if request.method == "POST":
+    #     form = ReportForm(request.POST)
+    #     if form.is_valid():
+    #         print("report form valid")
+    #         report = form.save(commit=False)
+    #         report.tutor = matching_models.User.objects.get(pk = request.user.pk)
+    #         report.tutee = matching_models.User.objects.get(pk = post.user.pk)
+    #         report.post = matching_models.Post.objects.get(pk = post.pk)
+    #         report.save()
+    #         return redirect('matching:report_detail', pk=report.pk)
+    #     else:
+    #         print("report form *invalid*")
+
+    # else:
+    #     form = ReportForm()
+
+    # ctx = {
+    #     'post': post,
+    #     'form': form,
+    # }
+
+    # return render(request, 'matching/tutor_report.html', ctx)
+
+# class ReportDetail(DetailView):
+#     model = Report
+
+#     def get_context_data(self, **kwargs):
+#         context = super(ReportDetail, self).get_context_data(**kwargs)
+#         context['form'] = AccuseForm
+#         return context
+
+#     def post(self, request, *args, **kwargs):
+#         self.object = self.get_object()
+#         form = AccuseForm(request.POST, request.FILES)
+
+#         if form.is_valid():
+#             return self.form_valid(form, self.object)
+
+#     def form_valid(self, form, report):
+#         report.tutee_feedback = form.cleaned_data['tutee_feedback']
+#         report.save()
+
 
 #TODO : method decorator should be added
 class ReportUpdate(UpdateView):
@@ -84,14 +137,11 @@ class ReportUpdate(UpdateView):
     template_name = 'matching/report_edit.html'
 
 @login_required(login_url=URL_LOGIN)
-def tutor_report(request, pk):
+def tutee_report(request, pk):
     post = matching_models.Post.objects.get(pk=pk)
 
     if request.user.pk != post.tutor.pk :
-        if request.user.profile.is_tutor == True:
-            return redirect('matching:tutor_home')
-        else:
-            return redirect('matching:tutee_home')
+        return redirect('matching:mainpage')
 
     if request.method == "POST":
         form = ReportForm(request.POST)
@@ -114,7 +164,7 @@ def tutor_report(request, pk):
         'form': form,
     }
 
-    return render(request, 'matching/tutor_report.html', ctx)
+    return render(request, 'matching/tutee_report.html', ctx)
 
 class ReportDetail(DetailView):
     model = Report
@@ -130,7 +180,7 @@ class ReportDetail(DetailView):
 
         if form.is_valid():
             return self.form_valid(form, self.object)
-    
+
     def form_valid(self, form, report):
         report.tutee_feedback = form.cleaned_data['tutee_feedback']
         report.save()
@@ -138,7 +188,6 @@ class ReportDetail(DetailView):
 
 @login_required(login_url=URL_LOGIN)
 def post_new(request):
-    ctx={}
     if request.method == "POST":
         form = PostForm(request.POST)
         if form.is_valid():
@@ -209,8 +258,12 @@ def set_tutor(request, postpk, userpk):
     except tutor.DoesNotExist:
         return HttpResponse("사용자가 없습니다.")
 
+    if tutor.pk == post.user.pk:
+        #포스트 작성자가 직접 튜터가 될 수 없음.
+        return redirect('matching:post_detail', pk=post.pk)
     post.tutor = tutor
     post.finding_match = False
+    post.start_time = timezone.localtime()
     post.save()
 
     return redirect('matching:post_detail', pk=post.pk)
@@ -246,61 +299,27 @@ def post_edit(request, pk):
 
     return render(request, 'matching/post_edit.html', ctx)
 
-@login_required(login_url=URL_LOGIN)
-def tutee_home(request):
-    post = matching_models.Post.objects.filter(user = request.user, finding_match = True)
-    if not post:
-        return render(request, 'matching/tutee_home.html', {})
-    else:
-        return redirect('matching:post_detail', pk=post[0].pk)
+
 
 @login_required(login_url=URL_LOGIN)
-def tutor_home(request):
+def admin_home(request):
     user = matching_models.User.objects.get(pk=request.user.pk)
 
-    if not user.profile.is_tutor is True:
-        return redirect(reverse('matching:tutee_home'))
+    print(user.is_staff)
 
-    if request.method == "POST":
-        form = PostForm(request.POST)
-        if form.is_valid():
-            print('form data : ', form.cleaned_data)
-            post = form.save(commit=False)
-            user_obj = matching_models.User.objects.get(username=request.user.username)
-            post.user = user_obj
-            post.finding_match = True
-            post.save()
-
-            channel_layer = get_channel_layer()
-            async_to_sync(channel_layer.group_send)(
-                'new_post',
-                {
-                    'type': 'new_post',
-                    'id': post.pk,
-                    'title': post.title,
-                    'finding': post.finding_match,
-                    'pub_date': json.dumps(post.pub_date, cls=DjangoJSONEncoder),
-                    #'topic': dict(TOPIC_CHOICES).get(post.topic),
-                    'nickname': post.user.profile.nickname,
-                }
-            )
-            return redirect('matching:post_detail', pk=post.pk)
-    else:
-        form = PostForm()
-
-    report = matching_models.Post.objects.filter(tutor=request.user).filter(report__isnull=True)
-    #print(report)
+    if not user.is_staff:
+        return redirect(reverse('matching:mainpage'))
 
     recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
     recruited = matching_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
     #posts = tutor_models.Post.objects.order_by('-pub_date')
     posts = list(chain(recruiting, recruited))
 
-    current_post_page = request.GET.get('page', 1)
+    post_page = request.GET.get('page', 1)
 
     post_paginator = Paginator(posts, 10)
     try:
-        posts = post_paginator.page(current_post_page)
+        posts = post_paginator.page(post_page)
     except PageNotAnInteger:
         posts = post_paginator.page(1)
     except EmptyPage:
@@ -327,64 +346,23 @@ def tutor_home(request):
 
     ctx = {
         'posts': posts,
-        'reports': report,
-        'postPaginator': post_paginator,
         'paginatorRange': paginatorRange,
-        'form': form,
-    }
-
-    return render(request, 'matching/tutor_home.html', ctx)
-
-@login_required(login_url=URL_LOGIN)
-def admin_home(request):
-    user = matching_models.User.objects.get(pk=request.user.pk)
-
-    print(user.is_staff)
-
-    if not user.is_staff:
-        return redirect(reverse('matching:tutee_home'))
-
-
-    recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
-    recruited = matching_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
-    #posts = tutor_models.Post.objects.order_by('-pub_date')
-    posts = list(chain(recruiting, recruited))
-
-    post_page = request.GET.get('page', 1)
-
-    post_paginator = Paginator(posts, 10)
-    try:
-        posts = post_paginator.page(post_page)
-    except PageNotAnInteger:
-        posts = post_paginator.page(1)
-    except EmptyPage:
-        posts = post_paginator.page(post_paginator.num_pages)
-
-    ctx = {
-        'posts': posts,
     }
 
     return render(request, 'matching/admin_home.html', ctx)
 
 
 def close_post(request, pk):
-    if request.method == 'POST':
-        print("close_post : POST")
-        form = CancelForm(request.POST, request.FILES)
-        if form.is_valid():
-            print("form valid")
-            post = matching_models.Post.objects.get(pk=pk)
-            post.cancel_reason = form.cleaned_data['cancel_reason']
-            post.finding_match = False
-            post.save()
-            return redirect(reverse('matching:tutee_home'))
-        else:
-            print("form invalid")
+    post = matching_models.Post.objects.get(pk=pk)
+    post.finding_match = False
+    post.save()
+    return redirect(reverse('matching:mainpage'))
 
-    else:
-        print("close_post : GET")
-        form = CancelForm()
-        return render(request, 'matching/post_detail.html')
+def fin_tutoring(request, pk):
+    post = matching_models.Post.objects.get(pk=pk)
+    post.fin_time = timezone.localtime()
+    post.save()
+    return redirect(reverse('matching:mainpage'))
 
 
 @login_required(login_url=URL_LOGIN)
@@ -492,20 +470,96 @@ def mypage_report(request):
     return render(request, 'matching/mypage_report.html', ctx)
 
 @login_required(login_url=URL_LOGIN)
-def mypage_incomplete(request):
-    ctx = {}
+def mainpage(request):
+    post = matching_models.Post.objects.filter(user = request.user, finding_match = True)
+    post_exist = False
 
-    empty_report = matching_models.Post.objects.filter(tutor=request.user).filter(report__isnull=True)
-    ctx['emptyreports'] = empty_report
+    if post:
+        post_exist = True
 
-    return render(request, 'matching/mypage_incomplete.html', ctx)
+    user = matching_models.User.objects.get(pk=request.user.pk)
 
-'''
-def index(request):
-    return render(request, 'matching/index.html', {})
+    ongoing_tutoring = matching_models.Post.objects.filter(tutor=user).filter(fin_time__isnull=True)
+    if ongoing_tutoring.exists():
+        ongoing_tutoring = ongoing_tutoring[:1].get()
 
-def room(request, room_name):
-    return render(request, 'matching/room.html', {
-        'room_name': room_name
-    })
-'''
+    ongoing_post = matching_models.Post.objects.filter(user=user).filter(finding_match=True)
+    if ongoing_post.exists():
+        ongoing_post = ongoing_post[:1].get()
+
+    if request.method == "POST":
+        form = PostForm(request.POST)
+        if form.is_valid():
+            print('form data : ', form.cleaned_data)
+            post = form.save(commit=False)
+            user_obj = matching_models.User.objects.get(username=request.user.username)
+            post.user = user_obj
+            post.finding_match = True
+            post.save()
+
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                'new_post',
+                {
+                    'type': 'new_post',
+                    'id': post.pk,
+                    'title': post.title,
+                    'finding': post.finding_match,
+                    'pub_date': json.dumps(post.pub_date, cls=DjangoJSONEncoder),
+                    #'topic': dict(TOPIC_CHOICES).get(post.topic),
+                    'nickname': post.user.profile.nickname,
+                }
+            )
+            return redirect('matching:post_detail', pk=post.pk)
+    else:
+        form = PostForm()
+
+    recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
+    onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True).order_by('-pub_date')
+    recruited = matching_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
+    recruited = recruited.exclude(start_time__isnull = False, fin_time__isnull = True)
+    #posts = tutor_models.Post.objects.order_by('-pub_date')
+    posts = list(chain(recruiting, onprocess, recruited))
+
+    current_post_page = request.GET.get('page', 1)
+
+    post_paginator = Paginator(posts, 9)
+    try:
+        posts = post_paginator.page(current_post_page)
+    except PageNotAnInteger:
+        posts = post_paginator.page(1)
+    except EmptyPage:
+        posts = post_paginator.page(post_paginator.num_pages)
+
+    neighbors = 10
+    if post_paginator.num_pages > 2*neighbors:
+        start_index = max(1, int(current_post_page)-neighbors)
+        end_index = min(int(current_post_page)+neighbors, post_paginator.num_pages)
+        if end_index < start_index + 2*neighbors:
+            end_index = start_index + 2*neighbors
+        elif start_index > end_index - 2*neighbors:
+            start_index = end_index - 2*neighbors
+        if start_index < 1:
+            end_index -= start_index
+            start_index = 1
+        elif end_index > post_paginator.num_pages:
+            start_index -= end_index - post_paginator.num_pages
+            end_index = post_paginator.num_pages
+        paginatorRange = [f for f in range(start_index, end_index+1)]
+        paginatorRange[:(2*neighbors + 1)]
+    else:
+        paginatorRange = range(1, post_paginator.num_pages+1)
+
+    ctx = {
+        'ongoing_tutoring' : ongoing_tutoring,
+        'ongoing_post': ongoing_post,
+        'user': user,
+        'posts': posts,
+        'postPaginator': post_paginator,
+        'paginatorRange': paginatorRange,
+        'form': form,
+        'post_exist': post_exist,
+    }
+
+    print(post_exist)
+    return render(request, 'matching/main.html', ctx)

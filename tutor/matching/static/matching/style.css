@@ -12,11 +12,24 @@
 }
 
 /* TUTOR HOME */
-#tableDiv {
-    position: relative;
-    top: 50px;
+.tableDiv {
     margin: auto;
-    width: calc(100vw - 200px);
+    width: calc(100vw - 250px);
+}
+
+.tableDiv tr {
+  border-right: 1px solid #d1d1d1;
+  border-left: 1px solid #d1d1d1;
+  border-bottom: 1px solid #d1d1d1;
+}
+
+.tableDiv th {
+  padding: 8px;
+}
+
+.tableDiv td {
+  padding: 8px;
+  font-size: 15px;
 }
 
 .dot {
@@ -32,7 +45,84 @@
     background-color: green;
 }
 
+#ongoing{
+    background-color: #fcba03;
+}
+
 #found{
     background-color: #bbb;
 }
 
+#createRoomBtn {
+  position: relative;
+  float: right;
+  top: 35px;
+  right: calc((100vw - (100vw - 250px))/2);
+  width: 80px;
+  height: 40px;
+  font-size: 15px;
+  padding: 8px 10px 8px 10px;
+}
+
+#post_table_div{
+  position: relative;
+  top: 15px;
+}
+
+#mainpage_table_div{
+  position: relative;
+  top: 80px;
+}
+
+#post-top{
+    margin-left:1200px;
+    margin-top:10px;
+    margin-bottom:10px;
+}
+
+#mybutton  {
+	background-color:white;
+	-webkit-border-top-left-radius:28px;
+	-moz-border-radius-topleft:28px;
+	border-top-left-radius:28px;
+	-webkit-border-top-right-radius:28px;
+	-moz-border-radius-topright:28px;
+	border-top-right-radius:28px;
+	-webkit-border-bottom-right-radius:28px;
+	-moz-border-radius-bottomright:28px;
+	border-bottom-right-radius:28px;
+	-webkit-border-bottom-left-radius:28px;
+	-moz-border-radius-bottomleft:28px;
+	border-bottom-left-radius:28px;
+text-indent:0;
+	border:1px solid #5246a0;
+	display:inline-block;
+	color:#52527a;
+	font-family:arial;
+	font-size:13px;
+	font-weight:bold;
+	font-style:normal;
+height:30px;
+	line-height:30px;
+width:90px;
+	text-decoration:none;
+	text-align:center;
+}#mybutton:hover {
+    background-color:#e9e6f5;
+}#mybutton:active {
+	position:relative;
+	top:1px;
+}
+
+#mainpage_ongoing_table_div {
+  position: relative;
+  top: 40px;
+}
+
+#mainpage_ongoing_table{
+  font-size: 13px;
+}
+
+.table {
+  padding: 10px;
+}

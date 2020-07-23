@@ -1,9 +1,205 @@
-{% extends "matching/base.html" %}
+{% extends 'matching/base.html' %}
 
 {% block title %}
-<title>Main</title>
+<title>Main Page</title>
+{% endblock %}
+
+{% block style %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    
+    $( document ).ready(function() {
+        console.log( "document loaded" );
+    });
+</script>
 {% endblock %}
 
 {% block content %}
-<h1>main - login?</h1>
+
+<div>
+  <div id="mainpage_ongoing_table_div" class="tableDiv">
+  <table id="mainpage_ongoing_table" class="table table-bordered w-auto">
+    <tbody>
+      {% if ongoing_post %}
+      <tr>
+        <th class="align-middle text-center text-nowrap">모집중인 튜터링</th>
+        <td class="align-middle text-center text-nowrap">튜터 : {{ ongoing_post.user.profile.nickname }}</td>
+        <td class="align-middle">제목 : {{ ongoing_post.title }}</td>
+        <td class="align-middle text-center">
+          <form class="align-middle" action="{% url 'matching:close_post' ongoing_post.pk %}"  method="POST">
+            {% csrf_token %}
+            <button id="mybutton" type="submit">모집종료</button>
+          </form>
+        </td>
+      </tr>
+      {% endif %}
+      {% if ongoing_tutoring %}
+      <tr>
+        <th class="align-middle text-center text-nowrap">진행중인 튜터링</th>
+        <td class="align-middle text-center text-nowrap">튜티 : {{ ongoing_tutoring.user.profile.nickname }}</td>
+        <td class="align-middle">제목 : {{ ongoing_tutoring.title }}</td>
+        <td class="align-middle text-center">
+          <form class="align-middle" action="{% url 'matching:fin_tutoring' ongoing_tutoring.pk %}"  method="POST">
+            {% csrf_token %}
+            <button id="mybutton" type="submit">튜터링 종료</button>
+          </form>
+        </td>
+      </tr>
+      {% endif %}
+    </tbody>
+  </div>
+  </table>
+</div>
+
+
+{% if post_exist == False %}
+<button id="createRoomBtn" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">방만들기</button>
+{% else %}
+<button id="createRoomBtn" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal" disabled>방만들기</button>
+{% endif %}
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <form action="" method="POST">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">방 새로 만들기</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>채팅방의 주제를 파악할 수 있는 이름을 지어주세요.</p>
+        {% csrf_token %}
+        {% for field in form %}
+          이름: {{field}}
+        {% endfor %}
+      </div>
+      <div class="modal-footer">
+        <!-- <button type="submit" class="btn btn-default" data-dismiss="modal">Submit</button> -->
+        <button type="submit" class="btn btn-default">Submit</button>
+      </div>
+    </div>
+    </form>
+
+  </div>
+</div>
+
+
+<div id="mainpage_table_div" class="tableDiv">
+    <table id="mainpage_table" class="table">
+        <thead>
+        <tr>
+          <th scope="col" style="width:100px" class="text-center">번호</th>
+          <!--<th scope="col" class="text-center">주제</th>-->
+          <th scope="col" class="text-center">방 이름</th>
+          <th scope="col" style="width:150px" class="text-center">닉네임</th>
+          <th scope="col" style="width:150px" class="text-center">시간</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for post in posts %}
+            <tr>
+                <td class="text-center text-nowrap align-middle"> {{post.pk}} </td>
+                <!--<td scope="row" class="text-center">{{post.get_topic_display}}</td>-->
+                {% if post.finding_match ==  True %}
+                <td class="align-middle"> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
+                {% elif post.start_time != Null and post.fin_time == Null %}
+                <td class="align-middle"> <span id="ongoing" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
+                {% else %}
+                <td class="align-middle"> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
+                {% endif %}
+                <td class="text-center text-nowrap align-middle">{{post.user.profile.nickname}}</td>
+                <td class="text-center text-nowrap align-middle">{{post.pub_date|date:'Y-m-d'}}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% if posts.has_other_pages %}
+    <nav aria-label="...">
+      <ul class="pagination">
+        {% if posts.number == 1 %}
+          <li class="page-item"><span class="page-link">⇤<span class="sr-only">(current)</span></span></li>
+        {% else %}
+          <li class="page-item"><a class="page-link" href="?page=1">⇤</a></li>
+        {% endif %}
+        {% if posts.has_previous %}
+          <li class="page-item"><a class="page-link" href="?page={{ posts.previous_page_number }}">&laquo;</a></li>
+        {% else %}
+          <li class="page-item"><span class="page-link">&laquo;<span class="sr-only">(current)</span></span></li>
+        {% endif %}
+        {% for i in paginatorRange %}
+          {% if posts.number == i %}
+            <li class="page-item active"><span class="page-link">{{ i }}<span class="sr-only">(current)</span></span></li>
+          {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+          {% endif %}
+        {% endfor %}
+        {% if posts.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{posts.next_page_number}}">&raquo;</a></li>
+        {% else %}
+        <li class="page-item"><span class="page-link">&raquo;<span class="sr-only">(current)</span></span></li>
+        {% endif %}
+        {% if posts.number == postPaginator.num_pages %}
+          <li class="page-item"><span class="page-link">⇥<span class="sr-only">(current)</span></span></li>
+        {% else %}
+          <li class="page-item"><a class="page-link" href="?page={{postPaginator.num_pages}}">⇥</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
+</div>
+
+{% if not posts %}
+    <p>등록된 post가 없음</p>
+{% endif %}
+
+<script>
+  const websocket = new WebSocket('ws://' + window.location.host + '/ws/tutorhome/');
+
+  websocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+
+    // Set table structure
+    var table = document.getElementById("mainpage_table");
+    var row = table.insertRow(1);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    var cell3 = row.insertCell(2);
+    var cell4 = row.insertCell(3);
+
+    // post number
+    cell1.className = "text-center";
+    cell1.innerHTML = data.id;
+
+    // title
+    var findingIcon = document.createElement("SPAN");
+    if (data.finding == true){
+      findingIcon.id = "finding";
+    } else {
+      findingIcon.id = "found";
+    }
+    findingIcon.className = "dot";
+    cell2.append(findingIcon);
+    cell2.innerHTML += "&nbsp;&nbsp;&nbsp;";
+    var postDetail = document.createElement("A");
+    postDetail.href=`/matching/post/detail/${data.id}`;
+    postDetail.innerHTML = data.title;
+    cell2.append(postDetail);
+
+    // nickname
+    cell3.className = "text-center";
+    cell3.innerHTML = data.nickname;
+
+    // time
+    cell4.className = "text-center";
+    cell4.innerHTML = data.pub_date.substring(1, 11);
+  };
+
+  websocket.onclose = function(e){
+    console.error('Chat socket closed unexpectedly');
+  };
+
+</script>
+
 {% endblock %}
