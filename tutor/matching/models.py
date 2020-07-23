@@ -52,7 +52,7 @@ class Post(models.Model):
 class Comment(models.Model):
    user = models.ForeignKey(User, on_delete=models.CASCADE)
    post = models.ForeignKey(Post, on_delete=models.CASCADE)
-   pub_date = models.DateTimeField(auto_now_add=True)
+   pub_date = models.DateTimeField() #TODO auto_now_add=True 로 바꾸기
    content = models.TextField()
 
    def __str__(self):

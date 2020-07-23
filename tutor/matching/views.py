@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.db.models import F
 from django.views import generic
 from django.contrib.auth.models import User
-from .forms import PostForm, ProfileForm, CommentForm, AcceptReportForm, CancelForm, AccuseForm
+from .forms import PostForm, ProfileForm, CommentForm, AcceptReportForm, AccuseForm
 from django.contrib.auth.decorators import login_required
 from matching import models as matching_models
 from django.db import transaction
@@ -181,11 +181,10 @@ def post_detail(request, pk):
     else:
         ctx['report_exist'] = False ;
 
-    comment_list = matching_models.Comment.objects.filter(post=post)
+    comment_list = matching_models.Comment.objects.filter(post=post).order_by('pub_date')
 
     ctx['post'] = post
     ctx['comment_list'] = comment_list
-
     return render(request, 'matching/post_detail.html', ctx)
 
 def set_tutor(request, postpk, userpk):
