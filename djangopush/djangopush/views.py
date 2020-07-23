@@ -37,6 +37,11 @@ def send_push(request):
         head: The title of the push notification.
         body: The body of the notification.
         id: The id of the request user.
+
+        - send_user_notification parameters 
+        User: The recipient of the push notification.
+        payload: The notification information, which includes the notification head and body.
+        ttl: The maximum time in seconds that the notification should be stored if the user is offline.
         '''
         return JsonResponse(status=200, data={"message" : "web push successful"})
     except TypeError:

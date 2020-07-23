@@ -1,13 +1,25 @@
 {% extends "matching/base.html" %}
 
 {% block content %}
-<form action="" method="POST">
-    <h1> signup </h1>
+
+<form method="POST" class="form-style-7">
     {% csrf_token %}
-    <table>
-        <p> 닉네임 : {{ profile_form.nickname }}</p>
-        <p> 휴대폰 : 010-<input type="text" name="phone1" pattern="[0-9]{4}">-<input type="text" name="phone2" pattern="[0-9]{4}"></p>
-    </table> 
-    <input type="submit" value="제출">
+    <ul>
+        <h1>Sign Up</h1>
+    <li>
+        <label for="name">Nickname</label>
+        <input type="text" id="nickname" name="nickname">
+        <span>Enter your nickname</span>
+    </li>
+    <li>
+        <label for="email">Phone</label>
+        010&nbsp&nbsp-<input type="text" name="phone1" pattern="[0-9]{4}" maxlength="4" style="width:80px;" required>-<input type="text" name="phone2" maxlength="4" style="width:80px;" pattern="[0-9]{4}" required>
+        <span>Enter your phone number</span>
+    </li>
+    <li>
+        <input type="submit" value="제출" >
+    </li>
+    </ul>
 </form>
+
 {% endblock %}
