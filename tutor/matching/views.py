@@ -185,7 +185,6 @@ class ReportDetail(DetailView):
         report.tutee_feedback = form.cleaned_data['tutee_feedback']
         report.save()
 
-
 @login_required(login_url=URL_LOGIN)
 def post_new(request):
     if request.method == "POST":
@@ -244,6 +243,11 @@ def post_detail(request, pk):
     return render(request, 'matching/post_detail.html', ctx)
 
 def set_tutor(request, postpk, userpk):
+    post = matching_models.Post.objects.filter(tutor=request.user)
+    if post:
+        # 튜터가 하나 이상의 튜터링을 동시에 진행할 수 없음
+        return redirect('matching:post_detail', pk=postpk)
+
     try:
         post = get_object_or_404(matching_models.Post, pk=postpk)
     except post.DoesNotExist:
@@ -263,6 +267,17 @@ def set_tutor(request, postpk, userpk):
     post.save()
 
     return redirect('matching:post_detail', pk=post.pk)
+
+@login_required
+def send_message(request):
+    if request.method == "GET":
+        post = matching_models.Post.objects.get(pk=request.GET['postid'])
+        new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=timezone.now(), content=request.GET['content'])
+        new_cmt.save()
+        return HttpResponse(new_cmt.id)
+    else:
+        return HttpResponse('NOT A GET REQUEST')
+
 
 @login_required(login_url=URL_LOGIN)
 def post_edit(request, pk):
@@ -353,16 +368,7 @@ def fin_tutoring(request, pk):
 @login_required(login_url=URL_LOGIN)
 def mypage(request):
     ctx = {}
-
-    print(request.user.profile.is_tutor)
-    if request.user.profile.is_tutor:
-        return redirect(reverse('matching:mypage_report'))
-    elif request.user.is_staff:
-        pass
-    else:
-        return redirect(reverse('matching:mypage_post'))
-
-    return render(request, 'matching/mypage.html', ctx)
+    return redirect(reverse('matching:mypage_post'))
 
 @login_required(login_url=URL_LOGIN)
 def mypage_post(request):
@@ -370,9 +376,11 @@ def mypage_post(request):
     post = matching_models.Post.objects.filter(user=request.user)
 
     recruiting = post.filter(finding_match = True).order_by('-pub_date')
+    onprocess = post.filter(start_time__isnull = False, fin_time__isnull = True).order_by('-pub_date')
     recruited = post.filter(finding_match = False).order_by('-pub_date')
+    recruited = recruited.exclude(start_time__isnull = False, fin_time__isnull = True)
     #posts = tutor_models.Post.objects.order_by('-pub_date')
-    posts = list(chain(recruiting, recruited))
+    posts = list(chain(recruiting, onprocess, recruited))
 
     current_post_page = request.GET.get('page', 1)
 
@@ -453,6 +461,54 @@ def mypage_report(request):
     }
 
     return render(request, 'matching/mypage_report.html', ctx)
+
+@login_required(login_url=URL_LOGIN)
+def mypage_tutor_post(request):
+    ctx = {}
+    post = matching_models.Post.objects.filter(tutor=request.user)
+
+    recruiting = post.filter(finding_match = True).order_by('-pub_date')
+    onprocess = post.filter(start_time__isnull = False, fin_time__isnull = True).order_by('-pub_date')
+    recruited = post.filter(finding_match = False).order_by('-pub_date')
+    recruited = recruited.exclude(start_time__isnull = False, fin_time__isnull = True)
+    #posts = tutor_models.Post.objects.order_by('-pub_date')
+    posts = list(chain(recruiting, onprocess, recruited))
+
+    current_post_page = request.GET.get('page', 1)
+
+    post_paginator = Paginator(posts, 10)
+    try:
+        posts = post_paginator.page(current_post_page)
+    except PageNotAnInteger:
+        posts = post_paginator.page(1)
+    except EmptyPage:
+        posts = post_paginator.page(post_paginator.num_pages)
+
+    neighbors = 10
+    if post_paginator.num_pages > 2*neighbors:
+        start_index = max(1, int(current_post_page)-neighbors)
+        end_index = min(int(current_post_page)+neighbors, post_paginator.num_pages)
+        if end_index < start_index + 2*neighbors:
+            end_index = start_index + 2*neighbors
+        elif start_index > end_index - 2*neighbors:
+            start_index = end_index - 2*neighbors
+        if start_index < 1:
+            end_index -= start_index
+            start_index = 1
+        elif end_index > post_paginator.num_pages:
+            start_index -= end_index - post_paginator.num_pages
+            end_index = post_paginator.num_pages
+        paginatorRange = [f for f in range(start_index, end_index+1)]
+        paginatorRange[:(2*neighbors + 1)]
+    else:
+        paginatorRange = range(1, post_paginator.num_pages+1)
+
+    ctx = {
+        'posts' : posts,
+        'postPaginator': post_paginator,
+        'paginatorRange': paginatorRange,
+    }
+    return render(request, 'matching/mypage_tutor_post.html', ctx)
 
 @login_required(login_url=URL_LOGIN)
 def mainpage(request):

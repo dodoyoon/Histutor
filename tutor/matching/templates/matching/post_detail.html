@@ -38,8 +38,7 @@
 
       </script>
       {% for comment in comment_list %}
-        {% if comment.post.tutor %}
-        {% if comment.post.tutor.pk == comment.user.pk %}
+        {% if comment.user != user %}
         <div class="date">
           <script type="text/javascript">
             var cur_date = "{{comment.pub_date|date:'Y.m.d'}}" ; 
@@ -55,10 +54,7 @@
             </div>
           </div>
         </div>
-        {% endif %}
-        {% endif %}
-        {% if comment.post.user %}
-          {% if comment.post.user.pk == comment.user.pk %}
+        {% else %}
           <div class="date">
             <script type="text/javascript">
               var cur_date = "{{comment.pub_date|date:'Y.m.d'}}" ; 
@@ -70,17 +66,95 @@
               <span class="sent_time_date"> {{ comment.pub_date|date:"P"}} <div id="msg_box">{{ comment.content }}</div></span>
             </div>
           </div>
-          {% endif %}
         {% endif %}
       {% endfor %}
 
     </div>
     <div class="type_msg">
       <div class="input_msg_write">
-        <input type="text" class="write_msg" placeholder="Type a message" />
-        <button class="msg_send_btn" type="button"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+        <input type="text" id="write_msg" class="write_msg" placeholder="Type a message" />
+        <button id="msg_send_btn" class="msg_send_btn" type="button"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
       </div>
     </div>
   </div>
 </div>
+
+  <script>
+    document.getElementById("msg_send_btn").addEventListener("click", sendMessage);
+
+    const websocket = new WebSocket('ws://' + window.location.host + '/ws/post/' + "{{post.pk}}" + '/');
+    
+    websocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    var req_username = "{{request.user.username}}";
+    
+    // Set table structure
+    var storage = document.getElementById("msg_history");
+    
+    if(data['username']==req_username){
+      var msg = document.createElement("div");
+      msg.className = "outgoing_msg";
+      var inner_msg = document.createElement("div");
+      inner_msg.className = "sent_msg";
+      var msg_content = document.createElement("p");
+      msg_content.innerHTML += data['content'];
+      var msg_time = document.createElement("span");
+      msg_time.className = "sent_time_date";
+      msg_time.innerHTML += data['date'];
+      inner_msg.append(msg_content);
+      inner_msg.append(msg_time);
+      msg.append(inner_msg);
+      storage.append(msg);
+    }else{
+      var msg = document.createElement("div");
+      msg.className = "incoming_msg";
+      var inner_msg = document.createElement("div");
+      inner_msg.className = "received_msg";
+      var inner_inner_msg = document.createElement("div");
+      inner_inner_msg.className = "received_with_msg";
+      var msg_content = document.createElement("p");
+      msg_content.innerHTML += data['content'];
+      var msg_time = document.createElement("span");
+      msg_time.className = "received_time_date";
+      msg_time.innerHTML += data['date'];
+      inner_inner_msg.append(msg_content);
+      inner_inner_msg.append(msg_time);
+      inner_msg.append(inner_inner_msg);
+      msg.append(inner_msg);
+      storage.append(msg);
+    }
+    };
+    
+    websocket.onclose = function(e){
+    console.error('Chat socket closed unexpectedly');
+    };
+
+    function sendMessage(){
+      event.preventDefault();
+
+      $.ajax({
+         url: "{% url 'matching:send_message' %}",
+         type: "GET",
+         data:{
+           postid: {{post.id}},
+           content: $("#write_msg").val(),
+         },
+         success: function(response){
+           //console.log(data)
+            //alert("SUCCESS\n" + response);
+            
+            websocket.send(JSON.stringify({
+               'postId': response,
+            }));
+            $("#classCreateName").value = "";
+         },
+         error: function(response){
+            //alert("ERROR!!\n" + response);
+         }
+      });
+
+    }
+    
+    </script>
+
 {% endblock %}
