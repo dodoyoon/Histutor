@@ -14,6 +14,7 @@ urlpatterns = [
   path('mypage/', views.mypage, name='mypage'),
   path('mypage/post/', views.mypage_post, name='mypage_post'),
   path('mypage/report/', views.mypage_report, name='mypage_report'),
+  path('mypage/tutor_post/', views.mypage_tutor_post, name='mypage_tutor_post'),
   path('post/detail/close_post/<int:pk>', views.close_post, name='close_post'),
   path('post/detail/fin_tutoring/<int:pk>', views.fin_tutoring, name='fin_tutoring'),
   path('post/settutor/<int:postpk>/<int:userpk>/', views.set_tutor, name='set_tutor'),
