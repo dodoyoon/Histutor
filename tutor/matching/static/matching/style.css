@@ -100,7 +100,6 @@ text-indent:0;
 	border:1px solid #5246a0;
 	display:inline-block;
 	color:#52527a;
-	font-family:arial;
 	font-size:13px;
 	font-weight:bold;
 	font-style:normal;
@@ -114,6 +113,11 @@ width:90px;
 }#mybutton:active {
 	position:relative;
 	top:1px;
+}#mybutton:disabled,
+#mybutton[disabled]{
+    background-color:#d7d6d8;
+    color:#22192b;
+    font-weight:normal;
 }
 
 #mainpage_ongoing_table_div {
@@ -132,7 +136,7 @@ width:90px;
 .create_room{
     position:relative;
     top:50%;
-    margin-left:85%;
+    margin-left:90%;
 }
 
 a{
@@ -145,6 +149,102 @@ a:hover{
 .mypage_table{
   position: relative;
   top: 60px;
+}
+
+
+.form-style-7{
+	max-width:400px;
+	margin:50px auto;
+	background:#fff;
+    border-radius:2px;
+    border: solid #bebbc2;
+	padding:20px;
+}
+.form-style-7 h1{
+	display: block;
+	text-align: center;
+	padding: 0;
+	margin: 0px 0px 20px 0px;
+	color: #5C5C5C;
+	font-size:x-large;
+}
+.form-style-7 ul{
+	list-style:none;
+	padding:0;
+	margin:0;	
+}
+.form-style-7 li{
+	display: block;
+	padding: 9px;
+    border:1px solid #DDDDDD;
+    border-bottom: 3px solid #DDDDDD;
+	margin-top: 30px;
+	border-radius: 3px;
+}
+.form-style-7 li:last-child{
+	border:none;
+	margin-bottom: 0px;
+	text-align: center;
+}
+.form-style-7 li > label{
+	display: block;
+	float: left;
+	margin-top: -19px;
+	background: #FFFFFF;
+	height: 14px;
+	padding: 2px 5px 2px 5px;
+	color: #8c8a8f;
+	font-size: 14px;
+}
+
+.form-style-7 input[type="text"],
+.form-style-7 select 
+{
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	width: 100%;
+    border-color:#cfcfd3;
+    border-width: thin;
+	height: 25px;
+	line-height: 25px;
+	font-size: 16px;
+	padding: 0;
+}
+.form-style-7 #nickname{
+    outline:None;
+    border:None;
+}
+
+.form-style-7 input[type="text"]:focus,
+.form-style-7 select:focus 
+{
+}
+
+.form-style-7 textarea{
+	resize:none;
+}
+.form-style-7 input[type="submit"],
+.form-style-7 input[type="button"]{
+	background: #7a6ebe;
+	border: none;
+	padding: 5px 20px 5px 20px;
+	border-bottom: 3px solid #3f395e;
+	border-radius: 3px;
+    color: white;
+}
+.form-style-7 input[type="submit"]:hover,
+.form-style-7 input[type="button"]:hover{
+	background: #d7d1fc;
+    color:#534892;
+}
+
+#nickname-error{
+    text-align : center;
+    margin-top:0.5em;
+    height:20px;
+    padding-top:5px;
+    padding-bottom:20px;
 }
 
 .form-signin .btn {
@@ -167,3 +267,4 @@ a:hover{
   left: calc(50% - 150px);
   top: 300px;
 }
+
