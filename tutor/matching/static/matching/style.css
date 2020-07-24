@@ -246,6 +246,11 @@ a:hover{
     padding-top:5px;
     padding-bottom:20px;
 }
+#handong-login-required{
+    width: 50%;
+    text-align:center;
+    margin:auto;
+}
 
 .form-signin .btn {
   font-size: 90%;
