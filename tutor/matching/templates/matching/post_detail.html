@@ -33,7 +33,7 @@
   </div>
 
   <div class="mesgs">
-    <div class="msg_history">
+    <div id="msg_history" class="msg_history">
       <script>
 
       </script>
@@ -50,7 +50,8 @@
           <div class="received_msg">
             <p class="received_name">{{comment.user.profile.nickname}}</p>
             <div class="received_with_msg">
-              {{ comment.content }}<span class="received_time_date">{{ comment.pub_date|date:"P"}} </span>
+              {{ comment.content }}
+              <span class="received_time_date">{{ comment.pub_date|date:"P"}} </span>
             </div>
           </div>
         </div>
@@ -63,7 +64,9 @@
           </div>
           <div class="outgoing_msg">
             <div class="sent_msg">
-              <span class="sent_time_date"> {{ comment.pub_date|date:"P"}} <div id="msg_box">{{ comment.content }}</div></span>
+              <span class="sent_time_date"> {{ comment.pub_date|date:"P"}} 
+                <div id="msg_box">{{ comment.content }}</div>
+              </span>
             </div>
           </div>
         {% endif %}
@@ -82,6 +85,9 @@
   <script>
     document.getElementById("msg_send_btn").addEventListener("click", sendMessage);
 
+    var storage = document.getElementById("msg_history");
+    storage.scrollTop = storage.scrollHeight;
+
     const websocket = new WebSocket('ws://' + window.location.host + '/ws/post/' + "{{post.pk}}" + '/');
     
     websocket.onmessage = function(e) {
@@ -89,40 +95,59 @@
     var req_username = "{{request.user.username}}";
     
     // Set table structure
-    var storage = document.getElementById("msg_history");
-    
+    /*var storage = document.getElementById("msg_history");
+    alert(storage.scrollHeight);
+    storage.scrollTop = storage.scrollHeight;*/
+    var at_bottom = false;
+    if(storage.scrollTop == storage.scrollHeight - storage.offsetHeight){
+      at_bottom = true;
+    }
+
     if(data['username']==req_username){
+      //console.log("outgoing");
+
       var msg = document.createElement("div");
       msg.className = "outgoing_msg";
       var inner_msg = document.createElement("div");
       inner_msg.className = "sent_msg";
-      var msg_content = document.createElement("p");
-      msg_content.innerHTML += data['content'];
       var msg_time = document.createElement("span");
       msg_time.className = "sent_time_date";
       msg_time.innerHTML += data['date'];
-      inner_msg.append(msg_content);
+      var msg_content = document.createElement("div");
+      msg_content.id = "msg_box";
+      msg_content.innerHTML += data['content'];
+      msg_time.append(msg_content);
       inner_msg.append(msg_time);
       msg.append(inner_msg);
       storage.append(msg);
+
     }else{
+      //console.log("incoming");
       var msg = document.createElement("div");
       msg.className = "incoming_msg";
       var inner_msg = document.createElement("div");
       inner_msg.className = "received_msg";
+      var received_name = document.createElement("p");
+      received_name.className = "received_name";
+      received_name.innerHTML += data['nickname'];
       var inner_inner_msg = document.createElement("div");
       inner_inner_msg.className = "received_with_msg";
-      var msg_content = document.createElement("p");
-      msg_content.innerHTML += data['content'];
+      inner_inner_msg.innerHTML += data['content'];
       var msg_time = document.createElement("span");
       msg_time.className = "received_time_date";
       msg_time.innerHTML += data['date'];
-      inner_inner_msg.append(msg_content);
       inner_inner_msg.append(msg_time);
+      inner_msg.append(received_name);
       inner_msg.append(inner_inner_msg);
       msg.append(inner_msg);
       storage.append(msg);
     }
+
+    if(at_bottom){
+      storage.scrollTop = storage.scrollHeight;
+    }
+
+    
     };
     
     websocket.onclose = function(e){

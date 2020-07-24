@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.db.models import F
 from django.views import generic
 from django.contrib.auth.models import User
-from .forms import PostForm, ProfileForm, CommentForm, AcceptReportForm, AccuseForm
+from .forms import PostForm, ProfileForm, CommentForm, AcceptReportForm, AccuseForm, ReportForm
 from django.contrib.auth.decorators import login_required
 from matching import models as matching_models
 from django.db import transaction
@@ -74,65 +74,6 @@ def user_check(request):
         print("not valid email address")
         matching_models.User.objects.filter(pk=request.user.pk).delete()
         return HttpResponseRedirect(reverse('matching:index'))
-# #TODO : method decorator should be added
-# class ReportUpdate(UpdateView):
-#     model = Report
-#     context_object_name = 'report'
-#     form_class = ReportForm
-#     template_name = 'matching/report_edit.html'
-
-# @login_required(login_url=URL_LOGIN)
-# def tutor_report(request, pk):
-#     post = matching_models.Post.objects.get(pk=pk)
-
-#     if request.user.pk != post.tutor.pk :
-#         if request.user.profile.is_tutor == True:
-#             return redirect('matching:tutor_home')
-#         else:
-#             return redirect('matching:tutee_home')
-
-    # if request.method == "POST":
-    #     form = ReportForm(request.POST)
-    #     if form.is_valid():
-    #         print("report form valid")
-    #         report = form.save(commit=False)
-    #         report.tutor = matching_models.User.objects.get(pk = request.user.pk)
-    #         report.tutee = matching_models.User.objects.get(pk = post.user.pk)
-    #         report.post = matching_models.Post.objects.get(pk = post.pk)
-    #         report.save()
-    #         return redirect('matching:report_detail', pk=report.pk)
-    #     else:
-    #         print("report form *invalid*")
-
-    # else:
-    #     form = ReportForm()
-
-    # ctx = {
-    #     'post': post,
-    #     'form': form,
-    # }
-
-    # return render(request, 'matching/tutor_report.html', ctx)
-
-# class ReportDetail(DetailView):
-#     model = Report
-
-#     def get_context_data(self, **kwargs):
-#         context = super(ReportDetail, self).get_context_data(**kwargs)
-#         context['form'] = AccuseForm
-#         return context
-
-#     def post(self, request, *args, **kwargs):
-#         self.object = self.get_object()
-#         form = AccuseForm(request.POST, request.FILES)
-
-#         if form.is_valid():
-#             return self.form_valid(form, self.object)
-
-#     def form_valid(self, form, report):
-#         report.tutee_feedback = form.cleaned_data['tutee_feedback']
-#         report.save()
-
 
 # #TODO : method decorator should be added
 # class ReportUpdate(UpdateView):
@@ -145,31 +86,21 @@ def user_check(request):
 def tutee_report(request, pk):
     post = matching_models.Post.objects.get(pk=pk)
 
-    if request.user.pk != post.tutor.pk :
-        return redirect('matching:mainpage')
-
     if request.method == "POST":
+        print(">>>POST")
         form = ReportForm(request.POST)
+
         if form.is_valid():
             print("report form valid")
             report = form.save(commit=False)
-            report.tutor = matching_models.User.objects.get(pk = request.user.pk)
+            report.tutor = matching_models.User.objects.get(pk = post.tutor.pk)
             report.tutee = matching_models.User.objects.get(pk = post.user.pk)
             report.post = matching_models.Post.objects.get(pk = post.pk)
             report.save()
             return redirect('matching:report_detail', pk=report.pk)
         else:
             print("report form *invalid*")
-
-    else:
-        form = ReportForm()
-
-    ctx = {
-        'post': post,
-        'form': form,
-    }
-
-    return render(request, 'matching/tutee_report.html', ctx)
+            return redirect('matching:mainpage')
 
 class ReportDetail(DetailView):
     model = Report
@@ -357,12 +288,15 @@ def admin_home(request):
     return render(request, 'matching/admin_home.html', ctx)
 
 
+# Tutee가 끝낼 때
 def close_post(request, pk):
+    print(">>> close post!")
     post = matching_models.Post.objects.get(pk=pk)
     post.finding_match = False
     post.save()
     return redirect(reverse('matching:mainpage'))
 
+# Tutor가 끝낼 때
 def fin_tutoring(request, pk):
     post = matching_models.Post.objects.get(pk=pk)
     post.fin_time = timezone.localtime()
@@ -606,6 +540,21 @@ def mainpage(request):
         'form': form,
         'post_exist': post_exist,
     }
+
+    # Tutee Report Part
+    user_obj2 = matching_models.User.objects.get(username=request.user.username)
+
+    report_to_write = matching_models.Post.objects.filter(user=user_obj2, report__isnull=True, tutor__isnull=False)
+
+    if report_to_write.exists():
+        print("REPORT to write EXIST")
+        for report in report_to_write:
+            report_form = ReportForm()
+            ctx['report_form'] = report_form
+            ctx['report_exist'] = True
+            ctx['report_post_pk'] = report.pk
+    else:
+        print("REPORT NOT EXIST")
 
     print(post_exist)
     return render(request, 'matching/main.html', ctx)
