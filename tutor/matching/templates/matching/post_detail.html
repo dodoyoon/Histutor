@@ -93,7 +93,6 @@
         if(message.value.trim()!=''){
           console.log(message.value.trim());
           document.getElementById("msg_send_btn").click();
-          message.value = '';
         }
       }
     })
@@ -184,7 +183,7 @@
             websocket.send(JSON.stringify({
                'postId': response,
             }));
-            $("#classCreateName").value = "";
+            message.value = "";
          },
          error: function(response){
             //alert("ERROR!!\n" + response);
