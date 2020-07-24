@@ -4,4 +4,14 @@
 
 {% block content %}
     <p><a href="{% provider_login_url 'google' %}">Google</a></p>
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            {% if message.tags and message.tags == "info" %}
+            <p class="alert alert-info" id="handong-login-required">{{ message }}</p>
+            {% endif %}
+        {% endfor %}
+    </ul>
+    {% endif %}
 {% endblock %}
