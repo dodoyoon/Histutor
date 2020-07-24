@@ -179,6 +179,7 @@ def post_detail(request, pk):
     return render(request, 'matching/post_detail.html', ctx)
 
 def set_tutor(request, postpk, userpk):
+    print("set_tutor")
     post = matching_models.Post.objects.filter(tutor=request.user)
     if post:
         # 튜터가 하나 이상의 튜터링을 동시에 진행할 수 없음
