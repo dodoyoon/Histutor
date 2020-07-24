@@ -174,7 +174,8 @@ def post_detail(request, pk):
     return render(request, 'matching/post_detail.html', ctx)
 
 def set_tutor(request, postpk, userpk):
-    post = matching_models.Post.objects.filter(tutor=request.user)
+    post = matching_models.Post.objects.filter(tutor=request.user, fin_time__isnull=True)
+
     if post:
         # 튜터가 하나 이상의 튜터링을 동시에 진행할 수 없음
         return redirect('matching:post_detail', pk=postpk)
@@ -357,7 +358,8 @@ def mypage_post(request):
 def mypage_report(request):
     ctx = {}
 
-    report = matching_models.Report.objects.filter(tutor=request.user).order_by('-pub_date')
+    # tutee = matching_models.User.objects.get(pk=request.user.pk)
+    report = matching_models.Report.objects.filter(tutee=request.user).order_by('-pub_date')
 
     current_report_page = request.GET.get('page', 1)
 

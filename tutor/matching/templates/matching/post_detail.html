@@ -41,8 +41,8 @@
         {% if comment.user != user %}
         <div class="date">
           <script type="text/javascript">
-            var cur_date = "{{comment.pub_date|date:'Y.m.d'}}" ; 
-            date_line(cur_date) ; 
+            var cur_date = "{{comment.pub_date|date:'Y.m.d'}}" ;
+            date_line(cur_date) ;
           </script>
         </div>
         <div class="incoming_msg">
@@ -58,13 +58,13 @@
         {% else %}
           <div class="date">
             <script type="text/javascript">
-              var cur_date = "{{comment.pub_date|date:'Y.m.d'}}" ; 
-              date_line(cur_date) ; 
+              var cur_date = "{{comment.pub_date|date:'Y.m.d'}}" ;
+              date_line(cur_date) ;
             </script>
           </div>
           <div class="outgoing_msg">
             <div class="sent_msg">
-              <span class="sent_time_date"> {{ comment.pub_date|date:"P"}} 
+              <span class="sent_time_date"> {{ comment.pub_date|date:"P"}}
                 <div id="msg_box">{{ comment.content }}</div>
               </span>
             </div>
@@ -89,11 +89,11 @@
     storage.scrollTop = storage.scrollHeight;
 
     const websocket = new WebSocket('ws://' + window.location.host + '/ws/post/' + "{{post.pk}}" + '/');
-    
+
     websocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
     var req_username = "{{request.user.username}}";
-    
+
     // Set table structure
     /*var storage = document.getElementById("msg_history");
     alert(storage.scrollHeight);
@@ -147,9 +147,9 @@
       storage.scrollTop = storage.scrollHeight;
     }
 
-    
+
     };
-    
+
     websocket.onclose = function(e){
     console.error('Chat socket closed unexpectedly');
     };
@@ -167,7 +167,7 @@
          success: function(response){
            //console.log(data)
             //alert("SUCCESS\n" + response);
-            
+
             websocket.send(JSON.stringify({
                'postId': response,
             }));
@@ -179,7 +179,7 @@
       });
 
     }
-    
+
     </script>
 
 {% endblock %}

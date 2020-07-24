@@ -33,11 +33,11 @@
               <td class="text-center text-nowrap align-middle"> {{report.pk}} </td>
               <!--<td scope="row" class="text-center">{{post.get_topic_display}}</td>-->
               {% if post.finding_match ==  True %}
-              <td class="align-middle"> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' report.post.pk %}">{{report.post.title}}</a></td>
+              <td class="align-middle"> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:report_detail' report.pk %}">{{report.post.title}}</a></td>
               {% elif post.start_time != Null and post.fin_time == Null %}
-              <td class="align-middle"> <span id="ongoing" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' report.post.pk %}">{{report.post.title}}</a></td>
+              <td class="align-middle"> <span id="ongoing" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:report_detail' report.pk %}">{{report.post.title}}</a></td>
               {% else %}
-              <td class="align-middle"> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' report.post.pk %}">{{report.post.title}}</a></td>
+              <td class="align-middle"> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:report_detail' report.pk %}">{{report.post.title}}</a></td>
               {% endif %}
               <td class="text-center text-nowrap align-middle">{{report.post.user.profile.nickname}}</td>
               <td class="text-center text-nowrap align-middle">{{report.post.pub_date|date:'Y-m-d'}}</td>
