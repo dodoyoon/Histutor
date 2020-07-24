@@ -20,6 +20,7 @@ from django.views.generic.edit import UpdateView
 from django.views.generic.detail import DetailView
 from .models import Report
 from django.utils import timezone
+from django.contrib import messages
 
 URL_LOGIN = "/matching"
 # DEFAULT PAGE
@@ -47,10 +48,14 @@ def save_profile(request, pk):
             profile.phone = "010" + str(request.POST['phone1']) + str(request.POST['phone2'])
             profile.save()
             return redirect(reverse('matching:mainpage'))
+        else:
+            print("invalid profile form")
+            messages.error(request, '이미 사용중인 닉네임입니다.')
+            return HttpResponseRedirect(reverse('matching:profile', args=(request.user.pk,)))
     else:
         profile_form = ProfileForm(instance=request.user.profile)
     return render(request, 'matching/save_profile.html', {
-        'profile_form' : profile_form
+        'form' : profile_form
     })
 
 def user_check(request):

@@ -7,7 +7,11 @@
 
 		<!-- Bootstrap CSS -->
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-
+		<!-- messages CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+		
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -52,13 +56,12 @@
 				  <li class="nav-item">
 					{% if user.is_authenticated %}
 						{% if user.is_staff %}
-						<a id="admin" href="{% url 'matching:admin_home' %}"><button class="status">Admin</button></a>
+						<a id="admin" href="{% url 'matching:admin_home' %}"><button class="status" disabled>Admin</button></a>
 						{% elif user.profile.is_tutor %}
-						<button class="status">tutor</button>
+						<button class="status" disabled>tutor</button>
 						{% else %}
-						<button class="status">tutee</button>
+						<button class="status" disabled>tutee</button>
 						{% endif %}
-						<a id="mypage" href="{% url 'matching:mypage' %}">My Page</a>
 					{% endif %}
 				  </li>
 				<!--
@@ -74,6 +77,9 @@
 				{% if user.is_authenticated %}
 					<a id="logout" href="{% url 'account_logout' %}">Logout</a>
 					<a class="navbar-brand">{{ user.profile.nickname }}</a>
+					<a id="mypage" href="{% url 'matching:mypage' %}"><button class="status">My Page</button></a>
+				{% else %}
+					<a href="{% provider_login_url 'google' %}">Login with Google</a>
 				{% endif %}
 			  </form>
 			</div>

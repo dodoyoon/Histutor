@@ -8,8 +8,8 @@ from django.urls import reverse
 
 class Profile(models.Model):
    user = models.OneToOneField(User, on_delete=models.CASCADE)
-   nickname = models.CharField(null=True,max_length=200, unique=True)
-   phone = models.CharField(null=True, blank=True,max_length=200)
+   nickname = models.CharField(default="", max_length=200, unique=True)
+   phone = models.CharField(default="",max_length=200)
    is_tutor = models.BooleanField(null=True,blank=True, default=False)
    signin = models.BooleanField(default=False)
 
