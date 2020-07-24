@@ -11,6 +11,13 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['nickname']
+    def __init__(self, *args, **kwargs):
+        super(ProfileForm, self).__init__(*args, **kwargs)
+
+        # add custom error messages
+        self.fields['nickname'].error_messages.update({
+            'required': '닉네임을 입력하세요',
+        })
 
 class PostForm(forms.ModelForm):
     class Meta:

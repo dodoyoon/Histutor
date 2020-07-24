@@ -175,8 +175,9 @@ a:hover{
 .form-style-7 li{
 	display: block;
 	padding: 9px;
-	border:1px solid #DDDDDD;
-	margin-bottom: 30px;
+    border:1px solid #DDDDDD;
+    border-bottom: 3px solid #DDDDDD;
+	margin-top: 30px;
 	border-radius: 3px;
 }
 .form-style-7 li:last-child{
@@ -202,7 +203,6 @@ a:hover{
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	width: 100%;
-    margin: 0 10px 0 10px;
     border-color:#cfcfd3;
     border-width: thin;
 	height: 25px;
@@ -214,19 +214,12 @@ a:hover{
     outline:None;
     border:None;
 }
+
 .form-style-7 input[type="text"]:focus,
 .form-style-7 select:focus 
 {
 }
-.form-style-7 li > span{
-	background: #e6e5e7;
-	display: block;
-	padding: 3px;
-	margin: 8px -9px -9px -9px;
-	text-align: center;
-	color: #8c8a8f;
-	font-size: 11px;
-}
+
 .form-style-7 textarea{
 	resize:none;
 }
@@ -243,4 +236,12 @@ a:hover{
 .form-style-7 input[type="button"]:hover{
 	background: #d7d1fc;
     color:#534892;
+}
+
+#nickname-error{
+    text-align : center;
+    margin-top:0.5em;
+    height:20px;
+    padding-top:5px;
+    padding-bottom:20px;
 }
