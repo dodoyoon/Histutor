@@ -2,6 +2,7 @@ import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 from matching import models as matching_models
+from django.utils import timezone
 
 class NewPostConsumer(WebsocketConsumer):
     def connect(self):
@@ -102,7 +103,12 @@ class PostDetailConsumer(WebsocketConsumer):
         id = event['id']
         comment = matching_models.Comment.objects.get(pk=id)
         username = comment.user.username
-        date = comment.pub_date
+        db_date = comment.pub_date
+        time = timezone.localtime(db_date).strftime("%-I:%M")
+        am_or_pm = timezone.localtime(db_date).strftime("%p").lower()
+        am_or_pm = am_or_pm[0] + '.' + am_or_pm[1] + '.'
+        date = time + ' ' + am_or_pm
+        profile = matching_models.Profile.objects.get(user=comment.user)
 
         # Send message to WebSocket
         self.send(text_data=json.dumps({
@@ -110,5 +116,6 @@ class PostDetailConsumer(WebsocketConsumer):
             'id': id,
             'content': comment.content,
             'username': username,
-            'date': str(date),
+            'date': date,
+            'nickname': profile.nickname,
         }))

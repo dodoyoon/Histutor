@@ -3,6 +3,7 @@
 {% load account socialaccount %}
 
 {% block content %}
+<<<<<<< HEAD
     <p><a href="{% provider_login_url 'google' %}">Google</a></p>
 
     {% if messages %}
@@ -14,4 +15,11 @@
         {% endfor %}
     </ul>
     {% endif %}
+=======
+
+<form id="google" class="form-signin" action="{% provider_login_url 'google' %}"  method="POST">
+  {% csrf_token %}
+  <button class="btn btn-lg btn-google btn-block text-uppercase" type="submit"><i class="fab fa-google mr-2"></i> Sign in with Google</button>
+</form>
+>>>>>>> 4ef1cb4340c5ca311c674a8e185aa1e6e8fe2134
 {% endblock %}

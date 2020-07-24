@@ -5,7 +5,7 @@ from django.forms import ModelChoiceField
 class AccuseForm(forms.ModelForm):
     class Meta:
         model = Report
-        fields = ['tutee_feedback']
+        fields = ['content']
 
 class ProfileForm(forms.ModelForm):
     class Meta:
@@ -24,10 +24,14 @@ class PostForm(forms.ModelForm):
         model = Post
         fields = ['title']
 
-class DateInput(forms.DateInput):
-    input_type = 'date'
+class ReportForm(forms.ModelForm):
+    class Meta:
+        model = Report
+        fields = ['content']
 
-
+    def __init__(self, *args, **kwargs):
+        super(ReportForm, self).__init__(*args, **kwargs)
+        self.fields['content'].widget.attrs.update({'name' : 'content'})
 
 class CommentForm(forms.ModelForm):
     class Meta:
@@ -37,4 +41,4 @@ class CommentForm(forms.ModelForm):
 class AcceptReportForm(forms.ModelForm):
     class Meta:
         model = Report
-        fields = ('tutee_feedback',)
+        fields = ('content',)
