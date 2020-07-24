@@ -51,8 +51,9 @@
             <p class="received_name">{{comment.user.profile.nickname}}</p>
             <div class="received_with_msg">
               <div id="msg_box">{{ comment.content }}</div>
-              <span class="received_time_date">{{ comment.pub_date|date:"P"}} </span>
+              
             </div>
+            <span class="received_time_date">{{ comment.pub_date|date:"P"}} </span>
           </div>
         </div>
         {% else %}

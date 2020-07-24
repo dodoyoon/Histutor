@@ -86,8 +86,8 @@ img{ max-width:100%;}
   color: #747474;
   display: inline-block;
   font-size: 12px;
-  margin: 4px 0 8px 20px;
-  position: absolute;
+  margin: 4px 0 8px 0px;
+  position: relative;
 }
 .date{
   color: #adacac;
