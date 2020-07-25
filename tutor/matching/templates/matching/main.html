@@ -148,7 +148,13 @@
                 <td class="align-middle"> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title|truncatechars:50}}</a></td>
                 {% endif %}
                 <td class="text-center text-nowrap align-middle">{{post.user.profile.nickname}}</td>
+                {% if post.pub_date|date:'Y-m-d' == today|date:'Y-m-d' %}
+                <td class="text-center text-nowrap align-middle">{{post.pub_date|date:'H:i'}}</td>
+                {% else %}
                 <td class="text-center text-nowrap align-middle">{{post.pub_date|date:'Y-m-d'}}</td>
+                {% endif %}
+
+                
             </tr>
         {% endfor %}
         </tbody>
