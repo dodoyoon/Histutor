@@ -7,9 +7,6 @@
     <li class="nav-item">
       <a class="nav-link" href="{% url 'matching:mypage_post' %}">모집한 튜터링</a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link" href="{% url 'matching:mypage_report' %}">작성한 후기</a>
-    </li>
     {% if user.profile.is_tutor == True %}
     <li class="nav-item">
       <a class="nav-link active">진행한 튜터링</a>
@@ -24,6 +21,7 @@
           <th scope="col" class="text-center">제목</th>
           <th scope="col" style="width:150px" class="text-center">작성자</th>
           <th scope="col" style="width:150px" class="text-center">작성일</th>
+          <th scope="col" style="width:150px" class="text-center">후기</th>
         </tr>
         </thead>
         <tbody>
@@ -44,6 +42,11 @@
               <td class="text-center text-nowrap align-middle">{{post.pub_date|date:'H:i'}}</td>
               {% else %}
               <td class="text-center text-nowrap align-middle">{{post.pub_date|date:'Y-m-d'}}</td>
+              <td class="text-center text-nowrap align-middle">
+                {% if post.report %}
+                <a href="{% url 'matching:report_detail' post.report.pk %}">보기</a>
+                {% endif %}
+              </td>
               {% endif %}
 
           </tr>
