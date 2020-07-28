@@ -17,11 +17,11 @@
     <table id="post_table" class="table">
         <thead>
         <tr>
-          <th scope="col" style="width:100px" class="text-center">번호</th>
+          <th scope="col" style="width:100px" class="text-center">No.</th>
           <!--<th scope="col" class="text-center">주제</th>-->
-          <th scope="col" class="text-center">방 이름</th>
-          <th scope="col" style="width:150px" class="text-center">닉네임</th>
-          <th scope="col" style="width:150px" class="text-center">시간</th>
+          <th scope="col" class="text-center">제목</th>
+          <th scope="col" style="width:150px" class="text-center">작성자</th>
+          <th scope="col" style="width:150px" class="text-center">작성일</th>
           <th scope="col" style="width:150px" class="text-center">후기</th>
         </tr>
         </thead>
@@ -32,19 +32,23 @@
               <td class="text-center text-nowrap align-middle"> {{post.pk}} </td>
               <!--<td scope="row" class="text-center">{{post.get_topic_display}}</td>-->
               {% if post.finding_match ==  True %}
-              <td class="align-middle"> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
+              <td class="align-middle"> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title|truncatechars:50}}</a></td>
               {% elif post.start_time != Null and post.fin_time == Null %}
-              <td class="align-middle"> <span id="ongoing" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
+              <td class="align-middle"> <span id="ongoing" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title|truncatechars:50}}</a></td>
               {% else %}
-              <td class="align-middle"> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
+              <td class="align-middle"> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title|truncatechars:50}}</a></td>
               {% endif %}
               <td class="text-center text-nowrap align-middle">{{post.user.profile.nickname}}</td>
+              {% if post.pub_date|date:'Y-m-d' == today|date:'Y-m-d' %}
+              <td class="text-center text-nowrap align-middle">{{post.pub_date|date:'H:i'}}</td>
+              {% else %}
               <td class="text-center text-nowrap align-middle">{{post.pub_date|date:'Y-m-d'}}</td>
               <td class="text-center text-nowrap align-middle">
-              {% if post.report %}
-              <a href="{% url 'matching:report_detail' post.report.pk %}">보기</a>
-              {% endif %}
+                {% if post.report %}
+                <a href="{% url 'matching:report_detail' post.report.pk %}">보기</a>
+                {% endif %}
               </td>
+              {% endif %}
           </tr>
         {% endfor %}
         {% else %}

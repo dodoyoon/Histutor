@@ -554,6 +554,7 @@ def mainpage(request):
         'paginatorRange': paginatorRange,
         'form': form,
         'post_exist': post_exist,
+        'today' : timezone.localtime(),
     }
 
     # Tutee Report Part
