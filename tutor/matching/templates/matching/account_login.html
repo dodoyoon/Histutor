@@ -4,6 +4,16 @@
 
 {% block content %}
 
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            {% if message.tags and message.tags == "info" %}
+            <p class="alert alert-info" id="handong-login-required">{{ message }}</p>
+            {% endif %}
+        {% endfor %}
+    </ul>
+    {% endif %}
+
 <form id="google" class="form-signin" action="{% provider_login_url 'google' %}"  method="POST">
   {% csrf_token %}
   <button class="btn btn-lg btn-google btn-block text-uppercase" type="submit"><i class="fab fa-google mr-2"></i> Sign in with Google</button>

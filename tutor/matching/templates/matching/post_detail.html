@@ -50,7 +50,7 @@
           <div class="received_msg">
             <p class="received_name">{{comment.user.profile.nickname}}</p>
             <div class="received_with_msg">
-              <div id="msg_box">{{ comment.content }}</div>
+              {{ comment.content }}
               
             </div>
             <span class="received_time_date">{{ comment.pub_date|date:"P"}} </span>
@@ -85,6 +85,16 @@
 
   <script>
     document.getElementById("msg_send_btn").addEventListener("click", sendMessage);
+    var message = document.getElementById("write_msg");
+    message.focus();
+    message.addEventListener("keyup", function(event){
+      if(event.keyCode == 13){
+        event.preventDefault();
+        if(message.value.trim()!=''){
+          document.getElementById("msg_send_btn").click();
+        }
+      }
+    })
 
     var storage = document.getElementById("msg_history");
     storage.scrollTop = storage.scrollHeight;
@@ -124,24 +134,24 @@
 
     }else{
       //console.log("incoming");
-      var msg = document.createElement("div");
-      msg.className = "incoming_msg";
-      var inner_msg = document.createElement("div");
-      inner_msg.className = "received_msg";
+      var incoming_msg = document.createElement("div");
+      incoming_msg.className = "incoming_msg";
+      var received_msg = document.createElement("div");
+      received_msg.className = "received_msg";
       var received_name = document.createElement("p");
       received_name.className = "received_name";
       received_name.innerHTML += data['nickname'];
-      var inner_inner_msg = document.createElement("div");
-      inner_inner_msg.className = "received_with_msg";
-      inner_inner_msg.innerHTML += data['content'];
-      var msg_time = document.createElement("span");
-      msg_time.className = "received_time_date";
-      msg_time.innerHTML += data['date'];
-      inner_inner_msg.append(msg_time);
-      inner_msg.append(received_name);
-      inner_msg.append(inner_inner_msg);
-      msg.append(inner_msg);
-      storage.append(msg);
+      var received_with_msg = document.createElement("div");
+      received_with_msg.className = "received_with_msg";
+      received_with_msg.innerHTML += data['content'];
+      var received_time_date = document.createElement("span");
+      received_time_date.className = "received_time_date";
+      received_time_date.innerHTML += data['date'];
+      received_msg.append(received_name);
+      received_msg.append(received_with_msg);
+      received_msg.append(received_time_date);
+      incoming_msg.append(received_msg);
+      storage.append(incoming_msg);
     }
 
     if(at_bottom){
@@ -172,7 +182,7 @@
             websocket.send(JSON.stringify({
                'postId': response,
             }));
-            $("#classCreateName").value = "";
+            message.value = "";
          },
          error: function(response){
             //alert("ERROR!!\n" + response);

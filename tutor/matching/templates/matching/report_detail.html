@@ -31,6 +31,7 @@
 <p>시작시간: {{report.post.start_time|date:'Y-m-d'}}</p>
 <p>종료시간: {{report.post.fin_time|date:'Y-m-d'}}</p>
 <p>내용: {{report.content}}</p>
+
 {% if user.pk == report.tutor.pk %}
 <div>
   <button type="button" onclick="location.href='{% url 'matching:report_update' report.pk %}'" >수정</button>

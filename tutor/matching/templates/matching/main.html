@@ -32,7 +32,7 @@
       <tr>
         <th class="align-middle text-center text-nowrap">모집중인 튜터링</th>
         <td class="align-middle text-center text-nowrap">튜터 : {{ ongoing_post.user.profile.nickname }}</td>
-        <td class="align-middle">제목 : {{ ongoing_post.title }}</td>
+        <td class="align-middle">제목 : {{ ongoing_post.title|truncatechars:50 }}</td>
         <td class="align-middle text-center">
           <form class="align-middle" action="{% url 'matching:close_post' ongoing_post.pk %}"  method="POST">
             {% csrf_token %}
@@ -155,14 +155,20 @@
                 <td class="text-center text-nowrap align-middle"> {{post.pk}} </td>
                 <!--<td scope="row" class="text-center">{{post.get_topic_display}}</td>-->
                 {% if post.finding_match ==  True %}
-                <td class="align-middle"> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
+                <td class="align-middle"> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title|truncatechars:50}}</a></td>
                 {% elif post.start_time != Null and post.fin_time == Null %}
-                <td class="align-middle"> <span id="ongoing" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
+                <td class="align-middle"> <span id="ongoing" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title|truncatechars:50}}</a></td>
                 {% else %}
-                <td class="align-middle"> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title}}</a></td>
+                <td class="align-middle"> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title|truncatechars:50}}</a></td>
                 {% endif %}
                 <td class="text-center text-nowrap align-middle">{{post.user.profile.nickname}}</td>
+                {% if post.pub_date|date:'Y-m-d' == today|date:'Y-m-d' %}
+                <td class="text-center text-nowrap align-middle">{{post.pub_date|date:'H:i'}}</td>
+                {% else %}
                 <td class="text-center text-nowrap align-middle">{{post.pub_date|date:'Y-m-d'}}</td>
+                {% endif %}
+
+                
             </tr>
         {% endfor %}
         </tbody>

@@ -34,6 +34,7 @@ def index(request):
 def login(request):
     return render(request, 'matching/account_login.html', {})
 
+
 @login_required(login_url=URL_LOGIN)
 @transaction.atomic
 def save_profile(request, pk):
@@ -60,11 +61,14 @@ def save_profile(request, pk):
 
 def user_check(request):
 
-    if "handong.edu" in request.user.email:
+    if request.user.email.endswith('@handong.edu'):
         print("handong student")
         try:
             user = matching_models.User.objects.get(pk=request.user.pk)
             if user.profile.signin == False:
+                user.profile.nickname = user.last_name + user.username[-3:]
+                user.profile.signin = True
+                user.profile.save()
                 return HttpResponseRedirect(reverse('matching:profile', args=(request.user.pk,)))
             else:
                 return HttpResponseRedirect(reverse('matching:mainpage'))
@@ -72,6 +76,7 @@ def user_check(request):
             return HttpResponseRedirect(reverse('matching:index'))
     else:
         print("not valid email address")
+        messages.info(request, '한동 이메일로 로그인해주세요.')
         matching_models.User.objects.filter(pk=request.user.pk).delete()
         return HttpResponseRedirect(reverse('matching:index'))
 
@@ -81,6 +86,7 @@ def user_check(request):
 #     context_object_name = 'report'
 #     form_class = ReportForm
 #     template_name = 'matching/report_edit.html'
+
 
 @login_required(login_url=URL_LOGIN)
 def tutee_report(request, pk):
@@ -121,6 +127,7 @@ class ReportDetail(DetailView):
         report.tutee_feedback = form.cleaned_data['tutee_feedback']
         report.save()
 
+
 @login_required(login_url=URL_LOGIN)
 def post_new(request):
     if request.method == "POST":
@@ -155,6 +162,7 @@ def post_new(request):
     ctx['form'] = form
 
     return render(request, 'matching/post_new.html', ctx)
+
 
 @login_required(login_url=URL_LOGIN)
 def post_detail(request, pk):
@@ -215,6 +223,7 @@ def send_message(request):
         return HttpResponse('NOT A GET REQUEST')
 
 
+
 @login_required(login_url=URL_LOGIN)
 def post_edit(request, pk):
     ctx={}
@@ -234,6 +243,7 @@ def post_edit(request, pk):
         ctx['post'] = post
 
     return render(request, 'matching/post_edit.html', ctx)
+
 
 
 
@@ -304,10 +314,12 @@ def fin_tutoring(request, pk):
     return redirect(reverse('matching:mainpage'))
 
 
+
 @login_required(login_url=URL_LOGIN)
 def mypage(request):
     ctx = {}
     return redirect(reverse('matching:mypage_post'))
+
 
 @login_required(login_url=URL_LOGIN)
 def mypage_post(request):
@@ -358,6 +370,7 @@ def mypage_post(request):
     return render(request, 'matching/mypage_post.html', ctx)
 
 
+
 @login_required(login_url=URL_LOGIN)
 def mypage_report(request):
     ctx = {}
@@ -401,6 +414,7 @@ def mypage_report(request):
     }
 
     return render(request, 'matching/mypage_report.html', ctx)
+
 
 @login_required(login_url=URL_LOGIN)
 def mypage_tutor_post(request):
@@ -551,6 +565,7 @@ def mainpage(request):
         'paginatorRange': paginatorRange,
         'form': form,
         'post_exist': post_exist,
+        'today' : timezone.localtime(),
     }
 
     # Tutee Report Part
@@ -567,3 +582,4 @@ def mainpage(request):
 
     print(post_exist)
     return render(request, 'matching/main.html', ctx)
+
