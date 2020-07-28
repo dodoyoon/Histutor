@@ -1,6 +1,12 @@
 {% extends "matching/base.html" %}
 
 {% block content %}
+
+<a href="{% url 'matching:post_detail' report.post.pk  %}"  method="POST">
+  {% csrf_token %}
+  <button id="mybutton" type="submit">튜터링</button>
+</a>
+
 <p>주제: {{report.post.get_topic_display}}</p>
 <p>제목: {{report.post.title}}</p>
 <p>튜티: {{report.post.user.profile.nickname }}</p>
