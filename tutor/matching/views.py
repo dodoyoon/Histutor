@@ -495,10 +495,21 @@ def mainpage(request):
     else:
         form = PostForm()
 
-    recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
-    onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True).order_by('-pub_date')
-    recruited = matching_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
-    recruited = recruited.exclude(start_time__isnull = False, fin_time__isnull = True)
+
+    ### 튜터링 검색기능 ###
+    search_word = request.GET.get('search_word', '') # GET request의 인자중에 q 값이 있으면 가져오고, 없으면 빈 문자열 넣기
+
+    if search_word != '': # q가 있으면
+        recruiting = matching_models.Post.objects.filter(finding_match = True, title__icontains=search_word).order_by('-pub_date')
+        onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True, title__icontains=search_word).order_by('-pub_date')
+        recruited = matching_models.Post.objects.filter(finding_match = False, title__icontains=search_word).order_by('-pub_date')
+        recruited = recruited.exclude(start_time__isnull = False, fin_time__isnull = True)
+    else:
+        recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
+        onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True).order_by('-pub_date')
+        recruited = matching_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
+        recruited = recruited.exclude(start_time__isnull = False, fin_time__isnull = True)
+
     #posts = tutor_models.Post.objects.order_by('-pub_date')
     posts = list(chain(recruiting, onprocess, recruited))
 
@@ -548,14 +559,11 @@ def mainpage(request):
     report_to_write = matching_models.Post.objects.filter(user=user_obj2, report__isnull=True, tutor__isnull=False)
 
     if report_to_write.exists():
-        print("REPORT to write EXIST")
         for report in report_to_write:
             report_form = ReportForm()
             ctx['report_form'] = report_form
             ctx['report_exist'] = True
             ctx['report_post_pk'] = report.pk
-    else:
-        print("REPORT NOT EXIST")
 
     print(post_exist)
     return render(request, 'matching/main.html', ctx)
