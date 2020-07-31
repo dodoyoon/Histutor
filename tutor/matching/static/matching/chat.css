@@ -67,6 +67,7 @@ img{ max-width:100%;}
   display: inline-block;
   vertical-align: top;
   width: 55%;
+
  }
  .received_with_msg  {
   background: #ebebeb none repeat scroll 0 0;
@@ -88,6 +89,7 @@ img{ max-width:100%;}
   font-size: 12px;
   margin: 4px 0 8px 0px;
   position: relative;
+  top: 7px;
 }
 .date{
   color: #adacac;
@@ -97,10 +99,11 @@ img{ max-width:100%;}
 
 .sent_time_date {
   color: #747474;
-  display: block;
+  display: inline-block;
   font-size: 12px;
   margin: 4px 0 0;
   position: relative;
+  top: 7px;
 }
 
 .received_name{
@@ -139,11 +142,12 @@ img{ max-width:100%;}
 .outgoing_msg{
   overflow:hidden;
   margin:0;
-  float: right;
   width: 100%;
+  margin: 5px 0 0;
 }
 .sent_msg {
   float: right;
+  display: inline;
   width: 100%;
   text-align: right;
 }
