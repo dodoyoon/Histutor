@@ -60,7 +60,7 @@
 				  <li class="nav-item">
 					{% if user.is_authenticated %}
 						{% if user.is_staff %}
-						<a id="admin" href="{% url 'matching:admin_home' %}"><button class="status" disabled>Admin</button></a>
+						<a id="admin" href="{% url 'matching:admin_home' %}"><button class="status">Admin</button></a>
 						{% elif user.profile.is_tutor %}
 						<button class="status" disabled>tutor</button>
 						{% else %}

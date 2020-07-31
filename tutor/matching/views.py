@@ -582,4 +582,3 @@ def mainpage(request):
 
     print(post_exist)
     return render(request, 'matching/main.html', ctx)
-
