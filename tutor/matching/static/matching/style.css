@@ -70,7 +70,7 @@
     margin-bottom:1%;
 }
 
-#mybutton  {
+.mybutton  {
 	background-color:white;
 	-webkit-border-top-left-radius:28px;
 	-moz-border-radius-topleft:28px;
@@ -91,21 +91,27 @@ text-indent:0;
 	font-size:13px;
 	font-weight:bold;
 	font-style:normal;
-height:40px;
-	line-height:30px;
-width:90px;
+height:30px;
+	line-height:20px;
+width:100px;
 	text-decoration:none;
 	text-align:center;
-}#mybutton:hover {
+}.mybutton:hover {
     background-color:#e9e6f5;
-}#mybutton:active {
+}.mybutton:active {
 	position:relative;
 	top:1px;
-}#mybutton:disabled,
-#mybutton[disabled]{
+}.mybutton:disabled,
+.mybutton[disabled]{
     background-color:#d7d6d8;
     color:#22192b;
     font-weight:normal;
+}
+
+#makeRoombtn{
+  float: right;
+  position: relative;
+  top: 18px;
 }
 
 #mainpage_ongoing_table_div {
