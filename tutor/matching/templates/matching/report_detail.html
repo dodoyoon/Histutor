@@ -2,6 +2,7 @@
 
 {% block content %}
 
+<<<<<<< HEAD
 <div id="mainpage_table_div" class="tableDiv">
     <table id="mainpage_table" class="table">
         <thead>
@@ -22,6 +23,12 @@
 </div>
 
 
+=======
+<a href="{% url 'matching:post_detail' report.post.pk  %}"  method="POST">
+  {% csrf_token %}
+  <button id="mybutton" type="submit">튜터링</button>
+</a>
+>>>>>>> 19f649d8e3ed7b0d11af823a793bd9cedc13c749
 
 <p>주제: {{report.post.get_topic_display}}</p>
 <p>제목: {{report.post.title}}</p>

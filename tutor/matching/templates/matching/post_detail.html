@@ -7,6 +7,13 @@
 {% block content %}
 <div id="post-top">
 
+  {% if post.report %}
+  <a href="{% url 'matching:report_detail' post.report.pk  %}"  method="POST">
+    {% csrf_token %}
+    <button id="mybutton" type="submit">후기</button>
+  </a>
+  {% endif %}
+
 {% if user == post.user and post.finding_match == True %}
   <form action="{% url 'matching:close_post' post.pk %}"  method="POST">
     {% csrf_token %}
