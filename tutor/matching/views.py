@@ -60,7 +60,7 @@ def save_profile(request, pk):
     })
 
 def user_check(request):
-
+    print("userCheck")
     if request.user.email.endswith('@handong.edu'):
         print("handong student")
         try:

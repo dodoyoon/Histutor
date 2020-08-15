@@ -8,7 +8,8 @@ from django.urls import reverse
 
 class Profile(models.Model):
    user = models.OneToOneField(User, on_delete=models.CASCADE)
-   nickname = models.CharField(default="", max_length=200, unique=True)
+   #nickname = models.CharField(default="", max_length=200, unique=True)
+   nickname = models.CharField(default="", max_length=200)
    phone = models.CharField(default="",max_length=200)
    is_tutor = models.BooleanField(null=True,blank=True, default=False)
    signin = models.BooleanField(default=False)
@@ -39,12 +40,17 @@ class Post(models.Model):
    tutor = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
    topic = models.CharField(choices=TOPIC_CHOICES, max_length=200, default='etc')
    title = models.CharField(max_length=200)
-   finding_match = models.NullBooleanField(default=True)
+   finding_match = models.BooleanField(null=True,default=True)
    pub_date = models.DateTimeField(auto_now_add=True)
    cancel_reason = models.TextField(null=True)
    start_time = models.DateTimeField(null=True)
    fin_time = models.DateTimeField(null=True)
+   hit = models.PositiveIntegerField(default=0)
 
+   @property
+   def update_hit(self):
+      self.hit += 1
+      self.save()
 
    def __str__(self):
       return self.get_topic_display() + ' ' + self.title
@@ -63,7 +69,7 @@ class Report(models.Model):
    tutee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutee")
    post = models.OneToOneField(Post, on_delete=models.CASCADE, related_name="report")
    pub_date = models.DateField(auto_now_add=True)
-   is_confirmed = models.NullBooleanField(default=False)
+   is_confirmed = models.BooleanField(null=True,default=False)
    content = models.TextField()
 
    def __str__(self):
