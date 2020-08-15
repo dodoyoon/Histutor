@@ -80,10 +80,12 @@
 
     </div>
     <div class="type_msg">
+      {% if post.finding_match or user == post.user or user == post.tutor %}
       <div class="input_msg_write">
         <input type="text" id="write_msg" class="write_msg" placeholder="Type a message" />
         <button id="msg_send_btn" class="msg_send_btn" type="button"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
       </div>
+      {% endif %}
     </div>
   </div>
 </div>
