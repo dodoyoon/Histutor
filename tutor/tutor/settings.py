@@ -25,7 +25,7 @@ SECRET_KEY = '$0+k15+_qw!%t3%t!!^@gy((rnhbch95yxxx0rm8j4uvnr9lg9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['34.64.147.240', '127.0.0.1', 'histutor.tk']
+ALLOWED_HOSTS = ['34.64.147.240', '127.0.0.1', 'histutor.tk', 'localhost']
 
 
 # Application definition
@@ -135,7 +135,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 
-SITE_ID = 4
+SITE_ID = 9
 ACCOUNT_LOGOUT_REDIRECT_URL ="/matching"
 LOGIN_REDIRECT_URL = "/matching/userCheck"
 ACCOUNT_LOGOUT_ON_GET = True
