@@ -168,10 +168,20 @@ def post_detail(request, pk):
         messages.error(request, '해당 게시물은 존재하지 않습니다.')
         return HttpResponseRedirect(reverse('matching:mainpage'))
 
-    if hasattr(post, 'report'):
-        ctx['report_exist'] = True ;
-    else:
-        ctx['report_exist'] = False ;
+    user = matching_models.User.objects.get(username=request.user.username)
+    report_to_write = matching_models.Post.objects.filter(user=user, report__isnull=True, tutor__isnull=False)
+    ongoing_tutoring = matching_models.Post.objects.filter(tutor=user).filter(fin_time__isnull=True)
+    if ongoing_tutoring.exists():
+        ongoing_tutoring = ongoing_tutoring[:1].get()
+
+    ctx['ongoing_tutoring'] = ongoing_tutoring
+
+    if report_to_write.exists():
+        for report in report_to_write:
+            report_form = ReportForm()
+            ctx['report_form'] = report_form
+            ctx['report_exist'] = True
+            ctx['report_post_pk'] = report.pk
 
     comment_list = matching_models.Comment.objects.filter(post=post).order_by('pub_date')
 
