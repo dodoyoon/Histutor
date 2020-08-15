@@ -505,6 +505,15 @@ def mainpage(request):
                     'nickname': post.user.profile.nickname,
                 }
             )
+
+            title = post.title
+            url = "http://" + request.get_host() + reverse('matching:post_detail', args=[post.pk])
+            payload = '{"body":"New Post has been posted.","connectColor":"#6C639C","connectInfo":[{"title":"' + title + '","imageUrl":"' + url + '"}]}'
+            
+            headers = {'Accept': 'application/vnd.tosslab.jandi-v2+json',
+            'Content-Type': 'application/json'}
+
+            r = requests.post("https://wh.jandi.com/connect-api/webhook/20949533/4bbee5c811038e410ccea15513acd716", data=payload.encode('utf-8'), headers=headers)
             return redirect('matching:post_detail', pk=post.pk)
     else:
         form = PostForm()
