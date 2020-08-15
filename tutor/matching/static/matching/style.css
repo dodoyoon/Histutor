@@ -41,18 +41,6 @@
     display: inline-block;
   }
 
-#finding{
-    background-color: green;
-}
-
-#ongoing{
-    background-color: #fcba03;
-}
-
-#found{
-    background-color: #bbb;
-}
-
 #createRoomBtn {
   position: relative;
   float: right;
@@ -171,7 +159,7 @@ a:hover{
 .form-style-7 ul{
 	list-style:none;
 	padding:0;
-	margin:0;	
+	margin:0;
 }
 .form-style-7 li{
 	display: block;
@@ -198,7 +186,7 @@ a:hover{
 }
 
 .form-style-7 input[type="text"],
-.form-style-7 select 
+.form-style-7 select
 {
 	box-sizing: border-box;
 	-webkit-box-sizing: border-box;
@@ -217,7 +205,7 @@ a:hover{
 }
 
 .form-style-7 input[type="text"]:focus,
-.form-style-7 select:focus 
+.form-style-7 select:focus
 {
 }
 
@@ -272,4 +260,3 @@ a:hover{
   left: calc(50% - 150px);
   top: 300px;
 }
-
