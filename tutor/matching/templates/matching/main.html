@@ -45,7 +45,7 @@
         <td class="align-middle text-center">
           <form class="align-middle" action="{% url 'matching:close_post' ongoing_post.pk %}"  method="POST">
             {% csrf_token %}
-            <button id="mybutton" type="submit">취소</button>
+            <button class="mybutton" type="submit">취소</button>
           </form>
         </td>
       </tr>
@@ -58,7 +58,7 @@
         <td class="align-middle text-center">
           <form class="align-middle" action="{% url 'matching:fin_tutoring' ongoing_tutoring.pk %}"  method="POST">
             {% csrf_token %}
-            <button id="mybutton" type="submit">취소</button>
+            <button class="mybutton" type="submit">취소</button>
           </form>
         </td>
       </tr>
@@ -68,9 +68,9 @@
   </table>
   <div class="create_room">
     {% if post_exist == False %}
-    <button id="mybutton" type="button"  data-toggle="modal" data-target="#myModal">튜터링 방 만들기</button>
+    <button id="makeRoombtn" class="mybutton" type="button"  data-toggle="modal" data-target="#myModal">튜터링 방 만들기</button>
     {% else %}
-    <button id="mybutton" type="button"  data-toggle="modal" data-target="#myModal" disabled>튜터링 방 만들기</button>
+    <button id="makeRoombtn" class="mybutton" type="button"  data-toggle="modal" data-target="#myModal" disabled>튜터링 방 만들기</button>
     {% endif %}
   </div>
   <!-- Modal -->
