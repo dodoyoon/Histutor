@@ -24,7 +24,16 @@
 {% endblock %}
 
 {% block content %}
+
+
 <div>
+  <ul class="messages">
+    {% for message in messages %}
+        {% if message.tags and message.tags == "error" %}
+        <p class="alert alert-danger" id="nickname-error">{{ message }}</p>
+        {% endif %}
+    {% endfor %}
+  </ul>
   <div id="mainpage_ongoing_table_div" class="tableDiv">
   <table id="mainpage_ongoing_table" class="table table-bordered w-auto">
     <tbody>
