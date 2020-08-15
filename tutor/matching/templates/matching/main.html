@@ -120,7 +120,7 @@
                 <td class="text-center text-nowrap align-middle" style="color:#0c6b27"> 모집중 </td>
                 {% elif post.start_time != Null and post.fin_time == Null %}
                 <td class="text-center text-nowrap align-middle" style="color:#2112bf"> 진행중 </td>
-                {% elif report_exist and user == post.user%}
+                {% elif not post.report and post.user == request.user %}
                 <td class="text-center text-nowrap align-middle" style="color:#b1100a"> 보고서 미작성 </td>
                 {% else %}
                 <td class="text-center text-nowrap align-middle" style="color:#bbb"> 종료 </td>
@@ -134,7 +134,7 @@
                 <td class="text-center text-nowrap align-middle">{{post.pub_date|date:'Y-m-d'}}</td>
                 {% endif %}
                 <td class="text-center text-nowrap align-middle">{{post.hit}}</td>
-                
+
             </tr>
         {% endfor %}
         </tbody>
