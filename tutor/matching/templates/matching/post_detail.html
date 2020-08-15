@@ -14,7 +14,6 @@
   </form>
 {% endif %}
 
-
 {% if post.tutor is null and user != post.user %}
   <form action="{% url 'matching:set_tutor' postpk=post.pk userpk=user.pk  %}"  method="POST">
     {% csrf_token %}
@@ -38,20 +37,22 @@
 
       </script>
       {% for comment in comment_list %}
-        {% if comment.user != user %}
+        {% if post.finding_match is False and comment.content == start_msg %}
+        <div class="start_tutoring">
+          ✨&nbsp;&nbsp;튜터링 시작&nbsp;&nbsp;✨
+        </div>
+        {% elif comment.user != user %}
         <div class="date">
           <script type="text/javascript">
-            var cur_date = "{{comment.pub_date|date:'Y.m.d'}}" ;
+            const cur_date = "{{comment.pub_date|date:'Y.m.d'}}" ;
             date_line(cur_date) ;
           </script>
         </div>
         <div class="incoming_msg">
-          <!--<div class="incoming_msg_img"> <img src="" alt=""> </div>-->
           <div class="received_msg">
             <p class="received_name">{{comment.user.profile.nickname}}</p>
             <div class="received_with_msg">
               {{ comment.content }}
-
             </div>
             <span class="received_time_date">{{ comment.pub_date|date:"P"}} </span>
           </div>
@@ -59,7 +60,7 @@
         {% else %}
           <div class="date">
             <script type="text/javascript">
-              var cur_date = "{{comment.pub_date|date:'Y.m.d'}}" ;
+              const cur_date = "{{comment.pub_date|date:'Y.m.d'}}" ;
               date_line(cur_date) ;
             </script>
           </div>
@@ -71,6 +72,7 @@
           </div>
         {% endif %}
       {% endfor %}
+
 
     </div>
     <div class="type_msg">
