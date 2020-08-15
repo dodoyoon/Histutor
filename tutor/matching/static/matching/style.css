@@ -208,6 +208,7 @@ a:hover{
 .form-style-7 #nickname{
     outline:None;
     border:None;
+    text-align:center;
 }
 
 .form-style-7 input[type="text"]:focus,

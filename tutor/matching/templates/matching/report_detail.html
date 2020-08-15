@@ -1,47 +1,38 @@
 {% extends "matching/base.html" %}
+{% load static %}
+{% block style %}
+  <link rel="stylesheet" type="text/css" href="{% static 'matching/report.css' %}">
+{% endblock %}
 
 {% block content %}
+  <div class="list-type1">
+    <ol>
+      <div class="list-box">
+        <li><a href="#">제목</a></li>
+        {{report.post.title}}
+      </div>
+      <div class="list-box">
+        <li><a href="#">튜티</a></li>
+        {{report.post.user.profile.nickname }}
+      </div>
+      <div class="list-box">
+        <li><a href="#">튜터</a></li>
+        {{report.post.tutor.profile.nickname }}
+      </div>
+      <div class="list-box">
+        <li><a href="#">시작시간</a></li>
+        {{report.post.start_time|date:'Y-m-d'}}
+      </div>
+      <div class="list-box">
+        <li><a href="#">종료시간</a></li>
+        {{report.post.fin_time|date:'Y-m-d'}}
+      </div>
+      <div class="list-box">
+        <li><a href="#">보고서</a></li>
+        {{report.content}}
+      </div>
+    </ol>
+  </div>
 
-<<<<<<< HEAD
-<div id="mainpage_table_div" class="tableDiv">
-    <table id="mainpage_table" class="table">
-        <thead>
-        <tr>
-          <th scope="row" style="width:100px" class="text-center">주제</th>
-          <!--<th scope="col" class="text-center">주제</th>-->
-          <th scope="row" class="text-center">제목</th>
-          <th scope="row" style="width:150px" class="text-center">작성자</th>
-          <th scope="row" style="width:150px" class="text-center">작성일</th>
-        </tr>
-        </thead>
-        <tbody>
-            <tr> <td>1</td> <th scope="row">홍길동</th> <td>경영학과</td> <td>90</td> <td>A</td> </tr>
-            <tr> <td>2</td> <th scope="row">전지현</th> <td>영문학과</td> <td>80</td> <td>B</td> </tr>
-            <tr> <td>3</td> <th scope="row">김철수</th> <td>건축학과</td> <td>70</td> <td>C</td> </tr>
-        </tbody>
-    </table>
-</div>
 
-
-=======
-<a href="{% url 'matching:post_detail' report.post.pk  %}"  method="POST">
-  {% csrf_token %}
-  <button id="mybutton" type="submit">튜터링</button>
-</a>
->>>>>>> 19f649d8e3ed7b0d11af823a793bd9cedc13c749
-
-<p>주제: {{report.post.get_topic_display}}</p>
-<p>제목: {{report.post.title}}</p>
-<p>튜티: {{report.post.user.profile.nickname }}</p>
-<p>튜터: {{report.post.tutor.profile.nickname }}</p>
-
-<p>시작시간: {{report.post.start_time|date:'Y-m-d'}}</p>
-<p>종료시간: {{report.post.fin_time|date:'Y-m-d'}}</p>
-<p>내용: {{report.content}}</p>
-
-{% if user.pk == report.tutor.pk %}
-<div>
-  <button type="button" onclick="location.href='{% url 'matching:report_update' report.pk %}'" >수정</button>
-</div>
-{% endif %}
 {% endblock %}

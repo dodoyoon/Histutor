@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block content %}
+
 <div style="margin-top:10px;float:right;margin-right:10px">
     {% if user == post.user and post.finding_match == True %}
     <button id="mybutton" type="submit" onclick="location.href='{% url "matching:close_post" post.pk %}'">모집 종료</button>
@@ -27,6 +28,7 @@
 <div class="chat">
   <div class="title">
     {{ post.title }}
+    {{ post.update_hit }}
   </div>
 
   <div class="mesgs">
@@ -35,20 +37,22 @@
 
       </script>
       {% for comment in comment_list %}
-        {% if comment.user != user %}
+        {% if post.finding_match is False and comment.content == start_msg %}
+        <div class="start_tutoring">
+          ✨&nbsp;&nbsp;튜터링 시작&nbsp;&nbsp;✨
+        </div>
+        {% elif comment.user != user %}
         <div class="date">
           <script type="text/javascript">
-            var cur_date = "{{comment.pub_date|date:'Y.m.d'}}" ;
+            const cur_date = "{{comment.pub_date|date:'Y.m.d'}}" ;
             date_line(cur_date) ;
           </script>
         </div>
         <div class="incoming_msg">
-          <!--<div class="incoming_msg_img"> <img src="" alt=""> </div>-->
           <div class="received_msg">
             <p class="received_name">{{comment.user.profile.nickname}}</p>
             <div class="received_with_msg">
               {{ comment.content }}
-
             </div>
             <span class="received_time_date">{{ comment.pub_date|date:"P"}} </span>
           </div>
@@ -56,7 +60,7 @@
         {% else %}
           <div class="date">
             <script type="text/javascript">
-              var cur_date = "{{comment.pub_date|date:'Y.m.d'}}" ;
+              const cur_date = "{{comment.pub_date|date:'Y.m.d'}}" ;
               date_line(cur_date) ;
             </script>
           </div>
@@ -68,6 +72,7 @@
           </div>
         {% endif %}
       {% endfor %}
+
 
     </div>
     <div class="type_msg">

@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.db.models import F
 from django.views import generic
 from django.contrib.auth.models import User
-from .forms import PostForm, ProfileForm, CommentForm, AcceptReportForm, AccuseForm, ReportForm
+from .forms import PostForm, CommentForm, AcceptReportForm, AccuseForm, ReportForm
 from django.contrib.auth.decorators import login_required
 from matching import models as matching_models
 from django.db import transaction
@@ -38,32 +38,24 @@ def login(request):
 @login_required(login_url=URL_LOGIN)
 @transaction.atomic
 def save_profile(request, pk):
+    user = matching_models.User.objects.get(pk=pk)
     if not request.user.is_authenticated:
         return redirect('/accounts/login/')
     if request.method == 'POST':
-        user = matching_models.User.objects.get(pk=pk)
-        profile_form = ProfileForm(request.POST, instance= user.profile)
-        if profile_form.is_valid():
-            profile = profile_form.save(commit=False)
-            profile.signin = True
-            profile.phone = "010" + str(request.POST['phone1']) + str(request.POST['phone2'])
-            profile.save()
-            return redirect(reverse('matching:mainpage'))
-        else:
-            messages.error(request, '이미 사용중인 닉네임입니다.')
-            return HttpResponseRedirect(reverse('matching:profile', args=(request.user.pk,)))
-    else:
-        profile_form = ProfileForm(instance=request.user.profile)
-    return render(request, 'matching/save_profile.html', {
-        'form' : profile_form
-    })
+        profile = user.profile 
+        profile.signin = True
+        profile.phone = "010" + str(request.POST['phone1']) + str(request.POST['phone2'])
+        profile.save()
+        return redirect(reverse('matching:mainpage'))
+    print("nickname : ", user.profile.nickname)
+    return render(request, 'matching/save_profile.html', {'nickname': user.profile.nickname})
 
 def user_check(request):
     if request.user.email.endswith('@handong.edu'):
         try:
             user = matching_models.User.objects.get(pk=request.user.pk)
             if user.profile.signin == False:
-                user.profile.nickname = user.last_name + user.username[-3:]
+                user.profile.nickname =user.username[1:2] + user.last_name
                 user.profile.signin = True
                 user.profile.save()
                 return HttpResponseRedirect(reverse('matching:profile', args=(request.user.pk,)))
@@ -187,6 +179,9 @@ def post_detail(request, pk):
 
     ctx['post'] = post
     ctx['comment_list'] = comment_list
+    ctx['start_msg'] = ""
+    if post.finding_match is False:
+        ctx['start_msg'] = post.tutor.last_name+post.user.last_name+"튜터링시작"
     return render(request, 'matching/post_detail.html', ctx)
 
 def set_tutor(request, postpk, userpk):
@@ -212,6 +207,9 @@ def set_tutor(request, postpk, userpk):
     post.finding_match = False
     post.start_time = timezone.localtime()
     post.save()
+
+    start_tutoring_cmt = matching_models.Comment(user=tutor, post=post, pub_date=post.start_time, content=tutor.last_name+post.user.last_name+"튜터링시작")
+    start_tutoring_cmt.save()
 
     return redirect('matching:post_detail', pk=post.pk)
 
