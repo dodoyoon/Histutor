@@ -464,6 +464,7 @@ def mypage_tutor_post(request):
     }
     return render(request, 'matching/mypage_tutor_post.html', ctx)
 
+import requests
 @login_required(login_url=URL_LOGIN)
 def mainpage(request):
     post = matching_models.Post.objects.filter(user = request.user, finding_match = True)
