@@ -7,17 +7,8 @@
         <h1>Sign Up</h1>
     <li>
         <label for="name">Nickname</label>
-        <input type="text" id="nickname" name="nickname" required>
+        <input type="text" value={{nickname}} id="nickname" name="nickname" disabled>
     </li>
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-            {% if message.tags and message.tags == "error" %}
-            <p class="alert alert-danger" id="nickname-error">{{ message }}</p>
-            {% endif %}
-        {% endfor %}
-    </ul>
-    {% endif %}
     <li>
         <label for="email">Phone</label>
         010&nbsp&nbsp-&nbsp&nbsp<input type="text" name="phone1" pattern="[0-9]{4}" maxlength="4" style="width:80px;" required>&nbsp&nbsp-&nbsp&nbsp<input type="text" name="phone2" maxlength="4" style="width:80px;" pattern="[0-9]{4}" required>

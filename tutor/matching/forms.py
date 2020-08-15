@@ -1,23 +1,11 @@
 from django import forms
-from .models import Post, Report, Profile, Comment
+from .models import Post, Report, Comment
 from django.forms import ModelChoiceField
 
 class AccuseForm(forms.ModelForm):
     class Meta:
         model = Report
         fields = ['content']
-
-class ProfileForm(forms.ModelForm):
-    class Meta:
-        model = Profile
-        fields = ['nickname']
-    def __init__(self, *args, **kwargs):
-        super(ProfileForm, self).__init__(*args, **kwargs)
-
-        # add custom error messages
-        self.fields['nickname'].error_messages.update({
-            'required': '닉네임을 입력하세요',
-        })
 
 class PostForm(forms.ModelForm):
     class Meta:

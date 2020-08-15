@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.db.models import F
 from django.views import generic
 from django.contrib.auth.models import User
-from .forms import PostForm, ProfileForm, CommentForm, AcceptReportForm, AccuseForm, ReportForm
+from .forms import PostForm, CommentForm, AcceptReportForm, AccuseForm, ReportForm
 from django.contrib.auth.decorators import login_required
 from matching import models as matching_models
 from django.db import transaction
@@ -38,26 +38,17 @@ def login(request):
 @login_required(login_url=URL_LOGIN)
 @transaction.atomic
 def save_profile(request, pk):
+    user = matching_models.User.objects.get(pk=pk)
     if not request.user.is_authenticated:
         return redirect('/accounts/login/')
     if request.method == 'POST':
-        user = matching_models.User.objects.get(pk=pk)
-        profile_form = ProfileForm(request.POST, instance= user.profile)
-        if profile_form.is_valid():
-            profile = profile_form.save(commit=False)
-            profile.signin = True
-            profile.phone = "010" + str(request.POST['phone1']) + str(request.POST['phone2'])
-            profile.save()
-            return redirect(reverse('matching:mainpage'))
-        else:
-            print("invalid profile form")
-            messages.error(request, '이미 사용중인 닉네임입니다.')
-            return HttpResponseRedirect(reverse('matching:profile', args=(request.user.pk,)))
-    else:
-        profile_form = ProfileForm(instance=request.user.profile)
-    return render(request, 'matching/save_profile.html', {
-        'form' : profile_form
-    })
+        profile = user.profile 
+        profile.signin = True
+        profile.phone = "010" + str(request.POST['phone1']) + str(request.POST['phone2'])
+        profile.save()
+        return redirect(reverse('matching:mainpage'))
+    print("nickname : ", user.profile.nickname)
+    return render(request, 'matching/save_profile.html', {'nickname': user.profile.nickname})
 
 def user_check(request):
     print("userCheck")
