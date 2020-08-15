@@ -50,7 +50,6 @@ def save_profile(request, pk):
             profile.save()
             return redirect(reverse('matching:mainpage'))
         else:
-            print("invalid profile form")
             messages.error(request, '이미 사용중인 닉네임입니다.')
             return HttpResponseRedirect(reverse('matching:profile', args=(request.user.pk,)))
     else:
@@ -60,9 +59,7 @@ def save_profile(request, pk):
     })
 
 def user_check(request):
-    print("userCheck")
     if request.user.email.endswith('@handong.edu'):
-        print("handong student")
         try:
             user = matching_models.User.objects.get(pk=request.user.pk)
             if user.profile.signin == False:
@@ -75,7 +72,6 @@ def user_check(request):
         except(KeyError, matching_models.User.DoesNotExist):
             return HttpResponseRedirect(reverse('matching:index'))
     else:
-        print("not valid email address")
         messages.info(request, '한동 이메일로 로그인해주세요.')
         matching_models.User.objects.filter(pk=request.user.pk).delete()
         return HttpResponseRedirect(reverse('matching:index'))
@@ -93,11 +89,9 @@ def tutee_report(request, pk):
     post = matching_models.Post.objects.get(pk=pk)
 
     if request.method == "POST":
-        print(">>>POST")
         form = ReportForm(request.POST)
 
         if form.is_valid():
-            print("report form valid")
             report = form.save(commit=False)
             report.tutor = matching_models.User.objects.get(pk = post.tutor.pk)
             report.tutee = matching_models.User.objects.get(pk = post.user.pk)
@@ -105,7 +99,6 @@ def tutee_report(request, pk):
             report.save()
             return redirect('matching:report_detail', pk=report.pk)
         else:
-            print("report form *invalid*")
             return redirect('matching:mainpage')
 
 class ReportDetail(DetailView):
@@ -133,7 +126,6 @@ def post_new(request):
     if request.method == "POST":
         form = PostForm(request.POST)
         if form.is_valid():
-            print('form data : ', form.cleaned_data)
             post = form.save(commit=False)
             user_obj = matching_models.User.objects.get(username=request.user.username)
             post.user = user_obj
@@ -170,10 +162,11 @@ def post_detail(request, pk):
 
     try:
         post = get_object_or_404(matching_models.Post, pk=pk)
-    except post.DoesNotExist:
-        return HttpResponse("포스트가 없습니다.")
     except matching_models.Post.DoesNotExist:
         return HttpResponse("게시물이 존재하지 않습니다.")
+    except:
+        messages.error(request, '해당 게시물은 존재하지 않습니다.')
+        return HttpResponseRedirect(reverse('matching:mainpage'))
 
     if hasattr(post, 'report'):
         ctx['report_exist'] = True ;
@@ -251,8 +244,6 @@ def post_edit(request, pk):
 def admin_home(request):
     user = matching_models.User.objects.get(pk=request.user.pk)
 
-    print(user.is_staff)
-
     if not user.is_staff:
         return redirect(reverse('matching:mainpage'))
 
@@ -300,7 +291,6 @@ def admin_home(request):
 
 # Tutee가 끝낼 때
 def close_post(request, pk):
-    print(">>> close post!")
     post = matching_models.Post.objects.get(pk=pk)
     post.finding_match = False
     post.save()
@@ -486,7 +476,6 @@ def mainpage(request):
     if request.method == "POST":
         form = PostForm(request.POST)
         if form.is_valid():
-            print('form data : ', form.cleaned_data)
             post = form.save(commit=False)
             user_obj = matching_models.User.objects.get(username=request.user.username)
             post.user = user_obj
@@ -590,5 +579,4 @@ def mainpage(request):
             ctx['report_exist'] = True
             ctx['report_post_pk'] = report.pk
 
-    print(post_exist)
     return render(request, 'matching/main.html', ctx)
