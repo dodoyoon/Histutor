@@ -6,37 +6,31 @@
 
 {% block style %}
 {% load static %}
-<!-- Report Modal Jquery -->
-<script type="text/javascript">
-    $(window).on('load',function(){
-        if('{{report_exist}}' == 'True'){
-            console.log( "REPORT EXIST" );
-            $('#reportModal').modal({backdrop: 'static', keyboard: false});
-        }
-        else{
-            console.log( "REPORT NOT EXIST" ) ;
-        }
-    });
-</script>
-
-<!-- <link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"> -->
-
 {% endblock %}
 
 {% block content %}
+
+
 <div>
+  <ul class="messages">
+    {% for message in messages %}
+        {% if message.tags and message.tags == "error" %}
+        <p class="alert alert-danger" id="nickname-error">{{ message }}</p>
+        {% endif %}
+    {% endfor %}
+  </ul>
   <div id="mainpage_ongoing_table_div" class="tableDiv">
   <table id="mainpage_ongoing_table" class="table table-bordered w-auto">
     <tbody>
       {% if ongoing_post %}
       <tr>
         <th class="align-middle text-center text-nowrap">모집중인 튜터링</th>
-        <td class="align-middle text-center text-nowrap">튜터 : {{ ongoing_post.user.profile.nickname }}</td>
-        <td class="align-middle">제목 : {{ ongoing_post.title|truncatechars:50 }}</td>
+        <td class="align-middle text-center text-nowrap">튜티 : {{ ongoing_post.user.profile.nickname }}</td>
+        <td class="align-middle">주제 : {{ ongoing_post.title|truncatechars:50 }}</td>
         <td class="align-middle text-center">
           <form class="align-middle" action="{% url 'matching:close_post' ongoing_post.pk %}"  method="POST">
             {% csrf_token %}
-            <button id="mybutton" type="submit">모집종료</button>
+            <button class="mybutton" type="submit">취소</button>
           </form>
         </td>
       </tr>
@@ -45,11 +39,11 @@
       <tr>
         <th class="align-middle text-center text-nowrap">진행중인 튜터링</th>
         <td class="align-middle text-center text-nowrap">튜티 : {{ ongoing_tutoring.user.profile.nickname }}</td>
-        <td class="align-middle">제목 : {{ ongoing_tutoring.title }}</td>
+        <td class="align-middle">주제 : {{ ongoing_tutoring.title }}</td>
         <td class="align-middle text-center">
           <form class="align-middle" action="{% url 'matching:fin_tutoring' ongoing_tutoring.pk %}"  method="POST">
             {% csrf_token %}
-            <button id="mybutton" type="submit">튜터링 종료</button>
+            <button class="mybutton" type="submit">취소</button>
           </form>
         </td>
       </tr>
@@ -58,10 +52,10 @@
   </div>
   </table>
   <div class="create_room">
-    {% if post_exist == False %}
+    {% if post_exist == False and not report_exist %}
     <button id="mybutton" type="button"  data-toggle="modal" data-target="#myModal">방 만들기</button>
     {% else %}
-    <button id="mybutton" type="button"  data-toggle="modal" data-target="#myModal" disabled>방 만들기</button>
+    <button id="makeRoombtn" class="mybutton" type="button"  data-toggle="modal" data-target="#myModal" disabled>튜터링 방 만들기</button>
     {% endif %}
   </div>
   <!-- Modal -->
@@ -93,47 +87,14 @@
 </div>
 
 
-
-
-{% if report_exist %}
-<!-- Report Modal -->
-<div id="reportModal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-    <form action="{% url 'matching:tutee_report' report_post_pk %}" method="POST">
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">보고서쓰기</h4>
-        <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
-      </div>
-      <div class="modal-body">
-        <p>튜터링이 어땠는지 말해주세요.</p>
-        {% csrf_token %}
-        {% for field in report_form %}
-          내용: {{field}}
-        {% endfor %}
-      </div>
-      <div class="modal-footer">
-        <!-- <button type="submit" class="btn btn-default" data-dismiss="modal">Submit</button> -->
-        <button type="submit" class="btn btn-default">Submit</button>
-      </div>
-    </div>
-    </form>
-
-  </div>
-</div>
-<!-- Report Modal End -->
-{% endif %}
-
-
 <div id="mainpage_table_div" class="tableDiv">
 
-    <div class="col-md-4 col-md-offset-3">
+    <div id="search" class="col-md-4 col-md-offset-3">
         <form action="" class="search-form" method="get">
             <div class="form-group has-feedback">
         		<label for="search" class="sr-only">Search</label>
-        		<input type="text" class="form-control" name="search_word" id="search" placeholder="search">
-          		<span class="fas fa-search form-control-feedback" ></span>
+        		<input id="search_label" type="text" class="form-control" name="search_word" id="search" placeholder="search">
+          		<span id="search_icon" class="fas fa-search form-control-feedback" ></span>
         	</div>
         </form>
     </div>
@@ -143,7 +104,7 @@
         <thead>
         <tr>
           <th scope="col" style="width:100px" class="text-center">No.</th>
-          <!--<th scope="col" class="text-center">주제</th>-->
+          <th scope="col" style="width:100px" class="text-center">Status</th>
           <th scope="col" class="text-center">제목</th>
           <th scope="col" style="width:150px" class="text-center">작성자</th>
           <th scope="col" style="width:150px" class="text-center">작성일</th>
@@ -156,12 +117,16 @@
                 <td class="text-center text-nowrap align-middle"> {{post.pk}} </td>
                 <!--<td scope="row" class="text-center">{{post.get_topic_display}}</td>-->
                 {% if post.finding_match ==  True %}
-                <td class="align-middle"> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title|truncatechars:50}}</a></td>
+                <td class="text-center text-nowrap align-middle" style="color:#0c6b27"> 모집중 </td>
                 {% elif post.start_time != Null and post.fin_time == Null %}
-                <td class="align-middle"> <span id="ongoing" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title|truncatechars:50}}</a></td>
+                <td class="text-center text-nowrap align-middle" style="color:#2112bf"> 진행중 </td>
+                {% elif report_exist %}
+                <td class="text-center text-nowrap align-middle" style="color:#b1100a"> 보고서 미작성 </td>
                 {% else %}
-                <td class="align-middle"> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title|truncatechars:50}}</a></td>
+                <td class="text-center text-nowrap align-middle" style="color:#bbb"> 종료 </td>
                 {% endif %}
+
+                <td class="align-middle" style="padding-left:4vw;"><a href="{% url 'matching:post_detail' post.pk %}">{{post.title|truncatechars:50}}</a></td>
                 <td class="text-center text-nowrap align-middle">{{post.user.profile.nickname}}</td>
                 {% if post.pub_date|date:'Y-m-d' == today|date:'Y-m-d' %}
                 <td class="text-center text-nowrap align-middle">{{post.pub_date|date:'H:i'}}</td>

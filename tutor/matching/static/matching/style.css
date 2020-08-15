@@ -41,18 +41,6 @@
     display: inline-block;
   }
 
-#finding{
-    background-color: green;
-}
-
-#ongoing{
-    background-color: #fcba03;
-}
-
-#found{
-    background-color: #bbb;
-}
-
 #createRoomBtn {
   position: relative;
   float: right;
@@ -82,7 +70,7 @@
     margin-bottom:1%;
 }
 
-#mybutton  {
+.mybutton  {
 	background-color:white;
 	-webkit-border-top-left-radius:28px;
 	-moz-border-radius-topleft:28px;
@@ -103,21 +91,27 @@ text-indent:0;
 	font-size:13px;
 	font-weight:bold;
 	font-style:normal;
-height:40px;
-	line-height:30px;
-width:90px;
+height:30px;
+	line-height:20px;
+width:100px;
 	text-decoration:none;
 	text-align:center;
-}#mybutton:hover {
+}.mybutton:hover {
     background-color:#e9e6f5;
-}#mybutton:active {
+}.mybutton:active {
 	position:relative;
 	top:1px;
-}#mybutton:disabled,
-#mybutton[disabled]{
+}.mybutton:disabled,
+.mybutton[disabled]{
     background-color:#d7d6d8;
     color:#22192b;
     font-weight:normal;
+}
+
+#makeRoombtn{
+  float: right;
+  position: relative;
+  top: 18px;
 }
 
 #mainpage_ongoing_table_div {
@@ -171,7 +165,7 @@ a:hover{
 .form-style-7 ul{
 	list-style:none;
 	padding:0;
-	margin:0;	
+	margin:0;
 }
 .form-style-7 li{
 	display: block;
@@ -198,7 +192,7 @@ a:hover{
 }
 
 .form-style-7 input[type="text"],
-.form-style-7 select 
+.form-style-7 select
 {
 	box-sizing: border-box;
 	-webkit-box-sizing: border-box;
@@ -218,7 +212,7 @@ a:hover{
 }
 
 .form-style-7 input[type="text"]:focus,
-.form-style-7 select:focus 
+.form-style-7 select:focus
 {
 }
 
@@ -273,4 +267,3 @@ a:hover{
   left: calc(50% - 150px);
   top: 300px;
 }
-
