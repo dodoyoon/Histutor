@@ -31,12 +31,12 @@
       {% if ongoing_post %}
       <tr>
         <th class="align-middle text-center text-nowrap">모집중인 튜터링</th>
-        <td class="align-middle text-center text-nowrap">튜터 : {{ ongoing_post.user.profile.nickname }}</td>
-        <td class="align-middle">제목 : {{ ongoing_post.title|truncatechars:50 }}</td>
+        <td class="align-middle text-center text-nowrap">튜티 : {{ ongoing_post.user.profile.nickname }}</td>
+        <td class="align-middle">주제 : {{ ongoing_post.title|truncatechars:50 }}</td>
         <td class="align-middle text-center">
           <form class="align-middle" action="{% url 'matching:close_post' ongoing_post.pk %}"  method="POST">
             {% csrf_token %}
-            <button id="mybutton" type="submit">모집종료</button>
+            <button id="mybutton" type="submit">취소</button>
           </form>
         </td>
       </tr>
@@ -45,11 +45,11 @@
       <tr>
         <th class="align-middle text-center text-nowrap">진행중인 튜터링</th>
         <td class="align-middle text-center text-nowrap">튜티 : {{ ongoing_tutoring.user.profile.nickname }}</td>
-        <td class="align-middle">제목 : {{ ongoing_tutoring.title }}</td>
+        <td class="align-middle">주제 : {{ ongoing_tutoring.title }}</td>
         <td class="align-middle text-center">
           <form class="align-middle" action="{% url 'matching:fin_tutoring' ongoing_tutoring.pk %}"  method="POST">
             {% csrf_token %}
-            <button id="mybutton" type="submit">튜터링 종료</button>
+            <button id="mybutton" type="submit">취소</button>
           </form>
         </td>
       </tr>
@@ -59,9 +59,9 @@
   </table>
   <div class="create_room">
     {% if post_exist == False %}
-    <button id="mybutton" type="button"  data-toggle="modal" data-target="#myModal">방 만들기</button>
+    <button id="mybutton" type="button"  data-toggle="modal" data-target="#myModal">튜터링 방 만들기</button>
     {% else %}
-    <button id="mybutton" type="button"  data-toggle="modal" data-target="#myModal" disabled>방 만들기</button>
+    <button id="mybutton" type="button"  data-toggle="modal" data-target="#myModal" disabled>튜터링 방 만들기</button>
     {% endif %}
   </div>
   <!-- Modal -->
@@ -144,9 +144,9 @@
         <tr>
           <th scope="col" style="width:100px" class="text-center">No.</th>
           <!--<th scope="col" class="text-center">주제</th>-->
-          <th scope="col" class="text-center">제목</th>
-          <th scope="col" style="width:150px" class="text-center">작성자</th>
-          <th scope="col" style="width:150px" class="text-center">작성일</th>
+          <th scope="col" class="text-center">튜터링 주제</th>
+          <th scope="col" style="width:150px" class="text-center">튜티</th>
+          <th scope="col" style="width:150px" class="text-center">모집일</th>
         </tr>
         </thead>
         <tbody>
