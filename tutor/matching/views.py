@@ -34,6 +34,9 @@ def index(request):
 def login(request):
     return render(request, 'matching/account_login.html', {})
 
+def redirect_to_main(request):
+    return redirect('matching:mainpage')
+
 
 @login_required(login_url=URL_LOGIN)
 @transaction.atomic
@@ -252,52 +255,28 @@ def post_edit(request, pk):
 
 @login_required(login_url=URL_LOGIN)
 def admin_home(request):
-    user = matching_models.User.objects.get(pk=request.user.pk)
-
-    if not user.is_staff:
-        return redirect(reverse('matching:mainpage'))
-
-    recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
-    recruited = matching_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
-    #posts = tutor_models.Post.objects.order_by('-pub_date')
-    posts = list(chain(recruiting, recruited))
-
-    post_page = request.GET.get('page', 1)
-
-    post_paginator = Paginator(posts, 10)
-    try:
-        posts = post_paginator.page(post_page)
-    except PageNotAnInteger:
-        posts = post_paginator.page(1)
-    except EmptyPage:
-        posts = post_paginator.page(post_paginator.num_pages)
-
-    neighbors = 10
-    if post_paginator.num_pages > 2*neighbors:
-        start_index = max(1, int(current_post_page)-neighbors)
-        end_index = min(int(current_post_page)+neighbors, post_paginator.num_pages)
-        if end_index < start_index + 2*neighbors:
-            end_index = start_index + 2*neighbors
-        elif start_index > end_index - 2*neighbors:
-            start_index = end_index - 2*neighbors
-        if start_index < 1:
-            end_index -= start_index
-            start_index = 1
-        elif end_index > post_paginator.num_pages:
-            start_index -= end_index - post_paginator.num_pages
-            end_index = post_paginator.num_pages
-        paginatorRange = [f for f in range(start_index, end_index+1)]
-        paginatorRange[:(2*neighbors + 1)]
-    else:
-        paginatorRange = range(1, post_paginator.num_pages+1)
-
+    tutorlist = matching_models.User.objects.filter(tutor=True)
+    
     ctx = {
-        'posts': posts,
-        'paginatorRange': paginatorRange,
+        'tutorlist': tutorlist,
     }
 
     return render(request, 'matching/admin_home.html', ctx)
 
+@login_required(login_url=URL_LOGIN)
+def tutor_detail(request, pk):
+    if not request.user.is_staff:
+        return redirect(reverse('matching:mainpage'))
+
+    tutor = matching_models.User.objects.get(pk=pk)
+    postlist = matching_models.Post.objects.filter(tutor=tutor)
+
+    ctx = {
+        'tutor' : tutor,
+        'postlist' : postlist,
+    }
+
+    return render(request, 'matching/tutor_detail.html', ctx)
 
 # Tutee가 끝낼 때
 def close_post(request, pk):
