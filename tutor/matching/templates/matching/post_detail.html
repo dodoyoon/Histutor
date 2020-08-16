@@ -45,14 +45,14 @@
 
       </script>
       {% for comment in comment_list %}
-        {% if post.finding_match is False and comment.content == start_msg %}
+        {% if comment.content|truncatechars:6 == "튜터링시작…" %}
         <div class="start_tutoring">
           ✨&nbsp;&nbsp;튜터링 시작&nbsp;&nbsp;✨
         </div>
         {% elif comment.user != user %}
         <div class="date">
           <script type="text/javascript">
-            const cur_date = "{{comment.pub_date|date:'Y.m.d'}}" ;
+            let cur_date = "{{comment.pub_date|date:'Y.m.d'}}" ;
             date_line(cur_date) ;
           </script>
         </div>
@@ -68,7 +68,7 @@
         {% else %}
           <div class="date">
             <script type="text/javascript">
-              const cur_date = "{{comment.pub_date|date:'Y.m.d'}}" ;
+              let cur_date = "{{comment.pub_date|date:'Y.m.d'}}" ;
               date_line(cur_date) ;
             </script>
           </div>
@@ -204,7 +204,6 @@
     }
 
     </script>
-
 
 
 {% if report_exist %}
