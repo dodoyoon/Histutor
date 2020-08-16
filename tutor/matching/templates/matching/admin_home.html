@@ -24,7 +24,7 @@
               <td class="text-center text-nowrap align-middle"> {{tutor.pk}} </td>
               <td class="text-center text-nowrap align-middle">{{tutor.email}}</td>
               <td class="text-center text-nowrap align-middle"><a href="{% url 'matching:tutor_detail' tutor.pk %}">{{tutor.profile.nickname}}</a></td>
-              <td class="text-center text-nowrap align-middle"></td>
+              <td class="text-center text-nowrap align-middle">{{tutor.profile.tutor_tutoringTime}}</td>
           </tr>
         {% endfor %}
         </tbody>

@@ -5,16 +5,15 @@
 {% endblock %}
 
 {% block content %}
-<h3>튜터: {{tutor}}</h3>
+<h3 style="margin-left:130px; margin-top:20px; color:#8f86c4;">튜터: {{tutor}}</h3>
 <div id="post_table_div" class="tableDiv">
     <table id="post_table" class="table">
         <thead>
         <tr>
           <th scope="col" style="width:50px" class="text-center">번호</th>
-          <!--<th scope="col" class="text-center">주제</th>-->
-          <th scope="col" class="text-center">학번</th>
-          <th scope="col" class="text-center">닉네임</th>
-          <th scope="col" class="text-center">시간</th>
+          <th scope="col" style="width:400px" class="text-center">제목</th>
+          <th scope="col" class="text-center">튜터링 시작 시간</th>
+          <th scope="col" class="text-center">튜터링 종료 시간</th>
         </tr>
         </thead>
         <tbody>
@@ -22,7 +21,11 @@
           <tr>
               <td class="text-center text-nowrap align-middle"> {{post.pk}} </td>
               <!--<td scope="row" class="text-center">{{post.get_topic_display}}</td>-->
-              <td class="text-center text-nowrap align-middle">{{post.title}}</td>
+              <td class="text-center text-nowrap align-middle">
+                <a href='{% url "matching:post_detail" post.pk %}'>
+                {{post.title}}
+                </a>
+              </td>
               <td class="text-center text-nowrap align-middle">{{post.start_time}}</td>
               <td class="text-center text-nowrap align-middle">{{post.fin_time}}</td>
           </tr>
