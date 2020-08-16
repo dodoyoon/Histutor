@@ -161,12 +161,7 @@ def post_detail(request, pk):
         return HttpResponseRedirect(reverse('matching:mainpage'))
 
     user = matching_models.User.objects.get(username=request.user.username)
-    report_to_write = matching_models.Post.objects.filter(user=user, report__isnull=True, tutor__isnull=False)
-    ongoing_tutoring = matching_models.Post.objects.filter(tutor=user).filter(fin_time__isnull=True)
-    if ongoing_tutoring.exists():
-        ongoing_tutoring = ongoing_tutoring[:1].get()
-
-    ctx['ongoing_tutoring'] = ongoing_tutoring
+    report_to_write = matching_models.Post.objects.filter(user=user, pk=pk, report__isnull=True, tutor__isnull=False)
 
     if report_to_write.exists():
         for report in report_to_write:
@@ -180,7 +175,8 @@ def post_detail(request, pk):
     ctx['post'] = post
     ctx['comment_list'] = comment_list
     ctx['start_msg'] = ""
-    if post.finding_match is False:
+    if post.finding_match is False and post.tutor:
+        print(post.tutor)
         ctx['start_msg'] = post.tutor.last_name+post.user.last_name+"튜터링시작"
     return render(request, 'matching/post_detail.html', ctx)
 
