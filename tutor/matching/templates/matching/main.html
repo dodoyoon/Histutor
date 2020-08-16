@@ -53,9 +53,9 @@
   </table>
   <div class="create_room">
     {% if post_exist == False and not report_exist %}
-    <button id="mybutton"  type="button"  data-toggle="modal" data-target="#myModal">튜터링 방 만들기</button>
+    <button id="makeRoombtn" class="mybutton" type="button"  data-toggle="modal" data-target="#myModal">튜터링 방 만들기</button>
     {% else %}
-    <button id="mybutton" type="button"  data-toggle="modal" data-target="#myModal" disabled>튜터링 방 만들기</button>
+    <button id="makeRoombtn" class="mybutton" type="button"  data-toggle="modal" data-target="#myModal" disabled>튜터링 방 만들기</button>
     {% endif %}
   </div>
   <!-- Modal -->
