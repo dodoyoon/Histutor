@@ -6,6 +6,7 @@
 
 {% block style %}
 {% load static %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -28,10 +29,16 @@
         <td class="align-middle text-center text-nowrap">튜티 : {{ ongoing_post.user.profile.nickname }}</td>
         <td class="align-middle" location.href= "{% url 'matching:post_detail' ongoing_post.pk %}">제목 : <a href="{% url 'matching:post_detail' ongoing_post.pk %}" style="text-decoration: underline; text-underline-position: under;">{{ ongoing_post.title|truncatechars:50 }}</a></td>
         <td class="align-middle text-center">
-          <form class="align-middle" action="{% url 'matching:close_post' ongoing_post.pk %}"  method="POST">
-            {% csrf_token %}
-            <button class="mybutton" type="submit">취소</button>
-          </form>
+            <button class="mybutton" id="tutee_delete_confirm" type="submit">취소</button>
+            <script>
+                $(document).on('click', '#tutee_delete_confirm', function(){
+                    var result = confirm('모집을 종료하시겠습니까?');
+                    if(result)
+                    {
+                        location.replace('{% url 'matching:close_post' ongoing_post.pk %}');
+                    }
+                });
+            </script>
         </td>
       </tr>
       {% endif %}
@@ -41,10 +48,25 @@
         <td class="align-middle text-center text-nowrap">튜티 : {{ ongoing_tutoring.user.profile.nickname }}</td>
         <td class="align-middle" location.href= "{% url 'matching:post_detail' ongoing_tutoring.pk %}">제목 : <a href="{% url 'matching:post_detail' ongoing_tutoring.pk %}" style="text-decoration: underline; text-underline-position: under;">{{ ongoing_tutoring.title }}</a></td>
         <td class="align-middle text-center">
-          <form class="align-middle" action="{% url 'matching:cancel_tutoring' ongoing_tutoring.pk %}"  method="POST">
-            {% csrf_token %}
-            <button class="mybutton" type="submit">튜터링 종료</button>
-          </form>
+        <button class="mybutton" id="tutoring_delete_confirm" type="submit">튜터링 취소</button>
+        <button class="mybutton" id="tutoring_complete_confirm" type="submit">튜터링 완료</button>
+          <script>
+              $(document).on('click', '#tutoring_delete_confirm', function(){
+                  var result = confirm('튜터링을 취소하시겠습니까?');
+                  if(result)
+                  {
+                      location.replace('{% url 'matching:cancel_tutoring' ongoing_tutoring.pk %}');
+                  }
+              });
+
+              $(document).on('click', '#tutoring_complete_confirm', function(){
+                  var result = confirm('튜터링을 완료하시겠습니까?');
+                  if(result)
+                  {
+                      location.replace('{% url "matching:fin_tutoring" ongoing_tutoring.pk %}');
+                  }
+              });
+          </script>
         </td>
       </tr>
       {% endif %}
