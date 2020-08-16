@@ -42,7 +42,7 @@ def save_profile(request, pk):
     if not request.user.is_authenticated:
         return redirect('/accounts/login/')
     if request.method == 'POST':
-        profile = user.profile 
+        profile = user.profile
         profile.signin = True
         profile.phone = "010" + str(request.POST['phone1']) + str(request.POST['phone2'])
         profile.save()
@@ -507,7 +507,7 @@ def mainpage(request):
             title = post.title
             url = "http://" + request.get_host() + reverse('matching:post_detail', args=[post.pk])
             payload = '{"body":"New Post has been posted.","connectColor":"#6C639C","connectInfo":[{"title":"' + title + '","imageUrl":"' + url + '"}]}'
-            
+
             headers = {'Accept': 'application/vnd.tosslab.jandi-v2+json',
             'Content-Type': 'application/json'}
 
