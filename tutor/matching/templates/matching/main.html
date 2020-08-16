@@ -43,7 +43,7 @@
         <td class="align-middle text-center">
           <form class="align-middle" action="{% url 'matching:cancel_tutoring' ongoing_tutoring.pk %}"  method="POST">
             {% csrf_token %}
-            <button class="mybutton" type="submit">튜터링 취소</button>
+            <button class="mybutton" type="submit">튜터링 종료</button>
           </form>
         </td>
       </tr>
@@ -176,10 +176,13 @@
 </div>
 
 <script>
+  let user = {{user.pk}};
+
   const websocket = new WebSocket('ws://' + window.location.host + '/ws/tutorhome/');
 
   websocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
+    console.log(data.id + "\n" + data.title + "\n" + data.finding + "\n" + data.pub_date + "\n" + data.topic + "\n" + data.nickname + "\n" + data.startTime + "\n" + data.endTime + "\n" + data.user + "\n" + data.tutor + "\n" + data.reportExist);
 
     // Set table structure
     var table = document.getElementById("mainpage_table");
@@ -188,10 +191,28 @@
     var cell2 = row.insertCell(1);
     var cell3 = row.insertCell(2);
     var cell4 = row.insertCell(3);
+    var cell5 = row.insertCell(4);
+    var cell6 = row.insertCell(5);
 
     // post number
     cell1.className = "text-center";
     cell1.innerHTML = data.id;
+
+    // status
+    cell2.className = "text-center text-nowrap align-middle";
+    if (data.finding == true){
+      cell2.style.color = "#0c6b27";
+      cell2.innerHTML += "모집중";
+    } else if (data.startTime != null && data.endTime == null){
+      cell2.style.color = "#2112bf";
+      cell2.innerHTML += "진행중";
+    } else if (data.reportExist == false && user == data.postUser && data.tutor == true){
+      cell2.style.color = "#b1100a";
+      cell2.innerHTML += "보고서 미작성";
+    } else {
+      cell2.style.color = "#bbb";
+      cell2.innerHTML += "종료";
+    }
 
     // title
     var findingIcon = document.createElement("SPAN");
@@ -201,20 +222,24 @@
       findingIcon.id = "found";
     }
     findingIcon.className = "dot";
-    cell2.append(findingIcon);
-    cell2.innerHTML += "&nbsp;&nbsp;&nbsp;";
+    cell3.append(findingIcon);
+    cell3.innerHTML += "&nbsp;&nbsp;&nbsp;";
     var postDetail = document.createElement("A");
     postDetail.href=`/matching/post/detail/${data.id}`;
     postDetail.innerHTML = data.title;
-    cell2.append(postDetail);
+    cell3.append(postDetail);
 
-    // nickname
-    cell3.className = "text-center";
-    cell3.innerHTML = data.nickname;
+    // writter
+    cell4.className = "text-center";
+    cell4.innerHTML = data.nickname;
 
     // time
-    cell4.className = "text-center";
-    cell4.innerHTML = data.pub_date.substring(1, 11);
+    cell5.className = "text-center";
+    cell5.innerHTML = data.pub_date;
+
+    // views
+    cell6.className = "text-center text-nowrap align-middle";
+    cell6.innerHTML = data.hit;
   };
 
   websocket.onclose = function(e){
