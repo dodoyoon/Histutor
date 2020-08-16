@@ -27,7 +27,10 @@
 
 <div class="chat">
   <div class="title">
-    {{ post.title }}
+    {{ post.title }} 
+    {% if post.tutor %}
+    tutor: {{ post.tutor }}
+    {% endif %}  
   </div>
 
   <div class="mesgs">
@@ -87,6 +90,7 @@
 
   <script>
     let hit = {{ post.update_hit }};
+    
     document.getElementById("msg_send_btn").addEventListener("click", sendMessage);
     var message = document.getElementById("write_msg");
     message.focus();

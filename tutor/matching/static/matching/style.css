@@ -70,7 +70,7 @@
     margin-bottom:1%;
 }
 
-.mybutton  {
+#mybutton  {
 	background-color:white;
 	-webkit-border-top-left-radius:28px;
 	-moz-border-radius-topleft:28px;
@@ -95,20 +95,24 @@ height:30px;
 	line-height:20px;
 width:100px;
 	text-decoration:none;
-	text-align:center;
-}.mybutton:hover {
+  text-align:center;
+  position: relative;
+  top: 18px;
+  float: right;
+  z-index: 1;
+}#mybutton:hover {
     background-color:#e9e6f5;
-}.mybutton:active {
+}#mybutton:active {
 	position:relative;
 	top:1px;
-}.mybutton:disabled,
-.mybutton[disabled]{
+}#mybutton:disabled,
+#mybutton[disabled]{
     background-color:#d7d6d8;
     color:#22192b;
     font-weight:normal;
 }
 
-#makeRoombtn{
+.makeRoombtn{
   float: right;
   position: relative;
   top: 18px;
