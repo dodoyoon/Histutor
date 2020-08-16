@@ -183,10 +183,12 @@ def post_detail(request, pk):
 
     ctx['post'] = post
     ctx['comment_list'] = comment_list
+    '''
     ctx['start_msg'] = ""
     if post.finding_match is False and post.tutor:
         print(post.tutor)
         ctx['start_msg'] = post.tutor.last_name+post.user.last_name+"튜터링시작"
+    '''
 
     post.hit = post.hit + 1
     post.save()
@@ -219,7 +221,7 @@ def set_tutor(request, postpk, userpk):
     post.start_time = timezone.localtime()
     post.save()
 
-    start_tutoring_cmt = matching_models.Comment(user=tutor, post=post, pub_date=post.start_time, content=tutor.last_name+post.user.last_name+"튜터링시작")
+    start_tutoring_cmt = matching_models.Comment(user=tutor, post=post, pub_date=post.start_time, content="튜터링시작"+tutor.last_name+post.user.last_name)
     start_tutoring_cmt.save()
 
     return redirect('matching:post_detail', pk=post.pk)
