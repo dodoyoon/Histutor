@@ -128,7 +128,7 @@ def post_new(request):
             post.finding_match = True
             post.save()
 
-            
+
 
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
@@ -214,8 +214,8 @@ def set_tutor(request, postpk, userpk):
         #포스트 작성자가 직접 튜터가 될 수 없음.
         return redirect('matching:post_detail', pk=post.pk)
 
-    
-    
+
+
     post.tutor = tutor
     post.finding_match = False
     post.start_time = timezone.localtime()
@@ -264,7 +264,7 @@ def post_edit(request, pk):
 @login_required(login_url=URL_LOGIN)
 def admin_home(request):
     tutorlist = matching_models.User.objects.filter(profile__is_tutor=True).order_by('-profile__tutor_tutoringTime')
-    
+
     ctx = {
         'tutorlist': tutorlist,
     }
@@ -496,13 +496,13 @@ def mainpage(request):
             post.finding_match = True
             post.save()
 
-            try: 
+            try:
               post.report.exists()
               reportExist = True
             except:
               reportExist = False
 
-            try: 
+            try:
               post.tutor.exists()
               tutorExist = True
             except:
@@ -599,6 +599,15 @@ def mainpage(request):
         'post_exist': post_exist,
         'today' : timezone.localtime(),
     }
+
+    # main.html에서 튜티도 진행중인 튜터링이 보이게 하기
+    if not user.profile.is_tutor:
+        try :
+            ongoing_tutoring_tutee = matching_models.Post.objects.get(user=user, tutor__isnull=False, start_time__isnull=False, fin_time__isnull=True)
+            ctx['ongoing_tutoring_tutee'] = ongoing_tutoring_tutee
+        except matching_models.Post.DoesNotExist :
+            ongoing_tutoring_tutee = None
+
 
     # Tutee Report Part
     user_obj2 = matching_models.User.objects.get(username=request.user.username)
