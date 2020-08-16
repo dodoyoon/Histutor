@@ -15,22 +15,22 @@
     <button id="mybutton" type="button"  data-toggle="modal" data-target="#reportModal" style="float:left">보고서 쓰기</button>
     {% endif %}
 
-    {% if post.tutor is null and user != post.user and user.profile.is_tutor %}
+    {% if post.tutor is null and user != post.user and user.profile.is_tutor and post.finding_match %}
     <button id="mybutton" type="submit" onclick="location.href='{% url "matching:set_tutor" postpk=post.pk userpk=user.pk  %}'">튜터링 시작</button>
     {% endif %}
 
-    {% if ongoing_tutoring and user.profile.is_tutor %}
-    <button id="mybutton" type="submit" onclick="location.href='{% url "matching:fin_tutoring" ongoing_tutoring.pk %}'">튜터링 종료</button>
+    {% if post.start_time and not post.fin_time and user.profile.is_tutor %}
+    <button id="mybutton" type="submit" onclick="location.href='{% url "matching:fin_tutoring" post.pk %}'">튜터링 종료</button>
     {% endif %}
 </div>
 
 
 <div class="chat">
   <div class="title">
-    {{ post.title }} 
+    {{ post.title }}
     {% if post.tutor %}
     tutor: {{ post.tutor }}
-    {% endif %}  
+    {% endif %}
   </div>
 
   <div class="mesgs">
@@ -90,7 +90,7 @@
 
   <script>
     let hit = {{ post.update_hit }};
-    
+
     document.getElementById("msg_send_btn").addEventListener("click", sendMessage);
     var message = document.getElementById("write_msg");
     message.focus();
@@ -211,7 +211,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h4 class="modal-title">보고서쓰기</h4>
-            <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
           </div>
           <div class="modal-body">
             <p>튜터링이 어땠는지 말해주세요.</p>
