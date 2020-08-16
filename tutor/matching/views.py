@@ -121,8 +121,11 @@ def post_new(request):
             post = form.save(commit=False)
             user_obj = matching_models.User.objects.get(username=request.user.username)
             post.user = user_obj
+            post.pub_date = timezone.localtime()
             post.finding_match = True
             post.save()
+
+            
 
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
@@ -483,8 +486,21 @@ def mainpage(request):
             post = form.save(commit=False)
             user_obj = matching_models.User.objects.get(username=request.user.username)
             post.user = user_obj
+            post.pub_date = timezone.localtime()
             post.finding_match = True
             post.save()
+
+            try: 
+              post.report.exists()
+              reportExist = True
+            except:
+              reportExist = False
+
+            try: 
+              post.tutor.exists()
+              tutorExist = True
+            except:
+              tutorExist = False
 
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
@@ -497,6 +513,12 @@ def mainpage(request):
                     'pub_date': json.dumps(post.pub_date, cls=DjangoJSONEncoder),
                     #'topic': dict(TOPIC_CHOICES).get(post.topic),
                     'nickname': post.user.profile.nickname,
+                    'startTime': json.dumps(post.start_time, cls=DjangoJSONEncoder),
+                    'endTime': json.dumps(post.fin_time, cls=DjangoJSONEncoder),
+                    'postUser': post.user.pk,
+                    'tutor': tutorExist,
+                    'reportExist': reportExist,
+                    'hit': post.hit,
                 }
             )
 

@@ -104,7 +104,7 @@ width:100px;
     background-color:#e9e6f5;
 }#mybutton:active {
 	position:relative;
-	top:1px;
+	top:17px;
 }#mybutton:disabled,
 #mybutton[disabled]{
     background-color:#d7d6d8;
