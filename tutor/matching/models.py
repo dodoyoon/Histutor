@@ -13,6 +13,7 @@ class Profile(models.Model):
    phone = models.CharField(default="",max_length=200)
    is_tutor = models.BooleanField(null=True,blank=True, default=False)
    signin = models.BooleanField(default=False)
+   tutor_tutoringTime = models.PositiveIntegerField(default=0)
 
 
    def __str__(self):

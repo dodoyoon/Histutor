@@ -108,7 +108,7 @@ width:100px;
     font-weight:normal;
 }
 
-.makeRoombtn{
+#makeRoombtn{
   position: relative;
   top: 18px;
   float: right;
