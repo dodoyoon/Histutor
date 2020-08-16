@@ -278,3 +278,8 @@ a:hover{
   width:18%; 
   height:200px;
 }
+
+#reportDetail{
+  position: relative;
+  top: -10px;
+}

@@ -1,8 +1,7 @@
 {% extends 'matching/base.html' %}
 {% load static %}
 {% block style %}
-<link rel="stylesheet" type="text/css" href="{% static 'matching/chat.css' %}">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="{% static 'matching/chat.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -10,9 +9,9 @@
 <div id="buttonDiv">
   {% if post.tutor %}
   <p style="color:#8f86c4; margin:4px; margin-bottom:10px;"><b>튜터: {{ post.tutor.profile.nickname }}</b></p>
-  {% endif %}
+  {% endif %}  
     {% if user == post.user and post.finding_match == True %}
-    <button class="mybutton" id="tutee_delete_confirm" type="submit">모집 종료</button>
+    <button class="mybutton" type="submit" onclick="location.href='{% url "matching:close_post" post.pk %}'">모집 종료</button>
     {% endif %}
 
     {% if report_exist %}
@@ -24,40 +23,12 @@
     {% endif %}
 
     {% if post.start_time and not post.fin_time and user.profile.is_tutor %}
-    <button class="mybutton" id="tutoring_delete_confirm" type="submit">튜터링 취소</button>
-    <button class="mybutton" id="tutoring_complete_confirm" type="submit">튜터링 완료</button>
+    <button class="mybutton" type="submit" onclick="location.href='{% url "matching:fin_tutoring" post.pk %}'">튜터링 종료</button>
     {% endif %}
 
     {% if post.report %}
     <button class="mybutton" type="submit" onclick="location.href='{% url "matching:report_detail" post.report.pk %}'">보고서 보기</button>
     {% endif %}
-
-
-    <script>
-        $(document).on('click', '#tutoring_delete_confirm', function(){
-            var result = confirm('튜터링을 취소하시겠습니까?');
-            if(result)
-            {
-                location.replace('{% url 'matching:cancel_tutoring' post.pk %}');
-            }
-        });
-
-        $(document).on('click', '#tutoring_complete_confirm', function(){
-            var result = confirm('튜터링을 완료하시겠습니까?');
-            if(result)
-            {
-                location.replace('{% url "matching:fin_tutoring" post.pk %}');
-            }
-        });
-
-        $(document).on('click', '#tutee_delete_confirm', function(){
-            var result = confirm('모집을 종료하시겠습니까?');
-            if(result)
-            {
-                location.replace('{% url 'matching:close_post' post.pk %}');
-            }
-        });
-    </script>
 </div>
 
 
@@ -65,7 +36,7 @@
 
 <div class="chat">
   <div class="title">
-    {{ post.title }}
+    {{ post.title }} 
   </div>
 
   <div class="mesgs">

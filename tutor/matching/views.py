@@ -503,6 +503,7 @@ def mainpage(request):
             except:
               tutorExist = False
 
+            '''
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
                 'new_post',
@@ -522,7 +523,7 @@ def mainpage(request):
                     'hit': post.hit,
                 }
             )
-
+            '''
             title = post.title
             url = "http://" + request.get_host() + reverse('matching:post_detail', args=[post.pk])
             payload = '{"body":"New Post has been posted.","connectColor":"#6C639C","connectInfo":[{"title":"' + title + '","imageUrl":"' + url + '"}]}'
