@@ -11,15 +11,15 @@
     <button id="mybutton" type="submit" onclick="location.href='{% url "matching:close_post" post.pk %}'">모집 종료</button>
     {% endif %}
 
-    {% if post.tutor is null and user != post.user %}
-    <button id="mybutton" type="submit" onclick="location.href='{% url "matching:set_tutor" postpk=post.pk userpk=user.pk  %}'">튜터링 시작</button>
-    {% endif %}
-
     {% if report_exist %}
     <button id="mybutton" type="button"  data-toggle="modal" data-target="#reportModal" style="float:left">보고서 쓰기</button>
     {% endif %}
 
-    {% if ongoing_tutoring %}
+    {% if post.tutor is null and user != post.user and user.profile.is_tutor %}
+    <button id="mybutton" type="submit" onclick="location.href='{% url "matching:set_tutor" postpk=post.pk userpk=user.pk  %}'">튜터링 시작</button>
+    {% endif %}
+
+    {% if ongoing_tutoring and user.profile.is_tutor %}
     <button id="mybutton" type="submit" onclick="location.href='{% url "matching:fin_tutoring" ongoing_tutoring.pk %}'">튜터링 종료</button>
     {% endif %}
 </div>
