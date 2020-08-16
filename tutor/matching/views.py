@@ -187,6 +187,9 @@ def post_detail(request, pk):
     if post.finding_match is False and post.tutor:
         print(post.tutor)
         ctx['start_msg'] = post.tutor.last_name+post.user.last_name+"튜터링시작"
+
+    post.hit = post.hit + 1
+    post.save()
     return render(request, 'matching/post_detail.html', ctx)
 
 def set_tutor(request, postpk, userpk):
