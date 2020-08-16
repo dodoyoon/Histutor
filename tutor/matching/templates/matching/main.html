@@ -41,6 +41,12 @@
             </script>
         </td>
       </tr>
+      {% elif ongoing_tutoring_tutee %}
+      <tr>
+        <th class="align-middle text-center text-nowrap">진행중인 튜터링</th>
+        <td class="align-middle text-center text-nowrap">튜티 : {{ ongoing_tutoring_tutee.user.profile.nickname }}</td>
+        <td class="align-middle" location.href= "{% url 'matching:post_detail' ongoing_tutoring_tutee.pk %}">제목 : <a href="{% url 'matching:post_detail' ongoing_tutoring_tutee.pk %}" style="text-decoration: underline; text-underline-position: under;">{{ ongoing_tutoring_tutee.title }}</a></td>
+      </tr>
       {% endif %}
       {% if ongoing_tutoring %}
       <tr>
