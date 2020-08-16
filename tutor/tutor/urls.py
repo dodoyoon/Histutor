@@ -17,9 +17,11 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls import url
 from matching import views
+from django.views.generic import RedirectView
 
 urlpatterns = [
     path('matching/', include('matching.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
+    url(r'^', RedirectView.as_view(url='matching/')),
 ]

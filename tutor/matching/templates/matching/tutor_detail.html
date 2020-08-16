@@ -1,12 +1,11 @@
 {% extends 'matching/base.html' %}
 
 {% block title %}
-<title>Admin Home</title>
+<title>Tutor Page</title>
 {% endblock %}
 
 {% block content %}
-<h1 style="margin-left:130px; margin-top:20px;">관리자 페이지</h1>
-
+<h3>튜터: {{tutor}}</h3>
 <div id="post_table_div" class="tableDiv">
     <table id="post_table" class="table">
         <thead>
@@ -19,12 +18,13 @@
         </tr>
         </thead>
         <tbody>
-        {% for tutor in tutorlist %}
+        {% for post in postlist %}
           <tr>
-              <td class="text-center text-nowrap align-middle"> {{tutor.pk}} </td>
-              <td class="text-center text-nowrap align-middle">{{tutor.email}}</td>
-              <td class="text-center text-nowrap align-middle"><a href="{% url 'matching:tutor_detail' tutor.pk %}">{{tutor.profile.nickname}}</a></td>
-              <td class="text-center text-nowrap align-middle"></td>
+              <td class="text-center text-nowrap align-middle"> {{post.pk}} </td>
+              <!--<td scope="row" class="text-center">{{post.get_topic_display}}</td>-->
+              <td class="text-center text-nowrap align-middle">{{post.title}}</td>
+              <td class="text-center text-nowrap align-middle">{{post.start_time}}</td>
+              <td class="text-center text-nowrap align-middle">{{post.fin_time}}</td>
           </tr>
         {% endfor %}
         </tbody>

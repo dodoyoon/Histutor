@@ -19,6 +19,7 @@ urlpatterns = [
   path('post/detail/fin_tutoring/<int:pk>', views.fin_tutoring, name='fin_tutoring'),
   path('post/detail/cancel_tutoring/<int:pk>', views.cancel_tutoring, name='cancel_tutoring'),
   path('post/settutor/<int:postpk>/<int:userpk>/', views.set_tutor, name='set_tutor'),
+  path('tutor/detail/<int:pk>', views.tutor_detail, name='tutor_detail'),
   path('login/', views.login, name='login'),
   path('admin_home/', views.admin_home, name='admin_home'),
   path('send_message/', views.send_message, name='send_message'),
