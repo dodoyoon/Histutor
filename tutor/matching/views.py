@@ -208,6 +208,9 @@ def set_tutor(request, postpk, userpk):
     if tutor.pk == post.user.pk:
         #포스트 작성자가 직접 튜터가 될 수 없음.
         return redirect('matching:post_detail', pk=post.pk)
+
+    
+    
     post.tutor = tutor
     post.finding_match = False
     post.start_time = timezone.localtime()
@@ -255,7 +258,7 @@ def post_edit(request, pk):
 
 @login_required(login_url=URL_LOGIN)
 def admin_home(request):
-    tutorlist = matching_models.User.objects.filter(tutor=True)
+    tutorlist = matching_models.User.objects.filter(profile__is_tutor=True).order_by('-profile__tutor_tutoringTime')
     
     ctx = {
         'tutorlist': tutorlist,
