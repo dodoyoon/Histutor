@@ -214,6 +214,9 @@ def set_tutor(request, postpk, userpk):
         #포스트 작성자가 직접 튜터가 될 수 없음.
         return redirect('matching:post_detail', pk=post.pk)
 
+    if post.tutor:
+        messages.error(request, '해당 방은 튜터링이 이미 진행중입니다.')
+        return HttpResponseRedirect(reverse('matching:mainpage'))
 
 
     post.tutor = tutor
