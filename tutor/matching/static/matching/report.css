@@ -6,7 +6,7 @@
     padding: 2% 4%;
     margin-top: 4%;
 }
-    
+
 .list-type1 ol{
 counter-reset: li;
 list-style: none;
@@ -23,7 +23,7 @@ margin: 0 0 0 2em;
 .list-type1 a{
 position: relative;
 display: block;
-padding: .4em .4em .4em 2em;
+padding: .4em .4em .4em 0.5em;
 *padding: .4em;
 margin: .5em 0;
 background: #f2eff6;

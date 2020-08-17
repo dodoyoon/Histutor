@@ -58,7 +58,7 @@ def user_check(request):
         try:
             user = matching_models.User.objects.get(pk=request.user.pk)
             if user.profile.signin == False:
-                user.profile.nickname =user.username[1:2] + user.last_name
+                user.profile.nickname =user.username[1:3] + user.last_name
                 user.profile.signin = True
                 user.profile.save()
                 return HttpResponseRedirect(reverse('matching:profile', args=(request.user.pk,)))
