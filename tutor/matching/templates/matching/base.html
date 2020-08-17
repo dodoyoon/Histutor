@@ -29,22 +29,6 @@
 
 		{% block style %}
 		{% endblock %}
-		<script>
-			var date_line = function(cur_date) {
-			  if( typeof date_line.date == 'undefined'){
-				date_line.date=cur_date;
-				document.write("___________ " + date_line.date + " ___________"  ) ;
-			  }
-			  else if(date_line.date !== cur_date){
-				date_line.date = cur_date;
-				document.write("___________ " + date_line.date + " ___________"  ) ;
-			  }
-			}
-			var print_pubDate = function(date){
-				console.log(date); 
-			}
-			
-		  </script>
 	</head>
 
 	{% load socialaccount %}
