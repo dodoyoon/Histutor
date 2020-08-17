@@ -84,12 +84,16 @@
 
     </div>
     <div class="type_msg">
-      {% if post.finding_match or user == post.user or user == post.tutor %}
       <div class="input_msg_write">
+        {% if post.finding_match or user == post.user or user == post.tutor %}
         <input type="text" id="write_msg" class="write_msg" placeholder="Type a message" />
         <button id="msg_send_btn" class="msg_send_btn" type="button"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+        {% else %}
+        <input type="text" id="write_msg" class="write_msg" placeholder="해당 방의 튜터가 아닌 사용자는 작성할 수 없습니다." />
+        <button id="msg_send_btn" class="msg_send_btn" type="button" disabled><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+        {% endif %}
       </div>
-      {% endif %}
+      
     </div>
   </div>
 </div>
