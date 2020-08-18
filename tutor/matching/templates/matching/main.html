@@ -29,18 +29,30 @@
         <td class="align-middle text-center text-nowrap">튜티 : {{ ongoing_post.user.profile.nickname }}</td>
         <td class="align-middle" location.href= "{% url 'matching:post_detail' ongoing_post.pk %}">제목 : <a href="{% url 'matching:post_detail' ongoing_post.pk %}" style="text-decoration: underline; text-underline-position: under;">{{ ongoing_post.title|truncatechars:50 }}</a></td>
         <td class="align-middle text-center">
-            <button class="mybutton" id="tutee_delete_confirm" type="submit">취소</button>
-            <script>
-                $(document).on('click', '#tutee_delete_confirm', function(){
-                    var result = confirm('모집을 종료하시겠습니까?');
-                    if(result)
-                    {
-                        location.replace('{% url 'matching:close_post' ongoing_post.pk %}');
-                    }
-                });
-            </script>
+            <button class="mybutton" type="submit"  data-toggle="modal" data-target="#postDeleteModal">모집취소</button>
         </td>
       </tr>
+
+      <div class="modal fade" id="postDeleteModal" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">튜터링 모집 취소</h4>
+            </div>
+            <div class="modal-body">
+              <p>정말로 튜터링 모집을 취소하시겠습니까?</p>
+              <div class="row" style="float: right;">
+                  <div class="col-12-xs text-center" style="margin-right: 1em;">
+                      <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" onclick="location.href='{% url "matching:close_post" ongoing_post.pk %}'">Yes</button>
+                      <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" type="button" class="close" data-dismiss="modal">No</button>
+                  </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
       {% elif ongoing_tutoring_tutee %}
       <tr>
         <th class="align-middle text-center text-nowrap">진행중인 튜터링</th>
@@ -54,27 +66,51 @@
         <td class="align-middle text-center text-nowrap">튜티 : {{ ongoing_tutoring.user.profile.nickname }}</td>
         <td class="align-middle" location.href= "{% url 'matching:post_detail' ongoing_tutoring.pk %}">제목 : <a href="{% url 'matching:post_detail' ongoing_tutoring.pk %}" style="text-decoration: underline; text-underline-position: under;">{{ ongoing_tutoring.title }}</a></td>
         <td class="align-middle text-center">
-        <button class="mybutton" id="tutoring_delete_confirm" type="submit">튜터링 취소</button>
-        <button class="mybutton" id="tutoring_complete_confirm" type="submit">튜터링 완료</button>
-          <script>
-              $(document).on('click', '#tutoring_delete_confirm', function(){
-                  var result = confirm('튜터링을 취소하시겠습니까?');
-                  if(result)
-                  {
-                      location.replace('{% url 'matching:cancel_tutoring' ongoing_tutoring.pk %}');
-                  }
-              });
-
-              $(document).on('click', '#tutoring_complete_confirm', function(){
-                  var result = confirm('튜터링을 완료하시겠습니까?');
-                  if(result)
-                  {
-                      location.replace('{% url "matching:fin_tutoring" ongoing_tutoring.pk %}');
-                  }
-              });
-          </script>
+        <button class="mybutton" type="submit"  data-toggle="modal" data-target="#cancelTutoringModal">튜터링 취소</button>
+        <button class="mybutton" type="submit"  data-toggle="modal" data-target="#finishTutoringModal">튜터링 완료</button>
         </td>
       </tr>
+
+
+      <div class="modal fade" id="cancelTutoringModal" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">튜터링 취소</h4>
+            </div>
+            <div class="modal-body">
+              <p>정말로 진행중인 튜터링을 취소하시겠습니까?</p>
+              <div class="row" style="float: right;">
+                  <div class="col-12-xs text-center" style="margin-right: 1em;">
+                      <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" onclick="location.href='{% url "matching:cancel_tutoring" ongoing_tutoring.pk %}'">Yes</button>
+                      <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" type="button" class="close" data-dismiss="modal">No</button>
+                  </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="finishTutoringModal" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">튜터링 완료</h4>
+            </div>
+            <div class="modal-body">
+              <p>튜터링을 완료하시겠습니까?</p>
+              <div class="row" style="float: right;">
+                  <div class="col-12-xs text-center" style="margin-right: 1em;">
+                      <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" onclick="location.href='{% url "matching:fin_tutoring" ongoing_tutoring.pk %}'">Yes</button>
+                      <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" type="button" class="close" data-dismiss="modal">No</button>
+                  </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
       {% endif %}
     </tbody>
   </div>
