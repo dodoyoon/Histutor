@@ -9,8 +9,8 @@
 <script>
   let cur_date ; 
   const date_line = (cur) => {
-    console.log("dateline");
-    console.log(`>${date_line.date}`);
+    //console.log("dateline");
+    //console.log(`>${date_line.date}`);
     if(date_line.date === undefined){
     date_line.date=cur;
     document.write("___________ " + date_line.date + " ___________"  ) ;
@@ -143,15 +143,19 @@
 {% endif %}
 
 <script>
-  document.getElementById("msg_send_btn").addEventListener("click", sendMessage);
+  document.getElementById("msg_send_btn").addEventListener("click", function(event){
+    var msg = document.getElementById("write_msg");
+    if(msg.value.trim()!=''){
+      sendMessage();
+    }
+  })
+
   var message = document.getElementById("write_msg");
   message.focus();
   message.addEventListener("keyup", function(event){
     if(event.keyCode == 13){
       event.preventDefault();
-      if(message.value.trim()!=''){
         document.getElementById("msg_send_btn").click();
-      }
     }
   })
   
