@@ -190,8 +190,8 @@
     var msg_content = document.createElement("div");
     msg_content.id = "msg_box";
     msg_content.innerHTML += data['content'];
-    msg_time.append(msg_content);
     inner_msg.append(msg_time);
+    inner_msg.append(msg_content);
     msg.append(inner_msg);
     storage.append(msg);
   
