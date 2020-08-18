@@ -142,3 +142,16 @@ class PostDetailConsumer(WebsocketConsumer):
             'date': date,
             'nickname': profile.nickname,
         }))
+
+            # Receive message from room group
+    def star_comment(self, event):
+        id = event['id']
+        comment = matching_models.Comment.objects.get(pk=id)
+
+        # Send message to WebSocket
+        self.send(text_data=json.dumps({
+            'type': 'star_comment',
+            'id': id,
+            'content': comment.content,
+            'username': comment.user.username,
+        }))
