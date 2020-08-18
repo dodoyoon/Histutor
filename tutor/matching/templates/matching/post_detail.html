@@ -176,8 +176,14 @@
   if(storage.scrollTop == storage.scrollHeight - storage.offsetHeight){
     at_bottom = true;
   }
-  
-  if(data['username']==req_username){
+
+  if(data['type'] == "star_comment" && data['username'] != req_username){
+    var msg = document.createElement("div");
+    msg.className = "start_tutoring";
+    msg.innerHTML = "✨&nbsp;&nbsp;튜터링 시작&nbsp;&nbsp;✨";
+    storage.append(msg);
+  }
+  else if(data['username']==req_username){
     //console.log("outgoing");
   
     var msg = document.createElement("div");
