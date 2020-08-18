@@ -7,7 +7,6 @@
 
 {% block content %}
 <script>
-
   let cur_date ; 
   const date_line = (cur) => {
     console.log("dateline");
@@ -21,114 +20,8 @@
     document.write("___________ " + date_line.date + " ___________"  ) ;
     }
   }
-  document.getElementById("msg_send_btn").addEventListener("click", sendMessage);
-  var message = document.getElementById("write_msg");
-  message.focus();
-  message.addEventListener("keyup", function(event){
-    if(event.keyCode == 13){
-      event.preventDefault();
-      if(message.value.trim()!=''){
-        document.getElementById("msg_send_btn").click();
-      }
-    }
-  })
-  
-  var storage = document.getElementById("msg_history");
-  storage.scrollTop = storage.scrollHeight;
-  
-  const websocket = new WebSocket('ws://' + window.location.host + '/ws/post/' + "{{post.pk}}" + '/');
-  
-  websocket.onmessage = function(e) {
-  const data = JSON.parse(e.data);
-  var req_username = "{{request.user.username}}";
-  
-  // Set table structure
-  /*var storage = document.getElementById("msg_history");
-  alert(storage.scrollHeight);
-  storage.scrollTop = storage.scrollHeight;*/
-  var at_bottom = false;
-  if(storage.scrollTop == storage.scrollHeight - storage.offsetHeight){
-    at_bottom = true;
-  }
-  
-  if(data['username']==req_username){
-    //console.log("outgoing");
-  
-    var msg = document.createElement("div");
-    msg.className = "outgoing_msg";
-    var inner_msg = document.createElement("div");
-    inner_msg.className = "sent_msg";
-    var msg_time = document.createElement("span");
-    msg_time.className = "sent_time_date";
-    msg_time.innerHTML += data['date'];
-    var msg_content = document.createElement("div");
-    msg_content.id = "msg_box";
-    msg_content.innerHTML += data['content'];
-    msg_time.append(msg_content);
-    inner_msg.append(msg_time);
-    msg.append(inner_msg);
-    storage.append(msg);
-  
-  }else{
-    //console.log("incoming");
-    var incoming_msg = document.createElement("div");
-    incoming_msg.className = "incoming_msg";
-    var received_msg = document.createElement("div");
-    received_msg.className = "received_msg";
-    var received_name = document.createElement("p");
-    received_name.className = "received_name";
-    received_name.innerHTML += data['nickname'];
-    var received_with_msg = document.createElement("div");
-    received_with_msg.className = "received_with_msg";
-    received_with_msg.innerHTML += data['content'];
-    var received_time_date = document.createElement("span");
-    received_time_date.className = "received_time_date";
-    received_time_date.innerHTML += data['date'];
-    received_msg.append(received_name);
-    received_msg.append(received_with_msg);
-    received_msg.append(received_time_date);
-    incoming_msg.append(received_msg);
-    storage.append(incoming_msg);
-  }
-  
-  if(at_bottom){
-    storage.scrollTop = storage.scrollHeight;
-  }
-  
-  
-  };
-  
-  websocket.onclose = function(e){
-  console.error('Chat socket closed unexpectedly');
-  };
-  
-  function sendMessage(){
-    event.preventDefault();
-  
-    $.ajax({
-       url: "{% url 'matching:send_message' %}",
-       type: "GET",
-       data:{
-         postid: {{post.id}},
-         content: $("#write_msg").val(),
-       },
-       success: function(response){
-         //console.log(data)
-          //alert("SUCCESS\n" + response);
-  
-          websocket.send(JSON.stringify({
-             'postId': response,
-          }));
-          message.value = "";
-       },
-       error: function(response){
-          //alert("ERROR!!\n" + response);
-       }
-    });
-  
-  }
-  
-  </script>
+</script>
+
 <div id="buttonDiv">
   {% if post.tutor %}
   <p style="color:#8f86c4; margin:4px; margin-bottom:10px;"><b>튜터: {{ post.tutor.profile.nickname }}</b></p>
@@ -248,4 +141,115 @@
     </div>
     <!-- Report Modal End -->
 {% endif %}
+
+<script>
+  document.getElementById("msg_send_btn").addEventListener("click", sendMessage);
+  var message = document.getElementById("write_msg");
+  message.focus();
+  message.addEventListener("keyup", function(event){
+    if(event.keyCode == 13){
+      event.preventDefault();
+      if(message.value.trim()!=''){
+        document.getElementById("msg_send_btn").click();
+      }
+    }
+  })
+  
+  var storage = document.getElementById("msg_history");
+  storage.scrollTop = storage.scrollHeight;
+  
+  const websocket = new WebSocket('ws://' + window.location.host + '/ws/post/' + "{{post.pk}}" + '/');
+  
+  websocket.onmessage = function(e) {
+  const data = JSON.parse(e.data);
+  var req_username = "{{request.user.username}}";
+  
+  // Set table structure
+  /*var storage = document.getElementById("msg_history");
+  alert(storage.scrollHeight);
+  storage.scrollTop = storage.scrollHeight;*/
+  var at_bottom = false;
+  if(storage.scrollTop == storage.scrollHeight - storage.offsetHeight){
+    at_bottom = true;
+  }
+  
+  if(data['username']==req_username){
+    //console.log("outgoing");
+  
+    var msg = document.createElement("div");
+    msg.className = "outgoing_msg";
+    var inner_msg = document.createElement("div");
+    inner_msg.className = "sent_msg";
+    var msg_time = document.createElement("span");
+    msg_time.className = "sent_time_date";
+    msg_time.innerHTML += data['date'];
+    var msg_content = document.createElement("div");
+    msg_content.id = "msg_box";
+    msg_content.innerHTML += data['content'];
+    msg_time.append(msg_content);
+    inner_msg.append(msg_time);
+    msg.append(inner_msg);
+    storage.append(msg);
+  
+  }else{
+    //console.log("incoming");
+    var incoming_msg = document.createElement("div");
+    incoming_msg.className = "incoming_msg";
+    var received_msg = document.createElement("div");
+    received_msg.className = "received_msg";
+    var received_name = document.createElement("p");
+    received_name.className = "received_name";
+    received_name.innerHTML += data['nickname'];
+    var received_with_msg = document.createElement("div");
+    received_with_msg.className = "received_with_msg";
+    received_with_msg.innerHTML += data['content'];
+    var received_time_date = document.createElement("span");
+    received_time_date.className = "received_time_date";
+    received_time_date.innerHTML += data['date'];
+    received_msg.append(received_name);
+    received_msg.append(received_with_msg);
+    received_msg.append(received_time_date);
+    incoming_msg.append(received_msg);
+    storage.append(incoming_msg);
+  }
+  
+  if(at_bottom){
+    storage.scrollTop = storage.scrollHeight;
+  }
+  
+  
+  };
+  
+  websocket.onclose = function(e){
+  console.error('Chat socket closed unexpectedly');
+  };
+  
+  function sendMessage(){
+    event.preventDefault();
+  
+    $.ajax({
+       url: "{% url 'matching:send_message' %}",
+       type: "GET",
+       data:{
+         postid: {{post.id}},
+         content: $("#write_msg").val(),
+       },
+       success: function(response){
+         //console.log(data)
+          //alert("SUCCESS\n" + response);
+  
+          websocket.send(JSON.stringify({
+             'postId': response,
+          }));
+          message.value = "";
+       },
+       error: function(response){
+          //alert("ERROR!!\n" + response);
+       }
+    });
+  
+  }
+</script>
+
 {% endblock %}
+
