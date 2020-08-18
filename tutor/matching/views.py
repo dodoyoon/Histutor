@@ -227,6 +227,15 @@ def set_tutor(request, postpk, userpk):
     start_tutoring_cmt = matching_models.Comment(user=tutor, post=post, pub_date=post.start_time, content="튜터링시작"+tutor.last_name+post.user.last_name)
     start_tutoring_cmt.save()
 
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+      'new_comment',
+      {
+        'type': 'star_comment',
+        'id': start_tutoring_cmt.pk,
+      }
+  )
+
     return redirect('matching:post_detail', pk=post.pk)
 
 @login_required
