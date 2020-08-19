@@ -57,8 +57,7 @@
     {% if post.tutor is null and user != post.user and user.profile.is_tutor and post.finding_match %}
     <button class="mybutton" type="submit" onclick="location.href='{% url "matching:set_tutor" postpk=post.pk userpk=user.pk  %}'">튜터링 시작</button>
     {% endif %}
-
-    {% if post.start_time and not post.fin_time and user.profile.is_tutor %}
+    {% if post.start_time and not post.fin_time and user == post.tutor %}
     <button class="mybutton" type="submit"  data-toggle="modal" data-target="#cancelTutoringModal">튜터링 취소</button>
     <button class="mybutton" type="submit"  data-toggle="modal" data-target="#finishTutoringModal">튜터링 완료</button>
 
@@ -188,7 +187,7 @@
             <p>튜터링이 어땠는지 말해주세요.</p>
             {% csrf_token %}
             {% for field in report_form %}
-              내용: {{field}}
+            {{field}}
             {% endfor %}
           </div>
           <div class="modal-footer">
