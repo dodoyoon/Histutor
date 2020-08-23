@@ -133,10 +133,10 @@
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
-        <p>채팅방의 주제를 파악할 수 있는 이름을 지어주세요.</p>
+        <p>채팅방의 주제를 파악할 수 있는 제목을 작성해주세요. (15자 이상)</p>
         {% csrf_token %}
         {% for field in form %}
-          이름: {{field}}
+          {{field}}
         {% endfor %}
       </div>
       <div class="modal-footer">
