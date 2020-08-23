@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-<h3 style="margin-left:130px; margin-top:20px; color:#8f86c4;">튜티: {{tutee}}</h3>
+<h3 style="margin-left:130px; margin-top:20px; color:#8f86c4;">튜티: {{tutee}} </h3>
 <div id="post_table_div" class="tableDiv">
     <table id="post_table" class="table">
         <thead>
@@ -13,8 +13,10 @@
           <th scope="col" style="width:50px" class="text-center">번호</th>
           <th scope="col" style="width:100px" class="text-center">Status</th>
           <th scope="col" style="width:400px" class="text-center">제목</th>
+          <th scope="col" class="text-center">튜터</th>
           <th scope="col" class="text-center">튜터링 시작 시간</th>
           <th scope="col" class="text-center">튜터링 종료 시간</th>
+          <th scope="col" class="text-center">보고서</th>
         </tr>
         </thead>
         <tbody>
@@ -35,6 +37,13 @@
                 {{post.title}}
                 </a>
               </td>
+              <td class="text-center text-nowrap align-middle">
+                {% if post.tutor %}
+                <a href='{% url "matching:tutor_detail" post.tutor.pk %}'>
+                {{post.tutor}}
+                </a>
+                {% endif %}
+              </td>
               {% if post.start_time == None %}
                   <td class="text-center text-nowrap align-middle"> - </td>
               {% else %}
@@ -46,6 +55,14 @@
               {% else %}
                   <td class="text-center text-nowrap align-middle">{{post.fin_time}}</td>
               {% endif %}
+
+              <td class="text-center text-nowrap align-middle">
+                {% if post.report %}
+                <a href='{% url "matching:report_detail" post.report.pk %}'>
+                보기
+                </a>
+                {% endif %}
+              </td>
           </tr>
         {% endfor %}
         </tbody>

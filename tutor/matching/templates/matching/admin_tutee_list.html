@@ -1,44 +1,39 @@
 {% extends 'matching/base.html' %}
 
-{% block title %}
-<title>Admin Home</title>
-{% endblock %}
-
 {% block content %}
-<h1 style="margin-left:130px; margin-top:20px;">관리자 페이지</h1>
 
 <div class="tableDiv mypage_table">
-  <ul class="nav nav-tabs">
-    <li class="nav-item">
-      <a class="nav-link" href="{% url 'matching:admin_home' %}">Tutor 현황</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link active" href="{% url 'matching:admin_tutee_stat' %}">Tutee 현황</a>
-    </li>
-  </ul>
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'matching:admin_home' %}">튜터 현황</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link active">튜티 현황</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'matching:userlist' %}">사용자 목록</a>
+  </li>
+</ul>
+
+<div class="tableDiv mypage_table">
 
   <div id="post_table_div" class="tableDiv">
       <table id="post_table" class="table">
           <thead>
           <tr>
             <th scope="col" style="width:50px" class="text-center">번호</th>
-            <!--<th scope="col" class="text-center">주제</th>-->
+            <th scope="col" class="text-center">학생</th>
             <th scope="col" class="text-center">이메일</th>
-            <th scope="col" class="text-center">닉네임</th>
-            {% if tutee.num_of_post %}
             <th scope="col" class="text-center">튜터링 신청 횟수</th>
-            {% endif %}
           </tr>
           </thead>
           <tbody>
           {% for tutee in tutee_list %}
             <tr>
                 <td class="text-center text-nowrap align-middle"> {{tutee.pk}} </td>
-                <td class="text-center text-nowrap align-middle">{{tutee.email}}</td>
                 <td class="text-center text-nowrap align-middle"><a href="{% url 'matching:tutee_detail' tutee.pk %}">{{tutee.profile.nickname}}</a></td>
-                {% if tutee.num_of_post %}
-                <td class="text-center text-nowrap align-middle">{{tutee.num_of_post}}</td>
-                {% endif %}
+                <td class="text-center text-nowrap align-middle">{{tutee.email}}</td>
+                <td class="text-center text-nowrap align-middle">{{tutee.num_posts}}</td>
             </tr>
           {% endfor %}
           </tbody>
