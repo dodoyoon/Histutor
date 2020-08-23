@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from django.db.models import F, Q
+from django.db.models import F, Q, Count
 from django.views import generic
 from django.contrib.auth.models import User
 from .forms import PostForm, CommentForm, AcceptReportForm, AccuseForm, ReportForm, TutorReportForm
@@ -300,19 +300,23 @@ def admin_home(request):
         'tutorlist': tutorlist,
     }
 
-    return render(request, 'matching/admin_home.html', ctx)
+    return render(request, 'matching/admin_tutor_list.html', ctx)
 
 @login_required(login_url=URL_LOGIN)
 
-def admin_tutee_stat(request):
-    tutee_list = matching_models.User.objects.filter(profile__is_tutor=False)
+def tutee_list(request):
+    tutee_list = matching_models.User.objects.filter(profile__is_tutor=False).annotate(
+        num_posts = Count('post_relation')
+    )
     # tutee_list = matching_models.User.objects.annotate(num_of_post=Count('post'), distinct=True)
+
+    print(tutee_list)
 
     ctx = {
         'tutee_list': tutee_list,
     }
 
-    return render(request, 'matching/admin_tutee_stat.html', ctx)
+    return render(request, 'matching/admin_tutee_list.html', ctx)
 
 @staff_member_required
 def userlist(request):
@@ -329,7 +333,7 @@ def userlist(request):
     if search_word != '':
         ctx['search_word'] = search_word
 
-    return render(request, 'matching/userlist.html', ctx)
+    return render(request, 'matching/admin_user_list.html', ctx)
 
 @staff_member_required
 def make_tutor(request, pk):
