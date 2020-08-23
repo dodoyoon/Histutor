@@ -237,8 +237,7 @@
   if(storage.scrollTop == storage.scrollHeight - storage.offsetHeight){
     at_bottom = true;
   }
-
-  if(data['type'] == "star_comment" && data['username'] != req_username){
+  if(data['type'] == "star_comment"){
     var msg = document.createElement("div");
     msg.className = "start_tutoring";
     msg.innerHTML = "✨&nbsp;&nbsp;튜터링 시작&nbsp;&nbsp;✨";

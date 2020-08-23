@@ -143,7 +143,7 @@ class PostDetailConsumer(WebsocketConsumer):
             'nickname': profile.nickname,
         }))
 
-            # Receive message from room group
+    # Receive message from room group
     def star_comment(self, event):
         id = event['id']
         comment = matching_models.Comment.objects.get(pk=id)
