@@ -266,7 +266,8 @@ a:hover{
 #google {
   position: relative;
   left: calc(50% - 150px);
-  top: 300px;
+  top: 15px;
+  width: 300px;
 }
 
 #buttonDiv{
@@ -282,4 +283,41 @@ a:hover{
 #reportDetail{
   position: relative;
   top: -10px;
+}
+
+#logo{
+  position: relative;
+  width: 200px;
+  left: calc(50% - 100px);
+}
+
+#hgu_email{
+  position: relative;
+  top: 40px;
+  font-size: 18px;
+  width: 350px;
+  height: 50px;
+  left: calc(50% - 175px);
+}
+
+#sign_in_div{
+  position: relative;
+  left: calc(50% - 300px);
+  top: 130px;
+  width: 600px;
+  height: 330px;
+  padding: 40px;
+}
+
+#contact_info{
+  width: 350px;
+  height: 250px;
+  padding: 20px;
+  position: relative;
+  left: calc(50% - 175px);
+  top: 100px;
+}
+
+#contact_info_icon{
+  width: 20px;
 }
