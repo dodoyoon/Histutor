@@ -303,14 +303,11 @@ def admin_home(request):
     return render(request, 'matching/admin_tutor_list.html', ctx)
 
 @login_required(login_url=URL_LOGIN)
-
+@staff_member_required
 def tutee_list(request):
     tutee_list = matching_models.User.objects.filter(profile__is_tutor=False).annotate(
         num_posts = Count('post_relation')
     )
-    # tutee_list = matching_models.User.objects.annotate(num_of_post=Count('post'), distinct=True)
-
-    print(tutee_list)
 
     ctx = {
         'tutee_list': tutee_list,
@@ -715,9 +712,16 @@ def mainpage(request):
 
     if report_to_write.exists():
         for report in report_to_write:
-            report_form = ReportForm()
+            if report.tutor == report.user:
+                report_form = TutorReportForm()
+            else:
+                report_form = ReportForm()
             ctx['report_form'] = report_form
-            ctx['report_exist'] = True
             ctx['report_post_pk'] = report.pk
+
+            # Tutoring이 정상적으로 종료되었을 경우
+            if report.fin_time:
+                ctx['report_exist'] = True
+                ctx['unwritten_report'] = report
 
     return render(request, 'matching/main.html', ctx)
