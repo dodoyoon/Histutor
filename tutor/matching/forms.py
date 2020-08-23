@@ -8,6 +8,7 @@ class AccuseForm(forms.ModelForm):
         fields = ['join_tutee', 'content']
 
 class PostForm(forms.ModelForm):
+    title = forms.CharField(widget=forms.TextInput(attrs={'size': '50', 'placeholder': '예) MySQL 설치하는데 자꾸 오류가 떠요', 'minlength': '15'}))
     class Meta:
         model = Post
         fields = ['title']
