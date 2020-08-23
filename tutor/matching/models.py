@@ -72,6 +72,7 @@ class Report(models.Model):
    pub_date = models.DateField(auto_now_add=True)
    is_confirmed = models.BooleanField(null=True,default=False)
    content = models.TextField()
+   join_tutee = models.TextField(null=True)
 
    def __str__(self):
       return self.post.get_topic_display() + ' ' + self.post.title

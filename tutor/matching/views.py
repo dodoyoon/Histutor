@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.db.models import F
 from django.views import generic
 from django.contrib.auth.models import User
-from .forms import PostForm, CommentForm, AcceptReportForm, AccuseForm, ReportForm
+from .forms import PostForm, CommentForm, AcceptReportForm, AccuseForm, ReportForm, TutorReportForm
 from django.contrib.auth.decorators import login_required
 from matching import models as matching_models
 from django.db import transaction
@@ -83,8 +83,14 @@ def user_check(request):
 def tutee_report(request, pk):
     post = matching_models.Post.objects.get(pk=pk)
 
+    if not post.user == request.user:
+        return redirect('matching:post_detail', pk=pk)
+
     if request.method == "POST":
-        form = ReportForm(request.POST)
+        if post.user == post.tutor:
+            form = TutorReportForm(request.POST)
+        else:
+            form = ReportForm(request.POST)
 
         if form.is_valid():
             report = form.save(commit=False)
@@ -171,7 +177,10 @@ def post_detail(request, pk):
 
     if report_to_write.exists():
         for report in report_to_write:
-            report_form = ReportForm()
+            if report.tutor == report.user:
+                report_form = TutorReportForm()
+            else:
+                report_form = ReportForm()
             ctx['report_form'] = report_form
             ctx['report_post_pk'] = report.pk
 
@@ -210,9 +219,9 @@ def set_tutor(request, postpk, userpk):
     except tutor.DoesNotExist:
         return HttpResponse("사용자가 없습니다.")
 
-    if tutor.pk == post.user.pk:
-        #포스트 작성자가 직접 튜터가 될 수 없음.
-        return redirect('matching:post_detail', pk=post.pk)
+    # if tutor.pk == post.user.pk:
+    #     #포스트 작성자가 직접 튜터가 될 수 없음.
+    #     return redirect('matching:post_detail', pk=post.pk)
 
     if post.tutor:
         messages.error(request, '해당 방은 튜터링이 이미 진행중입니다.')
