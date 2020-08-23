@@ -10,10 +10,10 @@
 <div class="tableDiv mypage_table">
   <ul class="nav nav-tabs">
     <li class="nav-item">
-      <a class="nav-link active" href="{% url 'matching:admin_home' %}">Tutor 현황</a>
+      <a class="nav-link" href="{% url 'matching:admin_home' %}">Tutor 현황</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="{% url 'matching:admin_tutee_stat' %}">Tutee 현황</a>
+      <a class="nav-link active" href="{% url 'matching:admin_tutee_stat' %}">Tutee 현황</a>
     </li>
   </ul>
 
@@ -25,16 +25,20 @@
             <!--<th scope="col" class="text-center">주제</th>-->
             <th scope="col" class="text-center">이메일</th>
             <th scope="col" class="text-center">닉네임</th>
-            <th scope="col" class="text-center">총 튜터링 시간</th>
+            {% if tutee.num_of_post %}
+            <th scope="col" class="text-center">튜터링 신청 횟수</th>
+            {% endif %}
           </tr>
           </thead>
           <tbody>
-          {% for tutor in tutorlist %}
+          {% for tutee in tutee_list %}
             <tr>
-                <td class="text-center text-nowrap align-middle"> {{tutor.pk}} </td>
-                <td class="text-center text-nowrap align-middle">{{tutor.email}}</td>
-                <td class="text-center text-nowrap align-middle"><a href="{% url 'matching:tutor_detail' tutor.pk %}">{{tutor.profile.nickname}}</a></td>
-                <td class="text-center text-nowrap align-middle">{{tutor.profile.tutor_tutoringTime}}</td>
+                <td class="text-center text-nowrap align-middle"> {{tutee.pk}} </td>
+                <td class="text-center text-nowrap align-middle">{{tutee.email}}</td>
+                <td class="text-center text-nowrap align-middle"><a href="{% url 'matching:tutee_detail' tutee.pk %}">{{tutee.profile.nickname}}</a></td>
+                {% if tutee.num_of_post %}
+                <td class="text-center text-nowrap align-middle">{{tutee.num_of_post}}</td>
+                {% endif %}
             </tr>
           {% endfor %}
           </tbody>
