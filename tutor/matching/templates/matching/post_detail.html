@@ -9,8 +9,6 @@
 <script>
   let cur_date ;
   const date_line = (cur) => {
-    //console.log("dateline");
-    //console.log(`>${date_line.date}`);
     if(date_line.date === undefined){
     date_line.date=cur;
     document.write("___________ " + date_line.date + " ___________"  ) ;
@@ -118,7 +116,7 @@
   <div class="mesgs">
     <div id="msg_history" class="msg_history">
       {% for comment in comment_list %}
-        {% if comment.content|truncatechars:6 == "튜터링시작…" %}
+        {% if comment.content == start_msg %}
         <div class="start_tutoring">
           ✨&nbsp;&nbsp;튜터링 시작&nbsp;&nbsp;✨
         </div>
