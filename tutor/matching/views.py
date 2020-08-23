@@ -201,12 +201,7 @@ def post_detail(request, pk):
 
     ctx['post'] = post
     ctx['comment_list'] = comment_list
-    '''
-    ctx['start_msg'] = ""
-    if post.finding_match is False and post.tutor:
-        print(post.tutor)
-        ctx['start_msg'] = post.tutor.last_name+post.user.last_name+"튜터링시작"
-    '''
+    ctx['start_msg'] = "튜터링시작"+post.user.last_name+str(post.pub_date)
 
     post.hit = post.hit + 1
     post.save()
@@ -242,7 +237,7 @@ def set_tutor(request, postpk, userpk):
     post.start_time = timezone.localtime()
     post.save()
 
-    start_tutoring_cmt = matching_models.Comment(user=tutor, post=post, pub_date=post.start_time, content="튜터링시작"+tutor.last_name+post.user.last_name)
+    start_tutoring_cmt = matching_models.Comment(user=tutor, post=post, pub_date=post.start_time, content="튜터링시작"+post.user.last_name+str(post.pub_date))
     start_tutoring_cmt.save()
 
     channel_layer = get_channel_layer()
@@ -562,9 +557,7 @@ def mainpage(request):
     if request.method == "POST":
         form = PostForm(request.POST)
         check_post_exist = matching_models.Post.objects.filter(user = request.user, finding_match = True)
-        print("***", check_post_exist)
         if form.is_valid() and not check_post_exist:
-            
             post = form.save(commit=False)
             user_obj = matching_models.User.objects.get(username=request.user.username)
             post.user = user_obj
