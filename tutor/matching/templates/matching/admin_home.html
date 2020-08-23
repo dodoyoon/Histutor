@@ -16,33 +16,42 @@
   </li>
 </ul>
 
-<div id="post_table_div" class="tableDiv">
-  <table id="post_table" class="table">
-      <thead>
-      <tr>
-        <th scope="col" style="width:50px" class="text-center">번호</th>
-        <!--<th scope="col" class="text-center">주제</th>-->
-        <th scope="col" style="width:200px" class="text-center">학생</th>
-        <th scope="col" style="width:150px" class="text-center">e-mail</th>
-        <th scope="col" style="width:150px" class="text-center">시간</th>
-      </tr>
-      </thead>
-      <tbody>
-      {% for tutor in tutorlist %}
-        <tr>
-            <td class="text-center text-nowrap align-middle"> {{tutor.pk}} </td>
-            <td class="text-center text-nowrap align-middle"><a href="{% url 'matching:tutor_detail' tutor.pk %}">{{tutor.profile.nickname}}</a></td>
-            <td class="text-center text-nowrap align-middle">{{tutor.email}}</td>
-            <td class="text-center text-nowrap align-middle">{{tutor.profile.tutor_tutoringTime}}</td>
-        </tr>
-      {% endfor %}
-      </tbody>
-  </table>
+
+<div class="tableDiv mypage_table">
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link active" href="{% url 'matching:admin_home' %}">Tutor 현황</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'matching:admin_tutee_stat' %}">Tutee 현황</a>
+    </li>
+  </ul>
+
+  <div id="post_table_div" class="tableDiv">
+      <table id="post_table" class="table">
+          <thead>
+          <tr>
+            <th scope="col" style="width:50px" class="text-center">번호</th>
+            <!--<th scope="col" class="text-center">주제</th>-->
+            <th scope="col" style="width:200px" class="text-center">학생</th>
+            <th scope="col" style="width:150px" class="text-center">e-mail</th>
+            <th scope="col" style="width:150px" class="text-center">시간</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for tutor in tutorlist %}
+            <tr>
+                <td class="text-center text-nowrap align-middle"> {{tutor.pk}} </td>
+                <td class="text-center text-nowrap align-middle"><a href="{% url 'matching:tutor_detail' tutor.pk %}">{{tutor.profile.nickname}}</a></td>
+                <td class="text-center text-nowrap align-middle">{{tutor.email}}</td>
+                <td class="text-center text-nowrap align-middle">{{tutor.profile.tutor_tutoringTime}}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+      </table>
+
+  </div>
+
 </div>
-
-
-</div>
-
-
 
 {% endblock %}

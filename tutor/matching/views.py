@@ -23,7 +23,6 @@ from django.utils import timezone
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 
-
 URL_LOGIN = "/matching"
 # DEFAULT PAGE
 
@@ -304,6 +303,17 @@ def admin_home(request):
     return render(request, 'matching/admin_home.html', ctx)
 
 @login_required(login_url=URL_LOGIN)
+
+def admin_tutee_stat(request):
+    tutee_list = matching_models.User.objects.filter(profile__is_tutor=False)
+    # tutee_list = matching_models.User.objects.annotate(num_of_post=Count('post'), distinct=True)
+
+    ctx = {
+        'tutee_list': tutee_list,
+    }
+
+    return render(request, 'matching/admin_tutee_stat.html', ctx)
+
 @staff_member_required
 def userlist(request):
     search_word = request.GET.get('search_word', '')
@@ -339,6 +349,7 @@ def remove_tutor(request, pk):
 
     return redirect(reverse('matching:userlist'))
 
+
 @login_required(login_url=URL_LOGIN)
 def tutor_detail(request, pk):
     if not request.user.is_staff:
@@ -353,6 +364,21 @@ def tutor_detail(request, pk):
     }
 
     return render(request, 'matching/tutor_detail.html', ctx)
+
+@login_required(login_url=URL_LOGIN)
+def tutee_detail(request, pk):
+    if not request.user.is_staff:
+        return redirect(reverse('matching:mainpage'))
+
+    tutee = matching_models.User.objects.get(pk=pk)
+    postlist = matching_models.Post.objects.filter(user=tutee)
+
+    ctx = {
+        'tutee' : tutee,
+        'postlist' : postlist,
+    }
+
+    return render(request, 'matching/tutee_detail.html', ctx)
 
 # Tutee가 끝낼 때
 def close_post(request, pk):
