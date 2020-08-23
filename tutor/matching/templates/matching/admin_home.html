@@ -1,11 +1,21 @@
 {% extends 'matching/base.html' %}
 
 {% block title %}
-<title>Admin Home</title>
+<title>관리자 페이지</title>
 {% endblock %}
 
 {% block content %}
-<h1 style="margin-left:130px; margin-top:20px;">관리자 페이지</h1>
+
+<div class="tableDiv mypage_table">
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link active">튜터 랭킹</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'matching:userlist' %}">사용자 목록</a>
+  </li>
+</ul>
+
 
 <div class="tableDiv mypage_table">
   <ul class="nav nav-tabs">
@@ -23,17 +33,17 @@
           <tr>
             <th scope="col" style="width:50px" class="text-center">번호</th>
             <!--<th scope="col" class="text-center">주제</th>-->
-            <th scope="col" class="text-center">이메일</th>
-            <th scope="col" class="text-center">닉네임</th>
-            <th scope="col" class="text-center">총 튜터링 시간</th>
+            <th scope="col" style="width:200px" class="text-center">학생</th>
+            <th scope="col" style="width:150px" class="text-center">e-mail</th>
+            <th scope="col" style="width:150px" class="text-center">시간</th>
           </tr>
           </thead>
           <tbody>
           {% for tutor in tutorlist %}
             <tr>
                 <td class="text-center text-nowrap align-middle"> {{tutor.pk}} </td>
-                <td class="text-center text-nowrap align-middle">{{tutor.email}}</td>
                 <td class="text-center text-nowrap align-middle"><a href="{% url 'matching:tutor_detail' tutor.pk %}">{{tutor.profile.nickname}}</a></td>
+                <td class="text-center text-nowrap align-middle">{{tutor.email}}</td>
                 <td class="text-center text-nowrap align-middle">{{tutor.profile.tutor_tutoringTime}}</td>
             </tr>
           {% endfor %}
@@ -43,6 +53,5 @@
   </div>
 
 </div>
-
 
 {% endblock %}

@@ -9,8 +9,6 @@
 <script>
   let cur_date ;
   const date_line = (cur) => {
-    //console.log("dateline");
-    //console.log(`>${date_line.date}`);
     if(date_line.date === undefined){
     date_line.date=cur;
     document.write("___________ " + date_line.date + " ___________"  ) ;
@@ -103,7 +101,9 @@
     {% endif %}
 
     {% if post.report %}
+    {% if user == post.user or user.is_staff %}
     <button class="mybutton" type="submit" onclick="location.href='{% url "matching:report_detail" post.report.pk %}'">보고서 보기</button>
+    {% endif %}
     {% endif %}
 </div>
 
@@ -118,7 +118,7 @@
   <div class="mesgs">
     <div id="msg_history" class="msg_history">
       {% for comment in comment_list %}
-        {% if comment.content|truncatechars:6 == "튜터링시작…" %}
+        {% if comment.content == start_msg %}
         <div class="start_tutoring">
           ✨&nbsp;&nbsp;튜터링 시작&nbsp;&nbsp;✨
         </div>
@@ -239,8 +239,7 @@
   if(storage.scrollTop == storage.scrollHeight - storage.offsetHeight){
     at_bottom = true;
   }
-
-  if(data['type'] == "star_comment" && data['username'] != req_username){
+  if(data['type'] == "star_comment"){
     var msg = document.createElement("div");
     msg.className = "start_tutoring";
     msg.innerHTML = "✨&nbsp;&nbsp;튜터링 시작&nbsp;&nbsp;✨";

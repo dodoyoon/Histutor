@@ -13,8 +13,10 @@
           <th scope="col" style="width:50px" class="text-center">번호</th>
           <th scope="col" style="width:100px" class="text-center">Status</th>
           <th scope="col" style="width:400px" class="text-center">제목</th>
+          <th scope="col" class="text-center">튜티</th>
           <th scope="col" class="text-center">튜터링 시작 시간</th>
           <th scope="col" class="text-center">튜터링 종료 시간</th>
+          <th scope="col" class="text-center">보고서</th>
         </tr>
         </thead>
         <tbody>
@@ -46,6 +48,14 @@
               {% else %}
                   <td class="text-center text-nowrap align-middle">{{post.fin_time}}</td>
               {% endif %}
+      
+              <td class="text-center text-nowrap align-middle">
+                {% if post.report %}
+                <a href='{% url "matching:report_detail" post.report.pk %}'>
+                보기
+                </a>
+                {% endif %}
+              </td>
           </tr>
         {% endfor %}
         </tbody>

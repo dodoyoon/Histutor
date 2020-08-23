@@ -206,10 +206,11 @@ img{ max-width:100%;}
   border-radius: 3px;
   color: #646464;
   font-size: 14px;
-  margin: 2% 40%;
+  margin: 2% auto;
   padding: 5px 12px 5px 12px;
   text-align: center;
   display: inline-block;
   width:auto;
   border: #F6F395 solid;
+  margin-left : 42%;
 }
