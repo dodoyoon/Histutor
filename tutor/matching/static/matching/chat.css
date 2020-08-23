@@ -206,7 +206,7 @@ img{ max-width:100%;}
   border-radius: 3px;
   color: #646464;
   font-size: 14px;
-  margin: 2% 40%;
+  margin: 2% 43%;
   padding: 5px 12px 5px 12px;
   text-align: center;
   display: inline-block;
@@ -221,3 +221,17 @@ img{ max-width:100%;}
 .outgoing_msg .urls{
   color: white;
 }
+
+.cancel_tutoring {
+  background: #FFFFFB none repeat scroll 0 0;
+  border-radius: 3px;
+  color: #646464;
+  font-size: 14px;
+  margin: 2% 43%;
+  padding: 5px 12px 5px 12px;
+  text-align: center;
+  display: inline-block;
+  width:auto;
+  border: #b8afc6 solid;
+}
+

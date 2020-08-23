@@ -9,8 +9,6 @@
 <script>
   let cur_date ;
   const date_line = (cur) => {
-    //console.log("dateline");
-    //console.log(`>${date_line.date}`);
     if(date_line.date === undefined){
     date_line.date=cur;
     document.write("___________ " + date_line.date + " ___________"  ) ;
@@ -23,6 +21,15 @@
 </script>
 
 <div id="buttonDiv">
+  {% if post.finding_match ==  True %}
+  <p style="color:#0c6b27; margin:4px; margin-bottom:10px;"><b> 모집중 </b></p>
+  {% elif post.start_time != Null and post.fin_time == Null %}
+  <p style="color:#2112bf; margin:4px; margin-bottom:10px;"><b> 진행중 </b></p>
+  {% elif not post.report and post.user == request.user and post.tutor %}
+  <p style="color:#b1100a; margin:4px; margin-bottom:10px;"><b> 보고서 미작성 </b></p>
+  {% else %}
+  <p style="color:#bbb; margin:4px; margin-bottom:10px;"><b> 종료 </b></p>
+  {% endif %}
   {% if post.tutor %}
   <p style="color:#8f86c4; margin:4px; margin-bottom:10px;"><b>튜터: {{ post.tutor.profile.nickname }}</b></p>
   {% endif %}
@@ -103,7 +110,9 @@
     {% endif %}
 
     {% if post.report %}
+    {% if user == post.user or user.is_staff %}
     <button class="mybutton" type="submit" onclick="location.href='{% url "matching:report_detail" post.report.pk %}'">보고서 보기</button>
+    {% endif %}
     {% endif %}
 </div>
 
@@ -118,9 +127,13 @@
   <div class="mesgs">
     <div id="msg_history" class="msg_history">
       {% for comment in comment_list %}
-        {% if comment.content|truncatechars:6 == "튜터링시작…" %}
+        {% if comment.content == start_msg %}
         <div class="start_tutoring">
-          ✨&nbsp;&nbsp;튜터링 시작&nbsp;&nbsp;✨
+          &nbsp;&nbsp;튜터링 시작&nbsp;&nbsp;
+        </div>
+        {% elif comment.content == cancel_msg %}
+        <div class="cancel_tutoring">
+          &nbsp;&nbsp;튜터링 취소&nbsp;&nbsp;
         </div>
         {% elif comment.user != user %}
         <div class="date">
@@ -190,7 +203,7 @@
             {{report_form.join_tutee}}
             <br>
             {% endif %}
-            <p>튜터링이 어땠는지 말해주세요.</p>
+            <p>튜터링 내용 등을 간단히 적어주세요 <br />(튜터링 보고서는 운영자 및 담당교수만 확인가능)</p>
             {{report_form.content}}
           </div>
           <div class="modal-footer">
