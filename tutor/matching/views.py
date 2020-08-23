@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from django.db.models import F
+from django.db.models import F, Q
 from django.views import generic
 from django.contrib.auth.models import User
 from .forms import PostForm, CommentForm, AcceptReportForm, AccuseForm, ReportForm, TutorReportForm
@@ -311,11 +311,18 @@ def admin_home(request):
 @login_required(login_url=URL_LOGIN)
 @staff_member_required
 def userlist(request):
-    userlist = matching_models.User.objects.all()
+    search_word = request.GET.get('search_word', '')
+    if search_word != '':
+        userlist = matching_models.User.objects.filter(Q(profile__nickname__icontains=search_word) | Q(email__icontains=search_word))
+    else:
+        userlist = matching_models.User.objects.all()
 
     ctx = {
         'userlist': userlist,
     }
+
+    if search_word != '':
+        ctx['search_word'] = search_word
 
     return render(request, 'matching/userlist.html', ctx)
 
