@@ -21,6 +21,8 @@ from django.views.generic.detail import DetailView
 from .models import Report
 from django.utils import timezone
 from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
+
 
 URL_LOGIN = "/matching"
 # DEFAULT PAGE
@@ -169,7 +171,7 @@ def post_detail(request, pk):
     except matching_models.Post.DoesNotExist:
         return HttpResponse("게시물이 존재하지 않습니다.")
     except:
-        messages.error(request, '해당 게시물은 존재하지 않습니다.')
+        messages.error(request, '해당 방은 존재하지 않습니다.')
         return HttpResponseRedirect(reverse('matching:mainpage'))
 
     user = matching_models.User.objects.get(username=request.user.username)
@@ -251,9 +253,15 @@ def set_tutor(request, postpk, userpk):
 def send_message(request):
     if request.method == "GET":
         post = matching_models.Post.objects.get(pk=request.GET['postid'])
-        new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=timezone.now(), content=request.GET['content'])
-        new_cmt.save()
-        return HttpResponse(new_cmt.id)
+        if post.finding_match or request.user == post.tutor or request.user == post.user:
+            print("in if")
+            new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=timezone.now(), content=request.GET['content'])
+            new_cmt.save()
+            return HttpResponse(new_cmt.id)
+        else:
+            print("in else")
+            messages.error(request, '해당 방은 튜터링이 시작되었습니다.')
+            return HttpResponseRedirect(reverse('matching:mainpage'))
     else:
         return HttpResponse('NOT A GET REQUEST')
 
@@ -283,6 +291,7 @@ def post_edit(request, pk):
 
 
 @login_required(login_url=URL_LOGIN)
+@staff_member_required
 def admin_home(request):
     tutorlist = matching_models.User.objects.filter(profile__is_tutor=True).order_by('-profile__tutor_tutoringTime')
 
@@ -291,6 +300,35 @@ def admin_home(request):
     }
 
     return render(request, 'matching/admin_home.html', ctx)
+
+@login_required(login_url=URL_LOGIN)
+@staff_member_required
+def userlist(request):
+    userlist = matching_models.User.objects.all()
+
+    ctx = {
+        'userlist': userlist,
+    }
+
+    return render(request, 'matching/userlist.html', ctx)
+
+@staff_member_required
+def make_tutor(request, pk):
+    user = matching_models.User.objects.get(pk=pk)
+    userinfo = matching_models.Profile.objects.get(user=user)
+    userinfo.is_tutor = True
+    userinfo.save()
+
+    return redirect(reverse('matching:userlist'))
+
+@staff_member_required
+def remove_tutor(request, pk):
+    user = matching_models.User.objects.get(pk=pk)
+    userinfo = matching_models.Profile.objects.get(user=user)
+    userinfo.is_tutor = False
+    userinfo.save()
+
+    return redirect(reverse('matching:userlist'))
 
 @login_required(login_url=URL_LOGIN)
 def tutor_detail(request, pk):
