@@ -107,6 +107,13 @@ def tutee_report(request, pk):
 class ReportDetail(DetailView):
     model = Report
 
+    def get(self, request, *args, **kwargs):
+        report = matching_models.Report.objects.get(pk=self.kwargs['pk'])
+        if self.request.user.is_staff or self.request.user == report.post.user:
+            return super(ReportDetail, self).get(request, *args, **kwargs)
+        else:
+            return redirect('matching:mainpage')
+
     def get_context_data(self, **kwargs):
         context = super(ReportDetail, self).get_context_data(**kwargs)
         context['form'] = AccuseForm

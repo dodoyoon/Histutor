@@ -103,7 +103,9 @@
     {% endif %}
 
     {% if post.report %}
+    {% if user == post.user or user.is_staff %}
     <button class="mybutton" type="submit" onclick="location.href='{% url "matching:report_detail" post.report.pk %}'">보고서 보기</button>
+    {% endif %}
     {% endif %}
 </div>
 
