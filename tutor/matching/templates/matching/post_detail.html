@@ -129,7 +129,11 @@
       {% for comment in comment_list %}
         {% if comment.content == start_msg %}
         <div class="start_tutoring">
-          ✨&nbsp;&nbsp;튜터링 시작&nbsp;&nbsp;✨
+          &nbsp;&nbsp;튜터링 시작&nbsp;&nbsp;
+        </div>
+        {% elif comment.content == cancel_msg %}
+        <div class="cancel_tutoring">
+          &nbsp;&nbsp;튜터링 취소&nbsp;&nbsp;
         </div>
         {% elif comment.user != user %}
         <div class="date">
