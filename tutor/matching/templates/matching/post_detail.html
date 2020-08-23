@@ -112,6 +112,12 @@
 
 <div class="chat">
   <div class="title">
+    {% if post.start_time and post.fin_time %}
+    [종료]
+    {% endif %}
+    {% if not post.start_time and not post.fin_time and not finding_match %}
+    [모집종료]
+    {% endif %}
     {{ post.title }}
   </div>
 
