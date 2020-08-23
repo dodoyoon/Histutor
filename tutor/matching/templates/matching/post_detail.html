@@ -145,7 +145,7 @@
         <div class="incoming_msg">
           <div class="received_msg">
             <p class="received_name">{{comment.user.profile.nickname}}</p>
-            <div class="received_with_msg">
+            <div id="comment{{ forloop.counter0 }}" class="received_with_msg msg_content">
               {{ comment.content }}
             </div>
             <span class="received_time_date">{{ comment.pub_date|date:"P"}} </span>
@@ -161,7 +161,7 @@
           <div class="outgoing_msg">
             <div class="sent_msg">
               <span class="sent_time_date"> {{ comment.pub_date|date:"P"}}</span>
-              <div id="msg_box">{{ comment.content }}</div>
+              <div id="comment{{ forloop.counter0 }}" class="msg_content msg_box">{{ comment.content }}</div>
             </div>
           </div>
         {% endif %}
@@ -219,6 +219,21 @@
 {% endif %}
 
 <script>
+
+  const makeUrl = function(text){
+    var urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.replace(urlRegex, function(url) {
+      return '<a class="urls" href="' + url + '">' + url + '</a>';
+    })
+  }
+
+  window.onload = function(){
+    let msgContents = document.querySelectorAll(".msg_content");
+    msgContents.forEach(function(msg){
+      document.getElementById(`${msg.id}`).innerHTML = makeUrl(msg.textContent);
+    });
+  }
+
   document.getElementById("msg_send_btn").addEventListener("click", function(event){
     var msg = document.getElementById("write_msg");
     if(msg.value.trim()!=''){
@@ -269,8 +284,8 @@
     msg_time.className = "sent_time_date";
     msg_time.innerHTML += data['date'];
     var msg_content = document.createElement("div");
-    msg_content.id = "msg_box";
-    msg_content.innerHTML += data['content'];
+    msg_content.className = "msg_box";
+    msg_content.innerHTML += makeUrl(data['content']);
     inner_msg.append(msg_time);
     inner_msg.append(msg_content);
     msg.append(inner_msg);
@@ -287,7 +302,7 @@
     received_name.innerHTML += data['nickname'];
     var received_with_msg = document.createElement("div");
     received_with_msg.className = "received_with_msg";
-    received_with_msg.innerHTML += data['content'];
+    received_with_msg.innerHTML += makeUrl(data['content']);
     var received_time_date = document.createElement("span");
     received_time_date.className = "received_time_date";
     received_time_date.innerHTML += data['date'];
