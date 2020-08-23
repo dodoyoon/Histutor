@@ -129,7 +129,7 @@ img{ max-width:100%;}
   padding: 15px 15px 5px 15px;
 }
 
- .sent_msg #msg_box {
+.msg_box {
   background: #8f86c4 none repeat scroll 0 0;
   border-radius: 3px;
   font-size: 14px;
@@ -212,4 +212,12 @@ img{ max-width:100%;}
   display: inline-block;
   width:auto;
   border: #F6F395 solid;
+}
+
+.incoming_msg .urls {
+  color: #646464;
+}
+
+.outgoing_msg .urls{
+  color: white;
 }
