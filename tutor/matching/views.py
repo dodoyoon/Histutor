@@ -547,7 +547,10 @@ def mainpage(request):
 
     if request.method == "POST":
         form = PostForm(request.POST)
-        if form.is_valid():
+        check_post_exist = matching_models.Post.objects.filter(user = request.user, finding_match = True)
+        print("***", check_post_exist)
+        if form.is_valid() and not check_post_exist:
+            
             post = form.save(commit=False)
             user_obj = matching_models.User.objects.get(username=request.user.username)
             post.user = user_obj
