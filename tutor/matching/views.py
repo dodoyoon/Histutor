@@ -191,10 +191,7 @@ def post_detail(request, pk):
                 report_form = ReportForm()
             ctx['report_form'] = report_form
             ctx['report_post_pk'] = report.pk
-
-            # Tutoring이 정상적으로 종료되었을 경우
-            if report.fin_time:
-                ctx['report_exist'] = True
+            ctx['report_exist'] = True
 
     comment_list = matching_models.Comment.objects.filter(post=post).order_by('pub_date')
 

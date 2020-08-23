@@ -20,12 +20,12 @@
         {{report.post.tutor.profile.nickname }}
       </div>
       <div class="list-box">
-        <li><a href="#">시작시간</a></li>
+        <li><a href="#">튜터링 날짜</a></li>
         {{report.post.start_time|date:'Y-m-d'}}
       </div>
       <div class="list-box">
-        <li><a href="#">종료시간</a></li>
-        {{report.post.fin_time|date:'Y-m-d'}}
+        <li><a href="#">튜터링 시간</a></li>
+        {{report.duration_time}}분
       </div>
       {% if report.join_tutee %}
       <div class="list-box">
