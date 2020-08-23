@@ -195,6 +195,7 @@ def post_detail(request, pk):
     ctx['post'] = post
     ctx['comment_list'] = comment_list
     ctx['start_msg'] = "튜터링시작"+post.user.last_name+str(post.pub_date)
+    ctx['cancel_msg'] = "튜터링취소"+post.user.last_name+str(post.pub_date)
 
     post.hit = post.hit + 1
     post.save()
@@ -363,10 +364,14 @@ def fin_tutoring(request, pk):
 def cancel_tutoring(request, pk):
     post = matching_models.Post.objects.get(pk=pk)
 
+    cancel_tutoring_cmt = matching_models.Comment(user=post.tutor, post=post, pub_date=timezone.now(), content="튜터링취소"+post.user.last_name+str(post.pub_date))
+    cancel_tutoring_cmt.save()
+
     post.tutor = None
     post.finding_match = True
     post.start_time = None
     post.save()
+
 
     return redirect(reverse('matching:mainpage'))
 
