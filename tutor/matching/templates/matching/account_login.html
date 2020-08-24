@@ -16,7 +16,8 @@
 
 {% load static %}
 <div id="sign_in_div">
-  <img id="logo" src="{% static 'matching/handong_logo.png' %}" alt="Handong Global University Logo">
+  <!--<img id="logo" src="{% static 'matching/handong_logo.png' %}" alt="Handong Global University Logo">-->
+  <img id="logo" src="https://www.mathworks.com/academia/tah-portal/handong-global-university-562602/_jcr_content/schoolLogo.adapt.320.high.jpg/1592908714710.jpg" alt="Handong Global University Logo">
   <form id="google" class="form-signin" action="{% provider_login_url 'google' %}"  method="POST">
     {% csrf_token %}
     <button class="btn btn-lg btn-google btn-block text-uppercase" type="submit"><i class="fab fa-google mr-2"></i> Sign in with Google</button>
