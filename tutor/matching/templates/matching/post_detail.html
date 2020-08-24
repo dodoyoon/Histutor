@@ -24,9 +24,9 @@
   {% if post.finding_match ==  True %}
   <p style="color:#0c6b27; margin:4px; margin-bottom:10px;"><b> 모집중 </b></p>
   {% elif post.start_time != Null and post.fin_time == Null %}
-  <p style="color:#2112bf; margin:4px; margin-bottom:10px;"><b> 진행중 </b></p>
+  <p style="color:#4858b7; margin:4px; margin-bottom:10px;"><b> 진행중 </b></p>
   {% elif not post.report and post.user == request.user and post.tutor %}
-  <p style="color:#b1100a; margin:4px; margin-bottom:10px;"><b> 보고서 미작성 </b></p>
+  <p style="color:#e43331; margin:4px; margin-bottom:10px;"><b> 보고서 미작성 </b></p>
   {% else %}
   <p style="color:#bbb; margin:4px; margin-bottom:10px;"><b> 종료 </b></p>
   {% endif %}
@@ -198,12 +198,13 @@
           </div>
           <div class="modal-body">
             {% csrf_token %}
+            <p>튜터링 시간 : {{report_form.duration_time}} 분</p>
             {% if report_form.join_tutee %}
             <p>튜터링에 참여한 튜티 정보를 입력해주세요.</p>
             {{report_form.join_tutee}}
             <br>
             {% endif %}
-            <p>튜터링 내용 등을 간단히 적어주세요 <br />(튜터링 보고서는 운영자 및 담당교수만 확인가능)</p>
+            <p>튜터링 내용 등을 간단히 적어주세요 <br />(튜터링 보고서는 운영자 및 담당 교수만 확인할 수 있습니다.)</p>
             {{report_form.content}}
           </div>
           <div class="modal-footer">

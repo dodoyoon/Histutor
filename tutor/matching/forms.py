@@ -16,20 +16,21 @@ class PostForm(forms.ModelForm):
 class TutorReportForm(forms.ModelForm):
     class Meta:
         model = Report
-        fields = ['join_tutee', 'content']
+        fields = ['join_tutee', 'content', 'duration_time']
 
     def __init__(self, *args, **kwargs):
         super(TutorReportForm, self).__init__(*args, **kwargs)
-        self.fields['content'].widget.attrs.update({'name' : 'content'})
-
+        
 class ReportForm(forms.ModelForm):
     class Meta:
         model = Report
-        fields = ['content']
+        fields = ['content', 'duration_time']
 
     def __init__(self, *args, **kwargs):
         super(ReportForm, self).__init__(*args, **kwargs)
-        self.fields['content'].widget.attrs.update({'name' : 'content'})
+        # self.fields['content'].widget.attrs = {
+        #     'placeholder': "튜터링 보고서는 운영자 및 담당 교수만 확인 가능합니다",
+        # }
 
 class CommentForm(forms.ModelForm):
     class Meta:

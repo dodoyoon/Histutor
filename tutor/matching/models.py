@@ -65,6 +65,15 @@ class Comment(models.Model):
    def __str__(self):
       return self.post.title + '    '+self.user.profile.nickname + '    ' + str(self.pub_date)
 
+TIME_CHOICES = (
+   (10, 10), 
+   (20, 20),
+   (30, 30),
+   (40, 40),
+   (50, 50),
+   (60, 60),
+)
+
 class Report(models.Model):
    tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutor")
    tutee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutee")
@@ -73,6 +82,7 @@ class Report(models.Model):
    is_confirmed = models.BooleanField(null=True,default=False)
    content = models.TextField()
    join_tutee = models.TextField(null=True)
+   duration_time = models.PositiveIntegerField(choices=TIME_CHOICES, default=10)
 
    def __str__(self):
       return self.post.get_topic_display() + ' ' + self.post.title

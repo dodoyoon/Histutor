@@ -95,10 +95,15 @@ def tutee_report(request, pk):
 
         if form.is_valid():
             report = form.save(commit=False)
+            if post.fin_time is None:
+                fin_tutoring(request,pk)
             report.tutor = matching_models.User.objects.get(pk = post.tutor.pk)
             report.tutee = matching_models.User.objects.get(pk = post.user.pk)
-            report.post = matching_models.Post.objects.get(pk = post.pk)
+            report.post = post
             report.save()
+            profile = matching_models.Profile.objects.get(user = report.tutor)
+            profile.tutor_tutoringTime += form.cleaned_data['duration_time']
+            profile.save()
             return redirect('matching:report_detail', pk=report.pk)
         else:
             return redirect('matching:mainpage')
@@ -191,10 +196,7 @@ def post_detail(request, pk):
                 report_form = ReportForm()
             ctx['report_form'] = report_form
             ctx['report_post_pk'] = report.pk
-
-            # Tutoring이 정상적으로 종료되었을 경우
-            if report.fin_time:
-                ctx['report_exist'] = True
+            ctx['report_exist'] = True
 
     comment_list = matching_models.Comment.objects.filter(post=post).order_by('pub_date')
 
@@ -394,11 +396,6 @@ def fin_tutoring(request, pk):
     post = matching_models.Post.objects.get(pk=pk)
     post.fin_time = timezone.localtime()
     post.save()
-    profile = matching_models.Profile.objects.get(user = request.user)
-    tutoring_time_minutes = int((post.fin_time - post.start_time).total_seconds() / 60)
-    print(profile.tutor_tutoringTime + tutoring_time_minutes)
-    profile.tutor_tutoringTime = profile.tutor_tutoringTime + tutoring_time_minutes
-    profile.save()
     return redirect(reverse('matching:mainpage'))
 
 # Tutor가 튜터링 중도 취소
