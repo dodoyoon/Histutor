@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
+from django.db.models import Count
 
 
 class Profile(models.Model):
@@ -119,3 +120,7 @@ class SessionLog(models.Model):
    wait_time = models.DateTimeField(auto_now_add=True)
    start_time = models.DateTimeField(null=True)
    fin_time = models.DateTimeField(null=True)
+
+   def ranking(self):
+    waitingList = SessionLog.objects.filter(is_waiting=True, wait_time__lt=self.wait_time).aggregate(ranking=Count('wait_time'))
+    return waitingList['ranking'] + 1
