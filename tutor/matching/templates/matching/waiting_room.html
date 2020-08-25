@@ -10,6 +10,9 @@
 {% endblock %}
 
 {% block content %}
+<div id="dont_exit_alert" class="alert alert-warning text-center" role="alert">
+  브라우저를 나가거나 새로고침하면 대기순서가 밀려납니다.
+</div>
 <div id="waiting_list">
   <div id="waiting">Waiting...</div>
   <div class="text-center">순서가 올 때까지 조금만 기다려주세요.</div>
@@ -44,7 +47,7 @@
             // 서버측에서 전송한 Response 데이터 형식 (json)
             // {'likes_count': post.like_count, 'message': message }
             success: function(response){ // 통신 성공시 - 동적으로 좋아요 갯수 변경, 유저 목록 변경
-                alert(response.message);
+                //alert(response.message);
             },
             error: function(request, status, error){ // 통신 실패시 - 로그인 페이지 리다이렉트
                 alert("로그인이 필요합니다.")

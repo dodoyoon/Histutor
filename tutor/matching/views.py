@@ -146,6 +146,7 @@ def report_list(request, pk):
     tutee_report = matching_models.Report.objects.filter(writer=post.user)
 
     ctx = {
+        'post' : post,
         'report_list' : report_list,
         'tutor_report' : tutor_report,
         'tutee_report' : tutee_report,
@@ -208,11 +209,12 @@ def post_detail(request, pk):
     post = matching_models.Post.objects.get(pk=pk)
     my_report = matching_models.Report.objects.filter(writer=user, post=pk)
     
-    if my_report.exists():
+    if my_report.exists(): #사용자가 쓴 보고서 존재 
         ctx['my_report'] = my_report
         ctx['my_report_pk'] = my_report[0].pk
-    elif post.fin_time or (request.user == post.tutor):
-        print("HERE@@@@@@")
+    elif post.fin_time or ((request.user == post.user) and post.tutor): 
+        print("report_exist")
+        #사용자가 쓴 보고서 존재하지 않고 종료되었거나 
         if post.tutor == post.user:
             report_form = TutorReportForm()
         else:
@@ -220,6 +222,8 @@ def post_detail(request, pk):
         ctx['report_form'] = report_form
         ctx['report_post_pk'] = post.pk
         ctx['report_exist'] = True
+    else:
+        print("else")
 
     comment_list = matching_models.Comment.objects.filter(post=post).order_by('pub_date')
 
@@ -332,6 +336,7 @@ def admin_home(request):
 @login_required(login_url=URL_LOGIN)
 @staff_member_required
 def tutee_list(request):
+    
     tutee_list = matching_models.User.objects.filter(profile__is_tutor=False).annotate(
         num_posts = Count('post_relation')
     )
@@ -339,7 +344,6 @@ def tutee_list(request):
     ctx = {
         'tutee_list': tutee_list,
     }
-
     return render(request, 'matching/admin_tutee_list.html', ctx)
 
 @staff_member_required
@@ -782,9 +786,10 @@ def mainpage(request):
     return render(request, 'matching/main.html', ctx)
 
 
-def get_next_tutee(session, req_user):
+def get_next_tutee(request, session, req_user):
     # session log
     if session.tutor != req_user:
+        print(str(session.tutor.pk) + " vs " + str(req_user.pk))
         messages.error(request, '해당 튜터만 새로운 튜터링을 시작할 수 있습니다.')
         return HttpResponseRedirect(reverse('matching:mainpage'))
     try:
@@ -799,7 +804,7 @@ def get_next_tutee(session, req_user):
 
     return next_tutee
 
-def fin_current_tutee(session):
+def fin_current_tutee(request, session):
     try:
         current_tutee = matching_models.SessionLog.objects.get(tutor_session=session, is_waiting=False, start_time__isnull=False, fin_time__isnull=True)
         print("Current Tutee", current_tutee)
@@ -833,8 +838,8 @@ def session_detail(request, pk):
             ctx['report_post_pk'] = report.pk
             ctx['report_exist'] = True'''
     if request.method == 'POST':
-        fin_current_tutee(session)
-        next_tutee = get_next_tutee(session, req_user)
+        fin_current_tutee(request, session)
+        next_tutee = get_next_tutee(request, session, req_user)
         ctx['tutee'] = next_tutee
 
 
@@ -867,9 +872,15 @@ def waitingroom(request, pk):
 
 
     # session log 만들기: session detail에 들어오면 무조건 하나의 log 만들기
-    if not user.profile.is_tutor:
+    try:
+      log = matching_models.SessionLog.objects.get(is_waiting=True, tutee=user)
+    except matching_models.SessionLog.DoesNotExist:
+      if not user.profile.is_tutor:
         log = matching_models.SessionLog.objects.create(tutor_session=session, tutee=user)
         log.save()
+    except:
+      messages.error(request, "해당 튜터세션은 존재하지 않습니다.")
+      return HttpResponseRedirect(reverse('matching:mainpage'))
 
     waitingList = matching_models.SessionLog.objects.filter(is_waiting=True)
     waitingTutee = waitingList.get(tutee = request.user) # 에러 뜸

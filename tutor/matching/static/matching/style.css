@@ -303,7 +303,7 @@ a:hover{
 #sign_in_div{
   position: relative;
   left: calc(50% - 300px);
-  top: 130px;
+  top: 100px;
   width: 600px;
   height: 330px;
   padding: 40px;
@@ -324,7 +324,7 @@ a:hover{
 
 #waiting_list{
   position: relative;
-  margin-top: 150px;
+  margin-top: 30px;
   left: calc(50% - 40%);
   width: 80%;
   height: 420px;
@@ -384,4 +384,11 @@ a:hover{
   background:#e8f3c7;
   margin: 0 10px 0 0;
   border-radius:50%;
+}
+
+#dont_exit_alert{
+  position: relative;
+  left: calc(50% - 250px);
+  margin-top: 7%;
+  width: 500px;
 }
