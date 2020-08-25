@@ -719,7 +719,7 @@ def mainpage(request):
         posts = list(chain(session_posts,non_session_posts ))
     
     current_post_page = request.GET.get('page', 1)
-    post_paginator = Paginator(posts, 2)
+    post_paginator = Paginator(posts, 9)
     try:
         posts = post_paginator.page(current_post_page)
     except PageNotAnInteger:
