@@ -123,6 +123,7 @@ class SessionLog(models.Model):
    wait_time = models.DateTimeField(auto_now_add=True)
    start_time = models.DateTimeField(null=True)
    fin_time = models.DateTimeField(null=True)
+   attend_online = models.BooleanField(default=True, null=False)
 
    def ranking(self):
     waitingList = SessionLog.objects.filter(is_waiting=True, wait_time__lt=self.wait_time).aggregate(ranking=Count('wait_time'))
