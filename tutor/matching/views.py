@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.db.models import F, Q, Count
 from django.views import generic
 from django.contrib.auth.models import User
-from .forms import PostForm, CommentForm, AcceptReportForm, AccuseForm, ReportForm, TutorReportForm
+from .forms import PostForm, CommentForm, AcceptReportForm, AccuseForm, ReportForm, TutorReportForm, TutorSessionForm
 from django.contrib.auth.decorators import login_required
 from matching import models as matching_models
 from django.db import transaction
@@ -209,6 +209,42 @@ def post_detail(request, pk):
     post.save()
     return render(request, 'matching/post_detail.html', ctx)
 
+@login_required(login_url=URL_LOGIN)
+def session_detail(request, pk):
+    ctx={}
+
+    try:
+        session = get_object_or_404(matching_models.TutorSession, pk=pk)
+    except matching_models.TutorSession.DoesNotExist:
+        return HttpResponse("게시물이 존재하지 않습니다.")
+    except:
+        messages.error(request, '해당 튜터세션은 존재하지 않습니다.')
+        return HttpResponseRedirect(reverse('matching:mainpage'))
+
+    user = matching_models.User.objects.get(username=request.user.username)
+    '''report_to_write = matching_models.Post.objects.filter(user=user, pk=pk, report__isnull=True, tutor__isnull=False)
+
+    if report_to_write.exists():
+        for report in report_to_write:
+            if report.tutor == report.user:
+                report_form = TutorReportForm()
+            else:
+                report_form = ReportForm()
+            ctx['report_form'] = report_form
+            ctx['report_post_pk'] = report.pk
+            ctx['report_exist'] = True'''
+
+    comment_list = matching_models.Comment.objects.filter(tutorsession=session).order_by('pub_date')
+
+    ctx['session'] = session
+    ctx['comment_list'] = comment_list
+    '''ctx['start_msg'] = "튜터링시작"+session.user.last_name+str(session.pub_date)
+    ctx['cancel_msg'] = "튜터링취소"+session.user.last_name+str(session.pub_date)
+    '''
+    session.hit = session.hit + 1
+    session.save()
+    return render(request, 'matching/session_detail.html', ctx)
+
 def set_tutor(request, postpk, userpk):
     post = matching_models.Post.objects.filter(tutor=request.user, fin_time__isnull=True)
     if post:
@@ -258,12 +294,10 @@ def send_message(request):
     if request.method == "GET":
         post = matching_models.Post.objects.get(pk=request.GET['postid'])
         if post.finding_match or request.user == post.tutor or request.user == post.user:
-            print("in if")
             new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=timezone.now(), content=request.GET['content'])
             new_cmt.save()
             return HttpResponse(new_cmt.id)
         else:
-            print("in else")
             messages.error(request, '해당 방은 튜터링이 시작되었습니다.')
             return HttpResponseRedirect(reverse('matching:mainpage'))
     else:
@@ -402,7 +436,7 @@ def fin_tutoring(request, pk):
 def cancel_tutoring(request, pk):
     post = matching_models.Post.objects.get(pk=pk)
 
-    cancel_tutoring_cmt = matching_models.Comment(user=post.tutor, post=post, pub_date=timezone.now(), content="튜터링취소"+post.user.last_name+str(post.pub_date))
+    cancel_tutoring_cmt = matching_models.Comment(user=post.tutor, post=post, pub_date=timezone.localtime(), content="튜터링취소"+post.user.last_name+str(post.pub_date))
     cancel_tutoring_cmt.save()
 
     post.tutor = None
@@ -584,9 +618,36 @@ def mainpage(request):
         ongoing_post = ongoing_post[:1].get()
 
     if request.method == "POST":
+        tsform = TutorSessionForm(request.POST)
+        print("tsform", tsform, tsform.is_valid())
         form = PostForm(request.POST)
+        print("form", form, form.is_valid())
         check_post_exist = matching_models.Post.objects.filter(user = request.user, finding_match = True)
-        if form.is_valid() and not check_post_exist:
+
+        if tsform.is_valid():
+            tutorsession = tsform.save(commit=False)
+            user_obj = matching_models.User.objects.get(username=request.user.username)
+            tutorsession.tutor = user_obj
+            tutorsession.pub_date = timezone.localtime()
+            tutorsession.save()
+
+            '''
+            try:
+            post.report.exists()
+            reportExist = True
+            except:
+            reportExist = False
+
+            try:
+            post.tutor.exists()
+            tutorExist = True
+            except:
+            tutorExist = False
+            '''
+            
+            return redirect('matching:session_detail', pk=tutorsession.pk)
+
+        elif form.is_valid() and not check_post_exist:
             post = form.save(commit=False)
             user_obj = matching_models.User.objects.get(username=request.user.username)
             post.user = user_obj
@@ -634,31 +695,30 @@ def mainpage(request):
             headers = {'Accept': 'application/vnd.tosslab.jandi-v2+json',
             'Content-Type': 'application/json'}
 
-            r = requests.post("https://wh.jandi.com/connect-api/webhook/20949533/4bbee5c811038e410ccea15513acd716", data=payload.encode('utf-8'), headers=headers)
+            #r = requests.post("https://wh.jandi.com/connect-api/webhook/20949533/4bbee5c811038e410ccea15513acd716", data=payload.encode('utf-8'), headers=headers)
             return redirect('matching:post_detail', pk=post.pk)
     else:
         form = PostForm()
+        tsform = TutorSessionForm()
 
 
-    ### 튜터링 검색기능 ###
     search_word = request.GET.get('search_word', '') # GET request의 인자중에 q 값이 있으면 가져오고, 없으면 빈 문자열 넣기
+    now = timezone.localtime()
 
-    if search_word != '': # q가 있으면
-        recruiting = matching_models.Post.objects.filter(finding_match = True, title__icontains=search_word).order_by('-pub_date')
-        onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True, title__icontains=search_word).order_by('-pub_date')
-        recruited = matching_models.Post.objects.filter(finding_match = False, title__icontains=search_word).order_by('-pub_date')
-        recruited = recruited.exclude(start_time__isnull = False, fin_time__isnull = True)
-    else:
-        recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
-        onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True).order_by('-pub_date')
-        recruited = matching_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
-        recruited = recruited.exclude(start_time__isnull = False, fin_time__isnull = True)
-
-    #posts = tutor_models.Post.objects.order_by('-pub_date')
-    posts = list(chain(recruiting, onprocess, recruited))
-
+    tutoring_on = matching_models.TutorSession.objects.filter(start_time__lte=now, fin_time__gte=now)
+    tutoring_off = matching_models.TutorSession.objects.filter(fin_time__lte=now)
+    recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
+    onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True).order_by('-pub_date')
+    recruited = matching_models.Post.objects.filter(finding_match = False, fin_time__isnull = False).order_by('-pub_date')
+    posts = list(chain(tutoring_on,recruiting, onprocess,recruited, tutoring_off))
+    
+    ### 튜터링 검색기능 ###
+    if search_word != '': 
+        session_posts = tutoring_on.union(tutoring_off).filter(title__icontains=search_word)
+        non_session_posts = recruiting.union(onprocess,recruited).filter(title__icontains=search_word)
+        posts = list(chain(session_posts,non_session_posts ))
+    
     current_post_page = request.GET.get('page', 1)
-
     post_paginator = Paginator(posts, 9)
     try:
         posts = post_paginator.page(current_post_page)
@@ -681,10 +741,11 @@ def mainpage(request):
         elif end_index > post_paginator.num_pages:
             start_index -= end_index - post_paginator.num_pages
             end_index = post_paginator.num_pages
-        paginatorRange = [f for f in range(start_index, end_index+1)]
-        paginatorRange[:(2*neighbors + 1)]
+        paginator_range = [f for f in range(start_index, end_index+1)]
+        paginator_range[:(2*neighbors + 1)]
     else:
-        paginatorRange = range(1, post_paginator.num_pages+1)
+        paginator_range = range(1, post_paginator.num_pages+1)
+
 
     ctx = {
         'ongoing_tutoring' : ongoing_tutoring,
@@ -692,8 +753,9 @@ def mainpage(request):
         'user': user,
         'posts': posts,
         'postPaginator': post_paginator,
-        'paginatorRange': paginatorRange,
+        'paginatorRange': paginator_range,
         'form': form,
+        'tsform': tsform,
         'post_exist': post_exist,
         'today' : timezone.localtime(),
     }
@@ -727,6 +789,7 @@ def mainpage(request):
                 ctx['unwritten_report'] = report
 
     return render(request, 'matching/main.html', ctx)
+
 
 @login_required(login_url=URL_LOGIN)
 #def waitingroom(request, pk):

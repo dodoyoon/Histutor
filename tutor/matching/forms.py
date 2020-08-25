@@ -1,5 +1,5 @@
 from django import forms
-from .models import Post, Report, Comment
+from .models import Post, Report, Comment, TutorSession
 from django.forms import ModelChoiceField
 
 class AccuseForm(forms.ModelForm):
@@ -41,3 +41,9 @@ class AcceptReportForm(forms.ModelForm):
     class Meta:
         model = Report
         fields = ('content',)
+
+
+class TutorSessionForm(forms.ModelForm):
+    class Meta:
+        model = TutorSession
+        fields = ('title', 'session_type', 'start_time', 'fin_time', 'location')
