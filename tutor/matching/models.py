@@ -66,7 +66,7 @@ class Comment(models.Model):
       return self.post.title + '    '+self.user.profile.nickname + '    ' + str(self.pub_date)
 
 TIME_CHOICES = (
-   (10, 10), 
+   (10, 10),
    (20, 20),
    (30, 30),
    (40, 40),
@@ -77,6 +77,7 @@ TIME_CHOICES = (
 class Report(models.Model):
    tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutor")
    tutee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutee")
+   writer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="writer")
    post = models.OneToOneField(Post, on_delete=models.CASCADE, related_name="report")
    pub_date = models.DateField(auto_now_add=True)
    is_confirmed = models.BooleanField(null=True,default=False)
@@ -89,3 +90,32 @@ class Report(models.Model):
 
    def get_absolute_url(self):
       return reverse('matching:report_detail', args=[self.pk])
+
+SESSION_TYPE = (
+      ('online', '온라인'), ('offline', '오프라인'), ('onoff','온/오프라인'),
+)
+class TutorSession(models.Model):
+   tutor = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='ses')
+   title = models.CharField(max_length=300)
+   session_type = models.CharField(choices=SESSION_TYPE, default='onoff')
+   pub_date = models.DateTimeField(auto_now_add=True)
+   start_time = models.DateTimeField(null=True)
+   fin_time = models.DateTimeField(null=True)
+   hit = models.PositiveIntegerField(default=0)
+   location = models.CharField(max_length=500, null=True)
+
+   @property
+   def update_hit(self):
+      self.hit += 1
+      self.save()
+
+   def __str__(self):
+      return self.get_topic_display() + ' ' + self.title
+
+class SessionLog(models.Model):
+   tutor_session = models.ForeignKey(TutorSession, on_delete=models.CASCADE, related_name="tutor_session")
+   tutee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutee")
+   is_waiting = models.BooleanField(default=True)
+   wait_time = models.DateTimeField(auto_now_add=True)
+   start_time = models.DateTimeField(null=True)
+   fin_time = models.DateTimeField(null=True)
