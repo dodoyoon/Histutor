@@ -100,7 +100,7 @@ class Report(models.Model):
    tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutor")
    tutee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutee")
    writer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="writer", null=True)
-   post = models.OneToOneField(Post, on_delete=models.CASCADE, related_name="report")
+   post = models.ForeignKey(Post, on_delete=models.CASCADE)
    pub_date = models.DateField(auto_now_add=True)
    is_confirmed = models.BooleanField(null=True,default=False)
    content = models.TextField()

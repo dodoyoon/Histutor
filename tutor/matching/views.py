@@ -84,7 +84,11 @@ def user_check(request):
 def tutee_report(request, pk):
     post = matching_models.Post.objects.get(pk=pk)
 
-    if not post.user == request.user:
+    if not (post.user == request.user or post.tutor == request.user):
+        return redirect('matching:post_detail', pk=pk)
+
+    report = matching_models.Report.objects.filter(post=pk, writer=request.user)
+    if report.exists():
         return redirect('matching:post_detail', pk=pk)
 
     if request.method == "POST":
@@ -92,6 +96,7 @@ def tutee_report(request, pk):
             form = TutorReportForm(request.POST)
         else:
             form = ReportForm(request.POST)
+        
 
         if form.is_valid():
             report = form.save(commit=False)
@@ -100,6 +105,7 @@ def tutee_report(request, pk):
             report.tutor = matching_models.User.objects.get(pk = post.tutor.pk)
             report.tutee = matching_models.User.objects.get(pk = post.user.pk)
             report.post = post
+            report.writer = request.user
             report.save()
             profile = matching_models.Profile.objects.get(user = report.tutor)
             profile.tutor_tutoringTime += form.cleaned_data['duration_time']
@@ -133,6 +139,20 @@ class ReportDetail(DetailView):
     def form_valid(self, form, report):
         report.tutee_feedback = form.cleaned_data['tutee_feedback']
         report.save()
+
+def report_list(request, pk):
+    post = matching_models.Post.objects.get(pk=pk)
+    report_list = matching_models.Report.objects.filter(post=post)
+    tutor_report = matching_models.Report.objects.filter(writer=post.tutor)
+    tutee_report = matching_models.Report.objects.filter(writer=post.user)
+
+    ctx = {
+        'report_list' : report_list,
+        'tutor_report' : tutor_report,
+        'tutee_report' : tutee_report,
+    }
+
+    return render(request, 'matching/report_list.html', ctx)
 
 
 @login_required(login_url=URL_LOGIN)
@@ -186,17 +206,20 @@ def post_detail(request, pk):
         return HttpResponseRedirect(reverse('matching:mainpage'))
 
     user = matching_models.User.objects.get(username=request.user.username)
-    report_to_write = matching_models.Post.objects.filter(user=user, pk=pk, report__isnull=True, tutor__isnull=False)
-
-    if report_to_write.exists():
-        for report in report_to_write:
-            if report.tutor == report.user:
-                report_form = TutorReportForm()
-            else:
-                report_form = ReportForm()
-            ctx['report_form'] = report_form
-            ctx['report_post_pk'] = report.pk
-            ctx['report_exist'] = True
+    post = matching_models.Post.objects.get(pk=pk)
+    my_report = matching_models.Report.objects.filter(writer=user, post=pk)
+    
+    if my_report.exists():
+        ctx['my_report'] = my_report
+        ctx['my_report_pk'] = my_report[0].pk
+    elif post.fin_time or (request.user == post.user and post.tutor):
+        if post.tutor == post.user:
+            report_form = TutorReportForm()
+        else:
+            report_form = ReportForm()
+        ctx['report_form'] = report_form
+        ctx['report_post_pk'] = post.pk
+        ctx['report_exist'] = True
 
     comment_list = matching_models.Comment.objects.filter(post=post).order_by('pub_date')
 
@@ -619,9 +642,7 @@ def mainpage(request):
 
     if request.method == "POST":
         tsform = TutorSessionForm(request.POST)
-        print("tsform", tsform, tsform.is_valid())
         form = PostForm(request.POST)
-        print("form", form, form.is_valid())
         check_post_exist = matching_models.Post.objects.filter(user = request.user, finding_match = True)
 
         if tsform.is_valid():
@@ -771,9 +792,7 @@ def mainpage(request):
 
     # Tutee Report Part
     user_obj2 = matching_models.User.objects.get(username=request.user.username)
-
-    report_to_write = matching_models.Post.objects.filter(user=user_obj2, report__isnull=True, tutor__isnull=False)
-
+    report_to_write = matching_models.Post.objects.filter(tutor=user_obj2, tutor__isnull=False).exclude(report__writer=user_obj2)
     if report_to_write.exists():
         for report in report_to_write:
             if report.tutor == report.user:

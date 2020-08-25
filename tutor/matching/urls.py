@@ -30,6 +30,7 @@ urlpatterns = [
   path('admin/remove-tutor/<int:pk>', views.remove_tutor, name='remove_tutor'),
   path('send_message/', views.send_message, name='send_message'),
   path('report/<int:pk>/', views.tutee_report, name='tutee_report'),
+  path('report/list/<int:pk>/', views.report_list, name='report_list'),
   path('report/detail/<int:pk>/', views.ReportDetail.as_view(), name='report_detail'),
   # path('report/edit/<int:pk>/', views.ReportUpdate.as_view(), name='report_update'),
   #path('', views.index, name='index'),
