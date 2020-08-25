@@ -213,7 +213,6 @@ def post_detail(request, pk):
         ctx['my_report'] = my_report
         ctx['my_report_pk'] = my_report[0].pk
     elif post.fin_time or ((request.user == post.user) and post.tutor): 
-        print("report_exist")
         #사용자가 쓴 보고서 존재하지 않고 종료되었거나 
         if post.tutor == post.user:
             report_form = TutorReportForm()
@@ -231,8 +230,7 @@ def post_detail(request, pk):
     ctx['comment_list'] = comment_list
     ctx['start_msg'] = "튜터링시작"+post.user.last_name+str(post.pub_date)
     ctx['cancel_msg'] = "튜터링취소"+post.user.last_name+str(post.pub_date)
-
-    print("REport exist:::",ctx['report_exist'] )
+    
     post.hit = post.hit + 1
     post.save()
     return render(request, 'matching/post_detail.html', ctx)
