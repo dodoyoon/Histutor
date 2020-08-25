@@ -77,7 +77,7 @@ TIME_CHOICES = (
 class Report(models.Model):
    tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutor")
    tutee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutee")
-   writer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="writer")
+   writer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="writer", null=True)
    post = models.OneToOneField(Post, on_delete=models.CASCADE, related_name="report")
    pub_date = models.DateField(auto_now_add=True)
    is_confirmed = models.BooleanField(null=True,default=False)
@@ -97,7 +97,7 @@ SESSION_TYPE = (
 class TutorSession(models.Model):
    tutor = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='ses')
    title = models.CharField(max_length=300)
-   session_type = models.CharField(choices=SESSION_TYPE, default='onoff')
+   session_type = models.CharField(choices=SESSION_TYPE, default='onoff', max_length=10)
    pub_date = models.DateTimeField(auto_now_add=True)
    start_time = models.DateTimeField(null=True)
    fin_time = models.DateTimeField(null=True)
@@ -114,7 +114,7 @@ class TutorSession(models.Model):
 
 class SessionLog(models.Model):
    tutor_session = models.ForeignKey(TutorSession, on_delete=models.CASCADE, related_name="tutor_session")
-   tutee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutee")
+   tutee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="log_tutee")
    is_waiting = models.BooleanField(default=True)
    wait_time = models.DateTimeField(auto_now_add=True)
    start_time = models.DateTimeField(null=True)
