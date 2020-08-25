@@ -57,11 +57,7 @@
               {% endif %}
 
               <td class="text-center text-nowrap align-middle">
-                {% if post.report %}
-                <a href='{% url "matching:report_detail" post.report.pk %}'>
-                보기
-                </a>
-                {% endif %}
+                <button class="mybutton" type="submit" onclick="location.href='{% url "matching:report_list" post.pk  %}'">보고서 목록</button>
               </td>
           </tr>
         {% endfor %}
