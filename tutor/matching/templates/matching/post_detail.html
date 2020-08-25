@@ -25,7 +25,7 @@
   <p style="color:#0c6b27; margin:4px; margin-bottom:10px;"><b> 모집중 </b></p>
   {% elif post.start_time != Null and post.fin_time == Null %}
   <p style="color:#4858b7; margin:4px; margin-bottom:10px;"><b> 진행중 </b></p>
-  {% elif post.tutor and not my_report %}
+  {% elif user == post.tutor and not my_report %}
   <p style="color:#e43331; margin:4px; margin-bottom:10px;"><b> 보고서 미작성 </b></p>
   {% else %}
   <p style="color:#bbb; margin:4px; margin-bottom:10px;"><b> 종료 </b></p>
@@ -57,11 +57,13 @@
     </div>
     {% endif %}
 
+    {% if user is post.user or user is post.tutor %}
     {% if report_exist %}
     <button class="mybutton" type="button"  data-toggle="modal" data-target="#reportModal" style="float:left">보고서 쓰기</button>
     {% endif %}
+    {% endif %}
 
-    {% if user.is_staff %}
+    {% if user.is_staff and post.fin_time %}
     <button class="mybutton" type="submit" onclick="location.href='{% url "matching:report_list" post.pk  %}'">보고서 목록</button>
     {% endif %}
 

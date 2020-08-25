@@ -161,12 +161,12 @@
   </table>
   <div class="create_room">
     {% if user.profile.is_tutor %}
-    {% if post_exist or report_exist %}
+    {% if post_exist %}
     <button id="makeRoombtn" class="mybutton" type="button"  data-toggle="modal" data-target="#tutorsession">튜터링 방 만들기</button>
     {% else %}
     <button id="makeRoombtn" class="mybutton" type="button"  data-toggle="modal" data-target="#tutortutee">튜터링 방 만들기</button>
     {% endif %}
-    {% elif post_exist == False and not report_exist %}
+    {% elif post_exist == False %}
     <button id="makeRoombtn" class="mybutton" type="button"  data-toggle="modal" data-target="#tuteesession">튜터링 방 만들기</button>
     {% else %}
     <button id="makeRoombtn" class="mybutton" type="button"  data-toggle="modal" data-target="#myModal" disabled>튜터링 방 만들기</button>
@@ -202,7 +202,7 @@
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title">방 새로 만들기</h4>
+        <h4 class="modal-title">TA 세션 열기</h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
@@ -287,8 +287,6 @@
                   <td class="text-center text-nowrap align-middle" style="color:#0c6b27"> 모집중 </td>
                   {% elif post.start_time != Null and post.fin_time == Null %}
                   <td class="text-center text-nowrap align-middle" style="color:#2112bf"> 진행중 </td>
-                  {% elif not post.report or post.tutor == request.user and post.report.writer != post.tutor %}
-                  <td class="text-center text-nowrap align-middle" style="color:#b1100a"> 보고서 미작성 </td>
                   {% else %}
                   <td class="text-center text-nowrap align-middle" style="color:#bbb"> 종료 </td>
                   {% endif %}
