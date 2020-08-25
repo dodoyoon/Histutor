@@ -232,52 +232,7 @@ def post_detail(request, pk):
     post.save()
     return render(request, 'matching/post_detail.html', ctx)
 
-@login_required(login_url=URL_LOGIN)
-def session_detail(request, pk):
-    ctx={}
 
-    try:
-        session = get_object_or_404(matching_models.TutorSession, pk=pk)
-    except matching_models.TutorSession.DoesNotExist:
-        return HttpResponse("게시물이 존재하지 않습니다.")
-    except:
-        messages.error(request, '해당 튜터세션은 존재하지 않습니다.')
-        return HttpResponseRedirect(reverse('matching:mainpage'))
-
-    user = matching_models.User.objects.get(username=request.user.username)
-    '''report_to_write = matching_models.Post.objects.filter(user=user, pk=pk, report__isnull=True, tutor__isnull=False)
-
-    if report_to_write.exists():
-        for report in report_to_write:
-            if report.tutor == report.user:
-                report_form = TutorReportForm()
-            else:
-                report_form = ReportForm()
-            ctx['report_form'] = report_form
-            ctx['report_post_pk'] = report.pk
-            ctx['report_exist'] = True'''
-
-    # session log
-    if not user.profile.is_tutor:
-        try:
-            log = matching_models.SessionLog.objects.get(tutor_session=session, tutee=user, is_waiting=True)
-        except matching_models.SessionLog.DoesNotExist:
-            log = None
-
-        if log:
-            log.start_time = timezone.now()
-            log.save()
-
-    comment_list = matching_models.Comment.objects.filter(tutorsession=session).order_by('pub_date')
-
-    ctx['session'] = session
-    ctx['comment_list'] = comment_list
-    '''ctx['start_msg'] = "튜터링시작"+session.user.last_name+str(session.pub_date)
-    ctx['cancel_msg'] = "튜터링취소"+session.user.last_name+str(session.pub_date)
-    '''
-    session.hit = session.hit + 1
-    session.save()
-    return render(request, 'matching/session_detail.html', ctx)
 
 def set_tutor(request, postpk, userpk):
     post = matching_models.Post.objects.filter(tutor=request.user, fin_time__isnull=True)
@@ -328,7 +283,7 @@ def send_message(request):
     if request.method == "GET":
         post = matching_models.Post.objects.get(pk=request.GET['postid'])
         if post.finding_match or request.user == post.tutor or request.user == post.user:
-            new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=timezone.now(), content=request.GET['content'])
+            new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=timezone.localtime(), content=request.GET['content'])
             new_cmt.save()
             return HttpResponse(new_cmt.id)
         else:
@@ -821,6 +776,74 @@ def mainpage(request):
                 ctx['unwritten_report'] = report
 
     return render(request, 'matching/main.html', ctx)
+
+
+def get_next_tutee(session, req_user):
+    # session log
+    if session.tutor != req_user:
+        messages.error(request, '해당 튜터만 새로운 튜터링을 시작할 수 있습니다.')
+        return HttpResponseRedirect(reverse('matching:mainpage'))
+    try:
+        next_tutee = matching_models.SessionLog.objects.filter(tutor_session=session, is_waiting=True).earliest('wait_time')
+    except matching_models.SessionLog.DoesNotExist:
+        next_tutee = None
+        
+    if next_tutee:
+        next_tutee.start_time = timezone.localtime()
+        next_tutee.is_waiting = False 
+        next_tutee.save()
+
+    return next_tutee
+
+def fin_current_tutee(session):
+    try:
+        current_tutee = matching_models.SessionLog.objects.get(tutor_session=session, is_waiting=False, start_time__isnull=False, fin_time__isnull=True)
+        print("Current Tutee", current_tutee)
+        current_tutee.fin_time = timezone.localtime()
+        current_tutee.save()
+    except:
+        print("현재 참여중인 튜티가 없습니다.")
+
+@login_required(login_url=URL_LOGIN)
+def session_detail(request, pk):
+    ctx={}
+
+    try:
+        session = get_object_or_404(matching_models.TutorSession, pk=pk)
+    except matching_models.TutorSession.DoesNotExist:
+        return HttpResponse("게시물이 존재하지 않습니다.")
+    except:
+        messages.error(request, '해당 튜터세션은 존재하지 않습니다.')
+        return HttpResponseRedirect(reverse('matching:mainpage'))
+
+    req_user = matching_models.User.objects.get(username=request.user.username)
+    '''report_to_write = matching_models.Post.objects.filter(user=user, pk=pk, report__isnull=True, tutor__isnull=False)
+
+    if report_to_write.exists():
+        for report in report_to_write:
+            if report.tutor == report.user:
+                report_form = TutorReportForm()
+            else:
+                report_form = ReportForm()
+            ctx['report_form'] = report_form
+            ctx['report_post_pk'] = report.pk
+            ctx['report_exist'] = True'''
+    if request.method == 'POST':
+        fin_current_tutee(session)
+        next_tutee = get_next_tutee(session, req_user)
+        ctx['tutee'] = next_tutee
+
+
+    comment_list = matching_models.Comment.objects.filter(tutorsession=session).order_by('pub_date')
+
+    ctx['session'] = session
+    ctx['comment_list'] = comment_list
+    '''ctx['start_msg'] = "튜터링시작"+session.user.last_name+str(session.pub_date)
+    ctx['cancel_msg'] = "튜터링취소"+session.user.last_name+str(session.pub_date)
+    '''
+    session.hit = session.hit + 1
+    session.save()
+    return render(request, 'matching/session_detail.html', ctx)
 
 
 @login_required(login_url=URL_LOGIN)
