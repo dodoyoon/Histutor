@@ -228,6 +228,7 @@ def post_detail(request, pk):
     ctx['start_msg'] = "튜터링시작"+post.user.last_name+str(post.pub_date)
     ctx['cancel_msg'] = "튜터링취소"+post.user.last_name+str(post.pub_date)
 
+
     post.hit = post.hit + 1
     post.save()
     return render(request, 'matching/post_detail.html', ctx)
