@@ -213,9 +213,13 @@ def set_tutor(request, postpk, userpk):
 def send_message(request):
     if request.method == "GET":
         post = matching_models.Post.objects.get(pk=request.GET['postid'])
-        new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=timezone.now(), content=request.GET['content'])
-        new_cmt.save()
-        return HttpResponse(new_cmt.id)
+        if post.finding_match or request.user == post.tutor or request.user == post.user:
+            new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=timezone.localtime(), content=request.GET['content'])
+            new_cmt.save()
+            return HttpResponse(new_cmt.id)
+        else:
+            messages.error(request, '해당 방은 튜터링이 시작되었습니다.')
+            return HttpResponseRedirect(reverse('matching:mainpage'))
     else:
         return HttpResponse('NOT A GET REQUEST')
 
@@ -308,6 +312,21 @@ def fin_tutoring(request, pk):
     post = matching_models.Post.objects.get(pk=pk)
     post.fin_time = timezone.localtime()
     post.save()
+    return redirect(reverse('matching:mainpage'))
+
+# Tutor가 튜터링 중도 취소
+def cancel_tutoring(request, pk):
+    post = matching_models.Post.objects.get(pk=pk)
+
+    cancel_tutoring_cmt = matching_models.Comment(user=post.tutor, post=post, pub_date=timezone.localtime(), content="튜터링취소"+post.user.last_name+str(post.pub_date))
+    cancel_tutoring_cmt.save()
+
+    post.tutor = None
+    post.finding_match = True
+    post.start_time = None
+    post.save()
+
+
     return redirect(reverse('matching:mainpage'))
 
 
@@ -509,20 +528,21 @@ def mainpage(request):
 
     ### 튜터링 검색기능 ###
     search_word = request.GET.get('search_word', '') # GET request의 인자중에 q 값이 있으면 가져오고, 없으면 빈 문자열 넣기
-
+    now = timezone.localtime()
     if search_word != '': # q가 있으면
         recruiting = matching_models.Post.objects.filter(finding_match = True, title__icontains=search_word).order_by('-pub_date')
         onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True, title__icontains=search_word).order_by('-pub_date')
         recruited = matching_models.Post.objects.filter(finding_match = False, title__icontains=search_word).order_by('-pub_date')
         recruited = recruited.exclude(start_time__isnull = False, fin_time__isnull = True)
     else:
+        tutoring_on = matching_models.TutorSession.objects.filter(start_time__lte=now, fin_time__gte=now)
+        tutoring_off = matching_models.TutorSession.objects.filter(fin_time__lte=now)
         recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
         onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True).order_by('-pub_date')
         recruited = matching_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
         recruited = recruited.exclude(start_time__isnull = False, fin_time__isnull = True)
 
-    #posts = tutor_models.Post.objects.order_by('-pub_date')
-    posts = list(chain(recruiting, onprocess, recruited))
+    posts = list(chain(tutoring_on,recruiting, onprocess,recruited, tutoring_off))
 
     current_post_page = request.GET.get('page', 1)
 
@@ -579,3 +599,5 @@ def mainpage(request):
 
     print(post_exist)
     return render(request, 'matching/main.html', ctx)
+
+
