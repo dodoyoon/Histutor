@@ -701,33 +701,25 @@ def mainpage(request):
         form = PostForm()
         tsform = TutorSessionForm()
 
-    
-    
 
-
-    ### 튜터링 검색기능 ###
     search_word = request.GET.get('search_word', '') # GET request의 인자중에 q 값이 있으면 가져오고, 없으면 빈 문자열 넣기
     now = timezone.localtime()
-    if search_word != '': # q가 있으면
-        tutoring_on = matching_models.TutorSession.objects.filter(start_time__lte=now, fin_time__gte=now, title__icontains=search_word)
-        tutoring_off = matching_models.TutorSession.objects.filter(fin_time__lte=now, title__icontains=search_word)
-        recruiting = matching_models.Post.objects.filter(finding_match = True, title__icontains=search_word).order_by('-pub_date')
-        onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True, title__icontains=search_word).order_by('-pub_date')
-        recruited = matching_models.Post.objects.filter(finding_match = False, title__icontains=search_word).order_by('-pub_date')
-        recruited = recruited.exclude(start_time__isnull = False, fin_time__isnull = True)
-    else:
-        tutoring_on = matching_models.TutorSession.objects.filter(start_time__lte=now, fin_time__gte=now)
-        tutoring_off = matching_models.TutorSession.objects.filter(fin_time__lte=now)
-        recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
-        onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True).order_by('-pub_date')
-        recruited = matching_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
-        recruited = recruited.exclude(start_time__isnull = False, fin_time__isnull = True)
 
+    tutoring_on = matching_models.TutorSession.objects.filter(start_time__lte=now, fin_time__gte=now)
+    tutoring_off = matching_models.TutorSession.objects.filter(fin_time__lte=now)
+    recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
+    onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True).order_by('-pub_date')
+    recruited = matching_models.Post.objects.filter(finding_match = False, fin_time__isnull = False).order_by('-pub_date')
     posts = list(chain(tutoring_on,recruiting, onprocess,recruited, tutoring_off))
-
+    
+    ### 튜터링 검색기능 ###
+    if search_word != '': 
+        session_posts = tutoring_on.union(tutoring_off).filter(title__icontains=search_word)
+        non_session_posts = recruiting.union(onprocess,recruited).filter(title__icontains=search_word)
+        posts = list(chain(session_posts,non_session_posts ))
+    
     current_post_page = request.GET.get('page', 1)
-
-    post_paginator = Paginator(posts, 9)
+    post_paginator = Paginator(posts, 2)
     try:
         posts = post_paginator.page(current_post_page)
     except PageNotAnInteger:
@@ -749,10 +741,11 @@ def mainpage(request):
         elif end_index > post_paginator.num_pages:
             start_index -= end_index - post_paginator.num_pages
             end_index = post_paginator.num_pages
-        paginatorRange = [f for f in range(start_index, end_index+1)]
-        paginatorRange[:(2*neighbors + 1)]
+        paginator_range = [f for f in range(start_index, end_index+1)]
+        paginator_range[:(2*neighbors + 1)]
     else:
-        paginatorRange = range(1, post_paginator.num_pages+1)
+        paginator_range = range(1, post_paginator.num_pages+1)
+
 
     ctx = {
         'ongoing_tutoring' : ongoing_tutoring,
@@ -760,7 +753,7 @@ def mainpage(request):
         'user': user,
         'posts': posts,
         'postPaginator': post_paginator,
-        'paginatorRange': paginatorRange,
+        'paginatorRange': paginator_range,
         'form': form,
         'tsform': tsform,
         'post_exist': post_exist,
@@ -796,5 +789,4 @@ def mainpage(request):
                 ctx['unwritten_report'] = report
 
     return render(request, 'matching/main.html', ctx)
-
 
