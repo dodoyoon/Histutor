@@ -56,8 +56,7 @@
       </div>
     </div>
     {% endif %}
-
-    {% if user is post.user or user is post.tutor %}
+    {% if user == post.user or user == post.tutor %}
     {% if report_exist %}
     <button class="mybutton" type="button"  data-toggle="modal" data-target="#reportModal" style="float:left">보고서 쓰기</button>
     {% endif %}
