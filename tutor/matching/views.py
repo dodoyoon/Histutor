@@ -806,6 +806,10 @@ def mainpage(request):
 
 @login_required(login_url=URL_LOGIN)
 def waitingroom(request, pk):
+    user = matching_models.User.objects.get(username=request.user.username)
+    if user.profile.is_tutor:
+        return redirect('matching:session_detail', pk=pk)
+
     try:
         session = get_object_or_404(matching_models.TutorSession, pk=pk)
     except matching_models.TutorSession.DoesNotExist:
@@ -814,7 +818,7 @@ def waitingroom(request, pk):
         messages.error(request, '해당 튜터세션은 존재하지 않습니다.')
         return HttpResponseRedirect(reverse('matching:mainpage'))
 
-    user = matching_models.User.objects.get(username=request.user.username)
+
 
     # session log 만들기: session detail에 들어오면 무조건 하나의 log 만들기
     if not user.profile.is_tutor:
@@ -834,6 +838,31 @@ def waitingroom(request, pk):
         'tuteeTurn' : tuteeTurn,
         'waitingAfterTutee' : totalWaiting - tuteeTurn,
         'totalWaiting' : totalWaiting,
+        'pk' : pk,
     }
 
     return render(request, 'matching/waiting_room.html', ctx)
+
+from django.views.decorators.http import require_POST
+
+@login_required
+@require_POST # 해당 뷰는 POST method 만 받는다.
+def not_waiting(request):
+    pk = request.POST.get('pk', None) # ajax 통신을 통해서 template에서 POST방식으로 전달
+    log_pk = request.POST.get('log_pk', None)
+
+    try:
+        log = matching_models.SessionLog.objects.get(pk=log_pk)
+    except matching_models.SessionLog.DoesNotExist:
+        log = None
+
+    if log:
+        log.is_waiting = False
+        log.save()
+
+    context = {
+       'message': "튜터링 대기열에서 제외되었습니다.",
+    }
+
+    return HttpResponse(json.dumps(context), content_type="application/json")
+    # context를 json 타입으로
