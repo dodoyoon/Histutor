@@ -12,6 +12,7 @@ urlpatterns = [
   path('post/detail/<int:pk>/', views.post_detail, name='post_detail'),
   path('post/edit/<int:pk>/', views.post_edit, name='post_edit'),
   path('session/detail/<int:pk>/', views.session_detail, name='session_detail'),
+  path('session/detail/<int:pk>/waitingroom/', views.waitingroom, name='waitingroom'),
   path('mypage/', views.mypage, name='mypage'),
   path('mypage/post/', views.mypage_post, name='mypage_post'),
   path('mypage/report/', views.mypage_report, name='mypage_report'),
@@ -36,5 +37,5 @@ urlpatterns = [
   #path('<str:room_name>/', views.room, name='room'),
   path('main/', views.mainpage, name='mainpage'),
   #path('post/detail/<int:pk>/waiting/', views.waitingpage, name='waiting_room')
-  path('post/detail/waiting/', views.waitingroom, name='waiting_room')
+  # path('post/detail/waiting/', views.waitingroom, name='waiting_room')
 ]

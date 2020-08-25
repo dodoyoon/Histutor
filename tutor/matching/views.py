@@ -234,6 +234,17 @@ def session_detail(request, pk):
             ctx['report_post_pk'] = report.pk
             ctx['report_exist'] = True'''
 
+    # session log
+    if not user.profile.is_tutor:
+        try:
+            log = matching_models.SessionLog.objects.get(tutor_session=session, tutee=user, is_waiting=True)
+        except matching_models.SessionLog.DoesNotExist:
+            log = None
+
+        if log:
+            log.start_time = timezone.now()
+            log.save()
+
     comment_list = matching_models.Comment.objects.filter(tutorsession=session).order_by('pub_date')
 
     ctx['session'] = session
@@ -644,7 +655,7 @@ def mainpage(request):
             except:
             tutorExist = False
             '''
-            
+
             return redirect('matching:session_detail', pk=tutorsession.pk)
 
         elif form.is_valid() and not check_post_exist:
@@ -711,13 +722,13 @@ def mainpage(request):
     onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True).order_by('-pub_date')
     recruited = matching_models.Post.objects.filter(finding_match = False, fin_time__isnull = False).order_by('-pub_date')
     posts = list(chain(tutoring_on,recruiting, onprocess,recruited, tutoring_off))
-    
+
     ### 튜터링 검색기능 ###
-    if search_word != '': 
+    if search_word != '':
         session_posts = tutoring_on.union(tutoring_off).filter(title__icontains=search_word)
         non_session_posts = recruiting.union(onprocess,recruited).filter(title__icontains=search_word)
         posts = list(chain(session_posts,non_session_posts ))
-    
+
     current_post_page = request.GET.get('page', 1)
     post_paginator = Paginator(posts, 9)
     try:
@@ -727,6 +738,8 @@ def mainpage(request):
     except EmptyPage:
         posts = post_paginator.page(post_paginator.num_pages)
 
+
+    print(">>> posts len: " + str(len(posts)))
     neighbors = 10
     if post_paginator.num_pages > 2*neighbors:
         start_index = max(1, int(current_post_page)-neighbors)
@@ -792,23 +805,35 @@ def mainpage(request):
 
 
 @login_required(login_url=URL_LOGIN)
-#def waitingroom(request, pk):
-def waitingroom(request):
-  waitingList = matching_models.SessionLog.objects.filter(is_waiting=True)
-  #waitingTutee = waitingList.get(tutee = request.user)
-  #tuteeTurn = waitingTutee.ranking()
-  waitingTutee = waitingList[1]
-  tuteeTurn = waitingTutee.ranking()
-  totalWaiting = len(waitingList)
+def waitingroom(request, pk):
+    try:
+        session = get_object_or_404(matching_models.TutorSession, pk=pk)
+    except matching_models.TutorSession.DoesNotExist:
+        return HttpResponse("게시물이 존재하지 않습니다.")
+    except:
+        messages.error(request, '해당 튜터세션은 존재하지 않습니다.')
+        return HttpResponseRedirect(reverse('matching:mainpage'))
 
-  ctx = {
-    'user' : request.user,
-    'waitingTutee' : waitingTutee,
-    'waitingList' : waitingList,
-    'waitingBeforeTutee' : tuteeTurn - 1,
-    'tuteeTurn' : tuteeTurn,
-    'waitingAfterTutee' : totalWaiting - tuteeTurn,
-    'totalWaiting' : totalWaiting,
-  }
+    user = matching_models.User.objects.get(username=request.user.username)
 
-  return render(request, 'matching/waiting_room.html', ctx)
+    # session log 만들기: session detail에 들어오면 무조건 하나의 log 만들기
+    if not user.profile.is_tutor:
+        log = matching_models.SessionLog.objects.create(tutor_session=session, tutee=user)
+        log.save()
+
+    waitingList = matching_models.SessionLog.objects.filter(is_waiting=True)
+    waitingTutee = waitingList.get(tutee = request.user) # 에러 뜸
+    tuteeTurn = waitingTutee.ranking()
+    totalWaiting = len(waitingList)
+
+    ctx = {
+        'user' : request.user,
+        'waitingTutee' : waitingTutee,
+        'waitingList' : waitingList,
+        'waitingBeforeTutee' : tuteeTurn - 1,
+        'tuteeTurn' : tuteeTurn,
+        'waitingAfterTutee' : totalWaiting - tuteeTurn,
+        'totalWaiting' : totalWaiting,
+    }
+
+    return render(request, 'matching/waiting_room.html', ctx)

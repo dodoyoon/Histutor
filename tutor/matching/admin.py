@@ -6,4 +6,3 @@ admin.site.register(Comment)
 admin.site.register(Report)
 admin.site.register(TutorSession)
 admin.site.register(SessionLog)
-
