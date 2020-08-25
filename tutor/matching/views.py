@@ -779,9 +779,10 @@ def mainpage(request):
     return render(request, 'matching/main.html', ctx)
 
 
-def get_next_tutee(session, req_user):
+def get_next_tutee(request, session, req_user):
     # session log
     if session.tutor != req_user:
+        print(str(session.tutor.pk) + " vs " + str(req_user.pk))
         messages.error(request, '해당 튜터만 새로운 튜터링을 시작할 수 있습니다.')
         return HttpResponseRedirect(reverse('matching:mainpage'))
     try:
@@ -796,7 +797,7 @@ def get_next_tutee(session, req_user):
 
     return next_tutee
 
-def fin_current_tutee(session):
+def fin_current_tutee(request, session):
     try:
         current_tutee = matching_models.SessionLog.objects.get(tutor_session=session, is_waiting=False, start_time__isnull=False, fin_time__isnull=True)
         print("Current Tutee", current_tutee)
@@ -830,8 +831,8 @@ def session_detail(request, pk):
             ctx['report_post_pk'] = report.pk
             ctx['report_exist'] = True'''
     if request.method == 'POST':
-        fin_current_tutee(session)
-        next_tutee = get_next_tutee(session, req_user)
+        fin_current_tutee(request, session)
+        next_tutee = get_next_tutee(request, session, req_user)
         ctx['tutee'] = next_tutee
 
 
@@ -864,9 +865,15 @@ def waitingroom(request, pk):
 
 
     # session log 만들기: session detail에 들어오면 무조건 하나의 log 만들기
-    if not user.profile.is_tutor:
+    try:
+      log = matching_models.SessionLog.objects.get(is_waiting=True, tutee=user)
+    except matching_models.SessionLog.DoesNotExist:
+      if not user.profile.is_tutor:
         log = matching_models.SessionLog.objects.create(tutor_session=session, tutee=user)
         log.save()
+    except:
+      messages.error(request, "해당 튜터세션은 존재하지 않습니다.")
+      return HttpResponseRedirect(reverse('matching:mainpage'))
 
     waitingList = matching_models.SessionLog.objects.filter(is_waiting=True)
     waitingTutee = waitingList.get(tutee = request.user) # 에러 뜸
