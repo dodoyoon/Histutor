@@ -709,6 +709,8 @@ def mainpage(request):
     search_word = request.GET.get('search_word', '') # GET request의 인자중에 q 값이 있으면 가져오고, 없으면 빈 문자열 넣기
     now = timezone.localtime()
     if search_word != '': # q가 있으면
+        tutoring_on = matching_models.TutorSession.objects.filter(start_time__lte=now, fin_time__gte=now, title__icontains=search_word)
+        tutoring_off = matching_models.TutorSession.objects.filter(fin_time__lte=now, title__icontains=search_word)
         recruiting = matching_models.Post.objects.filter(finding_match = True, title__icontains=search_word).order_by('-pub_date')
         onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True, title__icontains=search_word).order_by('-pub_date')
         recruited = matching_models.Post.objects.filter(finding_match = False, title__icontains=search_word).order_by('-pub_date')
