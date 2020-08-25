@@ -21,7 +21,7 @@ class TutorReportForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(TutorReportForm, self).__init__(*args, **kwargs)
-        
+
 class ReportForm(forms.ModelForm):
     class Meta:
         model = Report
@@ -45,12 +45,12 @@ class AcceptReportForm(forms.ModelForm):
 
 
 class TutorSessionForm(forms.ModelForm):
-    start_time = forms.DateTimeField(
-        widget=DateTimePicker(),
-    )
-    fin_time = forms.DateTimeField(
-        widget=DateTimePicker(),
-    )
+    # start_time = forms.DateTimeField(
+    #     widget=DateTimePicker(),
+    # )
+    # fin_time = forms.DateTimeField(
+    #     widget=DateTimePicker(),
+    # )
     class Meta:
         model = TutorSession
-        fields = ('title', 'session_type', 'location')
+        fields = ('title', 'session_type', 'location', 'start_time', 'fin_time')
