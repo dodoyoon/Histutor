@@ -160,8 +160,14 @@
   </div>
   </table>
   <div class="create_room">
-    {% if post_exist == False and not report_exist %}
+    {% if user.profile.is_tutor %}
+    {% if post_exist or report_exist %}
+    <button id="makeRoombtn" class="mybutton" type="button"  data-toggle="modal" data-target="#tutorsession">튜터링 방 만들기</button>
+    {% else %}
     <button id="makeRoombtn" class="mybutton" type="button"  data-toggle="modal" data-target="#tutortutee">튜터링 방 만들기</button>
+    {% endif %}
+    {% elif post_exist == False and not report_exist %}
+    <button id="makeRoombtn" class="mybutton" type="button"  data-toggle="modal" data-target="#tuteesession">튜터링 방 만들기</button>
     {% else %}
     <button id="makeRoombtn" class="mybutton" type="button"  data-toggle="modal" data-target="#myModal" disabled>튜터링 방 만들기</button>
     {% endif %}
