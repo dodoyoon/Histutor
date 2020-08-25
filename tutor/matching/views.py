@@ -83,7 +83,6 @@ def user_check(request):
 @login_required(login_url=URL_LOGIN)
 def tutee_report(request, pk):
     post = matching_models.Post.objects.get(pk=pk)
-
     if not (post.user == request.user or post.tutor == request.user):
         return redirect('matching:post_detail', pk=pk)
 
@@ -233,7 +232,7 @@ def post_detail(request, pk):
     ctx['start_msg'] = "튜터링시작"+post.user.last_name+str(post.pub_date)
     ctx['cancel_msg'] = "튜터링취소"+post.user.last_name+str(post.pub_date)
 
-
+    print("REport exist:::",ctx['report_exist'] )
     post.hit = post.hit + 1
     post.save()
     return render(request, 'matching/post_detail.html', ctx)
@@ -703,13 +702,16 @@ def mainpage(request):
     recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
     onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True).order_by('-pub_date')
     recruited = matching_models.Post.objects.filter(finding_match = False, fin_time__isnull = False).order_by('-pub_date')
-    posts = list(chain(tutoring_on,recruiting, onprocess,recruited, tutoring_off))
 
     ### 튜터링 검색기능 ###
     if search_word != '':
-        session_posts = tutoring_on.union(tutoring_off).filter(title__icontains=search_word)
-        non_session_posts = recruiting.union(onprocess,recruited).filter(title__icontains=search_word)
-        posts = list(chain(session_posts,non_session_posts ))
+        tutoring_on = tutoring_on.filter(title__icontains=search_word)
+        tutoring_off = tutoring_off.filter(title__icontains=search_word)
+        recruiting = recruiting.filter(title__icontains=search_word)
+        onprocess = onprocess.filter(title__icontains=search_word)
+        recruited = recruited.filter(title__icontains=search_word)
+        
+    posts = list(chain(tutoring_on,recruiting, onprocess,recruited, tutoring_off))
 
     current_post_page = request.GET.get('page', 1)
     post_paginator = Paginator(posts, 9)
@@ -764,7 +766,7 @@ def mainpage(request):
             ongoing_tutoring_tutee = None
 
 
-    # Tutee Report Part
+    # Tutor Report Part
     user_obj2 = matching_models.User.objects.get(username=request.user.username)
     report_to_write = matching_models.Post.objects.filter(tutor=user_obj2, tutor__isnull=False).exclude(report__writer=user_obj2)
     if report_to_write.exists():

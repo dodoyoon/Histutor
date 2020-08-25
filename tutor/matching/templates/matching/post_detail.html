@@ -189,39 +189,38 @@
   </div>
 </div>
 
-
 {% if report_exist %}
-    <!-- Report Modal -->
-    <div id="reportModal" class="modal fade" role="dialog">
-      <div class="modal-dialog">
-        <form action="{% url 'matching:tutee_report' report_post_pk %}" method="POST">
-        <!-- Modal content-->
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title">보고서쓰기</h4>
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
+      <!-- Report Modal -->
+      <div id="reportModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+          <form action="{% url 'matching:tutee_report' report_post_pk %}" method="POST">
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">보고서쓰기</h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+              {% csrf_token %}
+              <p>튜터링 시간 : {{report_form.duration_time}} 분</p>
+              {% if report_form.join_tutee %}
+              <p>튜터링에 참여한 튜티 정보를 입력해주세요.</p>
+              {{report_form.join_tutee}}
+              <br>
+              {% endif %}
+              <p>튜터링 내용 등을 간단히 적어주세요 <br />(튜터링 보고서는 운영자 및 담당교수만 확인가능)</p>
+              {{report_form.content}}
+            </div>
+            <div class="modal-footer">
+              <!-- <button type="submit" class="btn btn-default" data-dismiss="modal">Submit</button> -->
+              <button type="submit" class="btn btn-default">Submit</button>
+            </div>
           </div>
-          <div class="modal-body">
-            {% csrf_token %}
-            <p>튜터링 시간 : {{report_form.duration_time}} 분</p>
-            {% if report_form.join_tutee %}
-            <p>튜터링에 참여한 튜티 정보를 입력해주세요.</p>
-            {{report_form.join_tutee}}
-            <br>
-            {% endif %}
-            <p>튜터링 내용 등을 간단히 적어주세요 <br />(튜터링 보고서는 운영자 및 담당 교수만 확인할 수 있습니다.)</p>
-            {{report_form.content}}
-          </div>
-          <div class="modal-footer">
-            <!-- <button type="submit" class="btn btn-default" data-dismiss="modal">Submit</button> -->
-            <button type="submit" class="btn btn-default">Submit</button>
-          </div>
-        </div>
-        </form>
+          </form>
 
+        </div>
       </div>
-    </div>
-    <!-- Report Modal End -->
+      <!-- Report Modal End -->
 {% endif %}
 
 <script>
