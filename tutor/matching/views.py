@@ -790,3 +790,25 @@ def mainpage(request):
 
     return render(request, 'matching/main.html', ctx)
 
+
+@login_required(login_url=URL_LOGIN)
+#def waitingroom(request, pk):
+def waitingroom(request):
+  waitingList = matching_models.SessionLog.objects.filter(is_waiting=True)
+  #waitingTutee = waitingList.get(tutee = request.user)
+  #tuteeTurn = waitingTutee.ranking()
+  waitingTutee = waitingList[1]
+  tuteeTurn = waitingTutee.ranking()
+  totalWaiting = len(waitingList)
+
+  ctx = {
+    'user' : request.user,
+    'waitingTutee' : waitingTutee,
+    'waitingList' : waitingList,
+    'waitingBeforeTutee' : tuteeTurn - 1,
+    'tuteeTurn' : tuteeTurn,
+    'waitingAfterTutee' : totalWaiting - tuteeTurn,
+    'totalWaiting' : totalWaiting,
+  }
+
+  return render(request, 'matching/waiting_room.html', ctx)

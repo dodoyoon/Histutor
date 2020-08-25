@@ -321,3 +321,57 @@ a:hover{
 #contact_info_icon{
   width: 20px;
 }
+
+#waiting_list{
+  position: relative;
+  margin-top: 150px;
+  left: calc(50% - 40%);
+  width: 80%;
+  height: 420px;
+  border: 2px solid #6C639C;
+  padding: 20px;
+}
+
+#waiting{
+  position: relative;
+  left: calc(50% - 40px);
+  font-size: 30px;
+  padding-bottom: 0px;
+}
+
+#totalWaiting{
+  margin-top: 20px;
+  margin-bottom: 50px;
+}
+
+#waiting_info{
+  position: relative;
+  left: 20%;
+  width: 60%;
+}
+
+#waiting_info div{
+  flex-grow: 1;
+}
+
+#line_image{
+  position: relative;
+  height: 150px;
+  left: calc(50% - 410px);
+  width: 820px;
+  padding: auto;
+}
+
+.stickMan{
+  height: 100%;
+  margin-right: -40px;
+}
+
+.flex-container{
+  display: flex;
+  justify-content: center;
+}
+
+.flex-container div{
+  margin: 10px;
+}
