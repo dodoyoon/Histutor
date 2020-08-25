@@ -19,22 +19,28 @@
     }
   }
 </script>
-
+<div class="update_tutee">
+  <form action="{% url 'matching:session_detail' session.pk %}" method="POST">
+    {% csrf_token %}
+    <button class="mybutton" type="submit">새로운 튜터링 시작</button>
+  </form>
+</div>
 <div id="buttonDiv">
-  {% if session.start_time != Null and session.fin_time == Null %}
+  <!-- 논리 안맞음. -->
+  <!-- {% if session.start_time != Null and session.fin_time == Null %}
   <p style="color:#4858b7; margin:4px; margin-bottom:10px;"><b> 진행중 </b></p>
   {% else %}
   <p style="color:#bbb; margin:4px; margin-bottom:10px;"><b> 종료 </b></p>
-  {% endif %}
+  {% endif %} -->
   {% if session.tutor %}
   <p style="color:#8f86c4; margin:4px; margin-bottom:10px;"><b>튜터: {{ session.tutor.profile.nickname }}</b></p>
   {% endif %}
 
-  {{ session.session_type }}
-    {{ session.pub_date }}
-    {{ session.start_time }}
-    {{ session.fin_time }}
-    {{ session.location }}
+  {{ session.session_type }}<br>
+    pubDate : {{ session.pub_date }}<br>
+    start:{{ session.start_time }}<br>
+    fin : {{ session.fin_time }}<br>
+    장소 : {{ session.location }}<br>
 
   <!-- 
     {% if report_exist %}

@@ -22,7 +22,6 @@ urlpatterns = [
   path('post/detail/cancel_tutoring/<int:pk>', views.cancel_tutoring, name='cancel_tutoring'),
   path('post/settutor/<int:postpk>/<int:userpk>/', views.set_tutor, name='set_tutor'),
   path('tutor/detail/<int:pk>', views.tutor_detail, name='tutor_detail'),
-  path('tutee/detail/<int:pk>', views.tutee_detail, name='tutee_detail'),
   path('login/', views.login, name='login'),
   path('admin/tutor-list', views.admin_home, name='admin_home'),
   path('admin/tutee-list/', views.tutee_list, name='tutee_list'),
