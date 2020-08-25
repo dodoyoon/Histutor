@@ -767,7 +767,6 @@ def get_next_tutee(session, req_user):
     try:
         next_tutee = matching_models.SessionLog.objects.filter(tutor_session=session, is_waiting=True).earliest('wait_time')
     except matching_models.SessionLog.DoesNotExist:
-        # 기다리는 튜티가 없을 때
         next_tutee = None
         
     if next_tutee:
@@ -776,6 +775,15 @@ def get_next_tutee(session, req_user):
         next_tutee.save()
 
     return next_tutee
+
+def fin_current_tutee(session):
+    try:
+        current_tutee = matching_models.SessionLog.objects.get(tutor_session=session, is_waiting=False, start_time__isnull=False, fin_time__isnull=True)
+        print("Current Tutee", current_tutee)
+        current_tutee.fin_time = timezone.localtime()
+        current_tutee.save()
+    except:
+        print("현재 참여중인 튜티가 없습니다.")
 
 @login_required(login_url=URL_LOGIN)
 def session_detail(request, pk):
@@ -802,6 +810,7 @@ def session_detail(request, pk):
             ctx['report_post_pk'] = report.pk
             ctx['report_exist'] = True'''
     if request.method == 'POST':
+        fin_current_tutee(session)
         next_tutee = get_next_tutee(session, req_user)
         ctx['tutee'] = next_tutee
 
