@@ -2,10 +2,10 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from django.db.models import F
+from django.db.models import F, Q, Count
 from django.views import generic
 from django.contrib.auth.models import User
-from .forms import PostForm, CommentForm, AcceptReportForm, AccuseForm, ReportForm
+from .forms import PostForm, CommentForm, AcceptReportForm, AccuseForm, ReportForm, TutorReportForm
 from django.contrib.auth.decorators import login_required
 from matching import models as matching_models
 from django.db import transaction
@@ -21,6 +21,7 @@ from django.views.generic.detail import DetailView
 from .models import Report
 from django.utils import timezone
 from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
 
 URL_LOGIN = "/matching"
 # DEFAULT PAGE
@@ -34,6 +35,9 @@ def index(request):
 def login(request):
     return render(request, 'matching/account_login.html', {})
 
+def redirect_to_main(request):
+    return redirect('matching:mainpage')
+
 
 @login_required(login_url=URL_LOGIN)
 @transaction.atomic
@@ -42,7 +46,7 @@ def save_profile(request, pk):
     if not request.user.is_authenticated:
         return redirect('/accounts/login/')
     if request.method == 'POST':
-        profile = user.profile 
+        profile = user.profile
         profile.signin = True
         profile.phone = "010" + str(request.POST['phone1']) + str(request.POST['phone2'])
         profile.save()
@@ -51,13 +55,11 @@ def save_profile(request, pk):
     return render(request, 'matching/save_profile.html', {'nickname': user.profile.nickname})
 
 def user_check(request):
-    print("userCheck")
     if request.user.email.endswith('@handong.edu'):
-        print("handong student")
         try:
             user = matching_models.User.objects.get(pk=request.user.pk)
             if user.profile.signin == False:
-                user.profile.nickname = user.last_name + user.username[-3:]
+                user.profile.nickname =user.username[1:3] + user.last_name
                 user.profile.signin = True
                 user.profile.save()
                 return HttpResponseRedirect(reverse('matching:profile', args=(request.user.pk,)))
@@ -66,7 +68,6 @@ def user_check(request):
         except(KeyError, matching_models.User.DoesNotExist):
             return HttpResponseRedirect(reverse('matching:index'))
     else:
-        print("not valid email address")
         messages.info(request, '한동 이메일로 로그인해주세요.')
         matching_models.User.objects.filter(pk=request.user.pk).delete()
         return HttpResponseRedirect(reverse('matching:index'))
@@ -83,24 +84,39 @@ def user_check(request):
 def tutee_report(request, pk):
     post = matching_models.Post.objects.get(pk=pk)
 
+    if not post.user == request.user:
+        return redirect('matching:post_detail', pk=pk)
+
     if request.method == "POST":
-        print(">>>POST")
-        form = ReportForm(request.POST)
+        if post.user == post.tutor:
+            form = TutorReportForm(request.POST)
+        else:
+            form = ReportForm(request.POST)
 
         if form.is_valid():
-            print("report form valid")
             report = form.save(commit=False)
+            if post.fin_time is None:
+                fin_tutoring(request,pk)
             report.tutor = matching_models.User.objects.get(pk = post.tutor.pk)
             report.tutee = matching_models.User.objects.get(pk = post.user.pk)
-            report.post = matching_models.Post.objects.get(pk = post.pk)
+            report.post = post
             report.save()
+            profile = matching_models.Profile.objects.get(user = report.tutor)
+            profile.tutor_tutoringTime += form.cleaned_data['duration_time']
+            profile.save()
             return redirect('matching:report_detail', pk=report.pk)
         else:
-            print("report form *invalid*")
             return redirect('matching:mainpage')
 
 class ReportDetail(DetailView):
     model = Report
+
+    def get(self, request, *args, **kwargs):
+        report = matching_models.Report.objects.get(pk=self.kwargs['pk'])
+        if self.request.user.is_staff or self.request.user == report.post.user:
+            return super(ReportDetail, self).get(request, *args, **kwargs)
+        else:
+            return redirect('matching:mainpage')
 
     def get_context_data(self, **kwargs):
         context = super(ReportDetail, self).get_context_data(**kwargs)
@@ -124,12 +140,14 @@ def post_new(request):
     if request.method == "POST":
         form = PostForm(request.POST)
         if form.is_valid():
-            print('form data : ', form.cleaned_data)
             post = form.save(commit=False)
             user_obj = matching_models.User.objects.get(username=request.user.username)
             post.user = user_obj
+            post.pub_date = timezone.localtime()
             post.finding_match = True
             post.save()
+
+
 
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
@@ -161,23 +179,34 @@ def post_detail(request, pk):
 
     try:
         post = get_object_or_404(matching_models.Post, pk=pk)
-    except post.DoesNotExist:
-        return HttpResponse("포스트가 없습니다.")
     except matching_models.Post.DoesNotExist:
         return HttpResponse("게시물이 존재하지 않습니다.")
+    except:
+        messages.error(request, '해당 방은 존재하지 않습니다.')
+        return HttpResponseRedirect(reverse('matching:mainpage'))
 
-    if hasattr(post, 'report'):
-        ctx['report_exist'] = True ;
-    else:
-        ctx['report_exist'] = False ;
+    user = matching_models.User.objects.get(username=request.user.username)
+    report_to_write = matching_models.Post.objects.filter(user=user, pk=pk, report__isnull=True, tutor__isnull=False)
+
+    if report_to_write.exists():
+        for report in report_to_write:
+            if report.tutor == report.user:
+                report_form = TutorReportForm()
+            else:
+                report_form = ReportForm()
+            ctx['report_form'] = report_form
+            ctx['report_post_pk'] = report.pk
+            ctx['report_exist'] = True
 
     comment_list = matching_models.Comment.objects.filter(post=post).order_by('pub_date')
 
     ctx['post'] = post
     ctx['comment_list'] = comment_list
-    ctx['start_msg'] = ""
-    if post.finding_match is False:
-        ctx['start_msg'] = post.tutor.last_name+post.user.last_name+"튜터링시작"
+    ctx['start_msg'] = "튜터링시작"+post.user.last_name+str(post.pub_date)
+    ctx['cancel_msg'] = "튜터링취소"+post.user.last_name+str(post.pub_date)
+
+    post.hit = post.hit + 1
+    post.save()
     return render(request, 'matching/post_detail.html', ctx)
 
 def set_tutor(request, postpk, userpk):
@@ -196,16 +225,31 @@ def set_tutor(request, postpk, userpk):
     except tutor.DoesNotExist:
         return HttpResponse("사용자가 없습니다.")
 
-    if tutor.pk == post.user.pk:
-        #포스트 작성자가 직접 튜터가 될 수 없음.
-        return redirect('matching:post_detail', pk=post.pk)
+    # if tutor.pk == post.user.pk:
+    #     #포스트 작성자가 직접 튜터가 될 수 없음.
+    #     return redirect('matching:post_detail', pk=post.pk)
+
+    if post.tutor:
+        messages.error(request, '해당 방은 튜터링이 이미 진행중입니다.')
+        return HttpResponseRedirect(reverse('matching:mainpage'))
+
+
     post.tutor = tutor
     post.finding_match = False
     post.start_time = timezone.localtime()
     post.save()
 
-    start_tutoring_cmt = matching_models.Comment(user=tutor, post=post, pub_date=post.start_time, content=tutor.last_name+post.user.last_name+"튜터링시작")
+    start_tutoring_cmt = matching_models.Comment(user=tutor, post=post, pub_date=post.start_time, content="튜터링시작"+post.user.last_name+str(post.pub_date))
     start_tutoring_cmt.save()
+
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+      'new_comment',
+      {
+        'type': 'star_comment',
+        'id': start_tutoring_cmt.pk,
+      }
+  )
 
     return redirect('matching:post_detail', pk=post.pk)
 
@@ -214,7 +258,7 @@ def send_message(request):
     if request.method == "GET":
         post = matching_models.Post.objects.get(pk=request.GET['postid'])
         if post.finding_match or request.user == post.tutor or request.user == post.user:
-            new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=timezone.localtime(), content=request.GET['content'])
+            new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=timezone.now(), content=request.GET['content'])
             new_cmt.save()
             return HttpResponse(new_cmt.id)
         else:
@@ -249,59 +293,97 @@ def post_edit(request, pk):
 
 
 @login_required(login_url=URL_LOGIN)
+@staff_member_required
 def admin_home(request):
-    user = matching_models.User.objects.get(pk=request.user.pk)
-
-    print(user.is_staff)
-
-    if not user.is_staff:
-        return redirect(reverse('matching:mainpage'))
-
-    recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
-    recruited = matching_models.Post.objects.filter(finding_match = False).order_by('-pub_date')
-    #posts = tutor_models.Post.objects.order_by('-pub_date')
-    posts = list(chain(recruiting, recruited))
-
-    post_page = request.GET.get('page', 1)
-
-    post_paginator = Paginator(posts, 10)
-    try:
-        posts = post_paginator.page(post_page)
-    except PageNotAnInteger:
-        posts = post_paginator.page(1)
-    except EmptyPage:
-        posts = post_paginator.page(post_paginator.num_pages)
-
-    neighbors = 10
-    if post_paginator.num_pages > 2*neighbors:
-        start_index = max(1, int(current_post_page)-neighbors)
-        end_index = min(int(current_post_page)+neighbors, post_paginator.num_pages)
-        if end_index < start_index + 2*neighbors:
-            end_index = start_index + 2*neighbors
-        elif start_index > end_index - 2*neighbors:
-            start_index = end_index - 2*neighbors
-        if start_index < 1:
-            end_index -= start_index
-            start_index = 1
-        elif end_index > post_paginator.num_pages:
-            start_index -= end_index - post_paginator.num_pages
-            end_index = post_paginator.num_pages
-        paginatorRange = [f for f in range(start_index, end_index+1)]
-        paginatorRange[:(2*neighbors + 1)]
-    else:
-        paginatorRange = range(1, post_paginator.num_pages+1)
+    tutorlist = matching_models.User.objects.filter(profile__is_tutor=True).order_by('-profile__tutor_tutoringTime')
 
     ctx = {
-        'posts': posts,
-        'paginatorRange': paginatorRange,
+        'tutorlist': tutorlist,
     }
 
-    return render(request, 'matching/admin_home.html', ctx)
+    return render(request, 'matching/admin_tutor_list.html', ctx)
 
+@login_required(login_url=URL_LOGIN)
+@staff_member_required
+def tutee_list(request):
+    tutee_list = matching_models.User.objects.filter(profile__is_tutor=False).annotate(
+        num_posts = Count('post_relation')
+    )
+
+    ctx = {
+        'tutee_list': tutee_list,
+    }
+
+    return render(request, 'matching/admin_tutee_list.html', ctx)
+
+@staff_member_required
+def userlist(request):
+    search_word = request.GET.get('search_word', '')
+    if search_word != '':
+        userlist = matching_models.User.objects.filter(Q(profile__nickname__icontains=search_word) | Q(email__icontains=search_word))
+    else:
+        userlist = matching_models.User.objects.all()
+
+    ctx = {
+        'userlist': userlist,
+    }
+
+    if search_word != '':
+        ctx['search_word'] = search_word
+
+    return render(request, 'matching/admin_user_list.html', ctx)
+
+@staff_member_required
+def make_tutor(request, pk):
+    user = matching_models.User.objects.get(pk=pk)
+    userinfo = matching_models.Profile.objects.get(user=user)
+    userinfo.is_tutor = True
+    userinfo.save()
+
+    return redirect(reverse('matching:userlist'))
+
+@staff_member_required
+def remove_tutor(request, pk):
+    user = matching_models.User.objects.get(pk=pk)
+    userinfo = matching_models.Profile.objects.get(user=user)
+    userinfo.is_tutor = False
+    userinfo.save()
+
+    return redirect(reverse('matching:userlist'))
+
+
+@login_required(login_url=URL_LOGIN)
+def tutor_detail(request, pk):
+    if not request.user.is_staff:
+        return redirect(reverse('matching:mainpage'))
+
+    tutor = matching_models.User.objects.get(pk=pk)
+    postlist = matching_models.Post.objects.filter(tutor=tutor)
+
+    ctx = {
+        'tutor' : tutor,
+        'postlist' : postlist,
+    }
+
+    return render(request, 'matching/tutor_detail.html', ctx)
+
+@login_required(login_url=URL_LOGIN)
+def tutee_detail(request, pk):
+    if not request.user.is_staff:
+        return redirect(reverse('matching:mainpage'))
+
+    tutee = matching_models.User.objects.get(pk=pk)
+    postlist = matching_models.Post.objects.filter(user=tutee)
+
+    ctx = {
+        'tutee' : tutee,
+        'postlist' : postlist,
+    }
+
+    return render(request, 'matching/tutee_detail.html', ctx)
 
 # Tutee가 끝낼 때
 def close_post(request, pk):
-    print(">>> close post!")
     post = matching_models.Post.objects.get(pk=pk)
     post.finding_match = False
     post.save()
@@ -480,6 +562,7 @@ def mypage_tutor_post(request):
     }
     return render(request, 'matching/mypage_tutor_post.html', ctx)
 
+import requests
 @login_required(login_url=URL_LOGIN)
 def mainpage(request):
     post = matching_models.Post.objects.filter(user = request.user, finding_match = True)
@@ -500,14 +583,28 @@ def mainpage(request):
 
     if request.method == "POST":
         form = PostForm(request.POST)
-        if form.is_valid():
-            print('form data : ', form.cleaned_data)
+        check_post_exist = matching_models.Post.objects.filter(user = request.user, finding_match = True)
+        if form.is_valid() and not check_post_exist:
             post = form.save(commit=False)
             user_obj = matching_models.User.objects.get(username=request.user.username)
             post.user = user_obj
+            post.pub_date = timezone.localtime()
             post.finding_match = True
             post.save()
 
+            try:
+              post.report.exists()
+              reportExist = True
+            except:
+              reportExist = False
+
+            try:
+              post.tutor.exists()
+              tutorExist = True
+            except:
+              tutorExist = False
+
+            '''
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
                 'new_post',
@@ -519,8 +616,23 @@ def mainpage(request):
                     'pub_date': json.dumps(post.pub_date, cls=DjangoJSONEncoder),
                     #'topic': dict(TOPIC_CHOICES).get(post.topic),
                     'nickname': post.user.profile.nickname,
+                    'startTime': json.dumps(post.start_time, cls=DjangoJSONEncoder),
+                    'endTime': json.dumps(post.fin_time, cls=DjangoJSONEncoder),
+                    'postUser': post.user.pk,
+                    'tutor': tutorExist,
+                    'reportExist': reportExist,
+                    'hit': post.hit,
                 }
             )
+            '''
+            title = post.title
+            url = "http://" + request.get_host() + reverse('matching:post_detail', args=[post.pk])
+            payload = '{"body":"' + title + '","connectColor":"#6C639C","connectInfo":[{"imageUrl":"' + url + '"}]}'
+
+            headers = {'Accept': 'application/vnd.tosslab.jandi-v2+json',
+            'Content-Type': 'application/json'}
+
+            r = requests.post("https://wh.jandi.com/connect-api/webhook/20949533/4bbee5c811038e410ccea15513acd716", data=payload.encode('utf-8'), headers=headers)
             return redirect('matching:post_detail', pk=post.pk)
     else:
         form = PostForm()
@@ -585,6 +697,15 @@ def mainpage(request):
         'today' : timezone.localtime(),
     }
 
+    # main.html에서 튜티도 진행중인 튜터링이 보이게 하기
+    if not user.profile.is_tutor:
+        try :
+            ongoing_tutoring_tutee = matching_models.Post.objects.get(user=user, tutor__isnull=False, start_time__isnull=False, fin_time__isnull=True)
+            ctx['ongoing_tutoring_tutee'] = ongoing_tutoring_tutee
+        except matching_models.Post.DoesNotExist :
+            ongoing_tutoring_tutee = None
+
+
     # Tutee Report Part
     user_obj2 = matching_models.User.objects.get(username=request.user.username)
 
@@ -592,12 +713,18 @@ def mainpage(request):
 
     if report_to_write.exists():
         for report in report_to_write:
-            report_form = ReportForm()
+            if report.tutor == report.user:
+                report_form = TutorReportForm()
+            else:
+                report_form = ReportForm()
             ctx['report_form'] = report_form
-            ctx['report_exist'] = True
             ctx['report_post_pk'] = report.pk
 
-    print(post_exist)
+            # Tutoring이 정상적으로 종료되었을 경우
+            if report.fin_time:
+                ctx['report_exist'] = True
+                ctx['unwritten_report'] = report
+
     return render(request, 'matching/main.html', ctx)
 
 

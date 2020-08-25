@@ -13,6 +13,7 @@ class Profile(models.Model):
    phone = models.CharField(default="",max_length=200)
    is_tutor = models.BooleanField(null=True,blank=True, default=False)
    signin = models.BooleanField(default=False)
+   tutor_tutoringTime = models.PositiveIntegerField(default=0)
 
 
    def __str__(self):
@@ -64,13 +65,25 @@ class Comment(models.Model):
    def __str__(self):
       return self.post.title + '    '+self.user.profile.nickname + '    ' + str(self.pub_date)
 
+TIME_CHOICES = (
+   (10, 10),
+   (20, 20),
+   (30, 30),
+   (40, 40),
+   (50, 50),
+   (60, 60),
+)
+
 class Report(models.Model):
    tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutor")
    tutee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutee")
+   writer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="writer", null=True)
    post = models.OneToOneField(Post, on_delete=models.CASCADE, related_name="report")
    pub_date = models.DateField(auto_now_add=True)
    is_confirmed = models.BooleanField(null=True,default=False)
    content = models.TextField()
+   join_tutee = models.TextField(null=True)
+   duration_time = models.PositiveIntegerField(choices=TIME_CHOICES, default=10)
 
    def __str__(self):
       return self.post.get_topic_display() + ' ' + self.post.title
@@ -97,7 +110,7 @@ class TutorSession(models.Model):
       self.save()
 
    def __str__(self):
-      return self.get_session_type_display() + ' ' + self.title
+      return self.get_topic_display() + ' ' + self.title
 
 class SessionLog(models.Model):
    tutor_session = models.ForeignKey(TutorSession, on_delete=models.CASCADE, related_name="tutor_session")

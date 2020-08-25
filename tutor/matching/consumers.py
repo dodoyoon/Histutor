@@ -32,6 +32,11 @@ class NewPostConsumer(WebsocketConsumer):
         pub_date = text_data_json['pub_date']
         topic = text_data_json['topic']
         nickname = text_data_json['nickname']
+        startTime = text_data_json['startTime']
+        endTime = text_data_json['endTime']
+        postUser = text_data_json['postUser']
+        tutor = text_data_json['tutor']
+        reportExist = text_data_json['reportExist']
 
         # Send message to room group
         async_to_sync(self.channel_layer.group_send)(
@@ -44,16 +49,28 @@ class NewPostConsumer(WebsocketConsumer):
                 'pub_date': pub_date,
                 'topic': topic,
                 'nickname': nickname,
+                'startTime': startTime,
+                'endTime': endTime,
+                'postUser': postUser,
+                'tutor': tutor,
+                'reportExist': reportExist,
             }
         )
 
     # Receive message from room group
     def new_post(self, event):
         id = event['id']
+        post = matching_models.Post.objects.get(pk=id)
         title = event['title']
         finding = event['finding']
-        pub_date = event['pub_date']
+        pub_date = timezone.localtime(post.pub_date).strftime("%H:%M")
         nickname = event['nickname']
+        startTime = event['startTime']
+        endTime = event['endTime']
+        postUser = event['postUser']
+        tutor = event['tutor']
+        reportExist = event['reportExist']
+        hit = event['hit']
 
         # Send message to WebSocket
         self.send(text_data=json.dumps({
@@ -63,6 +80,12 @@ class NewPostConsumer(WebsocketConsumer):
             'finding': finding,
             'pub_date': pub_date,
             'nickname': nickname,
+            'startTime': startTime,
+            'endTime': endTime,
+            'postUser': postUser,
+            'tutor': tutor,
+            'reportExist': reportExist,
+            'hit': hit,
         }))
 
 class PostDetailConsumer(WebsocketConsumer):
@@ -118,4 +141,17 @@ class PostDetailConsumer(WebsocketConsumer):
             'username': username,
             'date': date,
             'nickname': profile.nickname,
+        }))
+
+    # Receive message from room group
+    def star_comment(self, event):
+        id = event['id']
+        comment = matching_models.Comment.objects.get(pk=id)
+
+        # Send message to WebSocket
+        self.send(text_data=json.dumps({
+            'type': 'star_comment',
+            'id': id,
+            'content': comment.content,
+            'username': comment.user.username,
         }))

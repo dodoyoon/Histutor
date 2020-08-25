@@ -14,8 +14,26 @@
     </ul>
     {% endif %}
 
-<form id="google" class="form-signin" action="{% provider_login_url 'google' %}"  method="POST">
-  {% csrf_token %}
-  <button class="btn btn-lg btn-google btn-block text-uppercase" type="submit"><i class="fab fa-google mr-2"></i> Sign in with Google</button>
-</form>
+{% load static %}
+<div id="sign_in_div">
+  <!--<img id="logo" src="{% static 'matching/handong_logo.png' %}" alt="Handong Global University Logo">-->
+  <img id="logo" src="https://www.mathworks.com/academia/tah-portal/handong-global-university-562602/_jcr_content/schoolLogo.adapt.320.high.jpg/1592908714710.jpg" alt="Handong Global University Logo">
+  <form id="google" class="form-signin" action="{% provider_login_url 'google' %}"  method="POST">
+    {% csrf_token %}
+    <button class="btn btn-lg btn-google btn-block text-uppercase" type="submit"><i class="fab fa-google mr-2"></i> Sign in with Google</button>
+  </form>
+  <div id="hgu_email" class="alert alert-warning text-center" role="alert">
+    한동대 이메일로 로그인해주세요
+  </div>
+</div>
+
+<div id="contact_info" class="text-center">
+  <p class="font-weight-bold">Contact Info &nbsp;&nbsp;&nbsp;<img id="contact_info_icon" src="https://img.icons8.com/ios-filled/50/000000/mail-contact.png"/></p>
+  <p>김성민 &nbsp;&nbsp;&nbsp;21300109@handong.edu</p>
+  <p>김종은 &nbsp;&nbsp;&nbsp;21700158@handong.edu</p>
+  <p>김도윤 &nbsp;&nbsp;&nbsp;21700083@handong.edu</p>
+  <p>양예진 &nbsp;&nbsp;&nbsp;yygeniee@gmail.com</p>
+</div>
+
+
 {% endblock %}
