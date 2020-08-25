@@ -29,9 +29,7 @@ class ReportForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ReportForm, self).__init__(*args, **kwargs)
-        # self.fields['content'].widget.attrs = {
-        #     'placeholder': "튜터링 보고서는 운영자 및 담당 교수만 확인 가능합니다",
-        # }
+
 
 class CommentForm(forms.ModelForm):
     class Meta:

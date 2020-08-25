@@ -136,6 +136,7 @@
             </div>
             <div class="modal-body">
               {% csrf_token %}
+              <p>튜터링 시간 : {{report_form.duration_time}} 분</p>
               {% if report_form.join_tutee %}
               <p>튜터링에 참여한 튜티 정보를 입력해주세요.</p>
               {{report_form.join_tutee}}
