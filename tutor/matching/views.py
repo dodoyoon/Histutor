@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.db.models import F, Q, Count
 from django.views import generic
 from django.contrib.auth.models import User
-from .forms import PostForm, CommentForm, AcceptReportForm, AccuseForm, ReportForm, TutorReportForm
+from .forms import PostForm, CommentForm, AcceptReportForm, AccuseForm, ReportForm, TutorReportForm, TutorSessionForm
 from django.contrib.auth.decorators import login_required
 from matching import models as matching_models
 from django.db import transaction
@@ -208,6 +208,42 @@ def post_detail(request, pk):
     post.hit = post.hit + 1
     post.save()
     return render(request, 'matching/post_detail.html', ctx)
+
+@login_required(login_url=URL_LOGIN)
+def session_detail(request, pk):
+    ctx={}
+
+    try:
+        session = get_object_or_404(matching_models.TutorSession, pk=pk)
+    except matching_models.TutorSession.DoesNotExist:
+        return HttpResponse("게시물이 존재하지 않습니다.")
+    except:
+        messages.error(request, '해당 튜터세션은 존재하지 않습니다.')
+        return HttpResponseRedirect(reverse('matching:mainpage'))
+
+    user = matching_models.User.objects.get(username=request.user.username)
+    '''report_to_write = matching_models.Post.objects.filter(user=user, pk=pk, report__isnull=True, tutor__isnull=False)
+
+    if report_to_write.exists():
+        for report in report_to_write:
+            if report.tutor == report.user:
+                report_form = TutorReportForm()
+            else:
+                report_form = ReportForm()
+            ctx['report_form'] = report_form
+            ctx['report_post_pk'] = report.pk
+            ctx['report_exist'] = True'''
+
+    comment_list = matching_models.Comment.objects.filter(tutorsession=session).order_by('pub_date')
+
+    ctx['session'] = session
+    ctx['comment_list'] = comment_list
+    '''ctx['start_msg'] = "튜터링시작"+session.user.last_name+str(session.pub_date)
+    ctx['cancel_msg'] = "튜터링취소"+session.user.last_name+str(session.pub_date)
+    '''
+    session.hit = session.hit + 1
+    session.save()
+    return render(request, 'matching/session_detail.html', ctx)
 
 def set_tutor(request, postpk, userpk):
     post = matching_models.Post.objects.filter(tutor=request.user, fin_time__isnull=True)
@@ -582,9 +618,36 @@ def mainpage(request):
         ongoing_post = ongoing_post[:1].get()
 
     if request.method == "POST":
+        tsform = TutorSessionForm(request.POST)
+        print("tsform", tsform, tsform.is_valid())
         form = PostForm(request.POST)
+        print("form", form, form.is_valid())
         check_post_exist = matching_models.Post.objects.filter(user = request.user, finding_match = True)
-        if form.is_valid() and not check_post_exist:
+
+        if tsform.is_valid():
+            tutorsession = tsform.save(commit=False)
+            user_obj = matching_models.User.objects.get(username=request.user.username)
+            tutorsession.tutor = user_obj
+            tutorsession.pub_date = timezone.localtime()
+            tutorsession.save()
+
+            '''
+            try:
+            post.report.exists()
+            reportExist = True
+            except:
+            reportExist = False
+
+            try:
+            post.tutor.exists()
+            tutorExist = True
+            except:
+            tutorExist = False
+            '''
+            
+            return redirect('matching:session_detail', pk=tutorsession.pk)
+
+        elif form.is_valid() and not check_post_exist:
             post = form.save(commit=False)
             user_obj = matching_models.User.objects.get(username=request.user.username)
             post.user = user_obj
@@ -632,10 +695,14 @@ def mainpage(request):
             headers = {'Accept': 'application/vnd.tosslab.jandi-v2+json',
             'Content-Type': 'application/json'}
 
-            r = requests.post("https://wh.jandi.com/connect-api/webhook/20949533/4bbee5c811038e410ccea15513acd716", data=payload.encode('utf-8'), headers=headers)
+            #r = requests.post("https://wh.jandi.com/connect-api/webhook/20949533/4bbee5c811038e410ccea15513acd716", data=payload.encode('utf-8'), headers=headers)
             return redirect('matching:post_detail', pk=post.pk)
     else:
         form = PostForm()
+        tsform = TutorSessionForm()
+
+    
+    
 
 
     ### 튜터링 검색기능 ###
@@ -693,6 +760,7 @@ def mainpage(request):
         'postPaginator': post_paginator,
         'paginatorRange': paginatorRange,
         'form': form,
+        'tsform': tsform,
         'post_exist': post_exist,
         'today' : timezone.localtime(),
     }
