@@ -1,6 +1,7 @@
 from django import forms
 from .models import Post, Report, Comment, TutorSession
 from django.forms import ModelChoiceField
+from tempus_dominus.widgets import DateTimePicker, TimePicker
 
 class AccuseForm(forms.ModelForm):
     class Meta:
@@ -44,6 +45,12 @@ class AcceptReportForm(forms.ModelForm):
 
 
 class TutorSessionForm(forms.ModelForm):
+    start_time = forms.DateTimeField(
+        widget=DateTimePicker(),
+    )
+    fin_time = forms.DateTimeField(
+        widget=DateTimePicker(),
+    )
     class Meta:
         model = TutorSession
-        fields = ('title', 'session_type', 'start_time', 'fin_time', 'location')
+        fields = ('title', 'session_type', 'location')
