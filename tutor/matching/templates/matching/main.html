@@ -270,18 +270,21 @@
         {% for post in posts %}
             <tr>
                 <td class="text-center text-nowrap align-middle"> {{post.pk}} </td>
-                <!--<td scope="row" class="text-center">{{post.get_topic_display}}</td>-->
-                {% if post.finding_match ==  True %}
-                <td class="text-center text-nowrap align-middle" style="color:#0c6b27"> 모집중 </td>
-                {% elif post.start_time != Null and post.fin_time == Null %}
-                <td class="text-center text-nowrap align-middle" style="color:#2112bf"> 진행중 </td>
-                {% elif not post.report and post.user == request.user and post.tutor %}
-                <td class="text-center text-nowrap align-middle" style="color:#b1100a"> 보고서 미작성 </td>
+                {% if post.session_type %}
+                  <td class="text-center text-nowrap align-middle" style="color:#0c6b27"> {{post.get_session_type_display}} </td>
+                  <td class="align-middle" style="padding-left:4vw;"><a href="{% url 'matching:session_detail' post.pk %}">{{post.title|truncatechars:50}}</a></td>
                 {% else %}
-                <td class="text-center text-nowrap align-middle" style="color:#bbb"> 종료 </td>
+                  {% if post.finding_match ==  True %}
+                  <td class="text-center text-nowrap align-middle" style="color:#0c6b27"> 모집중 </td>
+                  {% elif post.start_time != Null and post.fin_time == Null %}
+                  <td class="text-center text-nowrap align-middle" style="color:#2112bf"> 진행중 </td>
+                  {% elif not post.report and post.user == request.user and post.tutor %}
+                  <td class="text-center text-nowrap align-middle" style="color:#b1100a"> 보고서 미작성 </td>
+                  {% else %}
+                  <td class="text-center text-nowrap align-middle" style="color:#bbb"> 종료 </td>
+                  {% endif %}
+                  <td class="align-middle" style="padding-left:4vw;"><a href="{% url 'matching:post_detail' post.pk %}">{{post.title|truncatechars:50}}</a></td>
                 {% endif %}
-
-                <td class="align-middle" style="padding-left:4vw;"><a href="{% url 'matching:post_detail' post.pk %}">{{post.title|truncatechars:50}}</a></td>
                 <td class="text-center text-nowrap align-middle">{{post.user.profile.nickname}}</td>
                 {% if post.pub_date|date:'Y-m-d' == today|date:'Y-m-d' %}
                 <td class="text-center text-nowrap align-middle">{{post.pub_date|date:'H:i'}}</td>

@@ -75,7 +75,7 @@ class TutorSession(models.Model):
       self.save()
 
    def __str__(self):
-      return self.get_topic_display() + ' ' + self.title
+      return self.get_session_type_display() + ' ' + self.title
 
 class Comment(models.Model):
    user = models.ForeignKey(User, on_delete=models.CASCADE)
