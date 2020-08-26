@@ -93,7 +93,7 @@ def session_report_create(request, pk):
     ctx = {
         'log_list' : log_list,
     }
-    print("loglist", log_list)
+
     if request.method == "POST":
         report = Report(tutor=user, writer=user, session=session)
         tutee_username = request.POST.get('username', None)
