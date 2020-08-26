@@ -280,13 +280,19 @@
             <tr>
                 <td class="text-center text-nowrap align-middle"> {{post.pk}} </td>
                 {% if post.session_type %}
-                  <td class="text-center text-nowrap align-middle"  style="color:#0c6b27"> {{post.get_session_type_display}} </td>
-                  {% if user.profile.is_tutor %}
-                      <td class="align-middle" style="padding-left:4vw;"><a href="{% url 'matching:session_detail' post.pk %}">
-                        <div class="ta">TA</div>{{post.title|truncatechars:50}}</a></td>
+                  {% if today < post.start_time %}
+                  <td class="text-center text-nowrap align-middle" style="color:#0c6b27"> 진행 예정 </td>
+                  {% elif post.fin_time is NULL %}
+                  <td class="text-center text-nowrap align-middle" style="color:#2112bf"> 진행중 </td>
                   {% else %}
-                      <td class="align-middle" style="padding-left:4vw;"><a href="{% url 'matching:waitingroom' post.pk %}">
-                        <div class="ta">TA</div>{{post.title|truncatechars:50}}</a></td>
+                  <td class="text-center text-nowrap align-middle" style="color:#bbb"> 종료 </td>
+                  {% endif %}
+                  {% if user.profile.is_tutor %}
+                      <td class="align-middle" style="padding-left:4vw;">
+                        <div class="ta">TA</div> <div style="display:inline-block; color:#707B7C; margin: 0 10px 0 0;">{{post.start_time|date:'H:i'}}-{{post.expected_fin_time|date:'H:i'}}</div>
+                        <a href="{% url 'matching:session_detail' post.pk %}">{{post.title|truncatechars:50}}</a></td>
+                  {% else %}
+                      <td class="align-middle" style="padding-left:4vw;"><a href="{% url 'matching:waitingroom' post.pk %}">{{post.title|truncatechars:50}}</a></td>
                   {% endif %}
                 {% else %}
                   {% if post.finding_match ==  True %}
@@ -298,7 +304,13 @@
                   {% endif %}
                   <td class="align-middle" style="padding-left:4vw;"><a href="{% url 'matching:post_detail' post.pk %}">{{post.title|truncatechars:50}}</a></td>
                 {% endif %}
-                <td class="text-center text-nowrap align-middle">{{post.user.profile.nickname}}</td>
+                <td class="text-center text-nowrap align-middle">
+                  {% if post.user %}
+                  {{post.user.profile.nickname}}
+                  {% else %}
+                  {{post.tutor.profile.nickname}}
+                  {% endif %}
+                </td>
                 {% if post.pub_date|date:'Y-m-d' == today|date:'Y-m-d' %}
                 <td class="text-center text-nowrap align-middle">{{post.pub_date|date:'H:i'}}</td>
                 {% else %}
