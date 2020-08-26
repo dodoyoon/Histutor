@@ -28,6 +28,37 @@
   <div id="mainpage_ongoing_table_div" class="tableDiv">
   <table id="mainpage_ongoing_table" class="table table-bordered w-auto">
     <tbody>
+      {% if ongoing_session %}
+      <tr>
+        <th class="align-middle text-center text-nowrap">진행중인 튜터세션</th>
+        <td class="align-middle text-center text-nowrap">튜터 : {{ ongoing_session.user.profile.nickname }}</td>
+        <td class="align-middle" location.href= "{% url 'matching:session_detail' ongoing_session.pk %}">제목 : <a href="{% url 'matching:session_detail' ongoing_session.pk %}" style="text-decoration: underline; text-underline-position: under;">{{ ongoing_session.title|truncatechars:50 }}</a></td>
+        <td class="align-middle text-center">
+            <button class="mybutton" type="submit"  data-toggle="modal" data-target="#endSession">세션종료</button>
+        </td>
+      </tr>
+
+      <div class="modal fade" id="endSession" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">튜터 세션 종료</h4>
+            </div>
+            <div class="modal-body">
+              <p>정말로 진행중인 튜터세션을 종료하시겠습니까?</p>
+              <div class="row" style="float: right;">
+                  <div class="col-12-xs text-center" style="margin-right: 1em;">
+                      <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" type="button" class="close" data-dismiss="modal">No</button>
+                      <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" onclick="location.href='{% url "matching:end_session" ongoing_session.pk %}'">Yes</button>
+                  </div>
+              </div>
+            </div>
+    
+          </div>
+        </div>
+      </div>
+
+      {% endif %}
       {% if ongoing_post %}
       <tr>
         <th class="align-middle text-center text-nowrap">모집중인 튜터링</th>
