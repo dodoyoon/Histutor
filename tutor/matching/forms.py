@@ -43,12 +43,12 @@ class AcceptReportForm(forms.ModelForm):
 
 
 class TutorSessionForm(forms.ModelForm):
-    # start_time = forms.DateTimeField(
-    #     widget=DateTimePicker(),
-    # )
-    # fin_time = forms.DateTimeField(
-    #     widget=DateTimePicker(),
-    # )
+    start_time = forms.DateTimeField(
+        widget=DateTimePicker(),
+    )
+    fin_time = forms.DateTimeField(
+        widget=DateTimePicker(),
+    )
     class Meta:
         model = TutorSession
         fields = ('title', 'session_type', 'location', 'start_time', 'fin_time')
