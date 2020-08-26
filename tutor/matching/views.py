@@ -842,6 +842,16 @@ def mainpage(request):
                 ctx['report_exist'] = True
                 ctx['unwritten_report'] = report
 
+    session_report_to_write = matching_models.TutorSession.objects.filter(tutor=user_obj2, fin_time__isnull=False).exclude(report__writer=user_obj2)
+    if session_report_to_write.exists():
+        for report in session_report_to_write:
+            ctx['report_session_pk'] = report.pk
+
+            # Tutoring이 정상적으로 종료되었을 경우
+            if report.fin_time:
+                ctx['session_report_exist'] = True
+                ctx['unwritten_session_report'] = report
+
     return render(request, 'matching/main.html', ctx)
 
 

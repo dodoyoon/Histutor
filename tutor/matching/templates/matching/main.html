@@ -193,6 +193,20 @@
       <!-- Report Modal End -->
       {% endif %}
 
+      {% if session_report_exist %}
+      <tr>
+        <th class="align-middle text-center text-nowrap">작성하지 않은 TA세션 보고서</th>
+        <td class="align-middle text-center text-nowrap">튜티 : {{ unwritten_session_report.user.profile.nickname }}</td>
+        <td class="align-middle" location.href= "{% url 'matching:session_detail' unwritten_session_report.pk %}">제목 : <a href="{% url 'matching:session_detail' unwritten_session_report.pk %}">{{ unwritten_session_report.title }}</a></td>
+        <td class="align-middle text-center">
+          <form action="{% url 'matching:session_report_create' unwritten_session_report.pk %}" method="POST">
+            {% csrf_token %}
+          <button class="mybutton" type="submit">보고서쓰기</button>
+          </form>
+        </td>
+      </tr>
+      {% endif %}
+
     </tbody>
   </div>
   </table>
