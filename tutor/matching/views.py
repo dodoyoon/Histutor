@@ -95,7 +95,7 @@ def tutee_report(request, pk):
             form = TutorReportForm(request.POST)
         else:
             form = ReportForm(request.POST)
-        
+
 
         if form.is_valid():
             report = form.save(commit=False)
@@ -208,12 +208,12 @@ def post_detail(request, pk):
     user = matching_models.User.objects.get(username=request.user.username)
     post = matching_models.Post.objects.get(pk=pk)
     my_report = matching_models.Report.objects.filter(writer=user, post=pk)
-    
-    if my_report.exists(): #사용자가 쓴 보고서 존재 
+
+    if my_report.exists(): #사용자가 쓴 보고서 존재
         ctx['my_report'] = my_report
         ctx['my_report_pk'] = my_report[0].pk
-    elif post.fin_time or ((request.user == post.user) and post.tutor): 
-        #사용자가 쓴 보고서 존재하지 않고 종료되었거나 
+    elif post.fin_time or ((request.user == post.user) and post.tutor):
+        #사용자가 쓴 보고서 존재하지 않고 종료되었거나
         if post.tutor == post.user:
             report_form = TutorReportForm()
         else:
@@ -230,7 +230,7 @@ def post_detail(request, pk):
     ctx['comment_list'] = comment_list
     ctx['start_msg'] = "튜터링시작"+post.user.last_name+str(post.pub_date)
     ctx['cancel_msg'] = "튜터링취소"+post.user.last_name+str(post.pub_date)
-    
+
     post.hit = post.hit + 1
     post.save()
     return render(request, 'matching/post_detail.html', ctx)
@@ -334,7 +334,7 @@ def admin_home(request):
 @login_required(login_url=URL_LOGIN)
 @staff_member_required
 def tutee_list(request):
-    
+
     tutee_list = matching_models.User.objects.filter(profile__is_tutor=False).annotate(
         num_posts = Count('post_relation')
     )
@@ -708,7 +708,7 @@ def mainpage(request):
         recruiting = recruiting.filter(title__icontains=search_word)
         onprocess = onprocess.filter(title__icontains=search_word)
         recruited = recruited.filter(title__icontains=search_word)
-        
+
     posts = list(chain(tutoring_on,recruiting, onprocess,recruited, tutoring_off))
 
     current_post_page = request.GET.get('page', 1)
@@ -794,10 +794,10 @@ def get_next_tutee(request, session, req_user):
         next_tutee = matching_models.SessionLog.objects.filter(tutor_session=session, is_waiting=True).earliest('wait_time')
     except matching_models.SessionLog.DoesNotExist:
         next_tutee = None
-        
+
     if next_tutee:
         next_tutee.start_time = timezone.localtime()
-        next_tutee.is_waiting = False 
+        next_tutee.is_waiting = False
         next_tutee.save()
 
     return next_tutee
@@ -864,7 +864,7 @@ def waitingroom(request, pk):
     except matching_models.TutorSession.DoesNotExist:
         return HttpResponse("게시물이 존재하지 않습니다.")
     except:
-        messages.error(request, '해당 튜터세션은 존재하지 않습니다.')
+        messages.error(request, '해당 튜터세션은 존재하지 않습니다. waitingroom')
         return HttpResponseRedirect(reverse('matching:mainpage'))
 
 
@@ -877,30 +877,39 @@ def waitingroom(request, pk):
         log = matching_models.SessionLog.objects.create(tutor_session=session, tutee=user)
         log.save()
     except:
-      messages.error(request, "해당 튜터세션은 존재하지 않습니다.")
+      messages.error(request, "해당 사용자 기록은 존재하지 않습니다.")
       return HttpResponseRedirect(reverse('matching:mainpage'))
 
     waitingList = matching_models.SessionLog.objects.filter(is_waiting=True)
-    waitingTutee = waitingList.get(tutee = request.user) # 에러 뜸
-    tuteeTurn = waitingTutee.ranking()
-    totalWaiting = len(waitingList)
-    if totalWaiting == 1:
-      waitingBeforeTutee = 0
-      waitingAfterTutee = 0
-    else:
-      waitingBeforeTutee = tuteeTurn - 1
-      waitingAfterTutee = totalWaiting - tuteeTurn
+
+    try:
+        waitingTutee = waitingList.get(tutee = request.user) # SessionLog object
+    except matching_models.SessionLog.DoesNotExist:
+        waitingTutee = None
+
 
     ctx = {
         'user' : request.user,
         'waitingTutee' : waitingTutee,
         'waitingList' : waitingList,
-        'waitingBeforeTutee' : waitingBeforeTutee,
-        'tuteeTurn' : tuteeTurn,
-        'waitingAfterTutee' : waitingAfterTutee,
-        'totalWaiting' : totalWaiting,
         'pk' : pk,
     }
+
+    if waitingTutee:
+        tuteeTurn = waitingTutee.ranking()
+        totalWaiting = len(waitingList)
+        waitingAfterTutee = totalWaiting - tuteeTurn
+
+        if waitingAfterTutee == -1:
+            waitingAfterTutee = 0
+
+        ctx['waitingBeforeTutee'] = tuteeTurn - 1
+        ctx['tuteeTurn'] = tuteeTurn
+        ctx['waitingAfterTutee'] = waitingAfterTutee, # waitingAfterTutee is int, but ctx['...'] is tuple?
+        ctx['totalWaiting'] = totalWaiting
+
+    else:
+        ctx['no_waiting'] = True
 
     return render(request, 'matching/waiting_room.html', ctx)
 
