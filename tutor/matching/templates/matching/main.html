@@ -32,7 +32,7 @@
       <tr>
         <th class="align-middle text-center text-nowrap">진행중인 튜터세션</th>
         <td class="align-middle text-center text-nowrap">튜터 : {{ ongoing_session.user.profile.nickname }}</td>
-        <td class="align-middle" location.href= "{% url 'matching:session_detail' ongoing_session.pk %}">제목 : <a href="{% url 'matching:session_detail' ongoing_session.pk %}" style="text-decoration: underline; text-underline-position: under;">{{ ongoing_session.title|truncatechars:50 }}</a></td>
+        <td class="align-middle" location.href= "{% url 'matching:session_detail' ongoing_session.pk %}">제목 : <a href="{% url 'matching:session_detail' ongoing_session.pk %}">{{ ongoing_session.title|truncatechars:50 }}</a></td>
         <td class="align-middle text-center">
             <button class="mybutton" type="submit"  data-toggle="modal" data-target="#endSession">세션종료</button>
         </td>
@@ -63,7 +63,7 @@
       <tr>
         <th class="align-middle text-center text-nowrap">모집중인 튜터링</th>
         <td class="align-middle text-center text-nowrap">튜티 : {{ ongoing_post.user.profile.nickname }}</td>
-        <td class="align-middle" location.href= "{% url 'matching:post_detail' ongoing_post.pk %}">제목 : <a href="{% url 'matching:post_detail' ongoing_post.pk %}" style="text-decoration: underline; text-underline-position: under;">{{ ongoing_post.title|truncatechars:50 }}</a></td>
+        <td class="align-middle" location.href= "{% url 'matching:post_detail' ongoing_post.pk %}">제목 : <a href="{% url 'matching:post_detail' ongoing_post.pk %}">{{ ongoing_post.title|truncatechars:50 }}</a></td>
         <td class="align-middle text-center">
             <button class="mybutton" type="submit"  data-toggle="modal" data-target="#postDeleteModal">모집취소</button>
         </td>
@@ -93,14 +93,14 @@
       <tr>
         <th class="align-middle text-center text-nowrap">진행중인 튜터링</th>
         <td class="align-middle text-center text-nowrap">튜티 : {{ ongoing_tutoring_tutee.user.profile.nickname }}</td>
-        <td class="align-middle" location.href= "{% url 'matching:post_detail' ongoing_tutoring_tutee.pk %}">제목 : <a href="{% url 'matching:post_detail' ongoing_tutoring_tutee.pk %}" style="text-decoration: underline; text-underline-position: under;">{{ ongoing_tutoring_tutee.title }}</a></td>
+        <td class="align-middle" location.href= "{% url 'matching:post_detail' ongoing_tutoring_tutee.pk %}">제목 : <a href="{% url 'matching:post_detail' ongoing_tutoring_tutee.pk %}">{{ ongoing_tutoring_tutee.title }}</a></td>
       </tr>
       {% endif %}
       {% if ongoing_tutoring %}
       <tr>
         <th class="align-middle text-center text-nowrap">진행중인 튜터링</th>
         <td class="align-middle text-center text-nowrap">튜티 : {{ ongoing_tutoring.user.profile.nickname }}</td>
-        <td class="align-middle" location.href= "{% url 'matching:post_detail' ongoing_tutoring.pk %}">제목 : <a href="{% url 'matching:post_detail' ongoing_tutoring.pk %}" style="text-decoration: underline; text-underline-position: under;">{{ ongoing_tutoring.title }}</a></td>
+        <td class="align-middle" location.href= "{% url 'matching:post_detail' ongoing_tutoring.pk %}">제목 : <a href="{% url 'matching:post_detail' ongoing_tutoring.pk %}">{{ ongoing_tutoring.title }}</a></td>
         <td class="align-middle text-center">
         <button class="mybutton" type="submit"  data-toggle="modal" data-target="#cancelTutoringModal">튜터링 취소</button>
         <button class="mybutton" type="submit"  data-toggle="modal" data-target="#finishTutoringModal">튜터링 완료</button>
@@ -154,7 +154,7 @@
       <tr>
         <th class="align-middle text-center text-nowrap">작성하지 않은 보고서</th>
         <td class="align-middle text-center text-nowrap">튜티 : {{ unwritten_report.user.profile.nickname }}</td>
-        <td class="align-middle" location.href= "{% url 'matching:post_detail' unwritten_report.pk %}">제목 : <a href="{% url 'matching:post_detail' unwritten_report.pk %}" style="text-decoration: underline; text-underline-position: under;">{{ unwritten_report.title }}</a></td>
+        <td class="align-middle" location.href= "{% url 'matching:post_detail' unwritten_report.pk %}">제목 : <a href="{% url 'matching:post_detail' unwritten_report.pk %}">{{ unwritten_report.title }}</a></td>
         <td class="align-middle text-center">
         <button class="mybutton" type="button"  data-toggle="modal" data-target="#reportModal" style="float:left">보고서 쓰기</button>
         </td>
