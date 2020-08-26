@@ -632,20 +632,6 @@ def mainpage(request):
             tutorsession.pub_date = timezone.localtime()
             tutorsession.save()
 
-            '''
-            try:
-            post.report.exists()
-            reportExist = True
-            except:
-            reportExist = False
-
-            try:
-            post.tutor.exists()
-            tutorExist = True
-            except:
-            tutorExist = False
-            '''
-
             return redirect('matching:session_detail', pk=tutorsession.pk)
 
         elif form.is_valid() and not check_post_exist:
@@ -720,8 +706,14 @@ def mainpage(request):
         recruiting = recruiting.filter(title__icontains=search_word)
         onprocess = onprocess.filter(title__icontains=search_word)
         recruited = recruited.filter(title__icontains=search_word)
-
-    posts = list(chain(tutoring_on,recruiting, onprocess,recruited, tutoring_off))
+    
+    filter = request.GET.get('filter', '')
+    if filter == 'session':
+        posts = list(chain(tutoring_on,tutoring_off))
+    elif filter == 'tutoring':
+        posts = list(chain(recruiting, onprocess,recruited))
+    else:
+        posts = list(chain(tutoring_on,recruiting, onprocess,recruited, tutoring_off))
 
     current_post_page = request.GET.get('page', 1)
     post_paginator = Paginator(posts, 9)
