@@ -23,6 +23,17 @@
 <div class="update_tutee">
     <button id="start_new_tutoring" class="mybutton" type="submit">새로운 튜터링 시작</button>
 </div>
+
+{% if my_report or user.is_staff %}
+{% if my_report_pk %}
+<button class="mybutton" type="submit" onclick="location.href='{% url "matching:report_detail" my_report_pk %}'">보고서 보기</button>
+{% endif %}
+{% endif %}
+
+{% if user.is_staff and session.fin_time %}
+<button class="mybutton" type="submit" onclick="location.href='{% url "matching:session_report_list" session.pk  %}'">보고서 목록</button>
+{% endif %}
+
 <div>
   <form action="{% url 'matching:session_report_create' session.pk %}" method="POST">
     {% csrf_token %}

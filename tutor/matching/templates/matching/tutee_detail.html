@@ -5,7 +5,8 @@
 {% endblock %}
 
 {% block content %}
-<h3 style="margin-left:130px; margin-top:20px; color:#8f86c4;">튜티: {{tutee}} </h3>
+<h3 style="margin-left:130px; margin-top:20px; color:#8f86c4;">튜티: {{tutee.profile.nickname}} </h3>
+
 <div id="post_table_div" class="tableDiv">
     <table id="post_table" class="table">
         <thead>
@@ -57,7 +58,7 @@
               {% endif %}
 
               <td class="text-center text-nowrap align-middle">
-                <button class="mybutton" type="submit" onclick="location.href='{% url "matching:report_list" post.pk  %}'">보고서 목록</button>
+                <button class="mybutton" type="submit" onclick="location.href='{% url "matching:post_report_list" post.pk  %}'">보고서 목록</button>
               </td>
           </tr>
         {% endfor %}

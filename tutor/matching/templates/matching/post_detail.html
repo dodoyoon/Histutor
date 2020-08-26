@@ -76,7 +76,7 @@
     {% endif %}
 
     {% if user.is_staff and post.fin_time %}
-    <button class="mybutton" type="submit" onclick="location.href='{% url "matching:report_list" post.pk  %}'">보고서 목록</button>
+    <button class="mybutton" type="submit" onclick="location.href='{% url "matching:post_report_list" post.pk  %}'">보고서 목록</button>
     {% endif %}
 
     {% if post.tutor is null and user.profile.is_tutor and post.finding_match %}
