@@ -21,10 +21,7 @@
 </script>
 
 <div class="update_tutee">
-  <form action="{% url 'matching:session_detail' session.pk %}" method="POST">
-    {% csrf_token %}
-    <button class="mybutton" type="submit">새로운 튜터링 시작</button>
-  </form>
+    <button id="start_new_tutoring" class="mybutton" type="submit">새로운 튜터링 시작</button>
 </div>
 <div id="buttonDiv">
   <table class="table">
@@ -326,44 +323,46 @@
       msg.innerHTML = "✨&nbsp;&nbsp;튜터링 시작&nbsp;&nbsp;✨";
       storage.append(msg);
     }
-    else if(data['username']==req_username){
-      //console.log("outgoing");
+    else if (data['type'] == "new_comment"){
+      if(data['username']==req_username){
+        //console.log("outgoing");
 
-      var msg = document.createElement("div");
-      msg.className = "outgoing_msg";
-      var inner_msg = document.createElement("div");
-      inner_msg.className = "sent_msg";
-      var msg_time = document.createElement("span");
-      msg_time.className = "sent_time_date";
-      msg_time.innerHTML += data['date'];
-      var msg_content = document.createElement("div");
-      msg_content.className = "msg_box";
-      msg_content.innerHTML += makeUrl(data['content']);
-      inner_msg.append(msg_time);
-      inner_msg.append(msg_content);
-      msg.append(inner_msg);
-      storage.append(msg);
+        var msg = document.createElement("div");
+        msg.className = "outgoing_msg";
+        var inner_msg = document.createElement("div");
+        inner_msg.className = "sent_msg";
+        var msg_time = document.createElement("span");
+        msg_time.className = "sent_time_date";
+        msg_time.innerHTML += data['date'];
+        var msg_content = document.createElement("div");
+        msg_content.className = "msg_box";
+        msg_content.innerHTML += makeUrl(data['content']);
+        inner_msg.append(msg_time);
+        inner_msg.append(msg_content);
+        msg.append(inner_msg);
+        storage.append(msg);
 
-    }else{
-      //console.log("incoming");
-      var incoming_msg = document.createElement("div");
-      incoming_msg.className = "incoming_msg";
-      var received_msg = document.createElement("div");
-      received_msg.className = "received_msg";
-      var received_name = document.createElement("p");
-      received_name.className = "received_name";
-      received_name.innerHTML += data['nickname'];
-      var received_with_msg = document.createElement("div");
-      received_with_msg.className = "received_with_msg";
-      received_with_msg.innerHTML += makeUrl(data['content']);
-      var received_time_date = document.createElement("span");
-      received_time_date.className = "received_time_date";
-      received_time_date.innerHTML += data['date'];
-      received_msg.append(received_name);
-      received_msg.append(received_with_msg);
-      received_msg.append(received_time_date);
-      incoming_msg.append(received_msg);
-      storage.append(incoming_msg);
+      }else{
+        //console.log("incoming");
+        var incoming_msg = document.createElement("div");
+        incoming_msg.className = "incoming_msg";
+        var received_msg = document.createElement("div");
+        received_msg.className = "received_msg";
+        var received_name = document.createElement("p");
+        received_name.className = "received_name";
+        received_name.innerHTML += data['nickname'];
+        var received_with_msg = document.createElement("div");
+        received_with_msg.className = "received_with_msg";
+        received_with_msg.innerHTML += makeUrl(data['content']);
+        var received_time_date = document.createElement("span");
+        received_time_date.className = "received_time_date";
+        received_time_date.innerHTML += data['date'];
+        received_msg.append(received_name);
+        received_msg.append(received_with_msg);
+        received_msg.append(received_time_date);
+        incoming_msg.append(received_msg);
+        storage.append(incoming_msg);
+      }
     }
 
     if(at_bottom){
@@ -393,6 +392,7 @@
           // alert("SUCCESS\n" + response);
 
           websocket.send(JSON.stringify({
+            'type':'new_comment',
              'comment_id': response,
           }));
           message.value = "";
@@ -401,6 +401,30 @@
           //alert("ERROR!!\n" + response);
        }
     });
+  }
+
+  document.getElementById("start_new_tutoring").onclick = function(){
+    $.ajax({
+            type: "POST",
+            url: "{% url 'matching:start_new_tutoring' session.pk %}",
+            data: {
+              'csrfmiddlewaretoken': '{{ csrf_token }}',
+            },
+            dataType: "json",
+            success: function(response){
+              // alert(response.next_tutee_pk);
+
+              websocket.send(JSON.stringify({
+                'type': 'start_new_tutoring',
+                'next_tutee_pk': response.next_tutee_pk,
+                'next_tutee_url': response.next_tutee_url,
+              }));
+            },
+            error: function(request, status, error){
+                alert("로그인이 필요합니다.");
+                window.location.replace("/accounts/login/");
+            },
+        });
   }
 </script>
 

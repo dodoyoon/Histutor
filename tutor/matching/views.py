@@ -794,7 +794,7 @@ def get_next_tutee(request, session, req_user):
         messages.error(request, '해당 튜터만 새로운 튜터링을 시작할 수 있습니다.')
         return HttpResponseRedirect(reverse('matching:mainpage'))
     try:
-        next_tutee = matching_models.SessionLog.objects.filter(tutor_session=session, is_waiting=True).latest('wait_time')
+        next_tutee = matching_models.SessionLog.objects.filter(tutor_session=session, is_waiting=True).earliest('wait_time')
         print("NEXT TUTEE\n", next_tutee)
     except matching_models.SessionLog.DoesNotExist:
         next_tutee = None
@@ -842,23 +842,6 @@ def session_detail(request, pk):
             ctx['report_post_pk'] = report.pk
             ctx['report_exist'] = True'''
 
-    if request.method == 'POST':
-        fin_current_tutee(request, session)
-        next_tutee = get_next_tutee(request, session, req_user)
-        ctx['tutee'] = next_tutee
-
-
-        if next_tutee:
-          channel_layer = get_channel_layer()
-          print(channel_layer)
-          async_to_sync(channel_layer.group_send)(
-            'session_waiting',
-            {
-              'type': 'get_next_tutee',
-              'pk' : next_tutee.pk,
-            }
-          )
-
     if not req_user.profile.is_tutor:
         try:
             log = matching_models.SessionLog.objects.get(is_waiting=False, start_time__isnull=False, fin_time__isnull=True, tutee=req_user)
@@ -905,8 +888,6 @@ def waitingroom(request, pk):
     except:
         messages.error(request, '해당 튜터세션은 존재하지 않습니다. waitingroom')
         return HttpResponseRedirect(reverse('matching:mainpage'))
-
-
 
     # session log 만들기: session detail에 들어오면 무조건 하나의 log 만들기
     try:
@@ -1004,3 +985,25 @@ def set_attending_type(request):
     context['message'] = "로그가 존재하지 않습니다."
 
   return HttpResponse(json.dumps(context), content_type="application/json")
+
+@login_required
+@require_POST
+def start_new_tutoring(request, pk):
+  if request.method == 'POST':
+
+    try:
+        session = get_object_or_404(matching_models.TutorSession, pk=pk)
+    except matching_models.TutorSession.DoesNotExist:
+        return HttpResponse("게시물이 존재하지 않습니다.")
+    except:
+        messages.error(request, '해당 튜터세션은 존재하지 않습니다.')
+        return HttpResponseRedirect(reverse('matching:mainpage'))
+
+    fin_current_tutee(request, session)
+    next_tutee = get_next_tutee(request, session, request.user)
+    if next_tutee:
+      url = "http://" + request.get_host() + reverse('matching:session_detail', args=[pk])
+      context = {'next_tutee_pk' : next_tutee.pk, 'next_tutee_url' : url}
+    else:
+      context = {'next_tutee_pk' : -1, 'next_tutee_url': -1}
+    return HttpResponse(json.dumps(context), content_type="application/json")

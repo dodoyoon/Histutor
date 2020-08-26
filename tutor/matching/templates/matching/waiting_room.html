@@ -66,12 +66,20 @@
 </div>
 
 <script>
-  const websocket = new WebSocket('ws://' + window.location.host+ '/ws/session/' + "{{pk}}" + '/waiting/');
+  const websocket = new WebSocket('ws://' + window.location.host + '/ws/session/' + "{{pk}}" + '/');
 
   websocket.onmessage = function(e){
     const data = JSON.parse(e.data);
-    alert(data);
     let tuteePk = "{{tuteePk}}";
+    // alert("received");
+
+    if (data['type'] == "get_next_tutee"){
+      // alert(tuteePk +" vs " + data['next_tutee_pk']);
+      if (tuteePk == data['next_tutee_pk']){
+        // alert("go to " + data['next_tutee_url']);
+        window.location.href = data['next_tutee_url'];
+      }
+    }
   }
 
   websocket.onclose = function(e){

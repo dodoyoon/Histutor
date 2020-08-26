@@ -6,5 +6,4 @@ websocket_urlpatterns = [
     re_path(r'ws/tutorhome/$', consumers.NewPostConsumer),
     re_path(r'ws/post/(?P<postId>\d+)/$', consumers.PostDetailConsumer),
     re_path(r'ws/session/(?P<postId>\d+)/$', consumers.SessionDetailConsumer),
-    re_path(r'ws/session/(?P<sessionId>\d+)/waiting/$', consumers.SessionWaitingConsumer),
 ]
