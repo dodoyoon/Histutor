@@ -13,6 +13,7 @@ urlpatterns = [
   path('post/edit/<int:pk>/', views.post_edit, name='post_edit'),
   path('session/detail/<int:pk>/', views.session_detail, name='session_detail'),
   path('session/detail/<int:pk>/waitingroom/', views.waitingroom, name='waitingroom'),
+  path('session/detail/end_session/<int:pk>', views.end_session, name='end_session'),
   url(r'^not_waiting/$', views.not_waiting, name='not_waiting'),
   url(r'^set_attending_type/$', views.set_attending_type, name='set_attending_type'),
   path('mypage/', views.mypage, name='mypage'),

@@ -40,12 +40,22 @@
           <td class="text-center text-nowrap align-middle">{{session.get_session_type_display}}</td>
         </tr>
         <tr>
-          <td class="text-center text-nowrap align-middle"><b>장소</b></td>
-          <td class="text-center text-nowrap align-middle">{{session.location}}</td>
+          <td class="text-center text-nowrap align-middle"><b>세션 상태</b></td>
+          <td class="text-center text-nowrap align-middle">
+            {% if today < session.start_time %}
+            <p style="color:#0c6b27; margin:4px; margin-bottom:10px;"><b> 진행 예정</b></p>
+            {% elif session.fin_time is NULL %}
+            <p style="color:#4858b7; margin:4px; margin-bottom:10px;"><b> 진행중 </b></p>
+            {% elif user == post.tutor and not my_report %}
+            <p style="color:#e43331; margin:4px; margin-bottom:10px;"><b> 보고서 미작성 </b></p>
+            {% else %}
+            <p style="color:#bbb; margin:4px; margin-bottom:10px;"><b> 종료 </b></p>
+            {% endif %}
+          </td>
         </tr>
         <tr>
-          <td class="text-center text-nowrap align-middle"><b>세션 상태</b></td>
-          <td class="text-center text-nowrap align-middle"></td>
+          <td class="text-center text-nowrap align-middle"><b>장소</b></td>
+          <td class="text-center text-nowrap align-middle">{{session.location}}</td>
         </tr>
         <tr>
           <td class="text-center text-nowrap align-middle"><b>시작 시간</b></td>
@@ -57,8 +67,9 @@
             {% endif %}
           </td>
         </tr>
+        {% if session.fin_time %}
         <tr>
-          <td class="text-center text-nowrap align-middle"><b>종료 예정 시간</b></td>
+          <td class="text-center text-nowrap align-middle"><b>종료 시간</b></td>
           <td class="text-center text-nowrap align-middle">
             {% if session.fin_time|date:'Y-m-d' == today|date:'Y-m-d' %}
             {{session.fin_time|date:'H:i'}}
@@ -67,8 +78,44 @@
             {% endif %}
           </td>
         </tr>
+        {% else %}
+        <tr>
+          <td class="text-center text-nowrap align-middle"><b>종료 예정 시간</b></td>
+          <td class="text-center text-nowrap align-middle">
+            {% if session.expected_fin_time|date:'Y-m-d' == today|date:'Y-m-d' %}
+            {{session.expected_fin_time|date:'H:i'}}
+            {% else %}
+            {{session.expected_fin_time|date:'Y-m-d H:i'}}
+            {% endif %}
+          </td>
+        </tr>
+        {% endif %}
       </tbody>
   </table>
+
+  {% if session.tutor and not session.fin_time %}
+  <button class="mybutton" type="submit"  data-toggle="modal" data-target="#endSession">튜터 세션 종료</button>
+
+  <div class="modal fade" id="endSession" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">튜터 세션 종료</h4>
+        </div>
+        <div class="modal-body">
+          <p>정말로 진행중인 튜터세션을 종료하시겠습니까?</p>
+          <div class="row" style="float: right;">
+              <div class="col-12-xs text-center" style="margin-right: 1em;">
+                  <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" type="button" class="close" data-dismiss="modal">No</button>
+                  <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" onclick="location.href='{% url "matching:end_session" session.pk %}'">Yes</button>
+              </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  {% endif %}
 
   <!-- 
     {% if report_exist %}

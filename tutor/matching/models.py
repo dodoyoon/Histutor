@@ -66,6 +66,7 @@ class TutorSession(models.Model):
    session_type = models.CharField(choices=SESSION_TYPE, default='onoff', max_length=10)
    pub_date = models.DateTimeField(auto_now_add=True)
    start_time = models.DateTimeField(null=True)
+   expected_fin_time = models.DateTimeField(null=True)
    fin_time = models.DateTimeField(null=True)
    hit = models.PositiveIntegerField(default=0)
    location = models.CharField(max_length=500, null=True)
