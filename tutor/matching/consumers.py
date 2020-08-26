@@ -156,46 +156,6 @@ class PostDetailConsumer(WebsocketConsumer):
             'username': comment.user.username,
         }))
 
-class SessionWaitingConsumer(WebsocketConsumer):
-  def connect(self):
-    self.group_name = 'session_waiting'
-
-    #Joing room group
-    async_to_sync(self.channel_layer.group_add)(
-      self.group_name,
-      self.channel_name
-    )
-    self.accept()
-
-  def disconnect(self, close_code):
-    #Leave room group
-    async_to_sync(self.channel_layer.group_discard)(
-      self.group_name,
-      self.channel_name
-    )
-  
-  def receive(self, text_data):
-    text_data_json = json.loads(text_data)
-    log_pk = text_data_json['pk']
-
-    async_to_sync(self.channel_layer.group_send)(
-      self.group_name,
-      {
-        'type':'get_next_tutee',
-        'pk': log_pk,
-      }
-    )
-  
-  def get_next_tutee(self, event):
-    pk = event['pk']
-    log = matching_models.SessionLog.objects.get(pk = pk)
-    print(log)
-
-    self.send(text_data=json.dumps({
-      'type': 'get_next_tutee',
-      'pk': pk,
-    }))
-
 class SessionDetailConsumer(WebsocketConsumer):
     def connect(self):
         self.group_name = 'new_comment_session'
@@ -218,16 +178,30 @@ class SessionDetailConsumer(WebsocketConsumer):
     # Receive message from WebSocket
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        comment_id = text_data_json['comment_id']
+        type = text_data_json['type']
 
-        # Send message to room group
-        async_to_sync(self.channel_layer.group_send)(
-            self.group_name,
-            {
-                'type': 'new_comment',
-                'id': comment_id,
-            }
-        )
+        if type == "new_comment":
+          comment_id = text_data_json['comment_id']
+
+          # Send message to room group
+          async_to_sync(self.channel_layer.group_send)(
+              self.group_name,
+              {
+                  'type': 'new_comment',
+                  'id': comment_id,
+              }
+          )
+        elif type == "start_new_tutoring":
+          next_tutee_pk = text_data_json['next_tutee_pk']
+          next_tutee_url = text_data_json['next_tutee_url']
+          async_to_sync(self.channel_layer.group_send)(
+              self.group_name,
+              {
+                  'type': 'get_next_tutee',
+                  'pk': next_tutee_pk,
+                  'next_tutee_url': next_tutee_url
+              }
+          )
 
     # Receive message from room group
     def new_comment(self, event):
@@ -263,3 +237,14 @@ class SessionDetailConsumer(WebsocketConsumer):
             'content': comment.content,
             'username': comment.user.username,
         }))
+    
+    def get_next_tutee(self, event):
+      pk = event['pk']
+      log = matching_models.SessionLog.objects.get(pk = pk)
+
+      self.send(text_data=json.dumps({
+        'type': 'get_next_tutee',
+        'next_tutee_pk': log.tutee.pk,
+        'session_pk': log.tutor_session.pk,
+        'next_tutee_url': event['next_tutee_url'],
+      }))

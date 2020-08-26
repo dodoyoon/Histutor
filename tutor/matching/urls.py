@@ -17,6 +17,7 @@ urlpatterns = [
   path('session/detail/end_session/<int:pk>', views.end_session, name='end_session'),
   url(r'^not_waiting/$', views.not_waiting, name='not_waiting'),
   url(r'^set_attending_type/$', views.set_attending_type, name='set_attending_type'),
+  path('session/detail/<int:pk>/start_new_tutoring/', views.start_new_tutoring, name='start_new_tutoring'),
   path('mypage/', views.mypage, name='mypage'),
   path('mypage/post/', views.mypage_post, name='mypage_post'),
   path('mypage/tutor-session/', views.mypage_session, name='mypage_tutor_session'),
