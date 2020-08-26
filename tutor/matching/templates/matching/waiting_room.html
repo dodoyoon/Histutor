@@ -10,9 +10,15 @@
 {% endblock %}
 
 {% block content %}
+{% if not no_waiting %}
 <div id="dont_exit_alert" class="alert alert-warning text-center" role="alert">
   현재 페이지를 벗어나거나 새로 고침하면 대기 순서가 밀려납니다.
 </div>
+{% else %}
+<div id="dont_exit_alert" class="alert alert-warning text-center" role="alert">
+  새로고침을 눌러주세요.
+</div>
+{% endif %}
 <div id="waiting_list">
     {% if not no_waiting %}
   <div id="waiting">Waiting...</div>
@@ -32,16 +38,6 @@
     <img class="stickMan" src="https://image.flaticon.com/icons/svg/10/10522.svg">
     <img class="stickMan" src="https://image.flaticon.com/icons/svg/10/10522.svg">
   </div>
-
-    {% else %}
-  <div id="waiting">No Waiting</div>
-  <br><br><br><br><br><br>
-  <div id="line_image" style="text-align: center;">
-    <img class="stickMan" src="https://image.flaticon.com/icons/svg/59/59805.svg">
-    <img class="stickMan" src="https://image.flaticon.com/icons/svg/10/10581.svg">
-  </div>
-    {% endif %}
-
   <div id="attend_type">
     <div id="explain_attend" class="text-center">세션에 참가할 방벙을 선택해주세요.</div>
     <div id="radio_buttons" class="text-center">
@@ -59,6 +55,14 @@
       </div>
     </div>
   </div>
+    {% else %}
+  <div id="waiting">No Waiting</div>
+  <br><br><br><br><br><br>
+  <div id="line_image" style="text-align: center;">
+    <img class="stickMan" src="https://image.flaticon.com/icons/svg/59/59805.svg">
+    <img class="stickMan" src="https://image.flaticon.com/icons/svg/10/10581.svg">
+  </div>
+    {% endif %}
 </div>
 
 <script>

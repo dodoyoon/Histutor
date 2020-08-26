@@ -835,10 +835,20 @@ def session_detail(request, pk):
             ctx['report_form'] = report_form
             ctx['report_post_pk'] = report.pk
             ctx['report_exist'] = True'''
+
     if request.method == 'POST':
         fin_current_tutee(request, session)
         next_tutee = get_next_tutee(request, session, req_user)
         ctx['tutee'] = next_tutee
+
+    if not req_user.profile.is_tutor:
+        try:
+            log = matching_models.SessionLog.objects.get(is_waiting=False, start_time__isnull=False, fin_time__isnull=True, tutee=req_user)
+        except matching_models.SessionLog.DoesNotExist:
+            log = None
+
+        if not log:
+            return redirect('matching:waitingroom', pk=pk)
 
 
     comment_list = matching_models.Comment.objects.filter(tutorsession=session).order_by('pub_date')
@@ -938,7 +948,7 @@ def not_waiting(request):
     # context를 json 타입으로
 
 @login_required
-@require_POST 
+@require_POST
 def set_attending_type(request):
   pk = request.POST.get('pk', None)
   online = request.POST.get('online', None)
@@ -948,23 +958,19 @@ def set_attending_type(request):
   try:
       log = matching_models.SessionLog.objects.get(tutee = request.user, tutor_session = session, is_waiting = True)
   except matching_models.SessionLog.DoesNotExist:
-      print("LOG DOES NOT EXIST")
       log = None
-  
+
   context = {}
   if log:
     if online == "true":
-      print("ONLINE")
       log.attend_online = True
       log.save()
       context['message'] = "세션을 온라인으로 참석합니다."
     else:
-      print("OFFLINE")
       log.attend_online = False
       log.save()
       context['message'] = "세션을 오프라인으로 참석합니다."
   else:
     context['message'] = "로그가 존재하지 않습니다."
-  
+
   return HttpResponse(json.dumps(context), content_type="application/json")
-    
