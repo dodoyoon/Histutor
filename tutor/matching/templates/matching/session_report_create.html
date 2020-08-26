@@ -4,15 +4,53 @@
   <link rel="stylesheet" type="text/css" href="{% static 'matching/session_report.css' %}">
 {% endblock %}
 {% block content %}
-
-{% for log in log_list %}
-<form method="POST" class="form-style-7 session_report_create">
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <p class="success_report">{{ message }}</p>
+    {% endfor %}
+</ul>
+{% endif %}
+{% if log_list %}
+    {% for log in log_list %}
+    <form method="POST" class="form-style-7 session_report_create">
+        {% csrf_token %}
+        <input name="username" value="{{log.tutee}}" type="hidden">
+        <ul>
+            <h1>튜터링 보고서</h1>
+        <li>
+            <label for="nickname">Tutee</label>
+            <input type="text" value="{{ log.tutee.profile.nickname }}" name="nickname" readonly>
+        </li>
+        <li>
+            <label for="time">튜터링 시간(분)</label>
+            <select name="time">
+                <option value=10>10</option>
+                <option value=20>20</option>
+                <option value=30>30</option>
+                <option value=40>40</option>
+                <option value=50>50</option>
+                <option value=60>60</option>
+            </select>
+        </li>
+        <li>
+            <label for="content">튜터링 내용</label>
+            <textarea name="content" cols=28% rows=8% minlength="10" maxlength="1000" autofocus></textarea>
+        </li>
+        <li>
+            <input type="submit" value="제출" >
+        </li>
+        </ul>
+    </form>
+    {% endfor %}
+{% else %}
+    <form method="POST" class="form-style-7 session_report_create">
     {% csrf_token %}
     <ul>
         <h1>튜터링 보고서</h1>
     <li>
-        <label for="tutee">Tutee</label>
-        <input type="text" value="{{ log.tutee.profile.nickname }}" name="tutee" readonly>
+        <label for="nickname">Tutee</label>
+        <input type="text" name="nickname" minlength="3" maxlength="100" style="text-align:left" autofocus>
     </li>
     <li>
         <label for="time">튜터링 시간(분)</label>
@@ -27,12 +65,13 @@
     </li>
     <li>
         <label for="content">튜터링 내용</label>
-        <textarea name="content" cols=28% rows=8% minlength="10" maxlength="1000" autofocus></textarea>
+        <textarea name="content" cols=28% rows=8% minlength="10" maxlength="1000"></textarea>
     </li>
     <li>
         <input type="submit" value="제출" >
     </li>
     </ul>
 </form>
-{% endfor %}
+
+{% endif %}
 {% endblock %}

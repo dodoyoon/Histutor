@@ -81,30 +81,34 @@ def user_check(request):
 
 @login_required(login_url=URL_LOGIN)
 def session_report_create(request, pk):
-    try:
-        session = get_object_or_404(matching_models.TutorSession, pk=pk)
-    except matching_models.TutorSession.DoesNotExist:
-        return HttpResponse("해당 튜터세션은 존재하지 않습니다.") # 이거 테스트해보기
-    # except:
-    #     messages.error(request, '해당 튜터세션은 존재하지 않습니다.')
-    #     return HttpResponseRedirect(reverse('matching:mainpage'))
-
+    session = get_object_or_404(matching_models.TutorSession, pk=pk)
     user = matching_models.User.objects.get(username=request.user.username)
+
     if user != session.tutor:
-        return HttpResponse("담당 튜터만 보고서를 작성할 수 있습니다.") # 이거 테스트해보기
+        messages.add_message(request, messages.ERROR, '담당 튜터에게만 보고서 작성 권한이 있습니다.')
+        return redirect('matching:mainpage')
 
-    if request.method == "POST":
-        report = Report(tutor=user, writer=user, session=session)
-        report.content = request.POST.get('content', "")
-        report.join_tutee = request.POST.get('tutee', "")
-        report.duration_time = request.POST.get("time", 0)
-        report.save()
-        return redirect('matching:session_report_create', pk=pk)
+    log_list = matching_models.SessionLog.objects.filter(tutor_session=session, fin_time__isnull=False, report__isnull=True)
 
-    log_list = matching_models.SessionLog.objects.filter(tutor_session=session, fin_time__isnull=False)
     ctx = {
         'log_list' : log_list,
     }
+    print("loglist", log_list)
+    if request.method == "POST":
+        report = Report(tutor=user, writer=user, session=session)
+        tutee_username = request.POST.get('username', None)
+        try:
+            report.tutee = matching_models.User.objects.get(username=tutee_username)
+        except:
+            report.tutee = None
+        report.content = request.POST.get('content', "")
+        report.join_tutee = request.POST.get('nickname', "")
+        report.duration_time = request.POST.get("time", 0)
+        report.save()
+        log_list.filter(tutee=report.tutee).update(report=report)
+        messages.add_message(request, messages.SUCCESS, '보고서가 제출되었습니다.')
+        return redirect('matching:session_report_create', pk=pk)
+
     return render(request, 'matching/session_report_create.html', ctx)
 
 @login_required(login_url=URL_LOGIN)

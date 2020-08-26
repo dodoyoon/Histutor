@@ -36,3 +36,16 @@
 .session_report_create *:focus{
     outline: none;
 }
+
+.success_report{
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin: 1% 37% 0 35%;
+    border: 3px solid transparent;
+    border-radius: .25rem;
+    color: #413255;
+    background-color: #fff;
+    border-color: #ab98c3;
+    text-align: center;
+    font-weight: 500;
+}

@@ -21,7 +21,7 @@
   <ul class="messages">
     {% for message in messages %}
         {% if message.tags and message.tags == "error" %}
-        <p class="alert alert-danger" id="nickname-error">{{ message }}</p>
+        <p class="danger_message" id="nickname-error">{{ message }}</p>
         {% endif %}
     {% endfor %}
   </ul>
