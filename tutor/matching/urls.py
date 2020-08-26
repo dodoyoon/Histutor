@@ -14,6 +14,7 @@ urlpatterns = [
   path('session/detail/<int:pk>/', views.session_detail, name='session_detail'),
   path('session/detail/<int:pk>/waitingroom/', views.waitingroom, name='waitingroom'),
   url(r'^not_waiting/$', views.not_waiting, name='not_waiting'),
+  url(r'^set_attending_type/$', views.set_attending_type, name='set_attending_type'),
   path('mypage/', views.mypage, name='mypage'),
   path('mypage/post/', views.mypage_post, name='mypage_post'),
   path('mypage/report/', views.mypage_report, name='mypage_report'),

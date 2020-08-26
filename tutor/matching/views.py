@@ -887,6 +887,7 @@ def waitingroom(request, pk):
     except matching_models.SessionLog.DoesNotExist:
         waitingTutee = None
 
+
     ctx = {
         'user' : request.user,
         'waitingTutee' : waitingTutee,
@@ -935,3 +936,35 @@ def not_waiting(request):
 
     return HttpResponse(json.dumps(context), content_type="application/json")
     # context를 json 타입으로
+
+@login_required
+@require_POST 
+def set_attending_type(request):
+  pk = request.POST.get('pk', None)
+  online = request.POST.get('online', None)
+
+  session = matching_models.TutorSession.objects.get(pk=pk)
+
+  try:
+      log = matching_models.SessionLog.objects.get(tutee = request.user, tutor_session = session, is_waiting = True)
+  except matching_models.SessionLog.DoesNotExist:
+      print("LOG DOES NOT EXIST")
+      log = None
+  
+  context = {}
+  if log:
+    if online == "true":
+      print("ONLINE")
+      log.attend_online = True
+      log.save()
+      context['message'] = "세션을 온라인으로 참석합니다."
+    else:
+      print("OFFLINE")
+      log.attend_online = False
+      log.save()
+      context['message'] = "세션을 오프라인으로 참석합니다."
+  else:
+    context['message'] = "로그가 존재하지 않습니다."
+  
+  return HttpResponse(json.dumps(context), content_type="application/json")
+    
