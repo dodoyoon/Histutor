@@ -79,7 +79,8 @@
       // alert(tuteePk +" vs " + data['next_tutee_pk']);
       if (tuteePk == data['next_tutee_pk']){
         // alert("go to " + data['next_tutee_url']);
-        window.location.href = data['next_tutee_url'];
+        // alert(document.location);
+        document.location.href = data['next_tutee_url'], true;
       }
     }
   }
