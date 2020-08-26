@@ -232,69 +232,69 @@
   var storage = document.getElementById("msg_history");
   storage.scrollTop = storage.scrollHeight;
 
-  const websocket = new WebSocket('ws://' + window.location.host + '/ws/post/' + "{{post.pk}}" + '/');
+  const websocket = new WebSocket('ws://' + window.location.host + '/ws/session/' + "{{pk}}" + '/');
 
   websocket.onmessage = function(e) {
-  const data = JSON.parse(e.data);
-  var req_username = "{{request.user.username}}";
+    const data = JSON.parse(e.data);
+    var req_username = "{{request.user.username}}";
 
-  // Set table structure
-  /*var storage = document.getElementById("msg_history");
-  alert(storage.scrollHeight);
-  storage.scrollTop = storage.scrollHeight;*/
-  var at_bottom = false;
-  if(storage.scrollTop == storage.scrollHeight - storage.offsetHeight){
-    at_bottom = true;
-  }
-  if(data['type'] == "star_comment"){
-    var msg = document.createElement("div");
-    msg.className = "start_tutoring";
-    msg.innerHTML = "✨&nbsp;&nbsp;튜터링 시작&nbsp;&nbsp;✨";
-    storage.append(msg);
-  }
-  else if(data['username']==req_username){
-    //console.log("outgoing");
+    // Set table structure
+    /*var storage = document.getElementById("msg_history");
+    alert(storage.scrollHeight);
+    storage.scrollTop = storage.scrollHeight;*/
+    var at_bottom = false;
+    if(storage.scrollTop == storage.scrollHeight - storage.offsetHeight){
+      at_bottom = true;
+    }
+    if(data['type'] == "star_comment"){
+      var msg = document.createElement("div");
+      msg.className = "start_tutoring";
+      msg.innerHTML = "✨&nbsp;&nbsp;튜터링 시작&nbsp;&nbsp;✨";
+      storage.append(msg);
+    }
+    else if(data['username']==req_username){
+      //console.log("outgoing");
 
-    var msg = document.createElement("div");
-    msg.className = "outgoing_msg";
-    var inner_msg = document.createElement("div");
-    inner_msg.className = "sent_msg";
-    var msg_time = document.createElement("span");
-    msg_time.className = "sent_time_date";
-    msg_time.innerHTML += data['date'];
-    var msg_content = document.createElement("div");
-    msg_content.className = "msg_box";
-    msg_content.innerHTML += makeUrl(data['content']);
-    inner_msg.append(msg_time);
-    inner_msg.append(msg_content);
-    msg.append(inner_msg);
-    storage.append(msg);
+      var msg = document.createElement("div");
+      msg.className = "outgoing_msg";
+      var inner_msg = document.createElement("div");
+      inner_msg.className = "sent_msg";
+      var msg_time = document.createElement("span");
+      msg_time.className = "sent_time_date";
+      msg_time.innerHTML += data['date'];
+      var msg_content = document.createElement("div");
+      msg_content.className = "msg_box";
+      msg_content.innerHTML += makeUrl(data['content']);
+      inner_msg.append(msg_time);
+      inner_msg.append(msg_content);
+      msg.append(inner_msg);
+      storage.append(msg);
 
-  }else{
-    //console.log("incoming");
-    var incoming_msg = document.createElement("div");
-    incoming_msg.className = "incoming_msg";
-    var received_msg = document.createElement("div");
-    received_msg.className = "received_msg";
-    var received_name = document.createElement("p");
-    received_name.className = "received_name";
-    received_name.innerHTML += data['nickname'];
-    var received_with_msg = document.createElement("div");
-    received_with_msg.className = "received_with_msg";
-    received_with_msg.innerHTML += makeUrl(data['content']);
-    var received_time_date = document.createElement("span");
-    received_time_date.className = "received_time_date";
-    received_time_date.innerHTML += data['date'];
-    received_msg.append(received_name);
-    received_msg.append(received_with_msg);
-    received_msg.append(received_time_date);
-    incoming_msg.append(received_msg);
-    storage.append(incoming_msg);
-  }
+    }else{
+      //console.log("incoming");
+      var incoming_msg = document.createElement("div");
+      incoming_msg.className = "incoming_msg";
+      var received_msg = document.createElement("div");
+      received_msg.className = "received_msg";
+      var received_name = document.createElement("p");
+      received_name.className = "received_name";
+      received_name.innerHTML += data['nickname'];
+      var received_with_msg = document.createElement("div");
+      received_with_msg.className = "received_with_msg";
+      received_with_msg.innerHTML += makeUrl(data['content']);
+      var received_time_date = document.createElement("span");
+      received_time_date.className = "received_time_date";
+      received_time_date.innerHTML += data['date'];
+      received_msg.append(received_name);
+      received_msg.append(received_with_msg);
+      received_msg.append(received_time_date);
+      incoming_msg.append(received_msg);
+      storage.append(incoming_msg);
+    }
 
-  if(at_bottom){
-    storage.scrollTop = storage.scrollHeight;
-  }
+    if(at_bottom){
+      storage.scrollTop = storage.scrollHeight;
+    }
 
 
   };
@@ -310,15 +310,16 @@
        url: "{% url 'matching:send_message' %}",
        type: "GET",
        data:{
-         postid: {{post.id}},
+         postid: {{pk}},
          content: $("#write_msg").val(),
+         type: "session",
        },
        success: function(response){
          //console.log(data)
-          //alert("SUCCESS\n" + response);
+          // alert("SUCCESS\n" + response);
 
           websocket.send(JSON.stringify({
-             'postId': response,
+             'comment_id': response,
           }));
           message.value = "";
        },
@@ -326,7 +327,6 @@
           //alert("ERROR!!\n" + response);
        }
     });
-
   }
 </script>
 

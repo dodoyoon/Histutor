@@ -258,7 +258,7 @@
   var storage = document.getElementById("msg_history");
   storage.scrollTop = storage.scrollHeight;
 
-  const websocket = new WebSocket('ws://' + window.location.host + '/ws/session/' + "{{session.pk}}" + '/');
+  const websocket = new WebSocket('ws://' + window.location.host + '/ws/post/' + "{{post.pk}}" + '/');
 
   websocket.onmessage = function(e) {
   const data = JSON.parse(e.data);
@@ -338,6 +338,7 @@
        data:{
          postid: {{post.id}},
          content: $("#write_msg").val(),
+         type: "post",
        },
        success: function(response){
          //console.log(data)

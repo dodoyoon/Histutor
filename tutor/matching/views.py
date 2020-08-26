@@ -167,8 +167,6 @@ def post_new(request):
             post.finding_match = True
             post.save()
 
-
-
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
                 'new_post',
@@ -284,14 +282,20 @@ def set_tutor(request, postpk, userpk):
 @login_required
 def send_message(request):
     if request.method == "GET":
-        post = matching_models.Post.objects.get(pk=request.GET['postid'])
-        if post.finding_match or request.user == post.tutor or request.user == post.user:
-            new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=timezone.localtime(), content=request.GET['content'])
-            new_cmt.save()
-            return HttpResponse(new_cmt.id)
+        if request.GET['type'] == "session":
+          session = matching_models.TutorSession.objects.get(pk = request.GET['postid'])
+          new_cmt = matching_models.Comment(user=request.user, tutorsession=session, pub_date=timezone.localtime(), content=request.GET['content'])
+          new_cmt.save()
+          return HttpResponse(new_cmt.id)
         else:
-            messages.error(request, '해당 방은 튜터링이 시작되었습니다.')
-            return HttpResponseRedirect(reverse('matching:mainpage'))
+          post = matching_models.Post.objects.get(pk=request.GET['postid'])
+          if post.finding_match or request.user == post.tutor or request.user == post.user:
+              new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=timezone.localtime(), content=request.GET['content'])
+              new_cmt.save()
+              return HttpResponse(new_cmt.id)
+          else:
+              messages.error(request, '해당 방은 튜터링이 시작되었습니다.')
+              return HttpResponseRedirect(reverse('matching:mainpage'))
     else:
         return HttpResponse('NOT A GET REQUEST')
 
@@ -787,11 +791,11 @@ def mainpage(request):
 def get_next_tutee(request, session, req_user):
     # session log
     if session.tutor != req_user:
-        print(str(session.tutor.pk) + " vs " + str(req_user.pk))
         messages.error(request, '해당 튜터만 새로운 튜터링을 시작할 수 있습니다.')
         return HttpResponseRedirect(reverse('matching:mainpage'))
     try:
-        next_tutee = matching_models.SessionLog.objects.filter(tutor_session=session, is_waiting=True).earliest('wait_time')
+        next_tutee = matching_models.SessionLog.objects.filter(tutor_session=session, is_waiting=True).latest('wait_time')
+        print("NEXT TUTEE\n", next_tutee)
     except matching_models.SessionLog.DoesNotExist:
         next_tutee = None
         
@@ -805,7 +809,7 @@ def get_next_tutee(request, session, req_user):
 def fin_current_tutee(request, session):
     try:
         current_tutee = matching_models.SessionLog.objects.get(tutor_session=session, is_waiting=False, start_time__isnull=False, fin_time__isnull=True)
-        print("Current Tutee", current_tutee)
+        print("Current Tutee\n", current_tutee)
         current_tutee.fin_time = timezone.localtime()
         current_tutee.save()
     except:
@@ -840,6 +844,16 @@ def session_detail(request, pk):
         next_tutee = get_next_tutee(request, session, req_user)
         ctx['tutee'] = next_tutee
 
+        if next_tutee:
+          channel_layer = get_channel_layer()
+          print(channel_layer)
+          async_to_sync(channel_layer.group_send)(
+            'session_waiting',
+            {
+              'type': 'get_next_tutee',
+              'pk' : next_tutee.pk,
+            }
+          )
 
     comment_list = matching_models.Comment.objects.filter(tutorsession=session).order_by('pub_date')
 
@@ -848,6 +862,7 @@ def session_detail(request, pk):
     '''ctx['start_msg'] = "튜터링시작"+session.user.last_name+str(session.pub_date)
     ctx['cancel_msg'] = "튜터링취소"+session.user.last_name+str(session.pub_date)
     '''
+    ctx['pk'] = pk
     session.hit = session.hit + 1
     session.save()
     return render(request, 'matching/session_detail.html', ctx)
@@ -900,8 +915,9 @@ def waitingroom(request, pk):
         'waitingAfterTutee' : waitingAfterTutee,
         'totalWaiting' : totalWaiting,
         'pk' : pk,
+        'tuteePk' : user.pk,
     }
-
+    
     return render(request, 'matching/waiting_room.html', ctx)
 
 from django.views.decorators.http import require_POST
