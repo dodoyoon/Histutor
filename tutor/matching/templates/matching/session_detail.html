@@ -33,21 +33,95 @@
   </form>
 </div>
 <div id="buttonDiv">
-  <!-- 논리 안맞음. -->
-  <!-- {% if session.start_time != Null and session.fin_time == Null %}
-  <p style="color:#4858b7; margin:4px; margin-bottom:10px;"><b> 진행중 </b></p>
-  {% else %}
-  <p style="color:#bbb; margin:4px; margin-bottom:10px;"><b> 종료 </b></p>
-  {% endif %} -->
-  {% if session.tutor %}
-  <p style="color:#8f86c4; margin:4px; margin-bottom:10px;"><b>튜터: {{ session.tutor.profile.nickname }}</b></p>
-  {% endif %}
+  <table class="table">
+      <tbody>
+        {% if session.tutor %}
+        <tr>
+          <td class="text-center text-nowrap align-middle"><b>튜터</b></td>
+          <td class="text-center text-nowrap align-middle">{{ session.tutor.profile.nickname }}</td>
+        </tr>
+        {% endif %}
+        <tr>
+          <td class="text-center text-nowrap align-middle"><b>세션유형</b></td>
+          <td class="text-center text-nowrap align-middle">{{session.get_session_type_display}}</td>
+        </tr>
+        <tr>
+          <td class="text-center text-nowrap align-middle"><b>세션 상태</b></td>
+          <td class="text-center text-nowrap align-middle">
+            {% if today < session.start_time %}
+            <p style="color:#0c6b27; margin:4px; margin-bottom:10px;"><b> 진행 예정</b></p>
+            {% elif session.fin_time is NULL %}
+            <p style="color:#4858b7; margin:4px; margin-bottom:10px;"><b> 진행중 </b></p>
+            {% elif user == post.tutor and not my_report %}
+            <p style="color:#e43331; margin:4px; margin-bottom:10px;"><b> 보고서 미작성 </b></p>
+            {% else %}
+            <p style="color:#bbb; margin:4px; margin-bottom:10px;"><b> 종료 </b></p>
+            {% endif %}
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center text-nowrap align-middle"><b>장소</b></td>
+          <td class="text-center text-nowrap align-middle">{{session.location}}</td>
+        </tr>
+        <tr>
+          <td class="text-center text-nowrap align-middle"><b>시작 시간</b></td>
+          <td class="text-center text-nowrap align-middle">
+            {% if session.start_time|date:'Y-m-d' == today|date:'Y-m-d' %}
+            {{session.start_time|date:'H:i'}}
+            {% else %}
+            {{session.start_time|date:'Y-m-d H:i'}}
+            {% endif %}
+          </td>
+        </tr>
+        {% if session.fin_time %}
+        <tr>
+          <td class="text-center text-nowrap align-middle"><b>종료 시간</b></td>
+          <td class="text-center text-nowrap align-middle">
+            {% if session.fin_time|date:'Y-m-d' == today|date:'Y-m-d' %}
+            {{session.fin_time|date:'H:i'}}
+            {% else %}
+            {{session.fin_time|date:'Y-m-d H:i'}}
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td class="text-center text-nowrap align-middle"><b>종료 예정 시간</b></td>
+          <td class="text-center text-nowrap align-middle">
+            {% if session.expected_fin_time|date:'Y-m-d' == today|date:'Y-m-d' %}
+            {{session.expected_fin_time|date:'H:i'}}
+            {% else %}
+            {{session.expected_fin_time|date:'Y-m-d H:i'}}
+            {% endif %}
+          </td>
+        </tr>
+        {% endif %}
+      </tbody>
+  </table>
 
-  {{ session.session_type }}<br>
-    pubDate : {{ session.pub_date }}<br>
-    start:{{ session.start_time }}<br>
-    fin : {{ session.fin_time }}<br>
-    장소 : {{ session.location }}<br>
+  {% if session.tutor and not session.fin_time %}
+  <button class="mybutton" type="submit"  data-toggle="modal" data-target="#endSession">튜터 세션 종료</button>
+
+  <div class="modal fade" id="endSession" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">튜터 세션 종료</h4>
+        </div>
+        <div class="modal-body">
+          <p>정말로 진행중인 튜터세션을 종료하시겠습니까?</p>
+          <div class="row" style="float: right;">
+              <div class="col-12-xs text-center" style="margin-right: 1em;">
+                  <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" type="button" class="close" data-dismiss="modal">No</button>
+                  <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" onclick="location.href='{% url "matching:end_session" session.pk %}'">Yes</button>
+              </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  {% endif %}
 
   <!-- 
     {% if report_exist %}
@@ -238,69 +312,69 @@
   var storage = document.getElementById("msg_history");
   storage.scrollTop = storage.scrollHeight;
 
-  const websocket = new WebSocket('ws://' + window.location.host + '/ws/post/' + "{{post.pk}}" + '/');
+  const websocket = new WebSocket('ws://' + window.location.host + '/ws/session/' + "{{pk}}" + '/');
 
   websocket.onmessage = function(e) {
-  const data = JSON.parse(e.data);
-  var req_username = "{{request.user.username}}";
+    const data = JSON.parse(e.data);
+    var req_username = "{{request.user.username}}";
 
-  // Set table structure
-  /*var storage = document.getElementById("msg_history");
-  alert(storage.scrollHeight);
-  storage.scrollTop = storage.scrollHeight;*/
-  var at_bottom = false;
-  if(storage.scrollTop == storage.scrollHeight - storage.offsetHeight){
-    at_bottom = true;
-  }
-  if(data['type'] == "star_comment"){
-    var msg = document.createElement("div");
-    msg.className = "start_tutoring";
-    msg.innerHTML = "✨&nbsp;&nbsp;튜터링 시작&nbsp;&nbsp;✨";
-    storage.append(msg);
-  }
-  else if(data['username']==req_username){
-    //console.log("outgoing");
+    // Set table structure
+    /*var storage = document.getElementById("msg_history");
+    alert(storage.scrollHeight);
+    storage.scrollTop = storage.scrollHeight;*/
+    var at_bottom = false;
+    if(storage.scrollTop == storage.scrollHeight - storage.offsetHeight){
+      at_bottom = true;
+    }
+    if(data['type'] == "star_comment"){
+      var msg = document.createElement("div");
+      msg.className = "start_tutoring";
+      msg.innerHTML = "✨&nbsp;&nbsp;튜터링 시작&nbsp;&nbsp;✨";
+      storage.append(msg);
+    }
+    else if(data['username']==req_username){
+      //console.log("outgoing");
 
-    var msg = document.createElement("div");
-    msg.className = "outgoing_msg";
-    var inner_msg = document.createElement("div");
-    inner_msg.className = "sent_msg";
-    var msg_time = document.createElement("span");
-    msg_time.className = "sent_time_date";
-    msg_time.innerHTML += data['date'];
-    var msg_content = document.createElement("div");
-    msg_content.className = "msg_box";
-    msg_content.innerHTML += makeUrl(data['content']);
-    inner_msg.append(msg_time);
-    inner_msg.append(msg_content);
-    msg.append(inner_msg);
-    storage.append(msg);
+      var msg = document.createElement("div");
+      msg.className = "outgoing_msg";
+      var inner_msg = document.createElement("div");
+      inner_msg.className = "sent_msg";
+      var msg_time = document.createElement("span");
+      msg_time.className = "sent_time_date";
+      msg_time.innerHTML += data['date'];
+      var msg_content = document.createElement("div");
+      msg_content.className = "msg_box";
+      msg_content.innerHTML += makeUrl(data['content']);
+      inner_msg.append(msg_time);
+      inner_msg.append(msg_content);
+      msg.append(inner_msg);
+      storage.append(msg);
 
-  }else{
-    //console.log("incoming");
-    var incoming_msg = document.createElement("div");
-    incoming_msg.className = "incoming_msg";
-    var received_msg = document.createElement("div");
-    received_msg.className = "received_msg";
-    var received_name = document.createElement("p");
-    received_name.className = "received_name";
-    received_name.innerHTML += data['nickname'];
-    var received_with_msg = document.createElement("div");
-    received_with_msg.className = "received_with_msg";
-    received_with_msg.innerHTML += makeUrl(data['content']);
-    var received_time_date = document.createElement("span");
-    received_time_date.className = "received_time_date";
-    received_time_date.innerHTML += data['date'];
-    received_msg.append(received_name);
-    received_msg.append(received_with_msg);
-    received_msg.append(received_time_date);
-    incoming_msg.append(received_msg);
-    storage.append(incoming_msg);
-  }
+    }else{
+      //console.log("incoming");
+      var incoming_msg = document.createElement("div");
+      incoming_msg.className = "incoming_msg";
+      var received_msg = document.createElement("div");
+      received_msg.className = "received_msg";
+      var received_name = document.createElement("p");
+      received_name.className = "received_name";
+      received_name.innerHTML += data['nickname'];
+      var received_with_msg = document.createElement("div");
+      received_with_msg.className = "received_with_msg";
+      received_with_msg.innerHTML += makeUrl(data['content']);
+      var received_time_date = document.createElement("span");
+      received_time_date.className = "received_time_date";
+      received_time_date.innerHTML += data['date'];
+      received_msg.append(received_name);
+      received_msg.append(received_with_msg);
+      received_msg.append(received_time_date);
+      incoming_msg.append(received_msg);
+      storage.append(incoming_msg);
+    }
 
-  if(at_bottom){
-    storage.scrollTop = storage.scrollHeight;
-  }
+    if(at_bottom){
+      storage.scrollTop = storage.scrollHeight;
+    }
 
 
   };
@@ -316,15 +390,16 @@
        url: "{% url 'matching:send_message' %}",
        type: "GET",
        data:{
-         postid: {{post.id}},
+         postid: {{pk}},
          content: $("#write_msg").val(),
+         type: "session",
        },
        success: function(response){
          //console.log(data)
-          //alert("SUCCESS\n" + response);
+          // alert("SUCCESS\n" + response);
 
           websocket.send(JSON.stringify({
-             'postId': response,
+             'comment_id': response,
           }));
           message.value = "";
        },
@@ -332,7 +407,6 @@
           //alert("ERROR!!\n" + response);
        }
     });
-
   }
 </script>
 

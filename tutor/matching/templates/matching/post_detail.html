@@ -21,18 +21,31 @@
 </script>
 
 <div id="buttonDiv">
-  {% if post.finding_match ==  True %}
-  <p style="color:#0c6b27; margin:4px; margin-bottom:10px;"><b> 모집중 </b></p>
-  {% elif post.start_time != Null and post.fin_time == Null %}
-  <p style="color:#4858b7; margin:4px; margin-bottom:10px;"><b> 진행중 </b></p>
-  {% elif user == post.tutor and not my_report %}
-  <p style="color:#e43331; margin:4px; margin-bottom:10px;"><b> 보고서 미작성 </b></p>
-  {% else %}
-  <p style="color:#bbb; margin:4px; margin-bottom:10px;"><b> 종료 </b></p>
-  {% endif %}
-  {% if post.tutor %}
-  <p style="color:#8f86c4; margin:4px; margin-bottom:10px;"><b>튜터: {{ post.tutor.profile.nickname }}</b></p>
-  {% endif %}
+  <table class="table">
+    <tbody>
+      {% if post.tutor %}
+      <tr>
+        <td class="text-center text-nowrap align-middle"><b>튜터</b></td>
+        <td class="text-center text-nowrap align-middle">{{ post.tutor.profile.nickname }}</td>
+      </tr>
+      {% endif %}
+      <tr>
+        <td class="text-center text-nowrap align-middle"><b>상태</b></td>
+        <td class="text-center text-nowrap align-middle">
+      {% if post.finding_match ==  True %}
+      <p style="color:#0c6b27; margin:4px; margin-bottom:10px;"><b> 모집중 </b></p>
+      {% elif post.start_time != Null and post.fin_time == Null %}
+      <p style="color:#4858b7; margin:4px; margin-bottom:10px;"><b> 진행중 </b></p>
+      {% elif user == post.tutor and not my_report %}
+      <p style="color:#e43331; margin:4px; margin-bottom:10px;"><b> 보고서 미작성 </b></p>
+      {% else %}
+      <p style="color:#bbb; margin:4px; margin-bottom:10px;"><b> 종료 </b></p>
+      {% endif %}
+      </td>
+      </tr>
+    </tbody>
+</table>
+
     {% if user == post.user and post.finding_match == True %}
     <button class="mybutton" type="submit"  data-toggle="modal" data-target="#postDeleteModal">모집취소</button>
 
@@ -258,7 +271,7 @@
   var storage = document.getElementById("msg_history");
   storage.scrollTop = storage.scrollHeight;
 
-  const websocket = new WebSocket('ws://' + window.location.host + '/ws/session/' + "{{session.pk}}" + '/');
+  const websocket = new WebSocket('ws://' + window.location.host + '/ws/post/' + "{{post.pk}}" + '/');
 
   websocket.onmessage = function(e) {
   const data = JSON.parse(e.data);
@@ -338,6 +351,7 @@
        data:{
          postid: {{post.id}},
          content: $("#write_msg").val(),
+         type: "post",
        },
        success: function(response){
          //console.log(data)

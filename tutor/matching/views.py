@@ -122,7 +122,7 @@ def tutee_report(request, pk):
             form = TutorReportForm(request.POST)
         else:
             form = ReportForm(request.POST)
-        
+
 
         if form.is_valid():
             report = form.save(commit=False)
@@ -194,8 +194,6 @@ def post_new(request):
             post.finding_match = True
             post.save()
 
-
-
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
                 'new_post',
@@ -235,12 +233,12 @@ def post_detail(request, pk):
     user = matching_models.User.objects.get(username=request.user.username)
     post = matching_models.Post.objects.get(pk=pk)
     my_report = matching_models.Report.objects.filter(writer=user, post=pk)
-    
-    if my_report.exists(): #사용자가 쓴 보고서 존재 
+
+    if my_report.exists(): #사용자가 쓴 보고서 존재
         ctx['my_report'] = my_report
         ctx['my_report_pk'] = my_report[0].pk
-    elif post.fin_time or ((request.user == post.user) and post.tutor): 
-        #사용자가 쓴 보고서 존재하지 않고 종료되었거나 
+    elif post.fin_time or ((request.user == post.user) and post.tutor):
+        #사용자가 쓴 보고서 존재하지 않고 종료되었거나
         if post.tutor == post.user:
             report_form = TutorReportForm()
         else:
@@ -257,7 +255,7 @@ def post_detail(request, pk):
     ctx['comment_list'] = comment_list
     ctx['start_msg'] = "튜터링시작"+post.user.last_name+str(post.pub_date)
     ctx['cancel_msg'] = "튜터링취소"+post.user.last_name+str(post.pub_date)
-    
+
     post.hit = post.hit + 1
     post.save()
     return render(request, 'matching/post_detail.html', ctx)
@@ -311,14 +309,20 @@ def set_tutor(request, postpk, userpk):
 @login_required
 def send_message(request):
     if request.method == "GET":
-        post = matching_models.Post.objects.get(pk=request.GET['postid'])
-        if post.finding_match or request.user == post.tutor or request.user == post.user:
-            new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=timezone.localtime(), content=request.GET['content'])
-            new_cmt.save()
-            return HttpResponse(new_cmt.id)
+        if request.GET['type'] == "session":
+          session = matching_models.TutorSession.objects.get(pk = request.GET['postid'])
+          new_cmt = matching_models.Comment(user=request.user, tutorsession=session, pub_date=timezone.localtime(), content=request.GET['content'])
+          new_cmt.save()
+          return HttpResponse(new_cmt.id)
         else:
-            messages.error(request, '해당 방은 튜터링이 시작되었습니다.')
-            return HttpResponseRedirect(reverse('matching:mainpage'))
+          post = matching_models.Post.objects.get(pk=request.GET['postid'])
+          if post.finding_match or request.user == post.tutor or request.user == post.user:
+              new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=timezone.localtime(), content=request.GET['content'])
+              new_cmt.save()
+              return HttpResponse(new_cmt.id)
+          else:
+              messages.error(request, '해당 방은 튜터링이 시작되었습니다.')
+              return HttpResponseRedirect(reverse('matching:mainpage'))
     else:
         return HttpResponse('NOT A GET REQUEST')
 
@@ -361,7 +365,7 @@ def admin_home(request):
 @login_required(login_url=URL_LOGIN)
 @staff_member_required
 def tutee_list(request):
-    
+
     tutee_list = matching_models.User.objects.filter(profile__is_tutor=False).annotate(
         num_posts = Count('post_relation')
     )
@@ -525,26 +529,24 @@ def mypage_post(request):
 
 
 @login_required(login_url=URL_LOGIN)
-def mypage_report(request):
+def mypage_session(request):
     ctx = {}
 
-    # tutee = matching_models.User.objects.get(pk=request.user.pk)
-    report = matching_models.Report.objects.filter(tutee=request.user).order_by('-pub_date')
+    session = matching_models.TutorSession.objects.filter(tutor=request.user).order_by('-pub_date')
+    current_session_page = request.GET.get('page', 1)
 
-    current_report_page = request.GET.get('page', 1)
-
-    report_paginator = Paginator(report, 10)
+    session_paginator = Paginator(session, 10)
     try:
-        reports = report_paginator.page(current_report_page)
+        sessions = session_paginator.page(current_session_page)
     except PageNotAnInteger:
-        reports = report_paginator.page(1)
+        sessions = session_paginator.page(1)
     except EmptyPage:
-        reports = report_paginator.page(report_paginator.num_pages)
+        sessions = session_paginator.page(session_paginator.num_pages)
 
     neighbors = 10
-    if report_paginator.num_pages > 2*neighbors:
-        start_index = max(1, int(current_report_page)-neighbors)
-        end_index = min(int(current_report_page)+neighbors, report_paginator.num_pages)
+    if session_paginator.num_pages > 2*neighbors:
+        start_index = max(1, int(current_session_page)-neighbors)
+        end_index = min(int(current_session_page)+neighbors, session_paginator.num_pages)
         if end_index < start_index + 2*neighbors:
             end_index = start_index + 2*neighbors
         elif start_index > end_index - 2*neighbors:
@@ -552,21 +554,22 @@ def mypage_report(request):
         if start_index < 1:
             end_index -= start_index
             start_index = 1
-        elif end_index > report_paginator.num_pages:
-            start_index -= end_index - report_paginator.num_pages
-            end_index = report_paginator.num_pages
+        elif end_index > session_paginator.num_pages:
+            start_index -= end_index - session_paginator.num_pages
+            end_index = session_paginator.num_pages
         paginatorRange = [f for f in range(start_index, end_index+1)]
         paginatorRange[:(2*neighbors + 1)]
     else:
-        paginatorRange = range(1, report_paginator.num_pages+1)
+        paginatorRange = range(1, session_paginator.num_pages+1)
 
     ctx = {
-        'reports': reports,
-        'reportPaginator': report_paginator,
+        'sessions': sessions,
+        'sessionPaginator': session_paginator,
         'paginatorRange': paginatorRange,
+        'today': timezone.localtime(),
     }
 
-    return render(request, 'matching/mypage_report.html', ctx)
+    return render(request, 'matching/mypage_session.html', ctx)
 
 
 @login_required(login_url=URL_LOGIN)
@@ -617,7 +620,7 @@ def mypage_tutor_post(request):
     }
     return render(request, 'matching/mypage_tutor_post.html', ctx)
 
-import requests
+import requests, datetime
 @login_required(login_url=URL_LOGIN)
 def mainpage(request):
     post = matching_models.Post.objects.filter(user = request.user, finding_match = True)
@@ -643,6 +646,9 @@ def mainpage(request):
 
         if tsform.is_valid():
             tutorsession = tsform.save(commit=False)
+            if tutorsession.expected_fin_time < tutorsession.start_time:
+                messages.error(request, '튜터링 종료 시간이 시작 시간보다 후여야 합니다.')
+                return HttpResponseRedirect(reverse('matching:mainpage'))
             user_obj = matching_models.User.objects.get(username=request.user.username)
             tutorsession.tutor = user_obj
             tutorsession.pub_date = timezone.localtime()
@@ -720,10 +726,12 @@ def mainpage(request):
 
 
     search_word = request.GET.get('search_word', '') # GET request의 인자중에 q 값이 있으면 가져오고, 없으면 빈 문자열 넣기
-    now = timezone.localtime()
+    #now = timezone.localtime()
+    start = datetime.date.today()
+    end = start + datetime.timedelta(days=1)
 
-    tutoring_on = matching_models.TutorSession.objects.filter(start_time__lte=now, fin_time__gte=now)
-    tutoring_off = matching_models.TutorSession.objects.filter(fin_time__lte=now)
+    tutoring_on = matching_models.TutorSession.objects.filter(start_time__range=(start, end), fin_time__isnull=True)
+    tutoring_off = matching_models.TutorSession.objects.exclude(id__in=tutoring_on).order_by('-pub_date')
     recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
     onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True).order_by('-pub_date')
     recruited = matching_models.Post.objects.filter(finding_match = False, fin_time__isnull = False).order_by('-pub_date')
@@ -735,7 +743,7 @@ def mainpage(request):
         recruiting = recruiting.filter(title__icontains=search_word)
         onprocess = onprocess.filter(title__icontains=search_word)
         recruited = recruited.filter(title__icontains=search_word)
-        
+
     posts = list(chain(tutoring_on,recruiting, onprocess,recruited, tutoring_off))
 
     current_post_page = request.GET.get('page', 1)
@@ -814,17 +822,17 @@ def mainpage(request):
 def get_next_tutee(request, session, req_user):
     # session log
     if session.tutor != req_user:
-        print(str(session.tutor.pk) + " vs " + str(req_user.pk))
         messages.error(request, '해당 튜터만 새로운 튜터링을 시작할 수 있습니다.')
         return HttpResponseRedirect(reverse('matching:mainpage'))
     try:
-        next_tutee = matching_models.SessionLog.objects.filter(tutor_session=session, is_waiting=True).earliest('wait_time')
+        next_tutee = matching_models.SessionLog.objects.filter(tutor_session=session, is_waiting=True).latest('wait_time')
+        print("NEXT TUTEE\n", next_tutee)
     except matching_models.SessionLog.DoesNotExist:
         next_tutee = None
-        
+
     if next_tutee:
         next_tutee.start_time = timezone.localtime()
-        next_tutee.is_waiting = False 
+        next_tutee.is_waiting = False
         next_tutee.save()
 
     return next_tutee
@@ -832,7 +840,7 @@ def get_next_tutee(request, session, req_user):
 def fin_current_tutee(request, session):
     try:
         current_tutee = matching_models.SessionLog.objects.get(tutor_session=session, is_waiting=False, start_time__isnull=False, fin_time__isnull=True)
-        print("Current Tutee", current_tutee)
+        print("Current Tutee\n", current_tutee)
         current_tutee.fin_time = timezone.localtime()
         current_tutee.save()
     except:
@@ -840,7 +848,9 @@ def fin_current_tutee(request, session):
 
 @login_required(login_url=URL_LOGIN)
 def session_detail(request, pk):
-    ctx={}
+    ctx={
+        'today' : timezone.localtime(),
+    }
 
     try:
         session = get_object_or_404(matching_models.TutorSession, pk=pk)
@@ -862,10 +872,33 @@ def session_detail(request, pk):
             ctx['report_form'] = report_form
             ctx['report_post_pk'] = report.pk
             ctx['report_exist'] = True'''
+
     if request.method == 'POST':
         fin_current_tutee(request, session)
         next_tutee = get_next_tutee(request, session, req_user)
         ctx['tutee'] = next_tutee
+
+
+        if next_tutee:
+          channel_layer = get_channel_layer()
+          print(channel_layer)
+          async_to_sync(channel_layer.group_send)(
+            'session_waiting',
+            {
+              'type': 'get_next_tutee',
+              'pk' : next_tutee.pk,
+            }
+          )
+
+    if not req_user.profile.is_tutor:
+        try:
+            log = matching_models.SessionLog.objects.get(is_waiting=False, start_time__isnull=False, fin_time__isnull=True, tutee=req_user)
+        except matching_models.SessionLog.DoesNotExist:
+            log = None
+
+        if not log:
+            return redirect('matching:waitingroom', pk=pk)
+
 
 
     comment_list = matching_models.Comment.objects.filter(tutorsession=session).order_by('pub_date')
@@ -875,9 +908,19 @@ def session_detail(request, pk):
     '''ctx['start_msg'] = "튜터링시작"+session.user.last_name+str(session.pub_date)
     ctx['cancel_msg'] = "튜터링취소"+session.user.last_name+str(session.pub_date)
     '''
+    ctx['pk'] = pk
     session.hit = session.hit + 1
     session.save()
     return render(request, 'matching/session_detail.html', ctx)
+
+@login_required(login_url=URL_LOGIN)
+def end_session(request, pk):
+    session = matching_models.TutorSession.objects.get(pk=pk)
+    if request.user == session.tutor:
+        session.fin_time = timezone.localtime()
+        session.save()
+    return redirect(reverse('matching:session_detail', kwargs={'pk':pk}))
+
 
 
 @login_required(login_url=URL_LOGIN)
@@ -891,7 +934,7 @@ def waitingroom(request, pk):
     except matching_models.TutorSession.DoesNotExist:
         return HttpResponse("게시물이 존재하지 않습니다.")
     except:
-        messages.error(request, '해당 튜터세션은 존재하지 않습니다.')
+        messages.error(request, '해당 튜터세션은 존재하지 않습니다. waitingroom')
         return HttpResponseRedirect(reverse('matching:mainpage'))
 
 
@@ -904,24 +947,40 @@ def waitingroom(request, pk):
         log = matching_models.SessionLog.objects.create(tutor_session=session, tutee=user)
         log.save()
     except:
-      messages.error(request, "해당 튜터세션은 존재하지 않습니다.")
+      messages.error(request, "해당 사용자 기록은 존재하지 않습니다.")
       return HttpResponseRedirect(reverse('matching:mainpage'))
 
     waitingList = matching_models.SessionLog.objects.filter(is_waiting=True)
-    waitingTutee = waitingList.get(tutee = request.user) # 에러 뜸
-    tuteeTurn = waitingTutee.ranking()
-    totalWaiting = len(waitingList)
+
+    try:
+        waitingTutee = waitingList.get(tutee = request.user) # SessionLog object
+    except matching_models.SessionLog.DoesNotExist:
+        waitingTutee = None
+
 
     ctx = {
         'user' : request.user,
         'waitingTutee' : waitingTutee,
         'waitingList' : waitingList,
-        'waitingBeforeTutee' : tuteeTurn - 1,
-        'tuteeTurn' : tuteeTurn,
-        'waitingAfterTutee' : totalWaiting - tuteeTurn,
-        'totalWaiting' : totalWaiting,
         'pk' : pk,
+        'tuteePk' : user.pk,
     }
+
+    if waitingTutee:
+        tuteeTurn = waitingTutee.ranking()
+        totalWaiting = len(waitingList)
+        waitingAfterTutee = totalWaiting - tuteeTurn
+
+        if waitingAfterTutee == -1:
+            waitingAfterTutee = 0
+
+        ctx['waitingBeforeTutee'] = tuteeTurn - 1
+        ctx['tuteeTurn'] = tuteeTurn
+        ctx['waitingAfterTutee'] = waitingAfterTutee, # waitingAfterTutee is int, but ctx['...'] is tuple?
+        ctx['totalWaiting'] = totalWaiting
+
+    else:
+        ctx['no_waiting'] = True
 
     return render(request, 'matching/waiting_room.html', ctx)
 
@@ -948,3 +1007,31 @@ def not_waiting(request):
 
     return HttpResponse(json.dumps(context), content_type="application/json")
     # context를 json 타입으로
+
+@login_required
+@require_POST
+def set_attending_type(request):
+  pk = request.POST.get('pk', None)
+  online = request.POST.get('online', None)
+
+  session = matching_models.TutorSession.objects.get(pk=pk)
+
+  try:
+      log = matching_models.SessionLog.objects.get(tutee = request.user, tutor_session = session, is_waiting = True)
+  except matching_models.SessionLog.DoesNotExist:
+      log = None
+
+  context = {}
+  if log:
+    if online == "true":
+      log.attend_online = True
+      log.save()
+      context['message'] = "세션을 온라인으로 참석합니다."
+    else:
+      log.attend_online = False
+      log.save()
+      context['message'] = "세션을 오프라인으로 참석합니다."
+  else:
+    context['message'] = "로그가 존재하지 않습니다."
+
+  return HttpResponse(json.dumps(context), content_type="application/json")
