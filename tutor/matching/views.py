@@ -619,6 +619,9 @@ def mainpage(request):
 
         if tsform.is_valid():
             tutorsession = tsform.save(commit=False)
+            if tutorsession.expected_fin_time < tutorsession.start_time:
+                messages.error(request, '튜터링 종료 시간이 시작 시간보다 후여야 합니다.')
+                return HttpResponseRedirect(reverse('matching:mainpage'))
             user_obj = matching_models.User.objects.get(username=request.user.username)
             tutorsession.tutor = user_obj
             tutorsession.pub_date = timezone.localtime()
