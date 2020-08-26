@@ -846,6 +846,9 @@ def fin_current_tutee(request, session):
         current_tutee.save()
     except:
         print("현재 참여중인 튜티가 없습니다.")
+        current_tutee = None
+    return current_tutee
+    
 
 @login_required(login_url=URL_LOGIN)
 def session_detail(request, pk):
@@ -1031,11 +1034,17 @@ def start_new_tutoring(request, pk):
         messages.error(request, '해당 튜터세션은 존재하지 않습니다.')
         return HttpResponseRedirect(reverse('matching:mainpage'))
 
-    fin_current_tutee(request, session)
+    context = {}
+    current_tutee = fin_current_tutee(request, session)
     next_tutee = get_next_tutee(request, session, request.user)
     if next_tutee:
       url = "http://" + request.get_host() + reverse('matching:session_detail', args=[pk])
       context = {'next_tutee_pk' : next_tutee.pk, 'next_tutee_url' : url}
-    else:
-      context = {'next_tutee_pk' : -1, 'next_tutee_url': -1}
+    
+    if current_tutee :
+      current_tutee_url = "http://" + request.get_host() + reverse('matching:mainpage')
+      context['current_tutee_pk'] = current_tutee.pk
+      context['current_tutee_url'] = current_tutee_url
+    
     return HttpResponse(json.dumps(context), content_type="application/json")
+

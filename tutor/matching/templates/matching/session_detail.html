@@ -314,6 +314,7 @@
   websocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
     var req_username = "{{request.user.username}}";
+    let current_tutee_pk = "{{request.user.pk}}";
 
     // Set table structure
     /*var storage = document.getElementById("msg_history");
@@ -369,6 +370,11 @@
         incoming_msg.append(received_msg);
         storage.append(incoming_msg);
       }
+    } else if (data['type'] == "letout_current_tutee"){
+      if (current_tutee_pk == data['current_tutee_pk']){
+        // alert("Redirecting to mainpage");
+        document.location.href = data['current_tutee_url'], true;
+      }
     }
 
     if(at_bottom){
@@ -418,13 +424,29 @@
             },
             dataType: "json",
             success: function(response){
+              // alert(response.current_tutee_pk);
               // alert(response.next_tutee_pk);
+            
+              if (response.current_tutee_pk != undefined ){
+                // alert("letout_current_tutee");
+                websocket.send(JSON.stringify({
+                  'type': 'start_new_tutoring',
+                  'type2': 'letout_current_tutee',
+                  'current_tutee_pk' : response.current_tutee_pk,
+                  'current_tutee_url' : response.current_tutee_url,
+                }))
+              }
 
-              websocket.send(JSON.stringify({
-                'type': 'start_new_tutoring',
-                'next_tutee_pk': response.next_tutee_pk,
-                'next_tutee_url': response.next_tutee_url,
-              }));
+              if (response.next_tutee_pk != undefined){
+                // alert("get_next_tutee");
+                websocket.send(JSON.stringify({
+                  'type': 'start_new_tutoring',
+                  'type2': 'get_next_tutee',
+                  'next_tutee_pk': response.next_tutee_pk,
+                  'next_tutee_url': response.next_tutee_url,
+                }));
+              }
+              
             },
             error: function(request, status, error){
                 alert("로그인이 필요합니다.");
