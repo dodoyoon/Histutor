@@ -813,7 +813,9 @@ def fin_current_tutee(request, session):
 
 @login_required(login_url=URL_LOGIN)
 def session_detail(request, pk):
-    ctx={}
+    ctx={
+        'today' : timezone.localtime(),
+    }
 
     try:
         session = get_object_or_404(matching_models.TutorSession, pk=pk)
