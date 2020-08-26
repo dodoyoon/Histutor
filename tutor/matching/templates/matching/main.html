@@ -235,7 +235,7 @@
 
 <div id="tutorsession" class="modal fade" role="dialog">
   <div class="modal-dialog">
-    <form action="" method="POST">
+    <form class="form-style-7 session_report_create" id="session_create" action="" method="POST">
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
@@ -245,7 +245,26 @@
       <div class="modal-body">
         <p>채팅방의 주제를 파악할 수 있는 제목을 작성해주세요. (15자 이상)</p>
         {% csrf_token %}
-        {{ tsform.as_p }}
+        <li>
+          <label for="title">제목</label>
+          {{ tsform.title }}
+       </li>
+        <li>
+          <label for="session_type">세션 유형</label>
+          {{ tsform.session_type }}
+       </li>
+        <li>
+          <label for="location">오프라인 장소 or URL</label>
+          {{ tsform.location }}
+       </li>
+        <li>
+          <label for="start_time">시작 시간</label>
+          {{ tsform.start_time }}
+        </li>
+        <li>
+          <label for="expected_fin_time">예상 종료 시간</label>
+          {{ tsform.expected_fin_time }}
+        </li>
       </div>
       <div class="modal-footer">
         <button type="submit" class="btn btn-default">Submit</button>
