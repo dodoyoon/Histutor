@@ -498,26 +498,24 @@ def mypage_post(request):
 
 
 @login_required(login_url=URL_LOGIN)
-def mypage_report(request):
+def mypage_session(request):
     ctx = {}
 
-    # tutee = matching_models.User.objects.get(pk=request.user.pk)
-    report = matching_models.Report.objects.filter(tutee=request.user).order_by('-pub_date')
+    session = matching_models.TutorSession.objects.filter(tutor=request.user).order_by('-pub_date')
+    current_session_page = request.GET.get('page', 1)
 
-    current_report_page = request.GET.get('page', 1)
-
-    report_paginator = Paginator(report, 10)
+    session_paginator = Paginator(session, 10)
     try:
-        reports = report_paginator.page(current_report_page)
+        sessions = session_paginator.page(current_session_page)
     except PageNotAnInteger:
-        reports = report_paginator.page(1)
+        sessions = session_paginator.page(1)
     except EmptyPage:
-        reports = report_paginator.page(report_paginator.num_pages)
+        sessions = session_paginator.page(session_paginator.num_pages)
 
     neighbors = 10
-    if report_paginator.num_pages > 2*neighbors:
-        start_index = max(1, int(current_report_page)-neighbors)
-        end_index = min(int(current_report_page)+neighbors, report_paginator.num_pages)
+    if session_paginator.num_pages > 2*neighbors:
+        start_index = max(1, int(current_session_page)-neighbors)
+        end_index = min(int(current_session_page)+neighbors, session_paginator.num_pages)
         if end_index < start_index + 2*neighbors:
             end_index = start_index + 2*neighbors
         elif start_index > end_index - 2*neighbors:
@@ -525,21 +523,22 @@ def mypage_report(request):
         if start_index < 1:
             end_index -= start_index
             start_index = 1
-        elif end_index > report_paginator.num_pages:
-            start_index -= end_index - report_paginator.num_pages
-            end_index = report_paginator.num_pages
+        elif end_index > session_paginator.num_pages:
+            start_index -= end_index - session_paginator.num_pages
+            end_index = session_paginator.num_pages
         paginatorRange = [f for f in range(start_index, end_index+1)]
         paginatorRange[:(2*neighbors + 1)]
     else:
-        paginatorRange = range(1, report_paginator.num_pages+1)
+        paginatorRange = range(1, session_paginator.num_pages+1)
 
     ctx = {
-        'reports': reports,
-        'reportPaginator': report_paginator,
+        'sessions': sessions,
+        'sessionPaginator': session_paginator,
         'paginatorRange': paginatorRange,
+        'today': timezone.localtime(),
     }
 
-    return render(request, 'matching/mypage_report.html', ctx)
+    return render(request, 'matching/mypage_session.html', ctx)
 
 
 @login_required(login_url=URL_LOGIN)
