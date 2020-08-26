@@ -95,7 +95,7 @@ def tutee_report(request, pk):
             form = TutorReportForm(request.POST)
         else:
             form = ReportForm(request.POST)
-        
+
 
         if form.is_valid():
             report = form.save(commit=False)
@@ -206,12 +206,12 @@ def post_detail(request, pk):
     user = matching_models.User.objects.get(username=request.user.username)
     post = matching_models.Post.objects.get(pk=pk)
     my_report = matching_models.Report.objects.filter(writer=user, post=pk)
-    
-    if my_report.exists(): #사용자가 쓴 보고서 존재 
+
+    if my_report.exists(): #사용자가 쓴 보고서 존재
         ctx['my_report'] = my_report
         ctx['my_report_pk'] = my_report[0].pk
-    elif post.fin_time or ((request.user == post.user) and post.tutor): 
-        #사용자가 쓴 보고서 존재하지 않고 종료되었거나 
+    elif post.fin_time or ((request.user == post.user) and post.tutor):
+        #사용자가 쓴 보고서 존재하지 않고 종료되었거나
         if post.tutor == post.user:
             report_form = TutorReportForm()
         else:
@@ -228,7 +228,7 @@ def post_detail(request, pk):
     ctx['comment_list'] = comment_list
     ctx['start_msg'] = "튜터링시작"+post.user.last_name+str(post.pub_date)
     ctx['cancel_msg'] = "튜터링취소"+post.user.last_name+str(post.pub_date)
-    
+
     post.hit = post.hit + 1
     post.save()
     return render(request, 'matching/post_detail.html', ctx)
@@ -338,7 +338,7 @@ def admin_home(request):
 @login_required(login_url=URL_LOGIN)
 @staff_member_required
 def tutee_list(request):
-    
+
     tutee_list = matching_models.User.objects.filter(profile__is_tutor=False).annotate(
         num_posts = Count('post_relation')
     )
@@ -712,7 +712,7 @@ def mainpage(request):
         recruiting = recruiting.filter(title__icontains=search_word)
         onprocess = onprocess.filter(title__icontains=search_word)
         recruited = recruited.filter(title__icontains=search_word)
-        
+
     posts = list(chain(tutoring_on,recruiting, onprocess,recruited, tutoring_off))
 
     current_post_page = request.GET.get('page', 1)
@@ -798,10 +798,10 @@ def get_next_tutee(request, session, req_user):
         print("NEXT TUTEE\n", next_tutee)
     except matching_models.SessionLog.DoesNotExist:
         next_tutee = None
-        
+
     if next_tutee:
         next_tutee.start_time = timezone.localtime()
-        next_tutee.is_waiting = False 
+        next_tutee.is_waiting = False
         next_tutee.save()
 
     return next_tutee
@@ -817,7 +817,9 @@ def fin_current_tutee(request, session):
 
 @login_required(login_url=URL_LOGIN)
 def session_detail(request, pk):
-    ctx={}
+    ctx={
+        'today' : timezone.localtime(),
+    }
 
     try:
         session = get_object_or_404(matching_models.TutorSession, pk=pk)
@@ -839,10 +841,12 @@ def session_detail(request, pk):
             ctx['report_form'] = report_form
             ctx['report_post_pk'] = report.pk
             ctx['report_exist'] = True'''
+
     if request.method == 'POST':
         fin_current_tutee(request, session)
         next_tutee = get_next_tutee(request, session, req_user)
         ctx['tutee'] = next_tutee
+
 
         if next_tutee:
           channel_layer = get_channel_layer()
@@ -854,6 +858,17 @@ def session_detail(request, pk):
               'pk' : next_tutee.pk,
             }
           )
+
+    if not req_user.profile.is_tutor:
+        try:
+            log = matching_models.SessionLog.objects.get(is_waiting=False, start_time__isnull=False, fin_time__isnull=True, tutee=req_user)
+        except matching_models.SessionLog.DoesNotExist:
+            log = None
+
+        if not log:
+            return redirect('matching:waitingroom', pk=pk)
+
+
 
     comment_list = matching_models.Comment.objects.filter(tutorsession=session).order_by('pub_date')
 
@@ -867,6 +882,15 @@ def session_detail(request, pk):
     session.save()
     return render(request, 'matching/session_detail.html', ctx)
 
+@login_required(login_url=URL_LOGIN)
+def end_session(request, pk):
+    session = matching_models.TutorSession.objects.get(pk=pk)
+    if request.user == session.tutor:
+        session.fin_time = timezone.localtime()
+        session.save()
+    return redirect(reverse('matching:session_detail', kwargs={'pk':pk}))
+
+
 
 @login_required(login_url=URL_LOGIN)
 def waitingroom(request, pk):
@@ -879,7 +903,7 @@ def waitingroom(request, pk):
     except matching_models.TutorSession.DoesNotExist:
         return HttpResponse("게시물이 존재하지 않습니다.")
     except:
-        messages.error(request, '해당 튜터세션은 존재하지 않습니다.')
+        messages.error(request, '해당 튜터세션은 존재하지 않습니다. waitingroom')
         return HttpResponseRedirect(reverse('matching:mainpage'))
 
 
@@ -892,32 +916,41 @@ def waitingroom(request, pk):
         log = matching_models.SessionLog.objects.create(tutor_session=session, tutee=user)
         log.save()
     except:
-      messages.error(request, "해당 튜터세션은 존재하지 않습니다.")
+      messages.error(request, "해당 사용자 기록은 존재하지 않습니다.")
       return HttpResponseRedirect(reverse('matching:mainpage'))
 
     waitingList = matching_models.SessionLog.objects.filter(is_waiting=True)
-    waitingTutee = waitingList.get(tutee = request.user) # 에러 뜸
-    tuteeTurn = waitingTutee.ranking()
-    totalWaiting = len(waitingList)
-    if totalWaiting == 1:
-      waitingBeforeTutee = 0
-      waitingAfterTutee = 0
-    else:
-      waitingBeforeTutee = tuteeTurn - 1
-      waitingAfterTutee = totalWaiting - tuteeTurn
+
+    try:
+        waitingTutee = waitingList.get(tutee = request.user) # SessionLog object
+    except matching_models.SessionLog.DoesNotExist:
+        waitingTutee = None
+
 
     ctx = {
         'user' : request.user,
         'waitingTutee' : waitingTutee,
         'waitingList' : waitingList,
-        'waitingBeforeTutee' : waitingBeforeTutee,
-        'tuteeTurn' : tuteeTurn,
-        'waitingAfterTutee' : waitingAfterTutee,
-        'totalWaiting' : totalWaiting,
         'pk' : pk,
         'tuteePk' : user.pk,
     }
-    
+
+    if waitingTutee:
+        tuteeTurn = waitingTutee.ranking()
+        totalWaiting = len(waitingList)
+        waitingAfterTutee = totalWaiting - tuteeTurn
+
+        if waitingAfterTutee == -1:
+            waitingAfterTutee = 0
+
+        ctx['waitingBeforeTutee'] = tuteeTurn - 1
+        ctx['tuteeTurn'] = tuteeTurn
+        ctx['waitingAfterTutee'] = waitingAfterTutee, # waitingAfterTutee is int, but ctx['...'] is tuple?
+        ctx['totalWaiting'] = totalWaiting
+
+    else:
+        ctx['no_waiting'] = True
+
     return render(request, 'matching/waiting_room.html', ctx)
 
 from django.views.decorators.http import require_POST
@@ -945,7 +978,7 @@ def not_waiting(request):
     # context를 json 타입으로
 
 @login_required
-@require_POST 
+@require_POST
 def set_attending_type(request):
   pk = request.POST.get('pk', None)
   online = request.POST.get('online', None)
@@ -955,23 +988,19 @@ def set_attending_type(request):
   try:
       log = matching_models.SessionLog.objects.get(tutee = request.user, tutor_session = session, is_waiting = True)
   except matching_models.SessionLog.DoesNotExist:
-      print("LOG DOES NOT EXIST")
       log = None
-  
+
   context = {}
   if log:
     if online == "true":
-      print("ONLINE")
       log.attend_online = True
       log.save()
       context['message'] = "세션을 온라인으로 참석합니다."
     else:
-      print("OFFLINE")
       log.attend_online = False
       log.save()
       context['message'] = "세션을 오프라인으로 참석합니다."
   else:
     context['message'] = "로그가 존재하지 않습니다."
-  
+
   return HttpResponse(json.dumps(context), content_type="application/json")
-    
