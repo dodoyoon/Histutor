@@ -11,25 +11,53 @@
 
 {% block content %}
 <div id="dont_exit_alert" class="alert alert-warning text-center" role="alert">
-  브라우저를 나가거나 새로고침하면 대기순서가 밀려납니다.
+  현재 페이지를 벗어나거나 새로 고침하면 대기 순서가 밀려납니다.
 </div>
 <div id="waiting_list">
+    {% if not no_waiting %}
   <div id="waiting">Waiting...</div>
-  <div class="text-center">순서가 올 때까지 조금만 기다려주세요.</div>
+  <div id="wait_for_turn" class="text-center">순서가 올 때까지 조금만 기다려주세요.</div>
   <div id="totalWaiting" class="text-center">총 대기자 수 : {{totalWaiting}}</div>
   <div id="waiting_info" class="flex-container text-center">
-    <div id="waitingBefore">BEFORE : {{waitingBeforeTutee}}</div>
+    <div id="waitingBefore">내 앞 : {{waitingBeforeTutee}}</div>
     <div id="current">내 대기 순서 : {{tuteeTurn}}</div>
-    <div id="waitingAfter">AFTER : {{waitingAfterTutee}}</div>
+    <div id="waitingAfter">내 뒤 : {{waitingAfterTutee.0}}</div>
   </div>
   <div id="line_image">
-    <img class="stickMan" src="https://image.flaticon.com/icons/svg/10/10522.svg">
+    <img class="stickMan" src="https://image.flaticon.com/icons/svg/59/59805.svg">
     <img class="stickMan" src="https://image.flaticon.com/icons/svg/10/10522.svg">
     <img class="stickMan" src="https://image.flaticon.com/icons/svg/10/10522.svg">
     <img class="stickMan" src="https://image.flaticon.com/icons/svg/10/10581.svg">
     <img class="stickMan" src="https://image.flaticon.com/icons/svg/10/10522.svg">
     <img class="stickMan" src="https://image.flaticon.com/icons/svg/10/10522.svg">
     <img class="stickMan" src="https://image.flaticon.com/icons/svg/10/10522.svg">
+  </div>
+
+    {% else %}
+  <div id="waiting">No Waiting</div>
+  <br><br><br><br><br><br>
+  <div id="line_image" style="text-align: center;">
+    <img class="stickMan" src="https://image.flaticon.com/icons/svg/59/59805.svg">
+    <img class="stickMan" src="https://image.flaticon.com/icons/svg/10/10581.svg">
+  </div>
+    {% endif %}
+
+  <div id="attend_type">
+    <div id="explain_attend" class="text-center">세션에 참가할 방벙을 선택해주세요.</div>
+    <div id="radio_buttons" class="text-center">
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="attend_type" id="online_radio" value="true" checked>
+        <label class="form-check-label" for="online">
+          온라인
+        </label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="attend_type" id="offline_radio" value="false">
+        <label class="form-check-label" for="offline">
+          오프라인
+        </label>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -50,10 +78,51 @@
                 //alert(response.message);
             },
             error: function(request, status, error){ // 통신 실패시 - 로그인 페이지 리다이렉트
-                alert("로그인이 필요합니다.")
-                window.location.replace("/accounts/login/")
+                alert("로그인이 필요합니다.");
+                window.location.replace("/accounts/login/");
             },
         });
+        return null;
     };
+
+    document.getElementById("online_radio").onclick = function(){
+      $.ajax({
+            type: "POST",
+            url: "{% url 'matching:set_attending_type' %}",
+            data: {
+                'pk': {{pk}},
+                'online': this.value,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            dataType: "json",
+            success: function(response){
+              alert(response.message);
+            },
+            error: function(request, status, error){
+                alert("로그인이 필요합니다.");
+                window.location.replace("/accounts/login/");
+            },
+        });
+    }
+
+    document.getElementById("offline_radio").onclick = function(){
+      $.ajax({
+            type: "POST",
+            url: "{% url 'matching:set_attending_type' %}",
+            data: {
+                'pk': {{pk}},
+                'online': this.value,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            dataType: "json",
+            success: function(response){
+              alert(response.message);
+            },
+            error: function(request, status, error){
+                alert("로그인이 필요합니다.");
+                window.location.replace("/accounts/login/");
+            },
+        });
+    }
 </script>
 {% endblock %}
