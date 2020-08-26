@@ -80,7 +80,10 @@ def user_check(request):
 #     template_name = 'matching/report_edit.html'
 @login_required(login_url=URL_LOGIN)
 def session_report_create(request, pk):
-    session = get_object_or_404(matching_models.TutorSession, pk=pk)
+    try:
+        session = get_object_or_404(matching_models.TutorSession, pk=pk)
+    except:
+        return HttpResponseRedirect(reverse('matching:mainpage'))
     user = matching_models.User.objects.get(username=request.user.username)
 
     if user != session.tutor:
@@ -944,6 +947,7 @@ def waitingroom(request, pk):
 
 
     ctx = {
+        'session' : session,
         'user' : request.user,
         'waitingTutee' : waitingTutee,
         'waitingList' : waitingList,
