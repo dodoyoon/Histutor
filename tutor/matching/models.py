@@ -100,9 +100,10 @@ TIME_CHOICES = (
 
 class Report(models.Model):
    tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutor")
-   tutee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutee")
+   tutee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutee", null=True)
    writer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="writer", null=True)
-   post = models.ForeignKey(Post, on_delete=models.CASCADE)
+   post = models.ForeignKey(Post, on_delete=models.CASCADE, null=True)
+   session = models.ForeignKey(TutorSession, on_delete=models.CASCADE, null=True)
    pub_date = models.DateField(auto_now_add=True)
    is_confirmed = models.BooleanField(null=True,default=False)
    content = models.TextField()
@@ -110,6 +111,8 @@ class Report(models.Model):
    duration_time = models.PositiveIntegerField(choices=TIME_CHOICES, default=10)
 
    def __str__(self):
+      if self.session:
+         return self.join_tutee + ' ' + self.session.title
       return self.post.get_topic_display() + ' ' + self.post.title
 
    def get_absolute_url(self):
@@ -120,6 +123,7 @@ class Report(models.Model):
 class SessionLog(models.Model):
    tutor_session = models.ForeignKey(TutorSession, on_delete=models.CASCADE, related_name="tutor_session")
    tutee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="log_tutee")
+   report = models.ForeignKey(Report, on_delete= models.SET_NULL, null=True)
    is_waiting = models.BooleanField(default=True)
    wait_time = models.DateTimeField(auto_now_add=True)
    start_time = models.DateTimeField(null=True)

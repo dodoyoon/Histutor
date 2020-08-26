@@ -26,6 +26,12 @@
     <button class="mybutton" type="submit">새로운 튜터링 시작</button>
   </form>
 </div>
+<div>
+  <form action="{% url 'matching:session_report_create' session.pk %}" method="POST">
+    {% csrf_token %}
+    <button class="mybutton" type="submit">보고서쓰기</button>
+  </form>
+</div>
 <div id="buttonDiv">
   <table class="table">
       <tbody>

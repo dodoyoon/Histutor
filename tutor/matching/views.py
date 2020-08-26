@@ -79,6 +79,37 @@ def user_check(request):
 #     form_class = ReportForm
 #     template_name = 'matching/report_edit.html'
 
+@login_required(login_url=URL_LOGIN)
+def session_report_create(request, pk):
+    session = get_object_or_404(matching_models.TutorSession, pk=pk)
+    user = matching_models.User.objects.get(username=request.user.username)
+
+    if user != session.tutor:
+        messages.add_message(request, messages.ERROR, '담당 튜터에게만 보고서 작성 권한이 있습니다.')
+        return redirect('matching:mainpage')
+
+    log_list = matching_models.SessionLog.objects.filter(tutor_session=session, fin_time__isnull=False, report__isnull=True)
+
+    ctx = {
+        'log_list' : log_list,
+    }
+
+    if request.method == "POST":
+        report = Report(tutor=user, writer=user, session=session)
+        tutee_username = request.POST.get('username', None)
+        try:
+            report.tutee = matching_models.User.objects.get(username=tutee_username)
+        except:
+            report.tutee = None
+        report.content = request.POST.get('content', "")
+        report.join_tutee = request.POST.get('nickname', "")
+        report.duration_time = request.POST.get("time", 0)
+        report.save()
+        log_list.filter(tutee=report.tutee).update(report=report)
+        messages.add_message(request, messages.SUCCESS, '보고서가 제출되었습니다.')
+        return redirect('matching:session_report_create', pk=pk)
+
+    return render(request, 'matching/session_report_create.html', ctx)
 
 @login_required(login_url=URL_LOGIN)
 def tutee_report(request, pk):
