@@ -327,7 +327,7 @@ a:hover{
   margin-top: 30px;
   left: calc(50% - 40%);
   width: 80%;
-  height: 420px;
+  height: 530px;
   border: 2px solid #6C639C;
   padding: 20px;
 }
@@ -389,6 +389,22 @@ a:hover{
 #dont_exit_alert{
   position: relative;
   left: calc(50% - 250px);
-  margin-top: 7%;
+  margin-top: 3%;
   width: 500px;
+}
+
+#explain_attend{
+  margin-top: 50px;
+}
+
+#radio_buttons{
+  width: 300px;
+  position: relative;
+  left: calc(50% - 150px);
+  padding: auto;
+  margin-top: 10px;
+}
+
+#offline_radio{
+  margin-left: 50px;
 }
