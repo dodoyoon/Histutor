@@ -217,9 +217,6 @@ a:hover{
 {
 }
 
-.form-style-7 textarea{
-	resize:none;
-}
 .form-style-7 input[type="submit"],
 .form-style-7 input[type="button"]{
 	background: #7a6ebe;

@@ -79,6 +79,33 @@ def user_check(request):
 #     form_class = ReportForm
 #     template_name = 'matching/report_edit.html'
 
+@login_required(login_url=URL_LOGIN)
+def session_report_create(request, pk):
+    try:
+        session = get_object_or_404(matching_models.TutorSession, pk=pk)
+    except matching_models.TutorSession.DoesNotExist:
+        return HttpResponse("해당 튜터세션은 존재하지 않습니다.") # 이거 테스트해보기
+    # except:
+    #     messages.error(request, '해당 튜터세션은 존재하지 않습니다.')
+    #     return HttpResponseRedirect(reverse('matching:mainpage'))
+
+    user = matching_models.User.objects.get(username=request.user.username)
+    if user != session.tutor:
+        return HttpResponse("담당 튜터만 보고서를 작성할 수 있습니다.") # 이거 테스트해보기
+
+    if request.method == "POST":
+        report = Report(tutor=user, writer=user, session=session)
+        report.content = request.POST.get('content', "")
+        report.join_tutee = request.POST.get('tutee', "")
+        report.duration_time = request.POST.get("time", 0)
+        report.save()
+        return redirect('matching:session_report_create', pk=pk)
+
+    log_list = matching_models.SessionLog.objects.filter(tutor_session=session, fin_time__isnull=False)
+    ctx = {
+        'log_list' : log_list,
+    }
+    return render(request, 'matching/session_report_create.html', ctx)
 
 @login_required(login_url=URL_LOGIN)
 def tutee_report(request, pk):

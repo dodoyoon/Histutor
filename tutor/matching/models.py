@@ -99,9 +99,10 @@ TIME_CHOICES = (
 
 class Report(models.Model):
    tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutor")
-   tutee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutee")
+   tutee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutee", null=True)
    writer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="writer", null=True)
-   post = models.ForeignKey(Post, on_delete=models.CASCADE)
+   post = models.ForeignKey(Post, on_delete=models.CASCADE, null=True)
+   session = models.ForeignKey(TutorSession, on_delete=models.CASCADE, null=True)
    pub_date = models.DateField(auto_now_add=True)
    is_confirmed = models.BooleanField(null=True,default=False)
    content = models.TextField()
