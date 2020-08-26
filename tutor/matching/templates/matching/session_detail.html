@@ -130,6 +130,15 @@
     </div>
   </div>
   {% endif %}
+  <div class="update_tutee" style="margin:2% 0;">
+    <button id="start_new_tutoring" class="mybutton" type="submit">새 튜터링 시작</button>
+  </div>
+  <div style="margin:2% 0;">
+    <form action="{% url 'matching:session_report_create' session.pk %}" method="POST">
+      {% csrf_token %}
+    <button class="mybutton" type="submit">보고서쓰기</button>
+    </form>
+  </div>
 
   <!-- 
     {% if report_exist %}
