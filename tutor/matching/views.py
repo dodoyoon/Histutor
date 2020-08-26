@@ -593,7 +593,7 @@ def mypage_tutor_post(request):
     }
     return render(request, 'matching/mypage_tutor_post.html', ctx)
 
-import requests
+import requests, datetime
 @login_required(login_url=URL_LOGIN)
 def mainpage(request):
     post = matching_models.Post.objects.filter(user = request.user, finding_match = True)
@@ -699,10 +699,12 @@ def mainpage(request):
 
 
     search_word = request.GET.get('search_word', '') # GET request의 인자중에 q 값이 있으면 가져오고, 없으면 빈 문자열 넣기
-    now = timezone.localtime()
+    #now = timezone.localtime()
+    start = datetime.date.today()
+    end = start + datetime.timedelta(days=1)
 
-    tutoring_on = matching_models.TutorSession.objects.filter(start_time__lte=now, fin_time__gte=now)
-    tutoring_off = matching_models.TutorSession.objects.filter(fin_time__lte=now)
+    tutoring_on = matching_models.TutorSession.objects.filter(start_time__range=(start, end), fin_time__isnull=True)
+    tutoring_off = matching_models.TutorSession.objects.exclude(id__in=tutoring_on)
     recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
     onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True).order_by('-pub_date')
     recruited = matching_models.Post.objects.filter(finding_match = False, fin_time__isnull = False).order_by('-pub_date')
