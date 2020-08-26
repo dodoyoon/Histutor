@@ -9,7 +9,11 @@
     <ol>
       <div class="list-box">
         <li><a href="#">제목</a></li>
+        {% if report.post %}
         {{report.post.title}}
+        {% else %}
+        {{report.session.title}}
+        {% endif %}
       </div>
       <div class="list-box">
         <li><a href="#">작성자</a></li>
@@ -17,15 +21,26 @@
       </div>
       <div class="list-box">
         <li><a href="#">튜티</a></li>
+        {% if report.post %}
         {{report.post.user.profile.nickname }}
+        {% else %}
+        {% endif %}
       </div>
       <div class="list-box">
         <li><a href="#">튜터</a></li>
+        {% if report.post %}
         {{report.post.tutor.profile.nickname }}
+        {% else %}
+        {{report.session.tutor.profile.nickname }}
+        {% endif %}
       </div>
       <div class="list-box">
         <li><a href="#">튜터링 날짜</a></li>
+        {% if report.post %}
         {{report.post.start_time|date:'Y-m-d'}}
+        {% else %}
+        {{report.session.start_time|date:'Y-m-d'}}
+        {% endif %}
       </div>
       <div class="list-box">
         <li><a href="#">튜터링 시간</a></li>

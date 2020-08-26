@@ -170,7 +170,7 @@ class ReportDetail(DetailView):
         report.tutee_feedback = form.cleaned_data['tutee_feedback']
         report.save()
 
-def report_list(request, pk):
+def post_report_list(request, pk):
     post = matching_models.Post.objects.get(pk=pk)
     report_list = matching_models.Report.objects.filter(post=post)
     tutor_report = matching_models.Report.objects.filter(writer=post.tutor)
@@ -181,6 +181,19 @@ def report_list(request, pk):
         'report_list' : report_list,
         'tutor_report' : tutor_report,
         'tutee_report' : tutee_report,
+    }
+
+    return render(request, 'matching/report_list.html', ctx)
+
+def session_report_list(request, pk):
+    session = matching_models.TutorSession.objects.get(pk=pk)
+    report_list = matching_models.Report.objects.filter(session=session)
+    tutor_report = matching_models.Report.objects.filter(writer=session.tutor)
+
+    ctx = {
+        'session' : session,
+        'report_list' : report_list,
+        'tutor_report' : tutor_report,
     }
 
     return render(request, 'matching/report_list.html', ctx)
@@ -370,7 +383,7 @@ def admin_home(request):
 @staff_member_required
 def tutee_list(request):
 
-    tutee_list = matching_models.User.objects.filter(profile__is_tutor=False).annotate(
+    tutee_list = matching_models.User.objects.all().annotate(
         num_posts = Count('post_relation')
     )
 
@@ -421,11 +434,14 @@ def tutor_detail(request, pk):
         return redirect(reverse('matching:mainpage'))
 
     tutor = matching_models.User.objects.get(pk=pk)
-    postlist = matching_models.Post.objects.filter(tutor=tutor)
+    postlist = matching_models.Post.objects.filter(tutor=tutor).order_by('-pub_date')
+    sessionlist = matching_models.TutorSession.objects.filter(tutor=tutor).order_by('-pub_date')
 
     ctx = {
+        'today' : timezone.localtime(),
         'tutor' : tutor,
         'postlist' : postlist,
+        'sessionlist' : sessionlist,
     }
 
     return render(request, 'matching/tutor_detail.html', ctx)
@@ -439,6 +455,7 @@ def tutee_detail(request, pk):
     postlist = matching_models.Post.objects.filter(user=tutee)
 
     ctx = {
+        'today' : timezone.localtime(),
         'tutee' : tutee,
         'postlist' : postlist,
     }
@@ -479,6 +496,8 @@ def cancel_tutoring(request, pk):
 @login_required(login_url=URL_LOGIN)
 def mypage(request):
     ctx = {}
+    if request.user.profile.is_tutor:
+        return redirect(reverse('matching:mypage_tutor_session'))
     return redirect(reverse('matching:mypage_post'))
 
 
@@ -862,6 +881,11 @@ def session_detail(request, pk):
         return HttpResponseRedirect(reverse('matching:mainpage'))
 
     req_user = matching_models.User.objects.get(username=request.user.username)
+    my_report = matching_models.Report.objects.filter(writer=request.user, session=pk)
+
+    if my_report.exists(): #사용자가 쓴 보고서 존재
+        ctx['my_report'] = my_report
+        ctx['my_report_pk'] = my_report[0].pk
     '''report_to_write = matching_models.Post.objects.filter(user=user, pk=pk, report__isnull=True, tutor__isnull=False)
 
     if report_to_write.exists():
