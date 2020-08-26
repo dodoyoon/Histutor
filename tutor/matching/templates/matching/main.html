@@ -326,7 +326,9 @@
                         <div class="ta">TA</div> <div style="display:inline-block; color:#707B7C; margin: 0 10px 0 0;">{{post.start_time|date:'H:i'}}-{{post.expected_fin_time|date:'H:i'}}</div>
                         <a href="{% url 'matching:session_detail' post.pk %}">{{post.title|truncatechars:50}}</a></td>
                   {% else %}
-                      <td class="align-middle" style="padding-left:4vw;"><a href="{% url 'matching:waitingroom' post.pk %}">{{post.title|truncatechars:50}}</a></td>
+                      <td class="align-middle" style="padding-left:4vw;">
+                        <div class="ta">TA</div> <div style="display:inline-block; color:#707B7C; margin: 0 10px 0 0;">{{post.start_time|date:'H:i'}}-{{post.expected_fin_time|date:'H:i'}}</div>
+                        <a href="{% url 'matching:waitingroom' post.pk %}">{{post.title|truncatechars:50}}</a></td>
                   {% endif %}
                 {% else %}
                   {% if post.finding_match ==  True %}
