@@ -155,3 +155,111 @@ class PostDetailConsumer(WebsocketConsumer):
             'content': comment.content,
             'username': comment.user.username,
         }))
+
+class SessionWaitingConsumer(WebsocketConsumer):
+  def connect(self):
+    self.group_name = 'session_waiting'
+
+    #Joing room group
+    async_to_sync(self.channel_layer.group_add)(
+      self.group_name,
+      self.channel_name
+    )
+    self.accept()
+
+  def disconnect(self, close_code):
+    #Leave room group
+    async_to_sync(self.channel_layer.group_discard)(
+      self.group_name,
+      self.channel_name
+    )
+  
+  def receive(self, text_data):
+    text_data_json = json.loads(text_data)
+    log_pk = text_data_json['pk']
+
+    async_to_sync(self.channel_layer.group_send)(
+      self.group_name,
+      {
+        'type':'get_next_tutee',
+        'pk': log_pk,
+      }
+    )
+  
+  def get_next_tutee(self, event):
+    pk = event['pk']
+    log = matching_models.SessionLog.objects.get(pk = pk)
+    print(log)
+
+    self.send(text_data=json.dumps({
+      'type': 'get_next_tutee',
+      'pk': pk,
+    }))
+
+class SessionDetailConsumer(WebsocketConsumer):
+    def connect(self):
+        self.group_name = 'new_comment_session'
+
+        # Join room group
+        async_to_sync(self.channel_layer.group_add)(
+            self.group_name,
+            self.channel_name
+        )
+
+        self.accept()
+
+    def disconnect(self, close_code):
+        # Leave room group
+        async_to_sync(self.channel_layer.group_discard)(
+            self.group_name,
+            self.channel_name
+        )
+
+    # Receive message from WebSocket
+    def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        comment_id = text_data_json['comment_id']
+
+        # Send message to room group
+        async_to_sync(self.channel_layer.group_send)(
+            self.group_name,
+            {
+                'type': 'new_comment',
+                'id': comment_id,
+            }
+        )
+
+    # Receive message from room group
+    def new_comment(self, event):
+        id = event['id']
+        comment = matching_models.Comment.objects.get(pk=id)
+        username = comment.user.username
+        db_date = comment.pub_date
+        time = timezone.localtime(db_date).strftime("%-I:%M")
+        am_or_pm = timezone.localtime(db_date).strftime("%p").lower()
+        am_or_pm = am_or_pm[0] + '.' + am_or_pm[1] + '.'
+        date = time + ' ' + am_or_pm
+        profile = matching_models.Profile.objects.get(user=comment.user)
+
+        # Send message to WebSocket
+        self.send(text_data=json.dumps({
+            'type': 'new_comment',
+            'id': id,
+            'content': comment.content,
+            'username': username,
+            'date': date,
+            'nickname': profile.nickname,
+        }))
+
+    # Receive message from room group
+    def star_comment(self, event):
+        id = event['id']
+        comment = matching_models.Comment.objects.get(pk=id)
+
+        # Send message to WebSocket
+        self.send(text_data=json.dumps({
+            'type': 'star_comment',
+            'id': id,
+            'content': comment.content,
+            'username': comment.user.username,
+        }))
