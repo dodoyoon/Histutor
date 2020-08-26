@@ -603,6 +603,11 @@ def mainpage(request):
         post_exist = True
 
     user = matching_models.User.objects.get(pk=request.user.pk)
+    now = timezone.localtime()
+
+    ongoing_session = matching_models.TutorSession.objects.filter(tutor=user, start_time__lte=now).filter(fin_time__isnull=True)
+    if ongoing_session.exists():
+        ongoing_session = ongoing_session[:1].get()
 
     ongoing_tutoring = matching_models.Post.objects.filter(tutor=user).filter(fin_time__isnull=True)
     if ongoing_tutoring.exists():
@@ -699,7 +704,6 @@ def mainpage(request):
 
 
     search_word = request.GET.get('search_word', '') # GET request의 인자중에 q 값이 있으면 가져오고, 없으면 빈 문자열 넣기
-    #now = timezone.localtime()
     start = datetime.date.today()
     end = start + datetime.timedelta(days=1)
 
@@ -751,6 +755,7 @@ def mainpage(request):
 
 
     ctx = {
+        'ongoing_session' : ongoing_session,
         'ongoing_tutoring' : ongoing_tutoring,
         'ongoing_post': ongoing_post,
         'user': user,
