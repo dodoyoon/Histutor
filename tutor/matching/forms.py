@@ -46,9 +46,9 @@ class TutorSessionForm(forms.ModelForm):
     start_time = forms.DateTimeField(
         widget=DateTimePicker(),
     )
-    fin_time = forms.DateTimeField(
+    expected_fin_time = forms.DateTimeField(
         widget=DateTimePicker(),
     )
     class Meta:
         model = TutorSession
-        fields = ('title', 'session_type', 'location', 'start_time', 'fin_time')
+        fields = ('title', 'session_type', 'location', 'start_time', 'expected_fin_time')

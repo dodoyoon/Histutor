@@ -864,6 +864,15 @@ def session_detail(request, pk):
     session.save()
     return render(request, 'matching/session_detail.html', ctx)
 
+@login_required(login_url=URL_LOGIN)
+def end_session(request, pk):
+    session = matching_models.TutorSession.objects.get(pk=pk)
+    if request.user == session.tutor:
+        session.fin_time = timezone.localtime()
+        session.save()
+    return redirect(reverse('matching:session_detail', kwargs={'pk':pk}))
+
+
 
 @login_required(login_url=URL_LOGIN)
 def waitingroom(request, pk):
