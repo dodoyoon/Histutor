@@ -28,7 +28,7 @@ URL_LOGIN = "/matching"
 
 def index(request):
     if request.user.is_authenticated:
-        return redirect('matching:mainpage')
+        return redirect('matching:mainpage', showtype='all')
     else:
         return redirect('login/')
 
@@ -36,7 +36,7 @@ def login(request):
     return render(request, 'matching/account_login.html', {})
 
 def redirect_to_main(request):
-    return redirect('matching:mainpage')
+    return redirect('matching:mainpage', showtype='all')
 
 
 @login_required(login_url=URL_LOGIN)
@@ -50,7 +50,7 @@ def save_profile(request, pk):
         profile.signin = True
         profile.phone = "010" + str(request.POST['phone1']) + str(request.POST['phone2'])
         profile.save()
-        return redirect(reverse('matching:mainpage'))
+        return redirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
     print("nickname : ", user.profile.nickname)
     return render(request, 'matching/save_profile.html', {'nickname': user.profile.nickname})
 
@@ -64,7 +64,7 @@ def user_check(request):
                 user.profile.save()
                 return HttpResponseRedirect(reverse('matching:profile', args=(request.user.pk,)))
             else:
-                return HttpResponseRedirect(reverse('matching:mainpage'))
+                return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
         except(KeyError, matching_models.User.DoesNotExist):
             return HttpResponseRedirect(reverse('matching:index'))
     else:
@@ -83,12 +83,12 @@ def session_report_create(request, pk):
     try:
         session = get_object_or_404(matching_models.TutorSession, pk=pk)
     except:
-        return HttpResponseRedirect(reverse('matching:mainpage'))
+        return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
     user = matching_models.User.objects.get(username=request.user.username)
 
     if user != session.tutor:
         messages.add_message(request, messages.ERROR, '담당 튜터에게만 보고서 작성 권한이 있습니다.')
-        return redirect('matching:mainpage')
+        return redirect('matching:mainpage', showtype='all')
 
     log_list = matching_models.SessionLog.objects.filter(tutor_session=session, fin_time__isnull=False, report__isnull=True)
     ctx = {'log_list' : log_list}
@@ -148,7 +148,7 @@ def tutee_report(request, pk):
             profile.save()
             return redirect('matching:report_detail', pk=report.pk)
         else:
-            return redirect('matching:mainpage')
+            return redirect('matching:mainpage', showtype='all')
 
 class ReportDetail(DetailView):
     model = Report
@@ -158,7 +158,7 @@ class ReportDetail(DetailView):
         if self.request.user.is_staff or self.request.user == report.post.user:
             return super(ReportDetail, self).get(request, *args, **kwargs)
         else:
-            return redirect('matching:mainpage')
+            return redirect('matching:mainpage', showtype='all')
 
     def get_context_data(self, **kwargs):
         context = super(ReportDetail, self).get_context_data(**kwargs)
@@ -251,7 +251,7 @@ def post_detail(request, pk):
         return HttpResponse("게시물이 존재하지 않습니다.")
     except:
         messages.error(request, '해당 방은 존재하지 않습니다.')
-        return HttpResponseRedirect(reverse('matching:mainpage'))
+        return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
 
     user = matching_models.User.objects.get(username=request.user.username)
     post = matching_models.Post.objects.get(pk=pk)
@@ -307,7 +307,7 @@ def set_tutor(request, postpk, userpk):
 
     if post.tutor:
         messages.error(request, '해당 방은 튜터링이 이미 진행중입니다.')
-        return HttpResponseRedirect(reverse('matching:mainpage'))
+        return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
 
 
     post.tutor = tutor
@@ -345,7 +345,7 @@ def send_message(request):
               return HttpResponse(new_cmt.id)
           else:
               messages.error(request, '해당 방은 튜터링이 시작되었습니다.')
-              return HttpResponseRedirect(reverse('matching:mainpage'))
+              return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
     else:
         return HttpResponse('NOT A GET REQUEST')
 
@@ -437,7 +437,7 @@ def remove_tutor(request, pk):
 @login_required(login_url=URL_LOGIN)
 def tutor_detail(request, pk):
     if not request.user.is_staff:
-        return redirect(reverse('matching:mainpage'))
+        return redirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
 
     tutor = matching_models.User.objects.get(pk=pk)
     postlist = matching_models.Post.objects.filter(tutor=tutor).order_by('-pub_date')
@@ -455,7 +455,7 @@ def tutor_detail(request, pk):
 @login_required(login_url=URL_LOGIN)
 def tutee_detail(request, pk):
     if not request.user.is_staff:
-        return redirect(reverse('matching:mainpage'))
+        return redirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
 
     tutee = matching_models.User.objects.get(pk=pk)
     postlist = matching_models.Post.objects.filter(user=tutee)
@@ -473,14 +473,14 @@ def close_post(request, pk):
     post = matching_models.Post.objects.get(pk=pk)
     post.finding_match = False
     post.save()
-    return redirect(reverse('matching:mainpage'))
+    return redirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
 
 # Tutor가 끝낼 때
 def fin_tutoring(request, pk):
     post = matching_models.Post.objects.get(pk=pk)
     post.fin_time = timezone.localtime()
     post.save()
-    return redirect(reverse('matching:mainpage'))
+    return redirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
 
 # Tutor가 튜터링 중도 취소
 def cancel_tutoring(request, pk):
@@ -495,7 +495,7 @@ def cancel_tutoring(request, pk):
     post.save()
 
 
-    return redirect(reverse('matching:mainpage'))
+    return redirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
 
 
 
@@ -651,7 +651,7 @@ def mypage_tutor_post(request):
 
 import requests, datetime
 @login_required(login_url=URL_LOGIN)
-def mainpage(request):
+def mainpage(request, showtype):
     post = matching_models.Post.objects.filter(user = request.user, finding_match = True)
     post_exist = False
 
@@ -682,7 +682,7 @@ def mainpage(request):
             tutorsession = tsform.save(commit=False)
             if tutorsession.expected_fin_time < tutorsession.start_time:
                 messages.error(request, '튜터링 종료 시간이 시작 시간보다 후여야 합니다.')
-                return HttpResponseRedirect(reverse('matching:mainpage'))
+                return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
             user_obj = matching_models.User.objects.get(username=request.user.username)
             tutorsession.tutor = user_obj
             tutorsession.pub_date = timezone.localtime()
@@ -763,13 +763,14 @@ def mainpage(request):
         onprocess = onprocess.filter(title__icontains=search_word)
         recruited = recruited.filter(title__icontains=search_word)
     
-    filter = request.GET.get('filter', '')
-    if filter == 'session':
+    if showtype == 'session':
         posts = list(chain(tutoring_on,tutoring_off))
-    elif filter == 'tutoring':
+    elif showtype == 'tutoring':
         posts = list(chain(recruiting, onprocess,recruited))
-    else:
+    elif showtype == 'all':
         posts = list(chain(tutoring_on,recruiting, onprocess,recruited, tutoring_off))
+    else:
+        return redirect('matching:mainpage', showtype='all')
 
     current_post_page = request.GET.get('page', 1)
     post_paginator = Paginator(posts, 9)
@@ -859,7 +860,7 @@ def get_next_tutee(request, session, req_user):
     # session log
     if session.tutor != req_user:
         messages.error(request, '해당 튜터만 새로운 튜터링을 시작할 수 있습니다.')
-        return HttpResponseRedirect(reverse('matching:mainpage'))
+        return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
     try:
         next_tutee = matching_models.SessionLog.objects.filter(tutor_session=session, is_waiting=True).earliest('wait_time')
         print("NEXT TUTEE\n", next_tutee)
@@ -897,7 +898,7 @@ def session_detail(request, pk):
         return HttpResponse("게시물이 존재하지 않습니다.")
     except:
         messages.error(request, '해당 튜터세션은 존재하지 않습니다.')
-        return HttpResponseRedirect(reverse('matching:mainpage'))
+        return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
 
     req_user = matching_models.User.objects.get(username=request.user.username)
     my_report = matching_models.Report.objects.filter(writer=request.user, session=pk)
@@ -962,7 +963,7 @@ def waitingroom(request, pk):
         return HttpResponse("게시물이 존재하지 않습니다.")
     except:
         messages.error(request, '해당 튜터세션은 존재하지 않습니다. waitingroom')
-        return HttpResponseRedirect(reverse('matching:mainpage'))
+        return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
 
     # session log 만들기: session detail에 들어오면 무조건 하나의 log 만들기
     try:
@@ -973,7 +974,7 @@ def waitingroom(request, pk):
         log.save()
     except:
       messages.error(request, "해당 사용자 기록은 존재하지 않습니다.")
-      return HttpResponseRedirect(reverse('matching:mainpage'))
+      return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
 
     waitingList = matching_models.SessionLog.objects.filter(is_waiting=True)
 
@@ -1073,7 +1074,7 @@ def start_new_tutoring(request, pk):
         return HttpResponse("게시물이 존재하지 않습니다.")
     except:
         messages.error(request, '해당 튜터세션은 존재하지 않습니다.')
-        return HttpResponseRedirect(reverse('matching:mainpage'))
+        return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
 
     context = {}
     current_tutee = fin_current_tutee(request, session)

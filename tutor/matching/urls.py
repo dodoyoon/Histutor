@@ -42,7 +42,7 @@ urlpatterns = [
   # path('report/edit/<int:pk>/', views.ReportUpdate.as_view(), name='report_update'),
   #path('', views.index, name='index'),
   #path('<str:room_name>/', views.room, name='room'),
-  path('main/', views.mainpage, name='mainpage'),
+  path('main/<showtype>/', views.mainpage, name='mainpage'),
   #path('post/detail/<int:pk>/waiting/', views.waitingpage, name='waiting_room')
   # path('post/detail/waiting/', views.waitingroom, name='waiting_room')
 ]
