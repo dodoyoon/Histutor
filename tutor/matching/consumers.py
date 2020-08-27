@@ -3,6 +3,7 @@ from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 from matching import models as matching_models
 from django.utils import timezone
+import datetime
 
 class NewPostConsumer(WebsocketConsumer):
     def connect(self):
@@ -63,7 +64,7 @@ class NewPostConsumer(WebsocketConsumer):
         post = matching_models.Post.objects.get(pk=id)
         title = event['title']
         finding = event['finding']
-        pub_date = timezone.localtime(post.pub_date).strftime("%H:%M")
+        pub_date = str(post.pub_date)
         nickname = event['nickname']
         startTime = event['startTime']
         endTime = event['endTime']
@@ -133,8 +134,8 @@ class PostDetailConsumer(WebsocketConsumer):
         comment = matching_models.Comment.objects.get(pk=id)
         username = comment.user.username
         db_date = comment.pub_date
-        time = timezone.localtime(db_date).strftime("%-I:%M")
-        am_or_pm = timezone.localtime(db_date).strftime("%p").lower()
+        time = str(db_date)
+        am_or_pm = str(db_date)
         am_or_pm = am_or_pm[0] + '.' + am_or_pm[1] + '.'
         date = time + ' ' + am_or_pm
         profile = matching_models.Profile.objects.get(user=comment.user)
@@ -231,8 +232,8 @@ class SessionDetailConsumer(WebsocketConsumer):
         comment = matching_models.Comment.objects.get(pk=id)
         username = comment.user.username
         db_date = comment.pub_date
-        time = timezone.localtime(db_date).strftime("%-I:%M")
-        am_or_pm = timezone.localtime(db_date).strftime("%p").lower()
+        time = str(db_date)
+        am_or_pm = str(db_date)
         am_or_pm = am_or_pm[0] + '.' + am_or_pm[1] + '.'
         date = time + ' ' + am_or_pm
         profile = matching_models.Profile.objects.get(user=comment.user)

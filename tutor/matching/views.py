@@ -22,6 +22,7 @@ from .models import Report
 from django.utils import timezone
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
+import datetime
 
 
 URL_LOGIN = "/matching"
@@ -214,7 +215,7 @@ def post_new(request):
             post = form.save(commit=False)
             user_obj = matching_models.User.objects.get(username=request.user.username)
             post.user = user_obj
-            post.pub_date = timezone.localtime()
+            post.pub_date = datetime.datetime.now()
             post.finding_match = True
             post.save()
 
@@ -311,7 +312,7 @@ def set_tutor(request, postpk, userpk):
 
     post.tutor = tutor
     post.finding_match = False
-    post.start_time = timezone.localtime()
+    post.start_time = datetime.datetime.now()
     post.save()
 
     start_tutoring_cmt = matching_models.Comment(user=tutor, post=post, pub_date=post.start_time, content="튜터링시작"+post.user.last_name+str(post.pub_date))
@@ -333,12 +334,17 @@ def send_message(request):
     if request.method == "GET":
         if request.GET['type'] == "session":
           session = matching_models.TutorSession.objects.get(pk = request.GET['postid'])
-          new_cmt = matching_models.Comment(user=request.user, tutorsession=session, pub_date=timezone.localtime(), content=request.GET['content'])
+          new_cmt = matching_models.Comment(user=request.user, tutorsession=session, pub_date=datetime.datetime.now(), content=request.GET['content'])
           new_cmt.save()
           return HttpResponse(new_cmt.id)
         else:
           post = matching_models.Post.objects.get(pk=request.GET['postid'])
           if post.finding_match or request.user == post.tutor or request.user == post.user:
+
+              new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=datetime.datetime.now(), content=request.GET['content'])
+              new_cmt.save()
+              return HttpResponse(new_cmt.id)
+
               content = request.GET['content']
               reply_to = request.GET.get('reply_to')
               reply_content = request.GET.get('reply_content')
@@ -355,6 +361,7 @@ def send_message(request):
 
               response['id'] = new_cmt.id
               return HttpResponse(json.dumps(response), content_type="application/json")
+
           else:
               messages.error(request, '해당 방은 튜터링이 시작되었습니다.')
               return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
@@ -456,7 +463,7 @@ def tutor_detail(request, pk):
     sessionlist = matching_models.TutorSession.objects.filter(tutor=tutor).order_by('-pub_date')
 
     ctx = {
-        'today' : timezone.localtime(),
+        'today' : datetime.datetime.now(),
         'tutor' : tutor,
         'postlist' : postlist,
         'sessionlist' : sessionlist,
@@ -473,7 +480,7 @@ def tutee_detail(request, pk):
     postlist = matching_models.Post.objects.filter(user=tutee)
 
     ctx = {
-        'today' : timezone.localtime(),
+        'today' : datetime.datetime.now(),
         'tutee' : tutee,
         'postlist' : postlist,
     }
@@ -490,7 +497,7 @@ def close_post(request, pk):
 # Tutor가 끝낼 때
 def fin_tutoring(request, pk):
     post = matching_models.Post.objects.get(pk=pk)
-    post.fin_time = timezone.localtime()
+    post.fin_time = datetime.datetime.now()
     post.save()
     return redirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
 
@@ -498,7 +505,7 @@ def fin_tutoring(request, pk):
 def cancel_tutoring(request, pk):
     post = matching_models.Post.objects.get(pk=pk)
 
-    cancel_tutoring_cmt = matching_models.Comment(user=post.tutor, post=post, pub_date=timezone.localtime(), content="튜터링취소"+post.user.last_name+str(post.pub_date))
+    cancel_tutoring_cmt = matching_models.Comment(user=post.tutor, post=post, pub_date=datetime.datetime.now(), content="튜터링취소"+post.user.last_name+str(post.pub_date))
     cancel_tutoring_cmt.save()
 
     post.tutor = None
@@ -607,7 +614,7 @@ def mypage_session(request):
         'sessions': sessions,
         'sessionPaginator': session_paginator,
         'paginatorRange': paginatorRange,
-        'today': timezone.localtime(),
+        'today': datetime.datetime.now(),
     }
 
     return render(request, 'matching/mypage_session.html', ctx)
@@ -671,7 +678,7 @@ def mainpage(request, showtype):
         post_exist = True
 
     user = matching_models.User.objects.get(pk=request.user.pk)
-    now = timezone.localtime()
+    now = datetime.datetime.now()
 
     ongoing_session = matching_models.TutorSession.objects.filter(tutor=user, start_time__lte=now).filter(fin_time__isnull=True)
     if ongoing_session.exists():
@@ -697,7 +704,7 @@ def mainpage(request, showtype):
                 return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
             user_obj = matching_models.User.objects.get(username=request.user.username)
             tutorsession.tutor = user_obj
-            tutorsession.pub_date = timezone.localtime()
+            tutorsession.pub_date = datetime.datetime.now()
             tutorsession.save()
 
             return redirect('matching:session_detail', pk=tutorsession.pk)
@@ -706,7 +713,7 @@ def mainpage(request, showtype):
             post = form.save(commit=False)
             user_obj = matching_models.User.objects.get(username=request.user.username)
             post.user = user_obj
-            post.pub_date = timezone.localtime()
+            post.pub_date = datetime.datetime.now()
             post.finding_match = True
             post.save()
 
@@ -825,7 +832,7 @@ def mainpage(request, showtype):
         'form': form,
         'tsform': tsform,
         'post_exist': post_exist,
-        'today' : timezone.localtime(),
+        'today' : datetime.datetime.now(),
     }
 
     # main.html에서 튜티도 진행중인 튜터링이 보이게 하기
@@ -878,7 +885,7 @@ def get_next_tutee(request, session, req_user):
         next_tutee = None
 
     if next_tutee:
-        next_tutee.start_time = timezone.localtime()
+        next_tutee.start_time = datetime.datetime.now()
         next_tutee.is_waiting = False
         next_tutee.save()
 
@@ -887,7 +894,7 @@ def get_next_tutee(request, session, req_user):
 def fin_current_tutee(request, session):
     try:
         current_tutee = matching_models.SessionLog.objects.get(tutor_session=session, is_waiting=False, start_time__isnull=False, fin_time__isnull=True)
-        current_tutee.fin_time = timezone.localtime()
+        current_tutee.fin_time = datetime.datetime.now()
         current_tutee.save()
     except:
         current_tutee = None
@@ -897,7 +904,7 @@ def fin_current_tutee(request, session):
 @login_required(login_url=URL_LOGIN)
 def session_detail(request, pk):
     ctx={
-        'today' : timezone.localtime(),
+        'today' : datetime.datetime.now(),
     }
 
     try:
@@ -953,7 +960,7 @@ def session_detail(request, pk):
 def end_session(request, pk):
     session = matching_models.TutorSession.objects.get(pk=pk)
     if request.user == session.tutor:
-        session.fin_time = timezone.localtime()
+        session.fin_time = datetime.datetime.now()
         session.save()
         current_tutoring = matching_models.SessionLog.objects.filter(tutor_session=session, start_time__isnull=False, fin_time__isnull=True).update(fin_time=session.fin_time)
     return redirect(reverse('matching:session_detail', kwargs={'pk':pk}))
@@ -1084,14 +1091,14 @@ def start_new_tutoring(request, pk):
     next_tutee = get_next_tutee(request, session, request.user)
     if next_tutee:
       url = "http://" + request.get_host() + reverse('matching:session_detail', args=[pk])
-      start_tutoring_cmt = matching_models.Comment(user=next_tutee.tutee, tutorsession=session, pub_date=timezone.localtime(), content="튜터링시작")
+      start_tutoring_cmt = matching_models.Comment(user=next_tutee.tutee, tutorsession=session, pub_date=datetime.datetime.now(), content="튜터링시작")
       start_tutoring_cmt.save()
       context = {'next_tutee_pk' : next_tutee.pk, 'next_tutee_url' : url}
 
 
     if current_tutee :
       current_tutee_url = "http://" + request.get_host() + reverse('matching:mainpage', kwargs={'showtype':'all'})
-      fin_tutoring_cmt = matching_models.Comment(user=current_tutee.tutee, tutorsession=session, pub_date=timezone.localtime(), content="튜터링종료")
+      fin_tutoring_cmt = matching_models.Comment(user=current_tutee.tutee, tutorsession=session, pub_date=datetime.datetime.now(), content="튜터링종료")
       fin_tutoring_cmt.save()
       context['current_tutee_pk'] = current_tutee.pk
       context['current_tutee_url'] = current_tutee_url

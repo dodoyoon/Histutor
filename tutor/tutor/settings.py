@@ -118,7 +118,8 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Seoul'
 USE_I18N = True
 USE_L10N = True
-USE_TZ = True
+#USE_TZ = True
+USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
@@ -136,7 +137,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 
-SITE_ID = 11
+SITE_ID = 12
 ACCOUNT_LOGOUT_REDIRECT_URL ="/matching"
 LOGIN_REDIRECT_URL = 'matching:user_check'
 ACCOUNT_LOGOUT_ON_GET = True
