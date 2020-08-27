@@ -20,16 +20,6 @@
   }
 </script>
 
-{% if my_report or user.is_staff %}
-{% if my_report_pk %}
-<button class="mybutton" type="submit" onclick="location.href='{% url "matching:report_detail" my_report_pk %}'">보고서 보기</button>
-{% endif %}
-{% endif %}
-
-{% if user.is_staff and session.fin_time %}
-<button class="mybutton" type="submit" onclick="location.href='{% url "matching:session_report_list" session.pk  %}'">보고서 목록</button>
-{% endif %}
-
 <div id="buttonDiv">
   <table class="table">
       <tbody>
@@ -120,74 +110,32 @@
     </div>
   </div>
   {% endif %}
+
+  {% if not session.fin_time %}
   <div class="update_tutee" style="margin:2% 0;">
     <button id="start_new_tutoring" class="mybutton" type="submit">새 튜터링 시작</button>
   </div>
+  {% endif %}
+
+  {% if not my_report %}
   <div style="margin:2% 0;">
     <form action="{% url 'matching:session_report_create' session.pk %}" method="POST">
       {% csrf_token %}
     <button class="mybutton" type="submit">보고서쓰기</button>
     </form>
   </div>
+  {% endif %}
 
-  <!-- 
-    {% if report_exist %}
-    <button class="mybutton" type="button"  data-toggle="modal" data-target="#reportModal" style="float:left">보고서 쓰기</button>
-    {% endif %}
+  {% if my_report or user.is_staff %}
+  {% if my_report_pk %}
+  <button class="mybutton" type="submit" onclick="location.href='{% url "matching:report_detail" my_report_pk %}'">보고서 보기</button>
+  {% endif %}
+  {% endif %}
 
-    {% if post.tutor is null and user.profile.is_tutor and post.finding_match %}
-    <button class="mybutton" type="submit" onclick="location.href='{% url "matching:set_tutor" postpk=post.pk userpk=user.pk  %}'">튜터링 시작</button>
-    {% endif %}
-    {% if post.start_time and not post.fin_time and user == post.tutor %}
-    <button class="mybutton" type="submit"  data-toggle="modal" data-target="#cancelTutoringModal">튜터링 취소</button>
-    <button class="mybutton" type="submit"  data-toggle="modal" data-target="#finishTutoringModal">튜터링 완료</button>
+  {% if user.is_staff and session.fin_time %}
+  <button class="mybutton" type="submit" onclick="location.href='{% url "matching:session_report_list" session.pk  %}'">보고서 목록</button>
+  {% endif %}
 
-    <div class="modal fade" id="cancelTutoringModal" role="dialog">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title">튜터링 취소</h4>
-          </div>
-          <div class="modal-body">
-            <p>정말로 진행중인 튜터링을 취소하시겠습니까?</p>
-            <div class="row" style="float: right;">
-                <div class="col-12-xs text-center" style="margin-right: 1em;">
-                    <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" type="button" class="close" data-dismiss="modal">No</button>
-                    <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" onclick="location.href='{% url "matching:cancel_tutoring" post.pk %}'">Yes</button>
-                </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-
-    <div class="modal fade" id="finishTutoringModal" role="dialog">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title">튜터링 완료</h4>
-          </div>
-          <div class="modal-body">
-            <p>튜터링을 완료하시겠습니까?</p>
-            <div class="row" style="float: right;">
-                <div class="col-12-xs text-center" style="margin-right: 1em;">
-                    <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" type="button" class="close" data-dismiss="modal">No</button>
-                    <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" onclick="location.href='{% url "matching:fin_tutoring" post.pk %}'">Yes</button>
-                </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-    {% endif %}
-
-    {% if post.report %}
-    {% if user == post.user or user.is_staff %}
-    <button class="mybutton" type="submit" onclick="location.href='{% url "matching:report_detail" post.report.pk %}'">보고서 보기</button>
-    {% endif %}
-    {% endif %}-->
 </div>
 
 
