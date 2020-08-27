@@ -201,7 +201,7 @@ class SessionDetailConsumer(WebsocketConsumer):
                 {
                     'type': 'get_next_tutee',
                     'pk': next_tutee_pk,
-                    'next_tutee_url': next_tutee_url
+                    'next_tutee_url': next_tutee_url,
                 }
             )
           elif type2 == "letout_current_tutee":
@@ -259,6 +259,7 @@ class SessionDetailConsumer(WebsocketConsumer):
       self.send(text_data=json.dumps({
         'type': 'get_next_tutee',
         'next_tutee_pk': log.tutee.pk,
+        'next_tutee_nickname': log.tutee.profile.nickname,
         'session_pk': log.tutor_session.pk,
         'next_tutee_url': event['next_tutee_url'],
       }))
@@ -270,6 +271,7 @@ class SessionDetailConsumer(WebsocketConsumer):
       self.send(text_data=json.dumps({
         'type': 'letout_current_tutee',
         'current_tutee_pk': log.tutee.pk,
+        'current_tutee_nickname': log.tutee.profile.nickname,
         'session_pk': log.tutor_session.pk,
         'current_tutee_url': event['current_tutee_url'],
       }))
