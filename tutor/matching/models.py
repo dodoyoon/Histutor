@@ -58,7 +58,7 @@ class Post(models.Model):
       return self.get_topic_display() + ' ' + self.title
 
 SESSION_TYPE = (
-      ('online', '온라인'), ('offline', '오프라인'), ('onoff','온/오프라인'),
+      ('on', '온라인'), ('off', '오프라인'), ('onoff','온/오프라인'),
 )
 class TutorSession(models.Model):
    tutor = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='ses')
@@ -86,6 +86,8 @@ class Comment(models.Model):
    tutorsession = models.ForeignKey(TutorSession, on_delete=models.CASCADE, null=True)
    pub_date = models.DateTimeField() #TODO auto_now_add=True 로 바꾸기
    content = models.TextField()
+   reply_to = models.CharField(null=True, blank=True, max_length=100)
+   reply_content = models.CharField(null=True, blank=True, max_length=500)
 
 
 

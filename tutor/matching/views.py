@@ -271,8 +271,6 @@ def post_detail(request, pk):
         ctx['report_form'] = report_form
         ctx['report_post_pk'] = post.pk
         ctx['report_exist'] = True
-    else:
-        print("else")
 
     comment_list = matching_models.Comment.objects.filter(post=post).order_by('pub_date')
 
@@ -342,9 +340,28 @@ def send_message(request):
         else:
           post = matching_models.Post.objects.get(pk=request.GET['postid'])
           if post.finding_match or request.user == post.tutor or request.user == post.user:
+
               new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=datetime.datetime.now(), content=request.GET['content'])
               new_cmt.save()
               return HttpResponse(new_cmt.id)
+
+              content = request.GET['content']
+              reply_to = request.GET.get('reply_to')
+              reply_content = request.GET.get('reply_content')
+
+              response = {}
+              if reply_to and reply_content:
+                  new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=timezone.localtime(), content=content, reply_to=reply_to, reply_content=reply_content)
+                  response['reply_to'] = reply_to
+                  response['reply_content'] = reply_content
+                  new_cmt.save()
+              else:
+                  new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=timezone.localtime(), content=content)
+                  new_cmt.save()
+
+              response['id'] = new_cmt.id
+              return HttpResponse(json.dumps(response), content_type="application/json")
+
           else:
               messages.error(request, '해당 방은 튜터링이 시작되었습니다.')
               return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
@@ -764,7 +781,7 @@ def mainpage(request, showtype):
         recruiting = recruiting.filter(title__icontains=search_word)
         onprocess = onprocess.filter(title__icontains=search_word)
         recruited = recruited.filter(title__icontains=search_word)
-    
+
     if showtype == 'session':
         posts = list(chain(tutoring_on,tutoring_off))
     elif showtype == 'tutoring':
@@ -782,6 +799,8 @@ def mainpage(request, showtype):
         posts = post_paginator.page(1)
     except EmptyPage:
         posts = post_paginator.page(post_paginator.num_pages)
+
+
     neighbors = 10
     if post_paginator.num_pages > 2*neighbors:
         start_index = max(1, int(current_post_page)-neighbors)
@@ -880,7 +899,7 @@ def fin_current_tutee(request, session):
     except:
         current_tutee = None
     return current_tutee
-    
+
 
 @login_required(login_url=URL_LOGIN)
 def session_detail(request, pk):
@@ -939,11 +958,11 @@ def session_detail(request, pk):
 
 @login_required(login_url=URL_LOGIN)
 def end_session(request, pk):
-    print("End Session : ", request)
     session = matching_models.TutorSession.objects.get(pk=pk)
     if request.user == session.tutor:
         session.fin_time = datetime.datetime.now()
         session.save()
+        current_tutoring = matching_models.SessionLog.objects.filter(tutor_session=session, start_time__isnull=False, fin_time__isnull=True).update(fin_time=session.fin_time)
     return redirect(reverse('matching:session_detail', kwargs={'pk':pk}))
 
 
@@ -955,9 +974,12 @@ def waitingroom(request, pk):
     try:
         session = get_object_or_404(matching_models.TutorSession, pk=pk)
     except:
-        messages.error(request, '해당 튜터세션은 존재하지 않습니다. waitingroom')
+        messages.error(request, '해당 튜터세션은 존재하지 않습니다.')
         return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
-    
+    if session.fin_time :
+        messages.error(request, '종료된 튜터세션에 참여하실 수 없습니다.')
+        return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
+
     if user == session.tutor:
         return redirect('matching:session_detail', pk=pk)
 
@@ -1080,5 +1102,5 @@ def start_new_tutoring(request, pk):
       fin_tutoring_cmt.save()
       context['current_tutee_pk'] = current_tutee.pk
       context['current_tutee_url'] = current_tutee_url
-    
+
     return HttpResponse(json.dumps(context), content_type="application/json")
