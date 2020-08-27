@@ -55,6 +55,7 @@
 }#session_create input[type="text"]{
     border:1px solid;
     text-align:center;
+    border:none;
 }#session_create li{
     margin-top:3%;
 }
