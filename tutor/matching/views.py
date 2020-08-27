@@ -13,7 +13,7 @@ from itertools import chain
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-from matching.models import TOPIC_CHOICES
+from matching.models import TOPIC_CHOICES, assign_pk
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.views.generic.edit import UpdateView
@@ -22,6 +22,7 @@ from .models import Report
 from django.utils import timezone
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
+
 
 URL_LOGIN = "/matching"
 # DEFAULT PAGE
@@ -684,6 +685,7 @@ def mainpage(request):
                 messages.error(request, '튜터링 종료 시간이 시작 시간보다 후여야 합니다.')
                 return HttpResponseRedirect(reverse('matching:mainpage'))
             user_obj = matching_models.User.objects.get(username=request.user.username)
+            tutorsession.id = assign_pk()
             tutorsession.tutor = user_obj
             tutorsession.pub_date = timezone.localtime()
             tutorsession.save()
@@ -693,6 +695,7 @@ def mainpage(request):
         elif form.is_valid() and not check_post_exist:
             post = form.save(commit=False)
             user_obj = matching_models.User.objects.get(username=request.user.username)
+            post.id = assign_pk()
             post.user = user_obj
             post.pub_date = timezone.localtime()
             post.finding_match = True
@@ -779,9 +782,6 @@ def mainpage(request):
         posts = post_paginator.page(1)
     except EmptyPage:
         posts = post_paginator.page(post_paginator.num_pages)
-
-
-    print(">>> posts len: " + str(len(posts)))
     neighbors = 10
     if post_paginator.num_pages > 2*neighbors:
         start_index = max(1, int(current_post_page)-neighbors)
@@ -932,6 +932,7 @@ def session_detail(request, pk):
 
 @login_required(login_url=URL_LOGIN)
 def end_session(request, pk):
+    print("End Session : ", request)
     session = matching_models.TutorSession.objects.get(pk=pk)
     if request.user == session.tutor:
         session.fin_time = timezone.localtime()
