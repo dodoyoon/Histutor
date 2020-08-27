@@ -163,8 +163,15 @@
         <div class="incoming_msg">
           <div class="received_msg">
             <p class="received_name">{{comment.user.profile.nickname}}</p>
-            <div id="comment{{ forloop.counter0 }}" class="received_with_msg msg_content">
-              {{ comment.content }}
+            <div id="comment{{ forloop.counter0 }}" class="received_with_msg msg_content" data-pk="{{comment.pk}}" data-username="{{comment.user.profile.nickname}}">
+                {% if comment.reply_to and comment.reply_content %}
+                    <div class="reply_style">
+                        {{ comment.reply_to }}에게 답장
+                        {{ comment.reply_content }}
+                    </div>
+                    <hr>
+                {% endif %}
+                {{ comment.content }}
             </div>
             <span class="received_time_date">{{ comment.pub_date|date:"P"}} </span>
           </div>
@@ -179,7 +186,16 @@
           <div class="outgoing_msg">
             <div class="sent_msg">
               <span class="sent_time_date"> {{ comment.pub_date|date:"P"}}</span>
-              <div id="comment{{ forloop.counter0 }}" class="msg_content msg_box">{{ comment.content }}</div>
+              <div id="comment{{ forloop.counter0 }}" class="msg_content msg_box" data-pk="{{comment.pk}}" data-username="{{comment.user.profile.nickname}}">
+                  {% if comment.reply_to and comment.reply_content %}
+                      <div class="reply_style">
+                          {{ comment.reply_to }}에게 답장
+                          {{ comment.reply_content }}
+                      </div>
+                      <hr>
+                  {% endif %}
+                  {{ comment.content }}
+              </div>
             </div>
           </div>
         {% endif %}
@@ -188,7 +204,7 @@
 
     </div>
     <div class="type_msg">
-      <div class="input_msg_write">
+      <div class="input_msg_write" id="input_msg_write">
         {% if post.finding_match or user == post.user or user == post.tutor %}
         <input type="text" id="write_msg" class="write_msg" placeholder="Type a message" />
         <button id="msg_send_btn" class="msg_send_btn" type="button"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
@@ -201,6 +217,7 @@
     </div>
   </div>
 </div>
+
 
 {% if report_exist %}
       <!-- Report Modal -->
@@ -245,12 +262,14 @@
     })
   }
 
-  window.onload = function(){
-    let msgContents = document.querySelectorAll(".msg_content");
-    msgContents.forEach(function(msg){
-      document.getElementById(`${msg.id}`).innerHTML = makeUrl(msg.textContent);
-    });
-  }
+  // !!!! 종은아 여기 수정 !!!!
+
+  // window.onload = function(){
+  //   let msgContents = document.querySelectorAll(".msg_content");
+  //   msgContents.forEach(function(msg){
+  //     document.getElementById(`${msg.id}`).innerHTML = makeUrl(msg.textContent);
+  //   });
+  // }
 
   document.getElementById("msg_send_btn").addEventListener("click", function(event){
     var msg = document.getElementById("write_msg");
@@ -274,67 +293,147 @@
   const websocket = new WebSocket('ws://' + window.location.host + '/ws/post/' + "{{post.pk}}" + '/');
 
   websocket.onmessage = function(e) {
-  const data = JSON.parse(e.data);
-  var req_username = "{{request.user.username}}";
+      const data = JSON.parse(e.data);
+      var req_username = "{{request.user.username}}";
+      let reply_to = data.reply_to;
+      let reply_content = data.reply_content;
 
-  // Set table structure
-  /*var storage = document.getElementById("msg_history");
-  alert(storage.scrollHeight);
-  storage.scrollTop = storage.scrollHeight;*/
-  var at_bottom = false;
-  if(storage.scrollTop == storage.scrollHeight - storage.offsetHeight){
-    at_bottom = true;
-  }
-  if(data['type'] == "star_comment"){
-    var msg = document.createElement("div");
-    msg.className = "start_tutoring";
-    msg.innerHTML = "✨&nbsp;&nbsp;튜터링 시작&nbsp;&nbsp;✨";
-    storage.append(msg);
-  }
-  else if(data['username']==req_username){
-    //console.log("outgoing");
+      if(reply_to != "None" && reply_content != "None"){
+          reply_to += '\n';
+          reply_content += '\n';
+      }
+      // Set table structure
+      /*var storage = document.getElementById("msg_history");
+      alert(storage.scrollHeight);
+      storage.scrollTop = storage.scrollHeight;*/
+      var at_bottom = false;
+      if(storage.scrollTop == storage.scrollHeight - storage.offsetHeight){
+        at_bottom = true;
+      }
+      if(data['type'] == "star_comment"){
+        var msg = document.createElement("div");
+        msg.className = "start_tutoring";
+        msg.innerHTML = "✨&nbsp;&nbsp;튜터링 시작&nbsp;&nbsp;✨";
+        storage.append(msg);
+      }
+      else if(data['username']==req_username){
+        var msg = document.createElement("div");
+        msg.className = "outgoing_msg";
+        var inner_msg = document.createElement("div");
+        inner_msg.className = "sent_msg";
+        var msg_time = document.createElement("span");
+        msg_time.className = "sent_time_date";
+        msg_time.innerHTML += data['date'];
+        var msg_content = document.createElement("div");
+        msg_content.className = "msg_box";
+        msg_content.className += " msg_content";
+        msg_content.dataset.username = data.nickname;
+        msg_content.dataset.pk = data.id;
+        if(reply_to != "None" && reply_content != "None"){
+            let div = document.createElement("div");
+            let p_to = document.createElement("p") ;
+            let p_content = document.createElement("span") ;
+            div.class = "reply_style" ;
+            div.innerText = reply_to + "에게 답장";
+            div.innerText += reply_content;
+            div.appendChild(document.createElement("hr"));
+            msg_content.appendChild(div);
+        }
+        msg_content.innerHTML += makeUrl(data['content']);
+        inner_msg.append(msg_time);
+        inner_msg.append(msg_content);
+        msg.append(inner_msg);
+        storage.append(msg);
 
-    var msg = document.createElement("div");
-    msg.className = "outgoing_msg";
-    var inner_msg = document.createElement("div");
-    inner_msg.className = "sent_msg";
-    var msg_time = document.createElement("span");
-    msg_time.className = "sent_time_date";
-    msg_time.innerHTML += data['date'];
-    var msg_content = document.createElement("div");
-    msg_content.className = "msg_box";
-    msg_content.innerHTML += makeUrl(data['content']);
-    inner_msg.append(msg_time);
-    inner_msg.append(msg_content);
-    msg.append(inner_msg);
-    storage.append(msg);
+      }else{
+        var incoming_msg = document.createElement("div");
+        incoming_msg.className = "incoming_msg";
+        var received_msg = document.createElement("div");
+        received_msg.className = "received_msg";
+        var received_name = document.createElement("p");
+        received_name.className = "received_name";
+        received_name.innerHTML += data['nickname'];
+        var received_with_msg = document.createElement("div");
+        received_with_msg.className = "received_with_msg";
+        received_with_msg.className += " msg_content";
+        received_with_msg.dataset.username = data.nickname;
+        received_with_msg.dataset.pk = data.id;
+        if(reply_to != "None" && reply_content != "None"){
+            let div = document.createElement("div");
+            div.class = "reply_style" ;
+            div.innerText = reply_to + "에게 답장";
+            div.innerText += reply_content;
+            div.appendChild(document.createElement("hr"));
+            received_with_msg.appendChild(div);
+        }
+        received_with_msg.innerHTML += makeUrl(data['content']);
+        var received_time_date = document.createElement("span");
+        received_time_date.className = "received_time_date";
+        received_time_date.innerHTML += data['date'];
+        received_msg.append(received_name);
+        received_msg.append(received_with_msg);
+        received_msg.append(received_time_date);
+        incoming_msg.append(received_msg);
+        storage.append(incoming_msg);
+      }
 
-  }else{
-    //console.log("incoming");
-    var incoming_msg = document.createElement("div");
-    incoming_msg.className = "incoming_msg";
-    var received_msg = document.createElement("div");
-    received_msg.className = "received_msg";
-    var received_name = document.createElement("p");
-    received_name.className = "received_name";
-    received_name.innerHTML += data['nickname'];
-    var received_with_msg = document.createElement("div");
-    received_with_msg.className = "received_with_msg";
-    received_with_msg.innerHTML += makeUrl(data['content']);
-    var received_time_date = document.createElement("span");
-    received_time_date.className = "received_time_date";
-    received_time_date.innerHTML += data['date'];
-    received_msg.append(received_name);
-    received_msg.append(received_with_msg);
-    received_msg.append(received_time_date);
-    incoming_msg.append(received_msg);
-    storage.append(incoming_msg);
-  }
+      if(at_bottom){
+        storage.scrollTop = storage.scrollHeight;
+      }
 
-  if(at_bottom){
-    storage.scrollTop = storage.scrollHeight;
-  }
 
+      // 밑의 로직과 같지만 이름이 중복이라서 new 붙여줌
+      let new_msg_content = document.getElementsByClassName("msg_content");
+      let msg_write_box = document.getElementById("input_msg_write");
+      let msg_write_box_child_num = msg_write_box.childNodes.length;
+
+      // DOM의 변화를 추적하는 Observer
+      let target = document.getElementById("input_msg_write");
+      let observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+              msg_write_box_child_num = msg_write_box.childNodes.length;
+          });
+      });
+      let config = { childList: true };
+      observer.observe(target, config);
+      // observer.disconnect();
+
+      for (let i = 0; i < new_msg_content.length; i++) {
+          new_msg_content[i].addEventListener("dblclick", function() {
+              if(msg_write_box_child_num == 5){
+                  const pk = new_msg_content[i].dataset.pk; // 나중에 email noti 할거면 이걸로 ajax 써서 하면 될듯
+                  const username = new_msg_content[i].dataset.username;
+                  const content = new_msg_content[i].lastChild.textContent;
+
+                  let div = document.createElement("div"); // 선택된 comment의 정보를 담고있는 div
+                  div.id = "reply_info" ;
+                  let to_tag = document.createElement("p"); // who 정보를 담고있는 paragraph
+                  let content_tag = document.createElement("p"); // what content 정보를 담고 있는 paragraph
+                  let to_text = document.createTextNode(username + "에게 답장");
+                  let content_text = document.createTextNode(content);
+                  const hr = document.createElement("hr");
+                  let cancel_btn = document.createElement("button");
+                  cancel_btn.id = "cancel_btn";
+                  cancel_btn.type = "button" ;
+                  cancel_btn.innerText = "Cancel This";
+
+                  // 선택된 comment의 정보를 담고있는 div를 만들어보자!
+                  to_tag.appendChild(to_text) ;
+                  content_tag.appendChild(content_text) ;
+                  div.appendChild(hr) ;
+                  div.insertBefore(content_tag, div.childNodes[0]) ;
+                  div.insertBefore(to_tag, div.childNodes[0]) ;
+                  div.insertBefore(cancel_btn, div.childNodes[2]);
+                  // 채팅 입력하는 div에 같이 넣어주기
+                  msg_write_box.insertBefore(div, msg_write_box.childNodes[0]) ;
+
+                  let btn = document.getElementById("cancel_btn");
+                  btn.addEventListener("click", function() {
+                      msg_write_box.removeChild(msg_write_box.firstChild)
+                  });
+              }
+          });
+      }
 
   };
 
@@ -345,21 +444,53 @@
   function sendMessage(){
     event.preventDefault();
 
+    let msg_write_box = document.getElementById("input_msg_write");
+    let msg_write_box_child_num = msg_write_box.childNodes.length;
+
+    let reply_to = "";
+    let reply_content = "";
+
+    reply = document.getElementById("reply_info");
+
+    let data_obj = {
+        postid: {{post.id}},
+        content: $("#write_msg").val(),
+        type: "post"
+    } ;
+
+    if(reply){
+        let is_first = true ;
+        for(let i = 0; i < reply.childNodes.length; i++){
+            let child = reply.childNodes[i] ;
+            if(child.nodeName == "P"){
+                if(is_first){
+                    reply_to = child.innerText;
+                    is_first = false ;
+                }else{
+                    reply_content = child.innerText ;
+                }
+            }
+        }
+        data_obj["reply_to"] = reply_to;
+        data_obj["reply_content"] = reply_content;
+    }
+
     $.ajax({
        url: "{% url 'matching:send_message' %}",
        type: "GET",
-       data:{
-         postid: {{post.id}},
-         content: $("#write_msg").val(),
-         type: "post",
-       },
+       data: data_obj,
        success: function(response){
-         //console.log(data)
-          //alert("SUCCESS\n" + response);
-
-          websocket.send(JSON.stringify({
-             'postId': response,
-          }));
+           let data = {
+               'postId': response.id
+           };
+           if(response.reply_to && response.reply_content){
+               data['reply_to'] = response.reply_to;
+               data['reply_content'] = response.reply_content;
+           }else{
+               data['reply_to'] = "None";
+               data['reply_content'] = "None";
+           }
+          websocket.send(JSON.stringify(data));
           message.value = "";
        },
        error: function(response){
@@ -368,6 +499,66 @@
     });
 
   }
-</script>
 
+  $( document ).ready(function() {
+      let msg_content = document.getElementsByClassName("msg_content");
+      let msg_write_box = document.getElementById("input_msg_write");
+      let msg_write_box_child_num = msg_write_box.childNodes.length;
+
+      // DOM의 변화를 추적하는 Observer
+      let target = document.getElementById("input_msg_write");
+      let observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+              msg_write_box_child_num = msg_write_box.childNodes.length;
+          });
+      });
+      let config = { childList: true };
+      observer.observe(target, config);
+      // observer.disconnect();
+
+      for (let i = 0; i < msg_content.length; i++) {
+          msg_content[i].addEventListener("dblclick", function() {
+              if(msg_write_box_child_num == 5){
+                  const pk = msg_content[i].dataset.pk; // 나중에 email noti 할거면 이걸로 ajax 써서 하면 될듯
+                  const username = msg_content[i].dataset.username;
+                  const content = msg_content[i].lastChild.textContent;
+
+                  let div = document.createElement("div"); // 선택된 comment의 정보를 담고있는 div
+                  div.id = "reply_info" ;
+                  let to_tag = document.createElement("p"); // who 정보를 담고있는 paragraph
+                  let content_tag = document.createElement("p"); // what content 정보를 담고 있는 paragraph
+                  let to_text = document.createTextNode(username);
+                  let content_text = document.createTextNode(content);
+                  const hr = document.createElement("hr");
+                  let cancel_btn = document.createElement("button");
+                  cancel_btn.id = "cancel_btn";
+                  cancel_btn.type = "button" ;
+                  cancel_btn.innerText = "Cancel This";
+
+                  // 선택된 comment의 정보를 담고있는 div를 만들어보자!
+                  to_tag.appendChild(to_text) ;
+                  content_tag.appendChild(content_text) ;
+                  div.appendChild(hr) ;
+                  div.insertBefore(content_tag, div.childNodes[0]) ;
+                  div.insertBefore(to_tag, div.childNodes[0]) ;
+                  div.insertBefore(cancel_btn, div.childNodes[2]);
+                  // 채팅 입력하는 div에 같이 넣어주기
+                  msg_write_box.insertBefore(div, msg_write_box.childNodes[0]) ;
+
+                  let btn = document.getElementById("cancel_btn");
+                  btn.addEventListener("click", function() {
+                      msg_write_box.removeChild(msg_write_box.firstChild)
+                  });
+              }
+          });
+      }
+
+      let send_btn = document.getElementById("msg_send_btn");
+      send_btn.addEventListener("click", function() {
+          if(msg_write_box_child_num != 5){
+              msg_write_box.removeChild(msg_write_box.firstChild)
+          }
+      });
+  });
+</script>
 {% endblock %}

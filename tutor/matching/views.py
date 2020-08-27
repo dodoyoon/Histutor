@@ -219,8 +219,6 @@ def post_detail(request, pk):
         ctx['report_form'] = report_form
         ctx['report_post_pk'] = post.pk
         ctx['report_exist'] = True
-    else:
-        print("else")
 
     comment_list = matching_models.Comment.objects.filter(post=post).order_by('pub_date')
 
@@ -290,9 +288,22 @@ def send_message(request):
         else:
           post = matching_models.Post.objects.get(pk=request.GET['postid'])
           if post.finding_match or request.user == post.tutor or request.user == post.user:
-              new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=timezone.localtime(), content=request.GET['content'])
-              new_cmt.save()
-              return HttpResponse(new_cmt.id)
+              content = request.GET['content']
+              reply_to = request.GET.get('reply_to')
+              reply_content = request.GET.get('reply_content')
+
+              response = {}
+              if reply_to and reply_content:
+                  new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=timezone.localtime(), content=content, reply_to=reply_to, reply_content=reply_content)
+                  response['reply_to'] = reply_to
+                  response['reply_content'] = reply_content
+                  new_cmt.save()
+              else:
+                  new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=timezone.localtime(), content=content)
+                  new_cmt.save()
+
+              response['id'] = new_cmt.id
+              return HttpResponse(json.dumps(response), content_type="application/json")
           else:
               messages.error(request, '해당 방은 튜터링이 시작되었습니다.')
               return HttpResponseRedirect(reverse('matching:mainpage'))
@@ -725,7 +736,6 @@ def mainpage(request):
         posts = post_paginator.page(post_paginator.num_pages)
 
 
-    print(">>> posts len: " + str(len(posts)))
     neighbors = 10
     if post_paginator.num_pages > 2*neighbors:
         start_index = max(1, int(current_post_page)-neighbors)

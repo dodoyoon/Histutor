@@ -111,14 +111,20 @@ class PostDetailConsumer(WebsocketConsumer):
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
         post_id = text_data_json['postId']
+        reply_to = text_data_json['reply_to']
+        reply_content = text_data_json['reply_content']
+
+        data={
+            'type': 'new_comment',
+            'id': post_id,
+            'reply_to': reply_to,
+            'reply_content': reply_content,
+        }
+
 
         # Send message to room group
         async_to_sync(self.channel_layer.group_send)(
-            self.group_name,
-            {
-                'type': 'new_comment',
-                'id': post_id,
-            }
+            self.group_name, data
         )
 
     # Receive message from room group
@@ -141,6 +147,8 @@ class PostDetailConsumer(WebsocketConsumer):
             'username': username,
             'date': date,
             'nickname': profile.nickname,
+            'reply_to': event['reply_to'],
+            'reply_content': event['reply_content'],
         }))
 
     # Receive message from room group
@@ -173,7 +181,7 @@ class SessionWaitingConsumer(WebsocketConsumer):
       self.group_name,
       self.channel_name
     )
-  
+
   def receive(self, text_data):
     text_data_json = json.loads(text_data)
     log_pk = text_data_json['pk']
@@ -185,7 +193,7 @@ class SessionWaitingConsumer(WebsocketConsumer):
         'pk': log_pk,
       }
     )
-  
+
   def get_next_tutee(self, event):
     pk = event['pk']
     log = matching_models.SessionLog.objects.get(pk = pk)

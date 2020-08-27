@@ -85,6 +85,8 @@ class Comment(models.Model):
    tutorsession = models.ForeignKey(TutorSession, on_delete=models.CASCADE, null=True)
    pub_date = models.DateTimeField() #TODO auto_now_add=True 로 바꾸기
    content = models.TextField()
+   reply_to = models.CharField(null=True, blank=True, max_length=100)
+   reply_content = models.CharField(null=True, blank=True, max_length=500)
 
    def __str__(self):
       return self.post.title + '    '+self.user.profile.nickname + '    ' + str(self.pub_date)
