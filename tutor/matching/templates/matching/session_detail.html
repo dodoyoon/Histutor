@@ -20,12 +20,6 @@
   }
 </script>
 
-<div class="update_tutee">
-  <form action="{% url 'matching:session_detail' session.pk %}" method="POST">
-    {% csrf_token %}
-    <button class="mybutton" type="submit">새로운 튜터링 시작</button>
-  </form>
-</div>
 <div id="buttonDiv">
   <table class="table">
       <tbody>
@@ -92,8 +86,8 @@
         {% endif %}
       </tbody>
   </table>
-
-  {% if session.tutor and not session.fin_time %}
+  {% if session.tutor == user %}
+  {% if not session.fin_time %}
   <button class="mybutton" type="submit"  data-toggle="modal" data-target="#endSession">튜터 세션 종료</button>
 
   <div class="modal fade" id="endSession" role="dialog">
@@ -117,64 +111,30 @@
   </div>
   {% endif %}
 
-  <!-- 
-    {% if report_exist %}
-    <button class="mybutton" type="button"  data-toggle="modal" data-target="#reportModal" style="float:left">보고서 쓰기</button>
-    {% endif %}
+  {% if not session.fin_time %}
+  <div class="update_tutee" style="margin:2% 0;">
+    <button id="start_new_tutoring" class="mybutton" type="submit">새 튜터링 시작</button>
+  </div>
+  {% endif %}
 
-    {% if post.tutor is null and user.profile.is_tutor and post.finding_match %}
-    <button class="mybutton" type="submit" onclick="location.href='{% url "matching:set_tutor" postpk=post.pk userpk=user.pk  %}'">튜터링 시작</button>
-    {% endif %}
-    {% if post.start_time and not post.fin_time and user == post.tutor %}
-    <button class="mybutton" type="submit"  data-toggle="modal" data-target="#cancelTutoringModal">튜터링 취소</button>
-    <button class="mybutton" type="submit"  data-toggle="modal" data-target="#finishTutoringModal">튜터링 완료</button>
+  <div style="margin:2% 0;">
+    <form action="{% url 'matching:session_report_create' session.pk %}" method="POST">
+      {% csrf_token %}
+    <button class="mybutton" type="submit">보고서쓰기</button>
+    </form>
+  </div>
 
-    <div class="modal fade" id="cancelTutoringModal" role="dialog">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title">튜터링 취소</h4>
-          </div>
-          <div class="modal-body">
-            <p>정말로 진행중인 튜터링을 취소하시겠습니까?</p>
-            <div class="row" style="float: right;">
-                <div class="col-12-xs text-center" style="margin-right: 1em;">
-                    <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" type="button" class="close" data-dismiss="modal">No</button>
-                    <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" onclick="location.href='{% url "matching:cancel_tutoring" post.pk %}'">Yes</button>
-                </div>
-            </div>
-          </div>
+  {% if my_report or user.is_staff %}
+  {% if my_report_pk %}
+  <button class="mybutton" type="submit" onclick="location.href='{% url "matching:report_detail" my_report_pk %}'">보고서 보기</button>
+  {% endif %}
+  {% endif %}
 
-        </div>
-      </div>
-    </div>
+  {% if user.is_staff and session.fin_time %}
+  <button class="mybutton" type="submit" onclick="location.href='{% url "matching:session_report_list" session.pk  %}'">보고서 목록</button>
+  {% endif %}
+  {% endif %}
 
-    <div class="modal fade" id="finishTutoringModal" role="dialog">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title">튜터링 완료</h4>
-          </div>
-          <div class="modal-body">
-            <p>튜터링을 완료하시겠습니까?</p>
-            <div class="row" style="float: right;">
-                <div class="col-12-xs text-center" style="margin-right: 1em;">
-                    <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" type="button" class="close" data-dismiss="modal">No</button>
-                    <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" onclick="location.href='{% url "matching:fin_tutoring" post.pk %}'">Yes</button>
-                </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-    {% endif %}
-
-    {% if post.report %}
-    {% if user == post.user or user.is_staff %}
-    <button class="mybutton" type="submit" onclick="location.href='{% url "matching:report_detail" post.report.pk %}'">보고서 보기</button>
-    {% endif %}
-    {% endif %}-->
 </div>
 
 
@@ -190,11 +150,11 @@
       {% for comment in comment_list %}
         {% if comment.content == start_msg %}
         <div class="start_tutoring">
-          &nbsp;&nbsp;튜터링 시작&nbsp;&nbsp;
+          ✨&nbsp;&nbsp;튜터링 시작 - {{comment.user.profile.nickname}}&nbsp;&nbsp;✨
         </div>
-        {% elif comment.content == cancel_msg %}
+        {% elif comment.content == fin_msg %}
         <div class="cancel_tutoring">
-          &nbsp;&nbsp;튜터링 취소&nbsp;&nbsp;
+          &nbsp;&nbsp;튜터링 종료 - {{comment.user.profile.nickname}}&nbsp;&nbsp;
         </div>
         {% elif comment.user != user %}
         <div class="date">
@@ -311,6 +271,7 @@
   websocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
     var req_username = "{{request.user.username}}";
+    let current_tutee_pk = "{{request.user.pk}}";
 
     // Set table structure
     /*var storage = document.getElementById("msg_history");
@@ -320,50 +281,60 @@
     if(storage.scrollTop == storage.scrollHeight - storage.offsetHeight){
       at_bottom = true;
     }
-    if(data['type'] == "star_comment"){
+    if (data['type'] == "new_comment"){
+      if(data['username']==req_username){
+        //console.log("outgoing");
+
+        var msg = document.createElement("div");
+        msg.className = "outgoing_msg";
+        var inner_msg = document.createElement("div");
+        inner_msg.className = "sent_msg";
+        var msg_time = document.createElement("span");
+        msg_time.className = "sent_time_date";
+        msg_time.innerHTML += data['date'];
+        var msg_content = document.createElement("div");
+        msg_content.className = "msg_box";
+        msg_content.innerHTML += makeUrl(data['content']);
+        inner_msg.append(msg_time);
+        inner_msg.append(msg_content);
+        msg.append(inner_msg);
+        storage.append(msg);
+
+      }else{
+        //console.log("incoming");
+        var incoming_msg = document.createElement("div");
+        incoming_msg.className = "incoming_msg";
+        var received_msg = document.createElement("div");
+        received_msg.className = "received_msg";
+        var received_name = document.createElement("p");
+        received_name.className = "received_name";
+        received_name.innerHTML += data['nickname'];
+        var received_with_msg = document.createElement("div");
+        received_with_msg.className = "received_with_msg";
+        received_with_msg.innerHTML += makeUrl(data['content']);
+        var received_time_date = document.createElement("span");
+        received_time_date.className = "received_time_date";
+        received_time_date.innerHTML += data['date'];
+        received_msg.append(received_name);
+        received_msg.append(received_with_msg);
+        received_msg.append(received_time_date);
+        incoming_msg.append(received_msg);
+        storage.append(incoming_msg);
+      }
+    } else if (data['type'] == "letout_current_tutee"){
+      var msg = document.createElement("div");
+      msg.className = "cancel_tutoring";
+      msg.innerHTML = `&nbsp;&nbsp;튜터링 종료 - ${data['current_tutee_nickname']}&nbsp;&nbsp;`;
+      storage.append(msg);
+      if (current_tutee_pk == data['current_tutee_pk']){
+        // alert("Redirecting to mainpage");
+        document.location.href = data['current_tutee_url'], true;
+      }
+    } else if (data['type'] == "get_next_tutee"){
       var msg = document.createElement("div");
       msg.className = "start_tutoring";
-      msg.innerHTML = "✨&nbsp;&nbsp;튜터링 시작&nbsp;&nbsp;✨";
+      msg.innerHTML = `✨&nbsp;&nbsp;튜터링 시작 - ${data['next_tutee_nickname']}&nbsp;&nbsp;✨`;
       storage.append(msg);
-    }
-    else if(data['username']==req_username){
-      //console.log("outgoing");
-
-      var msg = document.createElement("div");
-      msg.className = "outgoing_msg";
-      var inner_msg = document.createElement("div");
-      inner_msg.className = "sent_msg";
-      var msg_time = document.createElement("span");
-      msg_time.className = "sent_time_date";
-      msg_time.innerHTML += data['date'];
-      var msg_content = document.createElement("div");
-      msg_content.className = "msg_box";
-      msg_content.innerHTML += makeUrl(data['content']);
-      inner_msg.append(msg_time);
-      inner_msg.append(msg_content);
-      msg.append(inner_msg);
-      storage.append(msg);
-
-    }else{
-      //console.log("incoming");
-      var incoming_msg = document.createElement("div");
-      incoming_msg.className = "incoming_msg";
-      var received_msg = document.createElement("div");
-      received_msg.className = "received_msg";
-      var received_name = document.createElement("p");
-      received_name.className = "received_name";
-      received_name.innerHTML += data['nickname'];
-      var received_with_msg = document.createElement("div");
-      received_with_msg.className = "received_with_msg";
-      received_with_msg.innerHTML += makeUrl(data['content']);
-      var received_time_date = document.createElement("span");
-      received_time_date.className = "received_time_date";
-      received_time_date.innerHTML += data['date'];
-      received_msg.append(received_name);
-      received_msg.append(received_with_msg);
-      received_msg.append(received_time_date);
-      incoming_msg.append(received_msg);
-      storage.append(incoming_msg);
     }
 
     if(at_bottom){
@@ -393,6 +364,7 @@
           // alert("SUCCESS\n" + response);
 
           websocket.send(JSON.stringify({
+            'type':'new_comment',
              'comment_id': response,
           }));
           message.value = "";
@@ -401,6 +373,46 @@
           //alert("ERROR!!\n" + response);
        }
     });
+  }
+
+  document.getElementById("start_new_tutoring").onclick = function(){
+    $.ajax({
+            type: "POST",
+            url: "{% url 'matching:start_new_tutoring' session.pk %}",
+            data: {
+              'csrfmiddlewaretoken': '{{ csrf_token }}',
+            },
+            dataType: "json",
+            success: function(response){
+              // alert(response.current_tutee_pk);
+              // alert(response.next_tutee_pk);
+            
+              if (response.current_tutee_pk != undefined ){
+                // alert("letout_current_tutee");
+                websocket.send(JSON.stringify({
+                  'type': 'start_new_tutoring',
+                  'type2': 'letout_current_tutee',
+                  'current_tutee_pk' : response.current_tutee_pk,
+                  'current_tutee_url' : response.current_tutee_url,
+                }))
+              }
+
+              if (response.next_tutee_pk != undefined){
+                // alert("get_next_tutee");
+                websocket.send(JSON.stringify({
+                  'type': 'start_new_tutoring',
+                  'type2': 'get_next_tutee',
+                  'next_tutee_pk': response.next_tutee_pk,
+                  'next_tutee_url': response.next_tutee_url,
+                }));
+              }
+              
+            },
+            error: function(request, status, error){
+                alert("로그인이 필요합니다.");
+                window.location.replace("/accounts/login/");
+            },
+        });
   }
 </script>
 

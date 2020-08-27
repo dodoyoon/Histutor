@@ -21,18 +21,49 @@
   <ul class="messages">
     {% for message in messages %}
         {% if message.tags and message.tags == "error" %}
-        <p class="alert alert-danger" id="nickname-error">{{ message }}</p>
+        <p class="danger_message" id="nickname-error">{{ message }}</p>
         {% endif %}
     {% endfor %}
   </ul>
   <div id="mainpage_ongoing_table_div" class="tableDiv">
   <table id="mainpage_ongoing_table" class="table table-bordered w-auto">
     <tbody>
+      {% if ongoing_session %}
+      <tr>
+        <th class="align-middle text-center text-nowrap">진행중인 튜터세션</th>
+        <td class="align-middle text-center text-nowrap">튜터 : {{ ongoing_session.user.profile.nickname }}</td>
+        <td class="align-middle" location.href= "{% url 'matching:session_detail' ongoing_session.pk %}">제목 : <a href="{% url 'matching:session_detail' ongoing_session.pk %}">{{ ongoing_session.title|truncatechars:50 }}</a></td>
+        <td class="align-middle text-center">
+            <button class="mybutton" type="submit"  data-toggle="modal" data-target="#endSession">세션종료</button>
+        </td>
+      </tr>
+
+      <div class="modal fade" id="endSession" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">튜터 세션 종료</h4>
+            </div>
+            <div class="modal-body">
+              <p>정말로 진행중인 튜터세션을 종료하시겠습니까?</p>
+              <div class="row" style="float: right;">
+                  <div class="col-12-xs text-center" style="margin-right: 1em;">
+                      <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" type="button" class="close" data-dismiss="modal">No</button>
+                      <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" onclick="location.href='{% url "matching:end_session" ongoing_session.pk %}'">Yes</button>
+                  </div>
+              </div>
+            </div>
+    
+          </div>
+        </div>
+      </div>
+
+      {% endif %}
       {% if ongoing_post %}
       <tr>
         <th class="align-middle text-center text-nowrap">모집중인 튜터링</th>
         <td class="align-middle text-center text-nowrap">튜티 : {{ ongoing_post.user.profile.nickname }}</td>
-        <td class="align-middle" location.href= "{% url 'matching:post_detail' ongoing_post.pk %}">제목 : <a href="{% url 'matching:post_detail' ongoing_post.pk %}" style="text-decoration: underline; text-underline-position: under;">{{ ongoing_post.title|truncatechars:50 }}</a></td>
+        <td class="align-middle" location.href= "{% url 'matching:post_detail' ongoing_post.pk %}">제목 : <a href="{% url 'matching:post_detail' ongoing_post.pk %}">{{ ongoing_post.title|truncatechars:50 }}</a></td>
         <td class="align-middle text-center">
             <button class="mybutton" type="submit"  data-toggle="modal" data-target="#postDeleteModal">모집취소</button>
         </td>
@@ -62,14 +93,14 @@
       <tr>
         <th class="align-middle text-center text-nowrap">진행중인 튜터링</th>
         <td class="align-middle text-center text-nowrap">튜티 : {{ ongoing_tutoring_tutee.user.profile.nickname }}</td>
-        <td class="align-middle" location.href= "{% url 'matching:post_detail' ongoing_tutoring_tutee.pk %}">제목 : <a href="{% url 'matching:post_detail' ongoing_tutoring_tutee.pk %}" style="text-decoration: underline; text-underline-position: under;">{{ ongoing_tutoring_tutee.title }}</a></td>
+        <td class="align-middle" location.href= "{% url 'matching:post_detail' ongoing_tutoring_tutee.pk %}">제목 : <a href="{% url 'matching:post_detail' ongoing_tutoring_tutee.pk %}">{{ ongoing_tutoring_tutee.title }}</a></td>
       </tr>
       {% endif %}
       {% if ongoing_tutoring %}
       <tr>
         <th class="align-middle text-center text-nowrap">진행중인 튜터링</th>
         <td class="align-middle text-center text-nowrap">튜티 : {{ ongoing_tutoring.user.profile.nickname }}</td>
-        <td class="align-middle" location.href= "{% url 'matching:post_detail' ongoing_tutoring.pk %}">제목 : <a href="{% url 'matching:post_detail' ongoing_tutoring.pk %}" style="text-decoration: underline; text-underline-position: under;">{{ ongoing_tutoring.title }}</a></td>
+        <td class="align-middle" location.href= "{% url 'matching:post_detail' ongoing_tutoring.pk %}">제목 : <a href="{% url 'matching:post_detail' ongoing_tutoring.pk %}">{{ ongoing_tutoring.title }}</a></td>
         <td class="align-middle text-center">
         <button class="mybutton" type="submit"  data-toggle="modal" data-target="#cancelTutoringModal">튜터링 취소</button>
         <button class="mybutton" type="submit"  data-toggle="modal" data-target="#finishTutoringModal">튜터링 완료</button>
@@ -123,7 +154,7 @@
       <tr>
         <th class="align-middle text-center text-nowrap">작성하지 않은 보고서</th>
         <td class="align-middle text-center text-nowrap">튜티 : {{ unwritten_report.user.profile.nickname }}</td>
-        <td class="align-middle" location.href= "{% url 'matching:post_detail' unwritten_report.pk %}">제목 : <a href="{% url 'matching:post_detail' unwritten_report.pk %}" style="text-decoration: underline; text-underline-position: under;">{{ unwritten_report.title }}</a></td>
+        <td class="align-middle" location.href= "{% url 'matching:post_detail' unwritten_report.pk %}">제목 : <a href="{% url 'matching:post_detail' unwritten_report.pk %}">{{ unwritten_report.title }}</a></td>
         <td class="align-middle text-center">
         <button class="mybutton" type="button"  data-toggle="modal" data-target="#reportModal" style="float:left">보고서 쓰기</button>
         </td>
@@ -160,6 +191,20 @@
         </div>
       </div>
       <!-- Report Modal End -->
+      {% endif %}
+
+      {% if session_report_exist %}
+      <tr>
+        <th class="align-middle text-center text-nowrap">작성하지 않은 TA세션 보고서</th>
+        <td class="align-middle text-center text-nowrap">튜티 : {{ unwritten_session_report.user.profile.nickname }}</td>
+        <td class="align-middle" location.href= "{% url 'matching:session_detail' unwritten_session_report.pk %}">제목 : <a href="{% url 'matching:session_detail' unwritten_session_report.pk %}">{{ unwritten_session_report.title }}</a></td>
+        <td class="align-middle text-center">
+          <form action="{% url 'matching:session_report_create' unwritten_session_report.pk %}" method="POST">
+            {% csrf_token %}
+          <button class="mybutton" type="submit">보고서쓰기</button>
+          </form>
+        </td>
+      </tr>
       {% endif %}
 
     </tbody>
@@ -204,7 +249,7 @@
 
 <div id="tutorsession" class="modal fade" role="dialog">
   <div class="modal-dialog">
-    <form action="" method="POST">
+    <form class="form-style-7 session_report_create" id="session_create" action="" method="POST">
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
@@ -214,7 +259,26 @@
       <div class="modal-body">
         <p>채팅방의 주제를 파악할 수 있는 제목을 작성해주세요. (15자 이상)</p>
         {% csrf_token %}
-        {{ tsform.as_p }}
+        <li>
+          <label for="title">제목</label>
+          {{ tsform.title }}
+       </li>
+        <li>
+          <label for="session_type">세션 유형</label>
+          {{ tsform.session_type }}
+       </li>
+        <li>
+          <label for="location">오프라인 장소 or URL</label>
+          {{ tsform.location }}
+       </li>
+        <li>
+          <label for="start_time">시작 시간</label>
+          {{ tsform.start_time }}
+        </li>
+        <li>
+          <label for="expected_fin_time">예상 종료 시간</label>
+          {{ tsform.expected_fin_time }}
+        </li>
       </div>
       <div class="modal-footer">
         <button type="submit" class="btn btn-default">Submit</button>
@@ -252,6 +316,9 @@
 
 
 <div id="mainpage_table_div" class="tableDiv">
+  <a href="{% url 'matching:mainpage' 'all' %}"><button class="mybutton">all</button></a>
+  <a href="{% url 'matching:mainpage' 'session' %}"><button class="mybutton">TA 세션</button></a>
+  <a href="{% url 'matching:mainpage' 'tutoring' %}"><button class="mybutton">튜터링</button></a>
 
     <div id="search" class="col-md-4 col-md-offset-3">
         <form action="" class="search-form" method="get">
@@ -280,14 +347,16 @@
             <tr>
                 <td class="text-center text-nowrap align-middle"> {{post.pk}} </td>
                 {% if post.session_type %}
-                  <td class="text-center text-nowrap align-middle"  style="color:#0c6b27"> {{post.get_session_type_display}} </td>
-                  {% if user.profile.is_tutor %}
-                      <td class="align-middle" style="padding-left:4vw;"><a href="{% url 'matching:session_detail' post.pk %}">
-                        <div class="ta">TA</div>{{post.title|truncatechars:50}}</a></td>
+                  {% if today < post.start_time %}
+                  <td class="text-center text-nowrap align-middle" style="color:#0c6b27"> 진행 예정 </td>
+                  {% elif post.fin_time is NULL %}
+                  <td class="text-center text-nowrap align-middle" style="color:#2112bf"> 진행중 </td>
                   {% else %}
-                      <td class="align-middle" style="padding-left:4vw;"><a href="{% url 'matching:waitingroom' post.pk %}">
-                        <div class="ta">TA</div>{{post.title|truncatechars:50}}</a></td>
+                  <td class="text-center text-nowrap align-middle" style="color:#bbb"> 종료 </td>
                   {% endif %}
+                  <td class="align-middle" style="padding-left:4vw;">
+                  <div class="ta">TA</div> <div style="display:inline-block; color:#707B7C; margin: 0 10px 0 0;">{{post.start_time|date:'H:i'}}-{{post.expected_fin_time|date:'H:i'}}</div>
+                  <a href="{% url 'matching:session_detail' post.pk %}">{{post.title|truncatechars:50}}</a></td>
                 {% else %}
                   {% if post.finding_match ==  True %}
                   <td class="text-center text-nowrap align-middle" style="color:#0c6b27"> 모집중 </td>
@@ -298,7 +367,13 @@
                   {% endif %}
                   <td class="align-middle" style="padding-left:4vw;"><a href="{% url 'matching:post_detail' post.pk %}">{{post.title|truncatechars:50}}</a></td>
                 {% endif %}
-                <td class="text-center text-nowrap align-middle">{{post.user.profile.nickname}}</td>
+                <td class="text-center text-nowrap align-middle">
+                  {% if post.user %}
+                  {{post.user.profile.nickname}}
+                  {% else %}
+                  {{post.tutor.profile.nickname}}
+                  {% endif %}
+                </td>
                 {% if post.pub_date|date:'Y-m-d' == today|date:'Y-m-d' %}
                 <td class="text-center text-nowrap align-middle">{{post.pub_date|date:'H:i'}}</td>
                 {% else %}

@@ -106,6 +106,8 @@ width:100px;
     background-color:#d7d6d8;
     color:#22192b;
     font-weight:normal;
+}.mybutton:focus{
+  outline:0;
 }
 
 #makeRoombtn{
@@ -176,11 +178,7 @@ a:hover{
 	margin-top: 30px;
 	border-radius: 3px;
 }
-.form-style-7 li:last-child{
-	border:none;
-	margin-bottom: 0px;
-	text-align: center;
-}
+
 .form-style-7 li > label{
 	display: block;
 	float: left;
@@ -217,9 +215,6 @@ a:hover{
 {
 }
 
-.form-style-7 textarea{
-	resize:none;
-}
 .form-style-7 input[type="submit"],
 .form-style-7 input[type="button"]{
 	background: #7a6ebe;

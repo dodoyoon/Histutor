@@ -38,8 +38,9 @@
     <img class="stickMan" src="https://image.flaticon.com/icons/svg/10/10522.svg">
     <img class="stickMan" src="https://image.flaticon.com/icons/svg/10/10522.svg">
   </div>
+  {% if session.session_type == 'onoff'%}
   <div id="attend_type">
-    <div id="explain_attend" class="text-center">세션에 참가할 방벙을 선택해주세요.</div>
+    <div id="explain_attend" class="text-center">세션에 참가할 방법을 선택해주세요.</div>
     <div id="radio_buttons" class="text-center">
       <div class="form-check form-check-inline">
         <input class="form-check-input" type="radio" name="attend_type" id="online_radio" value="true" checked>
@@ -55,6 +56,7 @@
       </div>
     </div>
   </div>
+  {% endif %}
     {% else %}
   <div id="waiting">No Waiting</div>
   <br><br><br><br><br><br>
@@ -66,12 +68,21 @@
 </div>
 
 <script>
-  const websocket = new WebSocket('ws://' + window.location.host+ '/ws/session/' + "{{pk}}" + '/waiting/');
+  const websocket = new WebSocket('ws://' + window.location.host + '/ws/session/' + "{{pk}}" + '/');
 
   websocket.onmessage = function(e){
     const data = JSON.parse(e.data);
-    alert(data);
     let tuteePk = "{{tuteePk}}";
+    // alert("received");
+
+    if (data['type'] == "get_next_tutee"){
+      // alert(tuteePk +" vs " + data['next_tutee_pk']);
+      if (tuteePk == data['next_tutee_pk']){
+        // alert("go to " + data['next_tutee_url']);
+        // alert(document.location);
+        document.location.href = data['next_tutee_url'], true;
+      }
+    }
   }
 
   websocket.onclose = function(e){

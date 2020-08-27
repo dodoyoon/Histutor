@@ -1,0 +1,62 @@
+{% extends 'matching/base.html' %}
+{% load static %}
+{% block style %}
+  <link rel="stylesheet" type="text/css" href="{% static 'matching/session_report.css' %}">
+{% endblock %}
+{% block content %}
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <p class="success_report">{{ message }}</p>
+    {% endfor %}
+</ul>
+{% endif %}
+{% if log_list %}
+    {% for log in log_list %}
+    <form method="POST" class="form-style-7 session_report_create">
+        {% csrf_token %}
+        <input name="username" value="{{log.tutee}}" type="hidden">
+        <ul>
+            <h1>튜터링 보고서</h1>
+        <li>
+            <label for="join_tutee">Tutee</label>
+            <input type="text" value="{{ log.tutee.profile.nickname }}" name="join_tutee" readonly>
+        </li>
+        <li>
+            <label for="tutoring_time" id="tutoring_time">튜터링 시간(분)</label>
+            {{form.duration_time}}
+        </li>
+        <li>
+            <label for="content">튜터링 내용</label>
+            {{form.content}}
+        </li>
+        <li>
+            <input type="submit" value="제출" >
+        </li>
+        </ul>
+    </form>
+    {% endfor %}
+{% else %}
+    <form method="POST" class="form-style-7 session_report_create">
+    {% csrf_token %}
+    <ul>
+        <h1>튜터링 보고서</h1>
+    <li>
+        <label for="join_tutee">Tutee</label>
+        <input type="text" name="join_tutee" minlength="3" maxlength="100" style="text-align:left" autofocus>
+    </li>
+    <li>
+        <p>튜터링 시간(분)</p>
+        {{form.duration_time}}
+    </li>
+    <li>
+        <label for="content">튜터링 내용</label>
+        {{form.content}}
+    </li>
+    <li>
+        <input type="submit" value="제출" >
+    </li>
+    </ul>
+</form>
+{% endif %}
+{% endblock %}

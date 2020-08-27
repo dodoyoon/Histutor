@@ -1,0 +1,104 @@
+{% extends "matching/base.html" %}
+
+{% block content %}
+
+
+<div class="tableDiv mypage_table">
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'matching:mypage_post' %}">모집한 튜터링</a>
+    </li>
+    {% if user.profile.is_tutor == True %}
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'matching:mypage_tutor_post' %}">진행한 튜터링</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link active">진행한 튜터 세션</a>
+    </li>
+    {% endif %}
+  </ul>
+    <table id="post_table" class="table">
+        <thead>
+        <tr>
+          <th scope="col" style="width:100px" class="text-center">No.</th>
+          <th scope="col" class="text-center">상태</th>
+          <th scope="col" class="text-center">제목</th>
+          <th scope="col" style="width:150px" class="text-center">작성자</th>
+          <th scope="col" style="width:150px" class="text-center">작성일</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if sessions %}
+        {% for session in sessions %}
+          <tr>
+              <td class="text-center text-nowrap align-middle"> {{session.pk}} </td>
+              <td class="text-center text-nowrap align-middle">
+                {% if today < session.start_time and not session.fin_time %}
+                <a style="color:#0c6b27;"><b> 진행 예정</b></a>
+                {% elif session.fin_time is NULL %}
+                <a style="color:#4858b7;"><b> 진행중 </b></a>
+                {% else %}
+                <a style="color:#bbb;"><b> 종료 </b></a>
+                {% endif %}
+              </td>
+              {% if session.finding_match ==  True %}
+              <td class="align-middle"> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:session_detail' session.pk %}">{{session.title|truncatechars:50}}</a></td>
+              {% elif session.start_time != Null and session.fin_time == Null %}
+              <td class="align-middle"> <span id="ongoing" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:session_detail' session.pk %}">{{session.title|truncatechars:50}}</a></td>
+              {% else %}
+              <td class="align-middle"> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:session_detail' session.pk %}">{{session.title|truncatechars:50}}</a></td>
+              {% endif %}
+              <td class="text-center text-nowrap align-middle">{{session.tutor.profile.nickname}}</td>
+              {% if session.pub_date|date:'Y-m-d' == today|date:'Y-m-d' %}
+              <td class="text-center text-nowrap align-middle">{{session.pub_date|date:'H:i'}}</td>
+              {% else %}
+              <td class="text-center text-nowrap align-middle">{{session.pub_date|date:'Y-m-d'}}</td>
+              {% endif %}
+          </tr>
+        {% endfor %}
+        {% else %}
+          <tr>
+              <td class="text-center" colspan="4"> 모집한 튜터링이 없음 </td>
+          </tr>
+        {% endif %}
+        </tbody>
+    </table>
+
+    {% if sessions %}
+    {% if sessions.has_other_pages %}
+    <nav aria-label="...">
+      <ul class="pagination">
+        {% if sessions.number == 1 %}
+          <li class="page-item"><span class="page-link">⇤<span class="sr-only">(current)</span></span></li>
+        {% else %}
+          <li class="page-item"><a class="page-link" href="?page=1">⇤</a></li>
+        {% endif %}
+        {% if sessions.has_previous %}
+          <li class="page-item"><a class="page-link" href="?page={{ sessions.previous_page_number }}">&laquo;</a></li>
+        {% else %}
+          <li class="page-item"><span class="page-link">&laquo;<span class="sr-only">(current)</span></span></li>
+        {% endif %}
+        {% for i in paginatorRange %}
+          {% if sessions.number == i %}
+            <li class="page-item active"><span class="page-link">{{ i }}<span class="sr-only">(current)</span></span></li>
+          {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+          {% endif %}
+        {% endfor %}
+        {% if sessions.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{sessions.next_page_number}}">&raquo;</a></li>
+        {% else %}
+        <li class="page-item"><span class="page-link">&raquo;<span class="sr-only">(current)</span></span></li>
+        {% endif %}
+        {% if sessions.number == sessionPaginator.num_pages %}
+          <li class="page-item"><span class="page-link">⇥<span class="sr-only">(current)</span></span></li>
+        {% else %}
+          <li class="page-item"><a class="page-link" href="?page={{sessionPaginator.num_pages}}">⇥</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
+    {% endif %}
+</div>
+
+{% endblock %}

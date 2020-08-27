@@ -40,3 +40,11 @@
     position: absolute;
     z-index: -1;
 }
+
+.danger_message{
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    margin: 0 30%;
+    border: 1px solid transparent;
+}

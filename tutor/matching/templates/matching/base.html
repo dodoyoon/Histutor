@@ -15,10 +15,10 @@
 
 		<!-- 이게 있으면 Modal이 안나옴 -->
 		<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
-
 		<link rel="stylesheet" type="text/css" href="{% static 'matching/base.css' %}">
 		<link rel="stylesheet" type="text/css" href="{% static 'matching/style.css' %}">
 		<link rel="stylesheet" type="text/css" href="{% static 'matching/search_bar.css' %}">
+		<link rel="stylesheet" type="text/css" href="{% static 'matching/session_report.css' %}">
 		<script src="https://kit.fontawesome.com/f99623035e.js" crossorigin="anonymous"></script>
 
 
@@ -34,7 +34,7 @@
 	{% load socialaccount %}
 	<body>
 		<nav id="navigationBar" class="navbar navbar-expand-lg navbar-dark">
-			<a class="navbar-brand" href="{% url 'matching:mainpage'%}">HisTutor</a>
+			<a class="navbar-brand" href="{% url 'matching:mainpage' 'all' %}">HisTutor</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 			  <span class="navbar-toggler-icon"></span>
 			</button>
