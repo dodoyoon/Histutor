@@ -1,7 +1,11 @@
 {% extends 'matching/base.html' %}
-{% load static %}
+
 {% block style %}
-  <link rel="stylesheet" type="text/css" href="{% static 'matching/chat.css' %}">
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'matching/chat.css' %}">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 {% endblock %}
 
 
@@ -166,7 +170,7 @@
             <div id="comment{{ forloop.counter0 }}" class="received_with_msg msg_content" data-pk="{{comment.pk}}" data-username="{{comment.user.profile.nickname}}">
                 {% if comment.reply_to and comment.reply_content %}
                     <div class="reply_style">
-                        {{ comment.reply_to }}에게 답장
+                        {{ comment.reply_to }}
                         {{ comment.reply_content }}
                     </div>
                     <hr>
@@ -189,7 +193,7 @@
               <div id="comment{{ forloop.counter0 }}" class="msg_content msg_box" data-pk="{{comment.pk}}" data-username="{{comment.user.profile.nickname}}">
                   {% if comment.reply_to and comment.reply_content %}
                       <div class="reply_style">
-                          {{ comment.reply_to }}에게 답장
+                          {{ comment.reply_to }}
                           {{ comment.reply_content }}
                       </div>
                       <hr>
@@ -202,6 +206,8 @@
       {% endfor %}
 
 
+    </div>
+    <div class="type_msg" id="reply_show_box">
     </div>
     <div class="type_msg">
       <div class="input_msg_write" id="input_msg_write">
@@ -334,7 +340,7 @@
             let p_to = document.createElement("p") ;
             let p_content = document.createElement("span") ;
             div.class = "reply_style" ;
-            div.innerText = reply_to + "에게 답장";
+            div.innerText = reply_to;
             div.innerText += reply_content;
             div.appendChild(document.createElement("hr"));
             msg_content.appendChild(div);
@@ -361,7 +367,7 @@
         if(reply_to != "None" && reply_content != "None"){
             let div = document.createElement("div");
             div.class = "reply_style" ;
-            div.innerText = reply_to + "에게 답장";
+            div.innerText = reply_to;
             div.innerText += reply_content;
             div.appendChild(document.createElement("hr"));
             received_with_msg.appendChild(div);
@@ -384,14 +390,15 @@
 
       // 밑의 로직과 같지만 이름이 중복이라서 new 붙여줌
       let new_msg_content = document.getElementsByClassName("msg_content");
-      let msg_write_box = document.getElementById("input_msg_write");
-      let msg_write_box_child_num = msg_write_box.childNodes.length;
+      let reply_show_box = document.getElementById("reply_show_box");
+      let reply_show_box_child_num = reply_show_box.childNodes.length;
+      const reply_show_box_child_num_const = reply_show_box.childNodes.length;
 
       // DOM의 변화를 추적하는 Observer
-      let target = document.getElementById("input_msg_write");
+      let target = document.getElementById("reply_show_box");
       let observer = new MutationObserver(function(mutations) {
           mutations.forEach(function(mutation) {
-              msg_write_box_child_num = msg_write_box.childNodes.length;
+              reply_show_box_child_num = reply_show_box.childNodes.length;
           });
       });
       let config = { childList: true };
@@ -400,7 +407,7 @@
 
       for (let i = 0; i < new_msg_content.length; i++) {
           new_msg_content[i].addEventListener("dblclick", function() {
-              if(msg_write_box_child_num == 5){
+              if(reply_show_box_child_num == reply_show_box_child_num_const){
                   const pk = new_msg_content[i].dataset.pk; // 나중에 email noti 할거면 이걸로 ajax 써서 하면 될듯
                   const username = new_msg_content[i].dataset.username;
                   const content = new_msg_content[i].lastChild.textContent;
@@ -415,7 +422,6 @@
                   let cancel_btn = document.createElement("button");
                   cancel_btn.id = "cancel_btn";
                   cancel_btn.type = "button" ;
-                  cancel_btn.innerText = "Cancel This";
 
                   // 선택된 comment의 정보를 담고있는 div를 만들어보자!
                   to_tag.appendChild(to_text) ;
@@ -425,11 +431,11 @@
                   div.insertBefore(to_tag, div.childNodes[0]) ;
                   div.insertBefore(cancel_btn, div.childNodes[2]);
                   // 채팅 입력하는 div에 같이 넣어주기
-                  msg_write_box.insertBefore(div, msg_write_box.childNodes[0]) ;
+                  reply_show_box.appendChild(div) ;
 
                   let btn = document.getElementById("cancel_btn");
                   btn.addEventListener("click", function() {
-                      msg_write_box.removeChild(msg_write_box.firstChild)
+                      reply_show_box.removeChild(reply_show_box.lastChild)
                   });
               }
           });
@@ -502,14 +508,15 @@
 
   $( document ).ready(function() {
       let msg_content = document.getElementsByClassName("msg_content");
-      let msg_write_box = document.getElementById("input_msg_write");
-      let msg_write_box_child_num = msg_write_box.childNodes.length;
+      let reply_show_box = document.getElementById("reply_show_box");
+      let reply_show_box_child_num = reply_show_box.childNodes.length;
+      const reply_show_box_child_num_const = reply_show_box.childNodes.length;
 
       // DOM의 변화를 추적하는 Observer
-      let target = document.getElementById("input_msg_write");
+      let target = document.getElementById("reply_show_box");
       let observer = new MutationObserver(function(mutations) {
           mutations.forEach(function(mutation) {
-              msg_write_box_child_num = msg_write_box.childNodes.length;
+              reply_show_box_child_num = reply_show_box.childNodes.length;
           });
       });
       let config = { childList: true };
@@ -518,7 +525,7 @@
 
       for (let i = 0; i < msg_content.length; i++) {
           msg_content[i].addEventListener("dblclick", function() {
-              if(msg_write_box_child_num == 5){
+              if(reply_show_box_child_num == reply_show_box_child_num_const){
                   const pk = msg_content[i].dataset.pk; // 나중에 email noti 할거면 이걸로 ajax 써서 하면 될듯
                   const username = msg_content[i].dataset.username;
                   const content = msg_content[i].lastChild.textContent;
@@ -527,13 +534,21 @@
                   div.id = "reply_info" ;
                   let to_tag = document.createElement("p"); // who 정보를 담고있는 paragraph
                   let content_tag = document.createElement("p"); // what content 정보를 담고 있는 paragraph
-                  let to_text = document.createTextNode(username);
+                  let to_text = document.createTextNode(username + "에게 답장");
                   let content_text = document.createTextNode(content);
                   const hr = document.createElement("hr");
+
                   let cancel_btn = document.createElement("button");
                   cancel_btn.id = "cancel_btn";
+                  cancel_btn.class = "cancel_btn";
                   cancel_btn.type = "button" ;
-                  cancel_btn.innerText = "Cancel This";
+                  cancel_btn.innerText = "X";
+
+                  // 안돼 ㅠㅠㅠ
+                  let icon = document.createElement("i");
+                  icon.class = "fa fa-times";
+                  icon.setAttribute("aria-hidden","true");
+                  cancel_btn.appendChild(icon);
 
                   // 선택된 comment의 정보를 담고있는 div를 만들어보자!
                   to_tag.appendChild(to_text) ;
@@ -543,11 +558,11 @@
                   div.insertBefore(to_tag, div.childNodes[0]) ;
                   div.insertBefore(cancel_btn, div.childNodes[2]);
                   // 채팅 입력하는 div에 같이 넣어주기
-                  msg_write_box.insertBefore(div, msg_write_box.childNodes[0]) ;
+                  reply_show_box.appendChild(div) ;
 
                   let btn = document.getElementById("cancel_btn");
                   btn.addEventListener("click", function() {
-                      msg_write_box.removeChild(msg_write_box.firstChild)
+                      reply_show_box.removeChild(reply_show_box.lastChild)
                   });
               }
           });
@@ -555,8 +570,8 @@
 
       let send_btn = document.getElementById("msg_send_btn");
       send_btn.addEventListener("click", function() {
-          if(msg_write_box_child_num != 5){
-              msg_write_box.removeChild(msg_write_box.firstChild)
+          if(reply_show_box_child_num != reply_show_box_child_num_const){
+              reply_show_box.removeChild(reply_show_box.lastChild)
           }
       });
   });
