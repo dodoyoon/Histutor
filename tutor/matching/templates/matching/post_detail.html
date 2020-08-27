@@ -3,9 +3,6 @@
 {% block style %}
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'matching/chat.css' %}">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 {% endblock %}
 
 
@@ -419,9 +416,18 @@
                   let to_text = document.createTextNode(username + "에게 답장");
                   let content_text = document.createTextNode(content);
                   const hr = document.createElement("hr");
+
                   let cancel_btn = document.createElement("button");
                   cancel_btn.id = "cancel_btn";
+                  cancel_btn.class = "cancel_btn";
                   cancel_btn.type = "button" ;
+                  cancel_btn.innerText = "X";
+
+                  // 안돼 ㅠㅠㅠ
+                  let icon = document.createElement("i");
+                  icon.class = "fa fa-times";
+                  icon.setAttribute("aria-hidden","true");
+                  cancel_btn.appendChild(icon);
 
                   // 선택된 comment의 정보를 담고있는 div를 만들어보자!
                   to_tag.appendChild(to_text) ;
