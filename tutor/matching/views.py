@@ -1088,7 +1088,7 @@ def start_new_tutoring(request, pk):
 
 
     if current_tutee :
-      current_tutee_url = "http://" + request.get_host() + reverse('matching:mainpage')
+      current_tutee_url = "http://" + request.get_host() + reverse('matching:mainpage', kwargs={'showtype':'all'})
       fin_tutoring_cmt = matching_models.Comment(user=current_tutee.tutee, tutorsession=session, pub_date=timezone.localtime(), content="튜터링종료")
       fin_tutoring_cmt.save()
       context['current_tutee_pk'] = current_tutee.pk
