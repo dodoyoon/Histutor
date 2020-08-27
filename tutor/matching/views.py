@@ -951,11 +951,11 @@ def session_detail(request, pk):
 
 @login_required(login_url=URL_LOGIN)
 def end_session(request, pk):
-    print("End Session : ", request)
     session = matching_models.TutorSession.objects.get(pk=pk)
     if request.user == session.tutor:
         session.fin_time = timezone.localtime()
         session.save()
+        current_tutoring = matching_models.SessionLog.objects.filter(tutor_session=session, start_time__isnull=False, fin_time__isnull=True).update(fin_time=session.fin_time)
     return redirect(reverse('matching:session_detail', kwargs={'pk':pk}))
 
 
@@ -967,7 +967,10 @@ def waitingroom(request, pk):
     try:
         session = get_object_or_404(matching_models.TutorSession, pk=pk)
     except:
-        messages.error(request, '해당 튜터세션은 존재하지 않습니다. waitingroom')
+        messages.error(request, '해당 튜터세션은 존재하지 않습니다.')
+        return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
+    if session.fin_time :
+        messages.error(request, '종료된 튜터세션에 참여하실 수 없습니다.')
         return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
 
     if user == session.tutor:

@@ -30,10 +30,7 @@
             <label for="content">튜터링 내용</label>
             {{form.content}}
         </li>
-        <li>
-            <input type="submit" value="제출" >
-        </li>
-        </ul>
+        <input type="submit" value="제출" style="margin:4% 0 0 40%">
     </form>
     {% endfor %}
 {% else %}
@@ -46,16 +43,14 @@
         <input type="text" name="join_tutee" minlength="3" maxlength="100" style="text-align:left" autofocus>
     </li>
     <li>
-        <p>튜터링 시간(분)</p>
+        <label>튜터링 시간(분)</label>
         {{form.duration_time}}
     </li>
     <li>
         <label for="content">튜터링 내용</label>
         {{form.content}}
     </li>
-    <li>
-        <input type="submit" value="제출" >
-    </li>
+    <input type="submit" value="제출" style="margin:4% 0 0 40%">
     </ul>
 </form>
 {% endif %}
