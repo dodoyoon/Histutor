@@ -13,7 +13,7 @@ from itertools import chain
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-from matching.models import TOPIC_CHOICES, assign_pk
+from matching.models import TOPIC_CHOICES
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.views.generic.edit import UpdateView
@@ -685,7 +685,6 @@ def mainpage(request, showtype):
                 messages.error(request, '튜터링 종료 시간이 시작 시간보다 후여야 합니다.')
                 return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
             user_obj = matching_models.User.objects.get(username=request.user.username)
-            tutorsession.id = assign_pk()
             tutorsession.tutor = user_obj
             tutorsession.pub_date = timezone.localtime()
             tutorsession.save()
@@ -695,7 +694,6 @@ def mainpage(request, showtype):
         elif form.is_valid() and not check_post_exist:
             post = form.save(commit=False)
             user_obj = matching_models.User.objects.get(username=request.user.username)
-            post.id = assign_pk()
             post.user = user_obj
             post.pub_date = timezone.localtime()
             post.finding_match = True
