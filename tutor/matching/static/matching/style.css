@@ -375,10 +375,24 @@ a:hover{
   display:inline-block;
   text-align:center;
   border:0;
-  width: 30px;
-  background:#e8f3c7;
-  margin: 0 10px 0 0;
+  width: 28px;
+  background:#eef8cc;
+  margin: 0 0 0 0;
   border-radius:50%;
+  font-size:1px; 
+  height:28px; 
+  padding-top:1%;
+}
+
+.session_status{
+  background-color: #fff;
+  border: 2px solid #ddf1a0;
+  border-radius: 18px;
+  height: 23px;
+  width: 30px;
+  font-size:1px;
+  text-align:center;
+  display:inline-block;
 }
 
 #dont_exit_alert{
