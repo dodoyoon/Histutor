@@ -6,13 +6,6 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.db.models import Count
 
-all_post_pk = 0
-
-def assign_pk():
-   global all_post_pk
-   id = all_post_pk
-   all_post_pk += 1
-   return id
 
 
 class Profile(models.Model):
@@ -45,7 +38,6 @@ TOPIC_CHOICES = (
 )
 
 class Post(models.Model):
-   id = models.PositiveIntegerField(primary_key=True)
    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="post_relation")
    tutor = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
    topic = models.CharField(choices=TOPIC_CHOICES, max_length=200, default='etc')
@@ -69,7 +61,6 @@ SESSION_TYPE = (
       ('online', '온라인'), ('offline', '오프라인'), ('onoff','온/오프라인'),
 )
 class TutorSession(models.Model):
-   id = models.PositiveIntegerField(primary_key=True)
    tutor = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='ses')
    title = models.CharField(max_length=300)
    session_type = models.CharField(choices=SESSION_TYPE, default='onoff', max_length=10)
