@@ -932,10 +932,10 @@ def session_detail(request, pk):
 
     ctx['session'] = session
     ctx['comment_list'] = comment_list
-    '''ctx['start_msg'] = "튜터링시작"+session.user.last_name+str(session.pub_date)
-    ctx['cancel_msg'] = "튜터링취소"+session.user.last_name+str(session.pub_date)
-    '''
+    ctx['start_msg'] = "튜터링시작"
+    ctx['fin_msg'] = "튜터링종료"
     ctx['pk'] = pk
+    ctx['request'] = request
     session.hit = session.hit + 1
     session.save()
     return render(request, 'matching/session_detail.html', ctx)
@@ -1080,10 +1080,15 @@ def start_new_tutoring(request, pk):
     next_tutee = get_next_tutee(request, session, request.user)
     if next_tutee:
       url = "http://" + request.get_host() + reverse('matching:session_detail', args=[pk])
+      start_tutoring_cmt = matching_models.Comment(user=next_tutee.tutee, tutorsession=session, pub_date=timezone.localtime(), content="튜터링시작")
+      start_tutoring_cmt.save()
       context = {'next_tutee_pk' : next_tutee.pk, 'next_tutee_url' : url}
-    
+
+
     if current_tutee :
       current_tutee_url = "http://" + request.get_host() + reverse('matching:mainpage')
+      fin_tutoring_cmt = matching_models.Comment(user=current_tutee.tutee, tutorsession=session, pub_date=timezone.localtime(), content="튜터링종료")
+      fin_tutoring_cmt.save()
       context['current_tutee_pk'] = current_tutee.pk
       context['current_tutee_url'] = current_tutee_url
     
