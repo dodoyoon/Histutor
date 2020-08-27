@@ -6,6 +6,14 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.db.models import Count
 
+all_post_pk = 0
+
+def assign_pk():
+   global all_post_pk
+   id = all_post_pk
+   all_post_pk += 1
+   return id
+
 
 class Profile(models.Model):
    user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -15,7 +23,6 @@ class Profile(models.Model):
    is_tutor = models.BooleanField(null=True,blank=True, default=False)
    signin = models.BooleanField(default=False)
    tutor_tutoringTime = models.PositiveIntegerField(default=0)
-
 
    def __str__(self):
       return self.user.username + ' ' + self.user.last_name
@@ -38,6 +45,7 @@ TOPIC_CHOICES = (
 )
 
 class Post(models.Model):
+   id = models.PositiveIntegerField(primary_key=True)
    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="post_relation")
    tutor = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
    topic = models.CharField(choices=TOPIC_CHOICES, max_length=200, default='etc')
@@ -61,6 +69,7 @@ SESSION_TYPE = (
       ('online', '온라인'), ('offline', '오프라인'), ('onoff','온/오프라인'),
 )
 class TutorSession(models.Model):
+   id = models.PositiveIntegerField(primary_key=True)
    tutor = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='ses')
    title = models.CharField(max_length=300)
    session_type = models.CharField(choices=SESSION_TYPE, default='onoff', max_length=10)
@@ -70,6 +79,7 @@ class TutorSession(models.Model):
    fin_time = models.DateTimeField(null=True)
    hit = models.PositiveIntegerField(default=0)
    location = models.CharField(max_length=500, null=True)
+
 
    @property
    def update_hit(self):
@@ -86,8 +96,7 @@ class Comment(models.Model):
    pub_date = models.DateTimeField() #TODO auto_now_add=True 로 바꾸기
    content = models.TextField()
 
-   def __str__(self):
-      return self.post.title + '    '+self.user.profile.nickname + '    ' + str(self.pub_date)
+
 
 TIME_CHOICES = (
    (10, 10),
@@ -135,3 +144,4 @@ class SessionLog(models.Model):
     return waitingList['ranking'] + 1
    def __str__(self):
       return self.tutee.profile.nickname +' ' + str(self.is_waiting) +' ' + str(self.wait_time) + ' ' + self.tutor_session.title
+
