@@ -86,8 +86,8 @@
         {% endif %}
       </tbody>
   </table>
-
-  {% if session.tutor and not session.fin_time %}
+  {% if session.tutor == user %}
+  {% if not session.fin_time %}
   <button class="mybutton" type="submit"  data-toggle="modal" data-target="#endSession">튜터 세션 종료</button>
 
   <div class="modal fade" id="endSession" role="dialog">
@@ -117,14 +117,12 @@
   </div>
   {% endif %}
 
-  {% if not my_report %}
   <div style="margin:2% 0;">
     <form action="{% url 'matching:session_report_create' session.pk %}" method="POST">
       {% csrf_token %}
     <button class="mybutton" type="submit">보고서쓰기</button>
     </form>
   </div>
-  {% endif %}
 
   {% if my_report or user.is_staff %}
   {% if my_report_pk %}
@@ -134,6 +132,7 @@
 
   {% if user.is_staff and session.fin_time %}
   <button class="mybutton" type="submit" onclick="location.href='{% url "matching:session_report_list" session.pk  %}'">보고서 목록</button>
+  {% endif %}
   {% endif %}
 
 </div>
