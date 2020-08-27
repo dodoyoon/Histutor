@@ -861,7 +861,6 @@ def get_next_tutee(request, session, req_user):
         return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
     try:
         next_tutee = matching_models.SessionLog.objects.filter(tutor_session=session, is_waiting=True).earliest('wait_time')
-        print("NEXT TUTEE\n", next_tutee)
     except matching_models.SessionLog.DoesNotExist:
         next_tutee = None
 
@@ -875,11 +874,9 @@ def get_next_tutee(request, session, req_user):
 def fin_current_tutee(request, session):
     try:
         current_tutee = matching_models.SessionLog.objects.get(tutor_session=session, is_waiting=False, start_time__isnull=False, fin_time__isnull=True)
-        print("Current Tutee\n", current_tutee)
         current_tutee.fin_time = timezone.localtime()
         current_tutee.save()
     except:
-        print("현재 참여중인 튜티가 없습니다.")
         current_tutee = None
     return current_tutee
     
@@ -953,41 +950,32 @@ def end_session(request, pk):
 @login_required(login_url=URL_LOGIN)
 def waitingroom(request, pk):
     user = matching_models.User.objects.get(username=request.user.username)
-    if user.profile.is_tutor:
-        return redirect('matching:session_detail', pk=pk)
 
     try:
         session = get_object_or_404(matching_models.TutorSession, pk=pk)
-    except matching_models.TutorSession.DoesNotExist:
-        return HttpResponse("게시물이 존재하지 않습니다.")
     except:
         messages.error(request, '해당 튜터세션은 존재하지 않습니다. waitingroom')
         return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
+    
+    if user == session.tutor:
+        return redirect('matching:session_detail', pk=pk)
 
-    # session log 만들기: session detail에 들어오면 무조건 하나의 log 만들기
-    try:
-      log = matching_models.SessionLog.objects.get(is_waiting=True, tutee=user)
+    try: # 세션에서 튜터링 끝나지 않은 상태에서 다시 세션에 들어온 튜티 -> 바로 채팅방으로 보내야함.
+        log = matching_models.SessionLog.objects.get(is_waiting=False, tutee=user, tutor_session=session, start_time__isnull=False, fin_time__isnull=True)
+        url = "http://" + request.get_host() + reverse('matching:session_detail', args=[session.pk])
+        context = {'next_tutee_pk' : user.pk, 'next_tutee_url' : url}
+        return HttpResponse(json.dumps(context), content_type="application/json")
     except matching_models.SessionLog.DoesNotExist:
-      if not user.profile.is_tutor:
         log = matching_models.SessionLog.objects.create(tutor_session=session, tutee=user)
         log.save()
-    except:
-      messages.error(request, "해당 사용자 기록은 존재하지 않습니다.")
-      return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
 
-    waitingList = matching_models.SessionLog.objects.filter(is_waiting=True)
-
-    try:
-        waitingTutee = waitingList.get(tutee = request.user) # SessionLog object
-    except matching_models.SessionLog.DoesNotExist:
-        waitingTutee = None
-
+    waitingList = matching_models.SessionLog.objects.filter(is_waiting=True, tutor_session=session)
+    waitingTutee = log
 
     ctx = {
         'session' : session,
         'user' : request.user,
         'waitingTutee' : waitingTutee,
-        'waitingList' : waitingList,
         'pk' : pk,
         'tuteePk' : user.pk,
     }

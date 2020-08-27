@@ -354,15 +354,9 @@
                   {% else %}
                   <td class="text-center text-nowrap align-middle" style="color:#bbb"> 종료 </td>
                   {% endif %}
-                  {% if user.profile.is_tutor %}
-                      <td class="align-middle" style="padding-left:4vw;">
-                        <div class="ta">TA</div> <div style="display:inline-block; color:#707B7C; margin: 0 10px 0 0;">{{post.start_time|date:'H:i'}}-{{post.expected_fin_time|date:'H:i'}}</div>
-                        <a href="{% url 'matching:session_detail' post.pk %}">{{post.title|truncatechars:50}}</a></td>
-                  {% else %}
-                      <td class="align-middle" style="padding-left:4vw;">
-                        <div class="ta">TA</div> <div style="display:inline-block; color:#707B7C; margin: 0 10px 0 0;">{{post.start_time|date:'H:i'}}-{{post.expected_fin_time|date:'H:i'}}</div>
-                        <a href="{% url 'matching:waitingroom' post.pk %}">{{post.title|truncatechars:50}}</a></td>
-                  {% endif %}
+                  <td class="align-middle" style="padding-left:4vw;">
+                  <div class="ta">TA</div> <div style="display:inline-block; color:#707B7C; margin: 0 10px 0 0;">{{post.start_time|date:'H:i'}}-{{post.expected_fin_time|date:'H:i'}}</div>
+                  <a href="{% url 'matching:session_detail' post.pk %}">{{post.title|truncatechars:50}}</a></td>
                 {% else %}
                   {% if post.finding_match ==  True %}
                   <td class="text-center text-nowrap align-middle" style="color:#0c6b27"> 모집중 </td>
