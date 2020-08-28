@@ -157,7 +157,7 @@ class ReportDetail(DetailView):
 
     def get(self, request, *args, **kwargs):
         report = matching_models.Report.objects.get(pk=self.kwargs['pk'])
-        if self.request.user.is_staff or self.request.user == report.post.user:
+        if self.request.user.is_staff or self.request.user == report.writer:
             return super(ReportDetail, self).get(request, *args, **kwargs)
         else:
             return redirect('matching:mainpage', showtype='all')
