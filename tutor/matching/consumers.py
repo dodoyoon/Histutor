@@ -133,8 +133,8 @@ class PostDetailConsumer(WebsocketConsumer):
         comment = matching_models.Comment.objects.get(pk=id)
         username = comment.user.username
         db_date = comment.pub_date
-        time = str(db_date)
-        am_or_pm = str(db_date)
+        time = timezone.localtime(db_date).strftime("%-I:%M")
+        am_or_pm = timezone.localtime(db_date).strftime("%p").lower()
         am_or_pm = am_or_pm[0] + '.' + am_or_pm[1] + '.'
         date = time + ' ' + am_or_pm
         profile = matching_models.Profile.objects.get(user=comment.user)
@@ -231,8 +231,8 @@ class SessionDetailConsumer(WebsocketConsumer):
         comment = matching_models.Comment.objects.get(pk=id)
         username = comment.user.username
         db_date = comment.pub_date
-        time = str(db_date)
-        am_or_pm = str(db_date)
+        time = timezone.localtime(db_date).strftime("%-I:%M")
+        am_or_pm = timezone.localtime(db_date).strftime("%p").lower()
         am_or_pm = am_or_pm[0] + '.' + am_or_pm[1] + '.'
         date = time + ' ' + am_or_pm
         profile = matching_models.Profile.objects.get(user=comment.user)
