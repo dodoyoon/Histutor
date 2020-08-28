@@ -20,12 +20,16 @@
 {% for report in report_list %}
   <div id="reportDetail" class="list-type1">
     <ol>
-        {% if report.join_tutee %}
+        {% if request.user.is_staff %}
         <div class="list-box">
-            <li><a href="#">참여한 튜티</a></li>
-            {{report.join_tutee}}
+            <li><a href="#">작성자</a></li>
+            {{report.writer.profile.nickname}}
         </div>
         {% endif %}
+        <div class="list-box">
+            <li><a href="#">튜티</a></li>
+            {{report.join_tutee}}
+        </div>
       <div class="list-box">
         <li><a href="#">튜터링 시간</a></li>
         {{report.duration_time}}분
