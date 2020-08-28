@@ -286,6 +286,7 @@
     var msg = document.getElementById("write_msg");
     if(msg.value.trim()!=''){
       sendMessage();
+      msg.value='';
     }
   })
 
@@ -514,7 +515,6 @@
            }
            console.log(JSON.stringify(data));
           websocket.send(JSON.stringify(data));
-          message.value = "";
        },
        error: function(response){
           //alert("ERROR!!\n" + response);
