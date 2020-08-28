@@ -276,6 +276,7 @@ def post_detail(request, pk):
     ctx['comment_list'] = comment_list
     ctx['start_msg'] = "튜터링시작"+post.user.last_name+str(post.pub_date)
     ctx['cancel_msg'] = "튜터링취소"+post.user.last_name+str(post.pub_date)
+    ctx['user_compare_msg'] = user.profile.nickname + '에게 답장'
 
     post.hit = post.hit + 1
     post.save()
@@ -561,7 +562,7 @@ def mypage_post(request):
 
         if form.is_valid():
             application = form.save(commit=False)
-            
+
             prev = matching_models.TutorApplication.objects.filter(user=request.user)
             if prev.exists():
                 messages.error(request, '이미 튜터 신청을 했습니다. ')

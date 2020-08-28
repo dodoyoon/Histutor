@@ -167,7 +167,12 @@
             <div id="comment{{ forloop.counter0 }}" class="received_with_msg msg_content" data-pk="{{comment.pk}}" data-username="{{comment.user.profile.nickname}}">
                 {% if comment.reply_to and comment.reply_content %}
                     <div class="reply_style">
-                        {{ comment.reply_to }} <br>
+                        {% if comment.reply_to == user_compare_msg %}
+                            나에게 답장
+                        {% else %}
+                            {{ comment.reply_to }}
+                        {% endif %}
+                        <br>
                         {{ comment.reply_content }}
                     </div>
                     <hr>
@@ -190,7 +195,12 @@
               <div id="comment{{ forloop.counter0 }}" class="msg_content msg_box" data-pk="{{comment.pk}}" data-username="{{comment.user.profile.nickname}}">
                   {% if comment.reply_to and comment.reply_content %}
                       <div class="reply_style">
-                          {{ comment.reply_to }} <br>
+                          {% if comment.reply_to == user_compare_msg %}
+                              나에게 답장
+                          {% else %}
+                              {{ comment.reply_to }}
+                          {% endif %}
+                          <br>
                           {{ comment.reply_content }}
                       </div>
                       <hr>
