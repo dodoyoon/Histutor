@@ -1,44 +1,52 @@
 {% extends "matching/base.html" %}
+{% load static %}
+{% block style %}
+  <link rel="stylesheet" type="text/css" href="{% static 'matching/report.css' %}">
+{% endblock %}
 
 {% block content %}
-<h3 style="margin-left:130px; margin-top:20px;"><b>{{ session.title }}</b>에 대한 보고서들 </h3>
-
-<div class="tableDiv mypage_table">
-
-    <div id="post_table_div" class="tableDiv">
-        <table id="post_table" class="table">
-            <thead>
-            <tr>
-              <th scope="col" style="width:50px" class="text-center">No.</th>
-              <th scope="col" class="text-center">신분</th>
-              <th scope="col" class="text-center">작성자</th>
-              <th scope="col" class="text-center">보고서 링크</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for report in report_list %}
-              <tr>
-                  <td class="text-center text-nowrap align-middle"> {{report.pk}} </td>
-                  <td class="text-center text-nowrap align-middle">
-                      {% if report.writer == tutor %}
-                      튜터
-                      {% elif report.writer == tutee %}
-                      튜티
-                      {% else %}
-                      DEBUG
-                      {% endif %}
-                  </td>
-                  <td class="text-center text-nowrap align-middle"> {{report.writer.profile.nickname}} </td>
-                  <td class="text-center text-nowrap align-middle"><a href="{% url 'matching:report_detail' report.pk %}">보기</a></td>
-                  
-              </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-  
-    </div>
-  
+<div id="reportDetail" class="list-type1">
+    <ol>
+      <div class="session_info">
+        <li><a href="#">제목</a></li>
+        {{post.title}}
+        <li><a href="#">튜터링 날짜</a></li>
+        {{post.pub_date|date:'Y-m-d'}}
+        <li><a href="#">튜터</a></li>
+        {{post.tutor.profile.nickname}}
+        <li><a href="#">튜티</a></li>
+        {{post.user.profile.nickname}}
+      </div>
+    </ol>
   </div>
-
-
+{% if report_list %}
+  {% for report in report_list %}
+    <div id="reportDetail" class="list-type1">
+      <ol>
+          {% if report.writer == post.tutor%}
+          <li><a href="#" style="background:#c1b5d6;">튜터의 보고서</a></li>
+          {% else %}
+          <li><a href="#" style="background:#c1b5d6;">튜티의 보고서</a></li>
+          {% endif %}
+          <div class="list-box">
+              <li><a href="#">작성자</a></li>
+              {{report.writer.profile.nickname}}
+          </div>
+        <div class="list-box">
+          <li><a href="#">튜터링 시간</a></li>
+          {{report.duration_time}}분
+        </div>
+        <div class="list-box">
+          <li><a href="#">보고서</a></li>
+          {{report.content}}
+        </div>
+      </ol>
+    </div>
+  {% endfor %}
+{% else %}
+<div id="reportDetail" class="list-type1">
+작성된 보고서가 없습니다.
+</div>
+{% endif %}
 {% endblock %}
+

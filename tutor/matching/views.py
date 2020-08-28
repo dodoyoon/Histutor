@@ -259,10 +259,8 @@ def post_detail(request, pk):
     user = matching_models.User.objects.get(username=request.user.username)
     post = matching_models.Post.objects.get(pk=pk)
     my_report = matching_models.Report.objects.filter(writer=user, post=pk)
-
     if my_report.exists(): #사용자가 쓴 보고서 존재
-        ctx['my_report'] = my_report
-        ctx['my_report_pk'] = my_report[0].pk
+        ctx['my_report'] = my_report[0]
     elif post.fin_time or ((request.user == post.user) and post.tutor):
         #사용자가 쓴 보고서 존재하지 않고 종료되었거나
         if post.tutor == post.user:
@@ -270,7 +268,6 @@ def post_detail(request, pk):
         else:
             report_form = ReportForm()
         ctx['report_form'] = report_form
-        ctx['report_post_pk'] = post.pk
         ctx['report_exist'] = True
 
     comment_list = matching_models.Comment.objects.filter(post=post).order_by('pub_date')
