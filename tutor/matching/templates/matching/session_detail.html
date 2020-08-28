@@ -135,8 +135,9 @@
 
 </div>
 
-
-
+<div id="lost_connection" class="">
+  <p class="alert alert-warning text-center">❗ 서버와의 연결이 끊겼습니다. 페이지를 새로고침 해주세요.❗</p>
+</div>
 
 <div class="chat">
   <div class="title">
@@ -344,7 +345,8 @@
   };
 
   websocket.onclose = function(e){
-  console.error('Chat socket closed unexpectedly');
+    console.error('Chat socket closed unexpectedly');
+    document.getElementById('lost_connection').style.visibility = "visible";
   };
 
   function sendMessage(){
