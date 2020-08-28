@@ -261,7 +261,7 @@
   const makeUrl = function(text){
     var urlRegex = /(https?:\/\/[^\s]+)/g;
     return text.replace(urlRegex, function(url) {
-      return '<a class="urls" href="' + url + '">' + url + '</a>';
+      return '<a class="urls" target="_blank" href="' + url + '">' + url + '</a>';
     })
   }
 
@@ -308,10 +308,13 @@
       var req_username = "{{request.user.username}}";
       let reply_to = data.reply_to;
       let reply_content = data.reply_content;
+      const reply_max_len = 30;
 
       if(reply_to != "None" && reply_content != "None"){
-          reply_to += '\n';
-          reply_content += '\n';
+          console.log(reply_content.length);
+          reply_to = reply_to.trim();
+          reply_content = reply_content.trim();
+          console.log(reply_content.length);
       }
       // Set table structure
       /*var storage = document.getElementById("msg_history");
@@ -347,7 +350,7 @@
             div.class = "reply_style" ;
             div.innerHTML = reply_to;
             div.innerHTML += '<br />';
-            div.innerHTML += reply_content;
+            div.innerHTML += truncateText(reply_content, reply_max_len);
             div.appendChild(document.createElement("hr"));
             msg_content.appendChild(div);
         }
@@ -375,7 +378,7 @@
             div.class = "reply_style" ;
             div.innerHTML = reply_to;
             div.innerHTML += '<br />';
-            div.innerHTML += reply_content;
+            div.innerHTML += truncateText(reply_content, reply_max_len);
             div.appendChild(document.createElement("hr"));
             received_with_msg.appendChild(div);
         }
@@ -417,7 +420,7 @@
               if(reply_show_box_child_num == reply_show_box_child_num_const){
                   const pk = new_msg_content[i].dataset.pk; // 나중에 email noti 할거면 이걸로 ajax 써서 하면 될듯
                   const username = new_msg_content[i].dataset.username;
-                  const content = new_msg_content[i].lastChild.textContent;
+                  const content = truncateText(new_msg_content[i].lastChild.textContent.trim(), reply_max_len);
 
                   let div = document.createElement("div"); // 선택된 comment의 정보를 담고있는 div
                   div.id = "reply_info" ;
@@ -512,7 +515,6 @@
                data['reply_to'] = "None";
                data['reply_content'] = "None";
            }
-           console.log(JSON.stringify(data));
           websocket.send(JSON.stringify(data));
           message.value = "";
        },
@@ -523,11 +525,19 @@
 
   }
 
+  function truncateText(truncated, maxLength) {
+    if (truncated.length > maxLength) {
+        truncated = truncated.substr(0,maxLength) + '...';
+    }
+    return truncated;
+  }
+
   $( document ).ready(function() {
       let msg_content = document.getElementsByClassName("msg_content");
       let reply_show_box = document.getElementById("reply_show_box");
       let reply_show_box_child_num = reply_show_box.childNodes.length;
       const reply_show_box_child_num_const = reply_show_box.childNodes.length;
+      const reply_max_len = 30;
 
       // DOM의 변화를 추적하는 Observer
       let target = document.getElementById("reply_show_box");
@@ -541,11 +551,19 @@
       // observer.disconnect();
 
       for (let i = 0; i < msg_content.length; i++) {
+          for(let j = 0; j < msg_content[i].childNodes.length; j++){
+              if(msg_content[i].childNodes[j].className == "reply_style"){
+                  msg_content[i].childNodes[j].innerText = truncateText(msg_content[i].childNodes[j].innerText, reply_max_len);
+              }
+          }
+      }
+
+      for (let i = 0; i < msg_content.length; i++) {
           msg_content[i].addEventListener("dblclick", function() {
               if(reply_show_box_child_num == reply_show_box_child_num_const){
                   const pk = msg_content[i].dataset.pk; // 나중에 email noti 할거면 이걸로 ajax 써서 하면 될듯
                   const username = msg_content[i].dataset.username;
-                  const content = msg_content[i].lastChild.textContent;
+                  const content = truncateText(msg_content[i].lastChild.textContent.trim(), reply_max_len);
 
                   let div = document.createElement("div"); // 선택된 comment의 정보를 담고있는 div
                   div.id = "reply_info" ;
