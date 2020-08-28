@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.db.models import F, Q, Count
 from django.views import generic
 from django.contrib.auth.models import User
-from .forms import PostForm, CommentForm, AcceptReportForm, AccuseForm, ReportForm, TutorReportForm, TutorSessionForm
+from .forms import PostForm, CommentForm, AcceptReportForm, AccuseForm, ReportForm, TutorReportForm, TutorSessionForm, TutorApplicationForm
 from django.contrib.auth.decorators import login_required
 from matching import models as matching_models
 from django.db import transaction
@@ -428,6 +428,15 @@ def userlist(request):
     return render(request, 'matching/admin_user_list.html', ctx)
 
 @staff_member_required
+def apply_list(request):
+    applylist = matching_models.TutorApplication.objects.all().exclude(user__profile__is_tutor=True)
+    ctx = {
+        'applylist' : applylist,
+    }
+
+    return render(request, 'matching/admin_apply_list.html', ctx)
+
+@staff_member_required
 def make_tutor(request, pk):
     user = matching_models.User.objects.get(pk=pk)
     userinfo = matching_models.Profile.objects.get(user=user)
@@ -445,6 +454,21 @@ def remove_tutor(request, pk):
 
     return redirect(reverse('matching:userlist'))
 
+@staff_member_required
+def make_staff(request, pk):
+    user = matching_models.User.objects.get(pk=pk)
+    userinfo.is_staff = True
+    user.save()
+
+    return redirect(reverse('matching:userlist'))
+
+@staff_member_required
+def remove_staff(request, pk):
+    user = matching_models.User.objects.get(pk=pk)
+    user.is_staff = False
+    user.save()
+
+    return redirect(reverse('matching:userlist'))
 
 @login_required(login_url=URL_LOGIN)
 def tutor_detail(request, pk):
@@ -531,6 +555,36 @@ def mypage_post(request):
     #posts = tutor_models.Post.objects.order_by('-pub_date')
     posts = list(chain(recruiting, onprocess, recruited))
 
+
+    if request.method == "POST":
+        form = TutorApplicationForm(request.POST)
+
+        if form.is_valid():
+            application = form.save(commit=False)
+            
+            prev = matching_models.TutorApplication.objects.filter(user=request.user)
+            if prev.exists():
+                messages.error(request, '이미 튜터 신청을 했습니다. ')
+                return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
+
+            application.user = request.user
+            application.date = datetime.datetime.now()
+            application.save()
+
+            name = request.user.profile.nickname
+            url = "http://" + request.get_host() + reverse('matching:apply_list')
+            payload = '{"body":"' + name + '","connectColor":"#6C639C","connectInfo":[{"imageUrl":"' + url + '"}]}'
+
+            headers = {'Accept': 'application/vnd.tosslab.jandi-v2+json',
+            'Content-Type': 'application/json'}
+
+            r = requests.post("https://wh.jandi.com/connect-api/webhook/20949533/ee62d73c8d858690d41a1f51f63c7800", data=payload.encode('utf-8'), headers=headers)
+
+            return redirect('matching:mypage_post')
+    else:
+        form = TutorApplicationForm()
+
+
     current_post_page = request.GET.get('page', 1)
 
     post_paginator = Paginator(posts, 10)
@@ -564,7 +618,9 @@ def mypage_post(request):
         'posts' : posts,
         'postPaginator': post_paginator,
         'paginatorRange': paginatorRange,
+        'form' : form,
     }
+
     return render(request, 'matching/mypage_post.html', ctx)
 
 

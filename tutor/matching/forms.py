@@ -1,5 +1,5 @@
 from django import forms
-from .models import Post, Report, Comment, TutorSession
+from .models import Post, Report, Comment, TutorSession, TutorApplication
 from django.forms import ModelChoiceField
 from tempus_dominus.widgets import DateTimePicker, TimePicker
 
@@ -55,3 +55,9 @@ class TutorSessionForm(forms.ModelForm):
     class Meta:
         model = TutorSession
         fields = ('title', 'session_type', 'location', 'start_time', 'expected_fin_time')
+
+class TutorApplicationForm(forms.ModelForm):
+    content = forms.CharField(widget=forms.TextInput(attrs={'placeholder': '신청 이유를 간단하게 적어주세요.'}))
+    class Meta:
+        model = TutorApplication
+        fields = ('content',)

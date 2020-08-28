@@ -2,6 +2,35 @@
 
 {% block content %}
 
+{% if not user.profile.is_tutor %}
+<a style="margin-top: 50px; margin-right:100px; float:right;">
+<button class="mybutton" type="button"  data-toggle="modal" data-target="#applyTutor">튜터 신청하기</button>
+</a>
+<div id="applyTutor" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <form class="form-style-7 session_report_create" id="session_create" action="" method="POST">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">튜터 신청하기</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        {% csrf_token %}
+        <p>튜터 신청 이유를 간단하게 적어주세요.</p>
+        <li>
+          {{form.as_p}}
+       </li>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-default">Submit</button>
+      </div>
+    </div>
+    </form>
+
+  </div>
+</div>
+{% endif %}
 
 <div class="tableDiv mypage_table">
   <ul class="nav nav-tabs">
