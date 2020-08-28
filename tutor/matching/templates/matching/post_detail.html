@@ -493,7 +493,7 @@
        data: data_obj,
        success: function(response){
            let data = {
-               'postId': response.id
+               'postid': response.id
            };
            if(response.reply_to && response.reply_content){
                data['reply_to'] = response.reply_to;
@@ -502,6 +502,8 @@
                data['reply_to'] = "None";
                data['reply_content'] = "None";
            }
+           console.log(data);
+           console.log(JSON.stringify(data));
           websocket.send(JSON.stringify(data));
           message.value = "";
        },

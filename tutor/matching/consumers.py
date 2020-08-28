@@ -111,7 +111,7 @@ class PostDetailConsumer(WebsocketConsumer):
     # Receive message from WebSocket
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        post_id = text_data_json['postId']
+        post_id = text_data_json['postid']
         reply_to = text_data_json['reply_to']
         reply_content = text_data_json['reply_content']
 
@@ -121,7 +121,6 @@ class PostDetailConsumer(WebsocketConsumer):
             'reply_to': reply_to,
             'reply_content': reply_content,
         }
-
 
         # Send message to room group
         async_to_sync(self.channel_layer.group_send)(
