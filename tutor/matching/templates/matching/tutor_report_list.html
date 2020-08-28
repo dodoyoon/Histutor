@@ -1,0 +1,42 @@
+{% extends "matching/base.html" %}
+{% load static %}
+{% block style %}
+  <link rel="stylesheet" type="text/css" href="{% static 'matching/report.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="reportDetail" class="list-type1">
+    <ol>
+      <div class="session_info">
+        <li><a href="#">제목</a></li>
+        {{session.title}}
+        <li><a href="#">튜터링 날짜</a></li>
+        {{session.pub_date|date:'Y-m-d'}}
+        <li><a href="#">튜터</a></li>
+        {{session.tutor.profile.nickname}}
+      </div>
+    </ol>
+  </div>
+{% for report in report_list %}
+  <div id="reportDetail" class="list-type1">
+    <ol>
+        {% if report.join_tutee %}
+        <div class="list-box">
+            <li><a href="#">참여한 튜티</a></li>
+            {{report.join_tutee}}
+        </div>
+        {% endif %}
+      <div class="list-box">
+        <li><a href="#">튜터링 시간</a></li>
+        {{report.duration_time}}분
+      </div>
+      <div class="list-box">
+        <li><a href="#">보고서</a></li>
+        {{report.content}}
+      </div>
+    </ol>
+  </div>
+
+{% endfor %}
+{% endblock %}
+

@@ -14,7 +14,6 @@ list-style: none;
 font-size: 15px;
 font-family: 'Raleway', sans-serif;
 padding: 0;
-margin-bottom: 4em;
 }
 .list-type1 ol ol{
 margin: 0 0 0 2em;
@@ -59,4 +58,7 @@ color:#FFF;
     margin:8% 0;
 }
 
-
+.session_info a{
+    background:#c1b5d6;
+    font-weight: 600;
+}
