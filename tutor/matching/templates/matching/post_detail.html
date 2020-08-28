@@ -167,8 +167,8 @@
             <div id="comment{{ forloop.counter0 }}" class="received_with_msg msg_content" data-pk="{{comment.pk}}" data-username="{{comment.user.profile.nickname}}">
                 {% if comment.reply_to and comment.reply_content %}
                     <div class="reply_style">
-                        {{ comment.reply_to }}
-                        {{ commernt.reply_content }}
+                        {{ comment.reply_to }} <br>
+                        {{ comment.reply_content }}
                     </div>
                     <hr>
                 {% endif %}
@@ -190,7 +190,7 @@
               <div id="comment{{ forloop.counter0 }}" class="msg_content msg_box" data-pk="{{comment.pk}}" data-username="{{comment.user.profile.nickname}}">
                   {% if comment.reply_to and comment.reply_content %}
                       <div class="reply_style">
-                          {{ comment.reply_to }}
+                          {{ comment.reply_to }} <br>
                           {{ comment.reply_content }}
                       </div>
                       <hr>
@@ -345,8 +345,9 @@
             let p_to = document.createElement("p") ;
             let p_content = document.createElement("span") ;
             div.class = "reply_style" ;
-            div.innerText = reply_to;
-            div.innerText += reply_content;
+            div.innerHTML = reply_to;
+            div.innerHTML += '<br />';
+            div.innerHTML += reply_content;
             div.appendChild(document.createElement("hr"));
             msg_content.appendChild(div);
         }
@@ -372,8 +373,9 @@
         if(reply_to != "None" && reply_content != "None"){
             let div = document.createElement("div");
             div.class = "reply_style" ;
-            div.innerText = reply_to;
-            div.innerText += reply_content;
+            div.innerHTML = reply_to;
+            div.innerHTML += '<br />';
+            div.innerHTML += reply_content;
             div.appendChild(document.createElement("hr"));
             received_with_msg.appendChild(div);
         }
@@ -510,7 +512,6 @@
                data['reply_to'] = "None";
                data['reply_content'] = "None";
            }
-           console.log(data);
            console.log(JSON.stringify(data));
           websocket.send(JSON.stringify(data));
           message.value = "";
