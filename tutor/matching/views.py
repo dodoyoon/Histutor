@@ -157,7 +157,7 @@ class ReportDetail(DetailView):
 
     def get(self, request, *args, **kwargs):
         report = matching_models.Report.objects.get(pk=self.kwargs['pk'])
-        if self.request.user.is_staff or self.request.user == report.post.user:
+        if self.request.user.is_staff or self.request.user == report.writer:
             return super(ReportDetail, self).get(request, *args, **kwargs)
         else:
             return redirect('matching:mainpage', showtype='all')
@@ -195,16 +195,17 @@ def post_report_list(request, pk):
 
 def session_report_list(request, pk):
     session = matching_models.TutorSession.objects.get(pk=pk)
-    report_list = matching_models.Report.objects.filter(session=session)
-    tutor_report = matching_models.Report.objects.filter(writer=session.tutor)
+    ctx = {'session': session}
+    if request.user.is_staff:
+        report_list = matching_models.Report.objects.filter(session=session)
+    elif request.user == session.tutor:
+        report_list = report_list.filter(writer=session.tutor)
+    else:
+        return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
+    ctx['report_list'] = report_list
+    return render(request, 'matching/session_report_list.html', ctx)
 
-    ctx = {
-        'session' : session,
-        'report_list' : report_list,
-        'tutor_report' : tutor_report,
-    }
 
-    return render(request, 'matching/report_list.html', ctx)
 
 
 @login_required(login_url=URL_LOGIN)
@@ -258,10 +259,8 @@ def post_detail(request, pk):
     user = matching_models.User.objects.get(username=request.user.username)
     post = matching_models.Post.objects.get(pk=pk)
     my_report = matching_models.Report.objects.filter(writer=user, post=pk)
-
     if my_report.exists(): #사용자가 쓴 보고서 존재
-        ctx['my_report'] = my_report
-        ctx['my_report_pk'] = my_report[0].pk
+        ctx['my_report'] = my_report[0]
     elif post.fin_time or ((request.user == post.user) and post.tutor):
         #사용자가 쓴 보고서 존재하지 않고 종료되었거나
         if post.tutor == post.user:
@@ -269,7 +268,6 @@ def post_detail(request, pk):
         else:
             report_form = ReportForm()
         ctx['report_form'] = report_form
-        ctx['report_post_pk'] = post.pk
         ctx['report_exist'] = True
 
     comment_list = matching_models.Comment.objects.filter(post=post).order_by('pub_date')

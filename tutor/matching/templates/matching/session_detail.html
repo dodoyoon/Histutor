@@ -124,13 +124,11 @@
     </form>
   </div>
 
-  {% if my_report or user.is_staff %}
-  {% if my_report_pk %}
-  <button class="mybutton" type="submit" onclick="location.href='{% url "matching:report_detail" my_report_pk %}'">보고서 보기</button>
-  {% endif %}
+  {% if my_report %}
+  <button class="mybutton" type="submit" onclick="location.href='{% url "matching:session_report_list" session.pk%}'">보고서 보기</button>
   {% endif %}
 
-  {% if user.is_staff and session.fin_time %}
+  {% if user.is_staff %}
   <button class="mybutton" type="submit" onclick="location.href='{% url "matching:session_report_list" session.pk  %}'">보고서 목록</button>
   {% endif %}
   {% endif %}

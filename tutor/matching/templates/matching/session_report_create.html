@@ -13,6 +13,7 @@
 {% endif %}
 {% if log_list %}
     {% for log in log_list %}
+    <div>
     <form method="POST" class="form-style-7 session_report_create">
         {% csrf_token %}
         <input name="username" value="{{log.tutee}}" type="hidden">
@@ -32,6 +33,7 @@
         </li>
         <input type="submit" value="제출" style="margin:4% 0 0 40%">
     </form>
+    </div>
     {% endfor %}
 {% else %}
     <form method="POST" class="form-style-7 session_report_create">
@@ -52,6 +54,6 @@
     </li>
     <input type="submit" value="제출" style="margin:4% 0 0 40%">
     </ul>
-</form>
+    </form>
 {% endif %}
 {% endblock %}

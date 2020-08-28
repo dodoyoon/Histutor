@@ -128,10 +128,8 @@
     </div>
     {% endif %}
 
-    {% if my_report or user.is_staff %}
-    {% if my_report_pk %}
-    <button class="mybutton" type="submit" onclick="location.href='{% url "matching:report_detail" my_report_pk %}'">보고서 보기</button>
-    {% endif %}
+    {% if my_report %}
+    <button class="mybutton" type="submit" onclick="location.href='{% url "matching:report_detail" my_report.pk %}'">보고서 보기</button>
     {% endif %}
 </div>
 
@@ -226,7 +224,7 @@
       <!-- Report Modal -->
       <div id="reportModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
-          <form action="{% url 'matching:tutee_report' report_post_pk %}" method="POST">
+          <form action="{% url 'matching:tutee_report' post.pk %}" method="POST">
           <!-- Modal content-->
           <div class="modal-content">
             <div class="modal-header">
