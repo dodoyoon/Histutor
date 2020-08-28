@@ -251,6 +251,7 @@
     var msg = document.getElementById("write_msg");
     if(msg.value.trim()!=''){
       sendMessage();
+      msg.value = "";
     }
   })
 
@@ -367,7 +368,6 @@
             'type':'new_comment',
              'comment_id': response,
           }));
-          message.value = "";
        },
        error: function(response){
           //alert("ERROR!!\n" + response);
