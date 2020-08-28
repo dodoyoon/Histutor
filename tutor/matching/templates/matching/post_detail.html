@@ -273,7 +273,7 @@
         // alert(`${msg.innerHTML}\nREPLAY MESSAGE EXIST?: ${msg.querySelector(".reply_style") != null}`);
         let replyContent = msg.getElementsByClassName("reply_style");
         let content = $(msg.id).clone().children().remove().end().text();
-        replyContent[0].innerHTML = makeUrl(replyContent[0].textContent);
+        replyContent[0].innerHTML = makeUrl(replyContent[0].innerHTML);
         replyContent[0].innerText += makeUrl(content);
       } else {
         // alert(`${msg.innerHTML}\nREPLAY MESSAGE EXIST?: ${msg.querySelector(".reply_style") != null}`);
