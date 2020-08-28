@@ -340,23 +340,18 @@ def send_message(request):
         else:
           post = matching_models.Post.objects.get(pk=request.GET['postid'])
           if post.finding_match or request.user == post.tutor or request.user == post.user:
-
-              new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=datetime.datetime.now(), content=request.GET['content'])
-              new_cmt.save()
-              return HttpResponse(new_cmt.id)
-
               content = request.GET['content']
               reply_to = request.GET.get('reply_to')
               reply_content = request.GET.get('reply_content')
 
               response = {}
               if reply_to and reply_content:
-                  new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=timezone.localtime(), content=content, reply_to=reply_to, reply_content=reply_content)
+                  new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=datetime.datetime.now(), content=content, reply_to=reply_to, reply_content=reply_content)
                   response['reply_to'] = reply_to
                   response['reply_content'] = reply_content
                   new_cmt.save()
               else:
-                  new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=timezone.localtime(), content=content)
+                  new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=datetime.datetime.now(), content=content)
                   new_cmt.save()
 
               response['id'] = new_cmt.id
