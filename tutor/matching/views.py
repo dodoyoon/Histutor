@@ -1024,14 +1024,11 @@ def session_detail(request, pk):
 
     if request.user != session.tutor:
         try:
-            log = matching_models.SessionLog.objects.get(is_waiting=False, start_time__isnull=False, fin_time__isnull=True, tutee=req_user)
+            log = matching_models.SessionLog.objects.get(is_waiting=False, start_time__isnull=False, fin_time__isnull=True, tutee=req_user, tutor_session=session)
         except matching_models.SessionLog.DoesNotExist:
-            log = None
-
-        if not log:
             return redirect('matching:waitingroom', pk=pk)
 
-
+        if not log:
 
     comment_list = matching_models.Comment.objects.filter(tutorsession=session).order_by('pub_date')
     ctx['user_compare_msg'] = req_user.profile.nickname + '에게 답장'
