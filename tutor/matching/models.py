@@ -134,7 +134,7 @@ class SessionLog(models.Model):
 
    def ranking(self):
     waitingList = SessionLog.objects.filter(is_waiting=True, wait_time__lt=self.wait_time).aggregate(ranking=Count('wait_time'))
-    return waitingList['ranking'] + 1
+    return waitingList['ranking']+1
    def __str__(self):
       return self.tutee.profile.nickname +' ' + str(self.is_waiting) +' ' + str(self.wait_time) + ' ' + self.tutor_session.title
 
