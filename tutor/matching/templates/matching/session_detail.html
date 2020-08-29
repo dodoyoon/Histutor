@@ -324,6 +324,11 @@
       let reply_content = data.reply_content;
       const reply_max_len = 30;
 
+
+      console.log("On Message");
+      console.log(reply_to);
+      console.log(reply_content);
+
       if(reply_to && reply_content){
           if(reply_to != "None" && reply_content != "None"){
               reply_to = reply_to.trim();
@@ -525,6 +530,10 @@
         data_obj["reply_content"] = reply_content;
     }
 
+    console.log("SEND MESSAGE");
+    console.log(reply_to);
+    console.log(reply_content);
+
 
     $.ajax({
        url: "{% url 'matching:send_message' %}",
@@ -542,6 +551,9 @@
               data['reply_to'] = "None";
               data['reply_content'] = "None";
           }
+          console.log("BEFORE Consumer");
+          console.log(response.reply_to);
+          console.log(response.reply_content);
          websocket.send(JSON.stringify(data));
        },
        error: function(response){

@@ -241,6 +241,9 @@ class SessionDetailConsumer(WebsocketConsumer):
         am_or_pm = am_or_pm[0] + '.' + am_or_pm[1] + '.'
         date = time + ' ' + am_or_pm
         profile = matching_models.Profile.objects.get(user=comment.user)
+        print("new_comment")
+        print(event['reply_to'])
+        print(event['reply_content'])
 
         # Send message to WebSocket
         self.send(text_data=json.dumps({
