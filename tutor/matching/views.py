@@ -981,32 +981,6 @@ def mainpage(request, showtype):
     return render(request, 'matching/main.html', ctx)
 
 
-def get_next_tutee(request, session, req_user):
-    # session log
-    if session.tutor != req_user:
-        messages.error(request, '해당 튜터만 새로운 튜터링을 시작할 수 있습니다.')
-        return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
-    try:
-        next_tutee = matching_models.SessionLog.objects.filter(tutor_session=session, is_waiting=True).earliest('wait_time')
-    except matching_models.SessionLog.DoesNotExist:
-        next_tutee = None
-
-    if next_tutee:
-        next_tutee.start_time = datetime.datetime.now()
-        next_tutee.is_waiting = False
-        next_tutee.save()
-
-    return next_tutee
-
-def fin_current_tutee(request, session):
-    try:
-        current_tutee = matching_models.SessionLog.objects.get(tutor_session=session, is_waiting=False, start_time__isnull=False, fin_time__isnull=True)
-        current_tutee.fin_time = datetime.datetime.now()
-        current_tutee.save()
-    except:
-        current_tutee = None
-    return current_tutee
-
 
 @login_required(login_url=URL_LOGIN)
 def session_detail(request, pk):
@@ -1206,7 +1180,7 @@ def start_new_tutoring(request, pk):
         messages.error(request, '해당 튜터세션은 존재하지 않습니다.')
         return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
 
-    context = {}
+    context = {'session_pk' : session.pk}
 
 
     current_tutee = fin_current_tutee(request, session)
@@ -1216,12 +1190,32 @@ def start_new_tutoring(request, pk):
       current_tutee_url = "http://" + request.get_host() + reverse('matching:mainpage', kwargs={'showtype':'all'})
       fin_tutoring_cmt = matching_models.Comment(user=current_tutee.tutee, tutorsession=session, pub_date=datetime.datetime.now(), content="튜터링종료"+str(session.pub_date))
       fin_tutoring_cmt.save()
-      context['current_tutee_pk'] = current_tutee.pk
+      context['current_tutee_pk'] = current_tutee.tutee.pk
       context['current_tutee_url'] = current_tutee_url
     if next_tutee:
-      url = "http://" + request.get_host() + reverse('matching:session_detail', args=[pk])
+      next_tutee_url = "http://" + request.get_host() + reverse('matching:session_detail', args=[pk])
       start_tutoring_cmt = matching_models.Comment(user=next_tutee.tutee, tutorsession=session, pub_date=datetime.datetime.now(), content="튜터링시작"+str(session.pub_date))
       start_tutoring_cmt.save()
-      context = {'next_tutee_pk' : next_tutee.pk, 'next_tutee_url' : url}
+      context['next_tutee_pk'] = next_tutee.tutee.pk
+      context['next_tutee_url'] = next_tutee_url
 
     return HttpResponse(json.dumps(context), content_type="application/json")
+
+
+def get_next_tutee(request, session, req_user):
+    # session log
+    if session.tutor != req_user:
+        messages.error(request, '해당 튜터만 새로운 튜터링을 시작할 수 있습니다.')
+        return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
+    try:
+        next_tutee = matching_models.SessionLog.objects.filter(tutor_session=session, is_waiting=True).earliest('wait_time')
+    except matching_models.SessionLog.DoesNotExist:
+        next_tutee = None
+    return next_tutee
+
+def fin_current_tutee(request, session):
+    try:
+        current_tutee = matching_models.SessionLog.objects.get(tutor_session=session, is_waiting=False, start_time__isnull=False, fin_time__isnull=True)
+    except:
+        current_tutee = None
+    return current_tutee
