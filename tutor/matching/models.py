@@ -69,7 +69,7 @@ class TutorSession(models.Model):
    expected_fin_time = models.DateTimeField(null=True)
    fin_time = models.DateTimeField(null=True)
    hit = models.PositiveIntegerField(default=0)
-   location = models.CharField(max_length=500, null=True)
+   location = models.CharField(max_length=500, null=True, blank=True)
 
 
    @property
