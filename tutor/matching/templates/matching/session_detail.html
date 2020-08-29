@@ -227,7 +227,7 @@
     </div>
     <div class="type_msg">
       <div class="input_msg_write" id="input_msg_write">
-        <input type="text" id="write_msg" class="write_msg" placeholder="Type a message" />
+        <input type="text" id="write_msg" class="write_msg" placeholder="Type a message" autofocus />
         <button id="msg_send_btn" class="msg_send_btn" type="button"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
       </div>
 
@@ -477,6 +477,9 @@
                       reply_show_box.removeChild(reply_show_box.lastChild);
                       chat_box.style.height = 550 + 'px';
                   });
+
+                  let write_msg = document.getElementById("write_msg") ;
+                  write_msg.focus();
               }
           });
       }
@@ -701,6 +704,9 @@
                       reply_show_box.removeChild(reply_show_box.lastChild);
                       chat_box.style.height = 550 + 'px';
                   });
+
+                  let write_msg = document.getElementById("write_msg") ;
+                  write_msg.focus();
               }
           });
       }
