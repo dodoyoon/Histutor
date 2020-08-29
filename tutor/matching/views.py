@@ -1076,7 +1076,7 @@ def waitingroom(request, pk):
         return redirect('matching:session_detail', pk=session.pk)
     except matching_models.SessionLog.DoesNotExist:
       try: 
-        log = matching_models.SessionLog.objects.get(is_waiting=True, tutor_session = session)
+        log = matching_models.SessionLog.objects.get(is_waiting=True, tutor_session = session, tutee = user)
       except matching_models.SessionLog.DoesNotExist:
         log = matching_models.SessionLog.objects.create(tutor_session=session, tutee=user)
         log.save()
