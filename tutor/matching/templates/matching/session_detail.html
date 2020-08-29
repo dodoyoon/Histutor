@@ -496,11 +496,11 @@
       msg.innerHTML = `✨&nbsp;&nbsp;튜터링 시작 - ${data['next_tutee_nickname']}&nbsp;&nbsp;✨`;
       storage.append(msg);
     } else if (data['type'] == "new_waiting_tutee"){
-      alert("NEW");
+      // alert("NEW");
       let waiting_tutee = document.getElementById("waiting_tutee");
       waiting_tutee.innerHTML = parseInt(waiting_tutee.innerHTML) + 1;
     } else if (data['type'] == "waiting_tutee_out"){
-      alert("OUT");
+      // alert("OUT");
       let waiting_tutee = document.getElementById("waiting_tutee");
       waiting_tutee.innerHTML = parseInt(waiting_tutee.innerHTML) - 1;
     }
