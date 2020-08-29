@@ -1061,6 +1061,8 @@ def session_detail(request, pk):
     ctx['fin_msg'] = "튜터링종료" +str(session.pub_date)
     ctx['pk'] = pk
     ctx['request'] = request
+    waitingList = matching_models.SessionLog.objects.filter(is_waiting=True, tutor_session=session)
+    ctx['waiting_tutee'] = len(waitingList)
     session.hit = session.hit + 1
     session.save()
     return render(request, 'matching/session_detail.html', ctx)

@@ -84,6 +84,14 @@
           </td>
         </tr>
         {% endif %}
+        <tr>
+          <td class="text-center text-nowrap align-middle"><b>대기 중인 튜티 수</b></td>
+          <td class="text-center text-nowrap align-middle">
+            <div id="waiting_tutee">
+              {{waiting_tutee}}
+            </div>
+          </td>
+        </tr>
       </tbody>
   </table>
   {% if session.tutor == user %}
@@ -482,6 +490,14 @@
       msg.className = "start_tutoring";
       msg.innerHTML = `✨&nbsp;&nbsp;튜터링 시작 - ${data['next_tutee_nickname']}&nbsp;&nbsp;✨`;
       storage.append(msg);
+    } else if (data['type'] == "new_waiting_tutee"){
+      alert("NEW");
+      let waiting_tutee = document.getElementById("waiting_tutee");
+      waiting_tutee.innerHTML = parseInt(waiting_tutee.innerHTML) + 1;
+    } else if (data['type'] == "waiting_tutee_out"){
+      alert("OUT");
+      let waiting_tutee = document.getElementById("waiting_tutee");
+      waiting_tutee.innerHTML = parseInt(waiting_tutee.innerHTML) - 1;
     }
 
     if(at_bottom){

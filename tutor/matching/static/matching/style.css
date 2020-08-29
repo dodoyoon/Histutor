@@ -267,12 +267,14 @@ a:hover{
 
 #buttonDiv{
   position: relative;
-  top: 30px;
+  top: 40px;
   margin-top:10px;
   float:right;
   margin-right:10px;
   width:18%;
   height:200px;
+  left: -10px;
+  font-size: 15px;
 }
 
 #reportDetail{
