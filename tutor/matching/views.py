@@ -195,6 +195,7 @@ def post_report_list(request, pk):
 def session_report_list(request, pk):
     session = matching_models.TutorSession.objects.get(pk=pk)
     ctx = {'session': session}
+    report_list = []
     if request.user.is_staff:
         report_list = matching_models.Report.objects.filter(session=session)
     elif request.user == session.tutor:
