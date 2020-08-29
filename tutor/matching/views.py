@@ -276,8 +276,8 @@ def post_detail(request, pk):
     ctx['comment_list'] = comment_list
     ctx['start_msg'] = "튜터링시작"+post.user.last_name+str(post.pub_date)
     ctx['cancel_msg'] = "튜터링취소"+post.user.last_name+str(post.pub_date)
+    ctx['fin_msg'] = "튜터링종료"+post.user.last_name+str(post.pub_date)
     ctx['user_compare_msg'] = user.profile.nickname + '에게 답장'
-
     post.hit = post.hit + 1
     post.save()
     return render(request, 'matching/post_detail.html', ctx)
@@ -531,6 +531,8 @@ def fin_tutoring(request, pk):
     post = matching_models.Post.objects.get(pk=pk)
     post.fin_time = datetime.datetime.now()
     post.save()
+    fin_tutoring_cmt = matching_models.Comment(user=post.tutor, post=post, pub_date=datetime.datetime.now(), content="튜터링종료"+post.user.last_name+str(post.pub_date))
+    fin_tutoring_cmt.save()
     return redirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
 
 # Tutor가 튜터링 중도 취소
