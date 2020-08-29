@@ -324,12 +324,14 @@
       let reply_content = data.reply_content;
       const reply_max_len = 30;
 
-      if(reply_to != "None" && reply_content != "None"){
-          reply_to = reply_to.trim();
-          reply_content = reply_content.trim();
+      if(reply_to && reply_content){
+          if(reply_to != "None" && reply_content != "None"){
+              reply_to = reply_to.trim();
+              reply_content = reply_content.trim();
 
-          if(reply_to == "{{user_compare_msg}}"){
-              reply_to = "나에게 답장";
+              if(reply_to == "{{user_compare_msg}}"){
+                  reply_to = "나에게 답장";
+              }
           }
       }
 
