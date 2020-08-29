@@ -1157,12 +1157,6 @@ def start_new_tutoring(request, pk):
     context = {}
     current_tutee = fin_current_tutee(request, session)
     next_tutee = get_next_tutee(request, session, request.user)
-    if next_tutee:
-      url = "http://" + request.get_host() + reverse('matching:session_detail', args=[pk])
-      start_tutoring_cmt = matching_models.Comment(user=next_tutee.tutee, tutorsession=session, pub_date=datetime.datetime.now(), content="튜터링시작"+str(session.pub_date))
-      start_tutoring_cmt.save()
-      context = {'next_tutee_pk' : next_tutee.pk, 'next_tutee_url' : url}
-
 
     if current_tutee :
       current_tutee_url = "http://" + request.get_host() + reverse('matching:mainpage', kwargs={'showtype':'all'})
@@ -1170,5 +1164,10 @@ def start_new_tutoring(request, pk):
       fin_tutoring_cmt.save()
       context['current_tutee_pk'] = current_tutee.pk
       context['current_tutee_url'] = current_tutee_url
+    if next_tutee:
+      url = "http://" + request.get_host() + reverse('matching:session_detail', args=[pk])
+      start_tutoring_cmt = matching_models.Comment(user=next_tutee.tutee, tutorsession=session, pub_date=datetime.datetime.now(), content="튜터링시작"+str(session.pub_date))
+      start_tutoring_cmt.save()
+      context = {'next_tutee_pk' : next_tutee.pk, 'next_tutee_url' : url}
 
     return HttpResponse(json.dumps(context), content_type="application/json")
