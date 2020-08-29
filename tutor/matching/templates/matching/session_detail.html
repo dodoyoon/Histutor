@@ -562,7 +562,7 @@
     });
   }
 
-  {% if user.profile.is_tutor %}
+  {% if user.profile.is_tutor and not session.fin_time and user == session.tutor %}
   document.getElementById("start_new_tutoring").onclick = function(){
     $.ajax({
             type: "POST",
