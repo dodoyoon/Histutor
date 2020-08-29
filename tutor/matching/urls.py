@@ -20,6 +20,7 @@ urlpatterns = [
   path('session/detail/<int:pk>/start_new_tutoring/', views.start_new_tutoring, name='start_new_tutoring'),
   path('mypage/', views.mypage, name='mypage'),
   path('mypage/post/', views.mypage_post, name='mypage_post'),
+  path('mypage/tutee-session/', views.mypage_tutee_session, name='mypage_tutee_session'),
   path('mypage/tutor-session/', views.mypage_session, name='mypage_tutor_session'),
   path('mypage/tutor_post/', views.mypage_tutor_post, name='mypage_tutor_post'),
   path('post/detail/close_post/<int:pk>', views.close_post, name='close_post'),
