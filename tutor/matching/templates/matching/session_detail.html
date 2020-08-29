@@ -463,9 +463,19 @@
                   // 채팅 입력하는 div에 같이 넣어주기
                   reply_show_box.appendChild(div) ;
 
+                  let reply_info_height = document.getElementById("reply_info").clientHeight;
+                  let reply_info = document.getElementById("reply_info");
+                  let chat_box = document.getElementById("msg_history");
+                  let chat_box_height = chat_box.clientHeight;
+
+                  if(chat_box_height != 469){
+                      chat_box.style.height = (chat_box_height - reply_info_height) + 'px';
+                  }
+
                   let btn = document.getElementById("cancel_btn");
                   btn.addEventListener("click", function() {
-                      reply_show_box.removeChild(reply_show_box.lastChild)
+                      reply_show_box.removeChild(reply_show_box.lastChild);
+                      chat_box.style.height = 550 + 'px';
                   });
               }
           });
@@ -679,18 +689,31 @@
                   // 채팅 입력하는 div에 같이 넣어주기
                   reply_show_box.appendChild(div) ;
 
+                  let reply_info_height = document.getElementById("reply_info").clientHeight;
+                  let chat_box = document.getElementById("msg_history");
+                  let chat_box_height = chat_box.clientHeight;
+                  if(chat_box_height != 469){
+                      chat_box.style.height = (chat_box_height - reply_info_height) + 'px';
+                  }
+
                   let btn = document.getElementById("cancel_btn");
                   btn.addEventListener("click", function() {
-                      reply_show_box.removeChild(reply_show_box.lastChild)
+                      reply_show_box.removeChild(reply_show_box.lastChild);
+                      chat_box.style.height = 550 + 'px';
                   });
               }
           });
       }
 
       let send_btn = document.getElementById("msg_send_btn");
+      let reply_info = document.getElementById("reply_info");
+      let chat_box = document.getElementById("msg_history");
+      let chat_box_height = chat_box.clientHeight;
+
       send_btn.addEventListener("click", function() {
           if(reply_show_box_child_num != reply_show_box_child_num_const){
-              reply_show_box.removeChild(reply_show_box.lastChild)
+              reply_show_box.removeChild(reply_show_box.lastChild);
+              chat_box.style.height = 550 + 'px';
           }
       });
   });
