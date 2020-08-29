@@ -188,16 +188,21 @@ class SessionDetailConsumer(WebsocketConsumer):
         text_data_json = json.loads(text_data)
         type1 = text_data_json['type']
 
+        reply_to = text_data_json['reply_to']
+        reply_content = text_data_json['reply_content']
+
+        data={}
+
         if type1 == "new_comment":
           comment_id = text_data_json['comment_id']
+          data['type'] = 'new_comment'
+          data['id'] = comment_id
+          data['reply_to'] = reply_to
+          data['reply_content'] = reply_content
 
           # Send message to room group
           async_to_sync(self.channel_layer.group_send)(
-              self.group_name,
-              {
-                  'type': 'new_comment',
-                  'id': comment_id,
-              }
+              self.group_name, data
           )
         elif type1 == "start_new_tutoring":
           type2 = text_data_json['type2']
@@ -210,6 +215,8 @@ class SessionDetailConsumer(WebsocketConsumer):
                     'type': 'get_next_tutee',
                     'pk': next_tutee_pk,
                     'next_tutee_url': next_tutee_url,
+                    'reply_to' : reply_to,
+                    'reply_content' : reply_content,
                 }
             )
           elif type2 == "letout_current_tutee":
@@ -220,7 +227,9 @@ class SessionDetailConsumer(WebsocketConsumer):
                 {
                     'type': 'letout_current_tutee',
                     'current_tutee_pk': current_tutee_pk,
-                    'current_tutee_url': current_tutee_url
+                    'current_tutee_url': current_tutee_url,
+                    'reply_to' : reply_to,
+                    'reply_content' : reply_content,
                 }
             )
 
@@ -245,6 +254,8 @@ class SessionDetailConsumer(WebsocketConsumer):
             'username': username,
             'date': date,
             'nickname': profile.nickname,
+            'reply_to': event['reply_to'],
+            'reply_content': event['reply_content'],
         }))
 
     # Receive message from room group
@@ -270,6 +281,8 @@ class SessionDetailConsumer(WebsocketConsumer):
         'next_tutee_nickname': log.tutee.profile.nickname,
         'session_pk': log.tutor_session.pk,
         'next_tutee_url': event['next_tutee_url'],
+        # 'reply_to': event['reply_to'],
+        # 'reply_content': event['reply_content'],
       }))
 
     def letout_current_tutee(self, event):
@@ -282,4 +295,6 @@ class SessionDetailConsumer(WebsocketConsumer):
         'current_tutee_nickname': log.tutee.profile.nickname,
         'session_pk': log.tutor_session.pk,
         'current_tutee_url': event['current_tutee_url'],
+        # 'reply_to': event['reply_to'],
+        # 'reply_content': event['reply_content'],
       }))

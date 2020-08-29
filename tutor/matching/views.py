@@ -333,9 +333,23 @@ def send_message(request):
     if request.method == "GET":
         if request.GET['type'] == "session":
           session = matching_models.TutorSession.objects.get(pk = request.GET['postid'])
-          new_cmt = matching_models.Comment(user=request.user, tutorsession=session, pub_date=datetime.datetime.now(), content=request.GET['content'])
-          new_cmt.save()
-          return HttpResponse(new_cmt.id)
+
+          content = request.GET['content']
+          reply_to = request.GET.get('reply_to')
+          reply_content = request.GET.get('reply_content')
+
+          response = {}
+          if reply_to and reply_content:
+              new_cmt = matching_models.Comment(user=request.user, tutorsession=session, pub_date=datetime.datetime.now(), content=content, reply_to=reply_to, reply_content=reply_content)
+              response['reply_to'] = reply_to
+              response['reply_content'] = reply_content
+              new_cmt.save()
+          else:
+              new_cmt = matching_models.Comment(user=request.user, tutorsession=session, pub_date=datetime.datetime.now(), content=content)
+              new_cmt.save()
+
+          response['id'] = new_cmt.id
+          return HttpResponse(json.dumps(response), content_type="application/json")
         else:
           post = matching_models.Post.objects.get(pk=request.GET['postid'])
           if post.finding_match or request.user == post.tutor or request.user == post.user:
@@ -995,6 +1009,7 @@ def session_detail(request, pk):
 
 
     comment_list = matching_models.Comment.objects.filter(tutorsession=session).order_by('pub_date')
+    ctx['user_compare_msg'] = req_user.profile.nickname + '에게 답장'
 
     ctx['session'] = session
     ctx['comment_list'] = comment_list
@@ -1143,7 +1158,7 @@ def start_new_tutoring(request, pk):
       url = "http://" + request.get_host() + reverse('matching:session_detail', args=[pk])
       start_tutoring_cmt = matching_models.Comment(user=next_tutee.tutee, tutorsession=session, pub_date=datetime.datetime.now(), content="튜터링시작")
       start_tutoring_cmt.save()
-      context = {'next_tutee_pk' : next_tutee.pk, 'next_tutee_url' : url}
+      context = {'next_tutee_pk' : next_tutee.pk, 'next_tutee_url' : url, 'session': session}
 
 
     if current_tutee :
@@ -1152,5 +1167,6 @@ def start_new_tutoring(request, pk):
       fin_tutoring_cmt.save()
       context['current_tutee_pk'] = current_tutee.pk
       context['current_tutee_url'] = current_tutee_url
+      context['session'] = session
 
     return HttpResponse(json.dumps(context), content_type="application/json")

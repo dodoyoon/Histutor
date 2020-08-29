@@ -165,8 +165,20 @@
         <div class="incoming_msg">
           <div class="received_msg">
             <p class="received_name">{{comment.user.profile.nickname}}</p>
-            <div id="comment{{ forloop.counter0 }}" class="received_with_msg msg_content">
-              {{ comment.content }}
+            <div id="comment{{ forloop.counter0 }}" class="received_with_msg msg_content" data-pk="{{comment.pk}}" data-username="{{comment.user.profile.nickname}}">
+                {% if comment.reply_to and comment.reply_content %}
+                    <div class="reply_style">
+                        {% if comment.reply_to == user_compare_msg %}
+                            나에게 답장
+                        {% else %}
+                            {{ comment.reply_to }}
+                        {% endif %}
+                        <br>
+                        {{ comment.reply_content }}
+                    </div>
+                    <hr>
+                {% endif %}
+                {{ comment.content }}
             </div>
             <span class="received_time_date">{{ comment.pub_date|date:"P"}} </span>
           </div>
@@ -181,7 +193,21 @@
           <div class="outgoing_msg">
             <div class="sent_msg">
               <span class="sent_time_date"> {{ comment.pub_date|date:"P"}}</span>
-              <div id="comment{{ forloop.counter0 }}" class="msg_content msg_box">{{ comment.content }}</div>
+              <div id="comment{{ forloop.counter0 }}" class="msg_content msg_box" data-pk="{{comment.pk}}" data-username="{{comment.user.profile.nickname}}">
+                  {% if comment.reply_to and comment.reply_content %}
+                      <div class="reply_style">
+                          {% if comment.reply_to == user_compare_msg %}
+                              나에게 답장
+                          {% else %}
+                              {{ comment.reply_to }}
+                          {% endif %}
+                          <br>
+                          {{ comment.reply_content }}
+                      </div>
+                      <hr>
+                  {% endif %}
+                  {{ comment.content }}
+              </div>
             </div>
           </div>
         {% endif %}
@@ -189,8 +215,10 @@
 
 
     </div>
+    <div class="type_msg" id="reply_show_box">
+    </div>
     <div class="type_msg">
-      <div class="input_msg_write">
+      <div class="input_msg_write" id="input_msg_write">
         <input type="text" id="write_msg" class="write_msg" placeholder="Type a message" />
         <button id="msg_send_btn" class="msg_send_btn" type="button"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
       </div>
@@ -235,15 +263,25 @@
   const makeUrl = function(text){
     var urlRegex = /(https?:\/\/[^\s]+)/g;
     return text.replace(urlRegex, function(url) {
-      return '<a class="urls" href="' + url + '">' + url + '</a>';
+      return '<a class="urls" target="_blank" href="' + url + '">' + url + '</a>';
     })
   }
 
   window.onload = function(){
-    let msgContents = document.querySelectorAll(".msg_content");
-    msgContents.forEach(function(msg){
-      document.getElementById(`${msg.id}`).innerHTML = makeUrl(msg.textContent);
-    });
+      let msgContents = document.querySelectorAll(".msg_content");
+      msgContents.forEach(function(msg){
+        // alert(`${msg.innerHTML}\nREPLAY MESSAGE EXIST?: ${msg.querySelector(".reply_style") != null}`);
+        if (msg.querySelector(".reply_style") != null){
+          // alert(`${msg.innerHTML}\nREPLAY MESSAGE EXIST?: ${msg.querySelector(".reply_style") != null}`);
+          let replyContent = msg.getElementsByClassName("reply_style");
+          let content = $(msg.id).clone().children().remove().end().text();
+          replyContent[0].innerHTML = makeUrl(replyContent[0].innerHTML);
+          replyContent[0].innerText += makeUrl(content);
+        } else {
+          // alert(`${msg.innerHTML}\nREPLAY MESSAGE EXIST?: ${msg.querySelector(".reply_style") != null}`);
+          document.getElementById(`${msg.id}`).innerHTML = makeUrl(msg.textContent);
+        }
+      });
   }
 
   document.getElementById("msg_send_btn").addEventListener("click", function(event){
@@ -273,6 +311,20 @@
     var req_username = "{{request.user.username}}";
     let current_tutee_pk = "{{request.user.pk}}";
 
+    let reply_to = data.reply_to;
+    let reply_content = data.reply_content;
+    const reply_max_len = 30;
+
+    console.log(reply_to);
+    console.log(reply_content);
+
+    if(reply_to != "None" && reply_content != "None"){
+        console.log(reply_content.length);
+        reply_to = reply_to.trim();
+        reply_content = reply_content.trim();
+        console.log(reply_content.length);
+    }
+
     // Set table structure
     /*var storage = document.getElementById("msg_history");
     alert(storage.scrollHeight);
@@ -294,6 +346,20 @@
         msg_time.innerHTML += data['date'];
         var msg_content = document.createElement("div");
         msg_content.className = "msg_box";
+        msg_content.className += " msg_content";
+        msg_content.dataset.username = data.nickname;
+        msg_content.dataset.pk = data.id;
+        if(reply_to != "None" && reply_content != "None"){
+            let div = document.createElement("div");
+            let p_to = document.createElement("p") ;
+            let p_content = document.createElement("span") ;
+            div.class = "reply_style" ;
+            div.innerHTML = reply_to;
+            div.innerHTML += '<br />';
+            div.innerHTML += truncateText(reply_content, reply_max_len);
+            div.appendChild(document.createElement("hr"));
+            msg_content.appendChild(div);
+        }
         msg_content.innerHTML += makeUrl(data['content']);
         inner_msg.append(msg_time);
         inner_msg.append(msg_content);
@@ -311,6 +377,18 @@
         received_name.innerHTML += data['nickname'];
         var received_with_msg = document.createElement("div");
         received_with_msg.className = "received_with_msg";
+        received_with_msg.className += " msg_content";
+        received_with_msg.dataset.username = data.nickname;
+        received_with_msg.dataset.pk = data.id;
+        if(reply_to != "None" && reply_content != "None"){
+            let div = document.createElement("div");
+            div.class = "reply_style" ;
+            div.innerHTML = reply_to;
+            div.innerHTML += '<br />';
+            div.innerHTML += truncateText(reply_content, reply_max_len);
+            div.appendChild(document.createElement("hr"));
+            received_with_msg.appendChild(div);
+        }
         received_with_msg.innerHTML += makeUrl(data['content']);
         var received_time_date = document.createElement("span");
         received_time_date.className = "received_time_date";
@@ -341,6 +419,67 @@
       storage.scrollTop = storage.scrollHeight;
     }
 
+    // 밑의 로직과 같지만 이름이 중복이라서 new 붙여줌
+    let new_msg_content = document.getElementsByClassName("msg_content");
+    let reply_show_box = document.getElementById("reply_show_box");
+    let reply_show_box_child_num = reply_show_box.childNodes.length;
+    const reply_show_box_child_num_const = reply_show_box.childNodes.length;
+
+    // DOM의 변화를 추적하는 Observer
+    let target = document.getElementById("reply_show_box");
+    let observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            reply_show_box_child_num = reply_show_box.childNodes.length;
+        });
+    });
+    let config = { childList: true };
+    observer.observe(target, config);
+    // observer.disconnect();
+
+    for (let i = 0; i < new_msg_content.length; i++) {
+        new_msg_content[i].addEventListener("dblclick", function() {
+            if(reply_show_box_child_num == reply_show_box_child_num_const){
+                const pk = new_msg_content[i].dataset.pk; // 나중에 email noti 할거면 이걸로 ajax 써서 하면 될듯
+                const username = new_msg_content[i].dataset.username;
+                const content = truncateText(new_msg_content[i].lastChild.textContent.trim(), reply_max_len);
+
+                let div = document.createElement("div"); // 선택된 comment의 정보를 담고있는 div
+                div.id = "reply_info" ;
+                let to_tag = document.createElement("p"); // who 정보를 담고있는 paragraph
+                let content_tag = document.createElement("p"); // what content 정보를 담고 있는 paragraph
+                let to_text = document.createTextNode(username + "에게 답장");
+                let content_text = document.createTextNode(content);
+                const hr = document.createElement("hr");
+
+                let cancel_btn = document.createElement("button");
+                cancel_btn.id = "cancel_btn";
+                cancel_btn.class = "cancel_btn";
+                cancel_btn.type = "button" ;
+                cancel_btn.innerText = "X";
+
+                // 안돼 ㅠㅠㅠ
+                let icon = document.createElement("i");
+                icon.class = "fa fa-times";
+                icon.setAttribute("aria-hidden","true");
+                cancel_btn.appendChild(icon);
+
+                // 선택된 comment의 정보를 담고있는 div를 만들어보자!
+                to_tag.appendChild(to_text) ;
+                content_tag.appendChild(content_text) ;
+                div.appendChild(hr) ;
+                div.insertBefore(content_tag, div.childNodes[0]) ;
+                div.insertBefore(to_tag, div.childNodes[0]) ;
+                div.insertBefore(cancel_btn, div.childNodes[2]);
+                // 채팅 입력하는 div에 같이 넣어주기
+                reply_show_box.appendChild(div) ;
+
+                let btn = document.getElementById("cancel_btn");
+                btn.addEventListener("click", function() {
+                    reply_show_box.removeChild(reply_show_box.lastChild)
+                });
+            }
+        });
+    }
 
   };
 
@@ -352,22 +491,58 @@
   function sendMessage(){
     event.preventDefault();
 
+    let msg_write_box = document.getElementById("input_msg_write");
+    let msg_write_box_child_num = msg_write_box.childNodes.length;
+
+    let reply_to = "";
+    let reply_content = "";
+
+    reply = document.getElementById("reply_info");
+
+    let data_obj = {
+        postid: {{pk}}, // session_detail pk
+        content: $("#write_msg").val(),
+        type: "session"
+    } ;
+
+
+    if(reply){
+        let is_first = true ;
+        for(let i = 0; i < reply.childNodes.length; i++){
+            let child = reply.childNodes[i] ;
+            if(child.nodeName == "P"){
+                if(is_first){
+                    reply_to = child.innerText;
+                    is_first = false ;
+                }else{
+                    reply_content = child.innerText ;
+                }
+            }
+        }
+        data_obj["reply_to"] = reply_to;
+        data_obj["reply_content"] = reply_content;
+    }
+
+    console.log(data_obj) ;
+
     $.ajax({
        url: "{% url 'matching:send_message' %}",
        type: "GET",
-       data:{
-         postid: {{pk}},
-         content: $("#write_msg").val(),
-         type: "session",
-       },
+       data:data_obj,
        success: function(response){
-         //console.log(data)
-          // alert("SUCCESS\n" + response);
-
-          websocket.send(JSON.stringify({
-            'type':'new_comment',
-             'comment_id': response,
-          }));
+          let data = {
+              'type':'new_comment',
+              'comment_id': response.id,
+          };
+          if(response.reply_to && response.reply_content){
+              data['reply_to'] = response.reply_to;
+              data['reply_content'] = response.reply_content;
+          }else{
+              data['reply_to'] = "None";
+              data['reply_content'] = "None";
+          }
+          console.log(data) ;
+         websocket.send(JSON.stringify(data));
        },
        error: function(response){
           //alert("ERROR!!\n" + response);
@@ -386,7 +561,7 @@
             success: function(response){
               // alert(response.current_tutee_pk);
               // alert(response.next_tutee_pk);
-            
+
               if (response.current_tutee_pk != undefined ){
                 // alert("letout_current_tutee");
                 websocket.send(JSON.stringify({
@@ -394,6 +569,7 @@
                   'type2': 'letout_current_tutee',
                   'current_tutee_pk' : response.current_tutee_pk,
                   'current_tutee_url' : response.current_tutee_url,
+                  'session' : response.session,
                 }))
               }
 
@@ -404,9 +580,10 @@
                   'type2': 'get_next_tutee',
                   'next_tutee_pk': response.next_tutee_pk,
                   'next_tutee_url': response.next_tutee_url,
+                  'session': response.session,
                 }));
               }
-              
+
             },
             error: function(request, status, error){
                 alert("로그인이 필요합니다.");
@@ -414,6 +591,95 @@
             },
         });
   }
+
+  function truncateText(truncated, maxLength) {
+    if (truncated.length > maxLength) {
+        truncated = truncated.substr(0,maxLength) + '...';
+    }
+    return truncated;
+  }
+    console.log("Document is ready Before");
+  $( document ).ready(function() {
+      console.log("Document is ready");
+      let msg_content = document.getElementsByClassName("msg_content");
+      let reply_show_box = document.getElementById("reply_show_box");
+      let reply_show_box_child_num = reply_show_box.childNodes.length;
+      const reply_show_box_child_num_const = reply_show_box.childNodes.length;
+      const reply_max_len = 30;
+
+      // DOM의 변화를 추적하는 Observer
+      let target = document.getElementById("reply_show_box");
+      let observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+              reply_show_box_child_num = reply_show_box.childNodes.length;
+          });
+      });
+      let config = { childList: true };
+      observer.observe(target, config);
+      // observer.disconnect();
+
+      for (let i = 0; i < msg_content.length; i++) {
+          for(let j = 0; j < msg_content[i].childNodes.length; j++){
+              if(msg_content[i].childNodes[j].className == "reply_style"){
+                  msg_content[i].childNodes[j].innerText = truncateText(msg_content[i].childNodes[j].innerText, reply_max_len);
+              }
+          }
+      }
+
+      for (let i = 0; i < msg_content.length; i++) {
+          msg_content[i].addEventListener("dblclick", function() {
+              console.log(reply_show_box_child_num);
+              console.log(reply_show_box_child_num_const);
+              if(reply_show_box_child_num == reply_show_box_child_num_const){
+                  const pk = msg_content[i].dataset.pk; // 나중에 email noti 할거면 이걸로 ajax 써서 하면 될듯
+                  const username = msg_content[i].dataset.username;
+                  const content = truncateText(msg_content[i].lastChild.textContent.trim(), reply_max_len);
+
+                  let div = document.createElement("div"); // 선택된 comment의 정보를 담고있는 div
+                  div.id = "reply_info" ;
+                  let to_tag = document.createElement("p"); // who 정보를 담고있는 paragraph
+                  let content_tag = document.createElement("p"); // what content 정보를 담고 있는 paragraph
+                  let to_text = document.createTextNode(username + "에게 답장");
+                  let content_text = document.createTextNode(content);
+                  const hr = document.createElement("hr");
+
+                  let cancel_btn = document.createElement("button");
+                  cancel_btn.id = "cancel_btn";
+                  cancel_btn.class = "cancel_btn";
+                  cancel_btn.type = "button" ;
+                  cancel_btn.innerText = "X";
+
+                  // 안돼 ㅠㅠㅠ
+                  let icon = document.createElement("i");
+                  icon.class = "fa fa-times";
+                  icon.setAttribute("aria-hidden","true");
+                  cancel_btn.appendChild(icon);
+
+                  // 선택된 comment의 정보를 담고있는 div를 만들어보자!
+                  to_tag.appendChild(to_text) ;
+                  content_tag.appendChild(content_text) ;
+                  div.appendChild(hr) ;
+                  div.insertBefore(content_tag, div.childNodes[0]) ;
+                  div.insertBefore(to_tag, div.childNodes[0]) ;
+                  div.insertBefore(cancel_btn, div.childNodes[2]);
+                  // 채팅 입력하는 div에 같이 넣어주기
+                  reply_show_box.appendChild(div) ;
+
+                  let btn = document.getElementById("cancel_btn");
+                  btn.addEventListener("click", function() {
+                      reply_show_box.removeChild(reply_show_box.lastChild)
+                  });
+              }
+          });
+      }
+
+      let send_btn = document.getElementById("msg_send_btn");
+      send_btn.addEventListener("click", function() {
+          if(reply_show_box_child_num != reply_show_box_child_num_const){
+              reply_show_box.removeChild(reply_show_box.lastChild)
+          }
+      });
+  });
 </script>
 
 {% endblock %}
