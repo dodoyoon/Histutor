@@ -188,8 +188,8 @@ class SessionDetailConsumer(WebsocketConsumer):
         text_data_json = json.loads(text_data)
         type1 = text_data_json['type']
 
-        reply_to = text_data_json['reply_to']
-        reply_content = text_data_json['reply_content']
+        # reply_to = text_data_json['reply_to']
+        # reply_content = text_data_json['reply_content']
 
         data={}
 
@@ -232,6 +232,24 @@ class SessionDetailConsumer(WebsocketConsumer):
                     'reply_content' : reply_content,
                 }
             )
+        elif type1 == "new_waiting_tutee":
+          new_tutee_turn = text_data_json['new_tutee_turn']
+          async_to_sync(self.channel_layer.group_send)(
+              self.group_name,
+              {
+                  'type': 'new_waiting_tutee',
+                  'new_tutee_turn': new_tutee_turn,
+              }
+          )
+        elif type1 == "waiting_tutee_out":
+          waiting_tutee_turn = text_data_json['waiting_tutee_turn']
+          async_to_sync(self.channel_layer.group_send)(
+              self.group_name,
+              {
+                  'type': 'waiting_tutee_out',
+                  'waiting_tutee_turn': waiting_tutee_turn,
+              }
+          )
 
 
     # Receive message from room group
@@ -297,4 +315,20 @@ class SessionDetailConsumer(WebsocketConsumer):
         'current_tutee_url': event['current_tutee_url'],
         # 'reply_to': event['reply_to'],
         # 'reply_content': event['reply_content'],
+      }))
+
+    def new_waiting_tutee(self, event):
+      new_tutee_turn = event['new_tutee_turn']
+
+      self.send(text_data=json.dumps({
+        'type': 'new_waiting_tutee',
+        'new_tutee_turn': new_tutee_turn,
+      }))
+
+    def waiting_tutee_out(self, event):
+      waiting_tutee_turn = event['waiting_tutee_turn']
+
+      self.send(text_data=json.dumps({
+        'type': 'waiting_tutee_out',
+        'waiting_tutee_turn': waiting_tutee_turn,
       }))

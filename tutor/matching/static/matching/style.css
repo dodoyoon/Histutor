@@ -337,6 +337,11 @@ a:hover{
 #totalWaiting{
   margin-top: 20px;
   margin-bottom: 50px;
+  
+}
+
+.inline{
+  display: inline;
 }
 
 #waiting_info{
