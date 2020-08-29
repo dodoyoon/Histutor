@@ -212,24 +212,28 @@ class SessionDetailConsumer(WebsocketConsumer):
           if type2 == "get_next_tutee":
             next_tutee_pk = text_data_json['next_tutee_pk']
             next_tutee_url = text_data_json['next_tutee_url']
+            next_tutee_startTime = text_data_json['next_tutee_startTime']
             async_to_sync(self.channel_layer.group_send)(
                 self.group_name,
                 {
                     'type': 'get_next_tutee',
                     'next_tutee_pk': next_tutee_pk,
                     'next_tutee_url': next_tutee_url,
+                    'next_tutee_startTime': next_tutee_startTime,
                     'session_pk' : session_pk,
                 }
             )
           elif type2 == "letout_current_tutee":
             current_tutee_pk = text_data_json['current_tutee_pk']
             current_tutee_url = text_data_json['current_tutee_url']
+            current_tutee_finTime = text_data_json['current_tutee_finTime']
             async_to_sync(self.channel_layer.group_send)(
                 self.group_name,
                 {
                     'type': 'letout_current_tutee',
                     'current_tutee_pk': current_tutee_pk,
                     'current_tutee_url': current_tutee_url,
+                    'current_tutee_finTime': current_tutee_finTime,
                     'session_pk' : session_pk,
                 }
             )
@@ -292,58 +296,55 @@ class SessionDetailConsumer(WebsocketConsumer):
 
     def get_next_tutee(self, event):
         next_tutee_pk = event['next_tutee_pk']
+        next_tutee_startTime = event['next_tutee_startTime']
         session_pk = event['session_pk']
         print("next_tutee_pk : ", next_tutee_pk)
-        try:            
-            log = matching_models.SessionLog.objects.filter(tutor_session_id=session_pk, tutee_id=next_tutee_pk, is_waiting=True).get()
-            log.start_time = datetime.datetime.now()
-            log.is_waiting = False
-            log.save()
-            self.send(text_data=json.dumps({
-                'type': 'get_next_tutee',
-                'next_tutee_pk': next_tutee_pk,
-                'next_tutee_nickname': log.tutee.profile.nickname,
-                'session_pk': session_pk,
-                'next_tutee_url': event['next_tutee_url'],
-            }))
-        except matching_models.SessionLog.DoesNotExist:
-            tutee = matching_models.User.objects.get(pk=next_tutee_pk);
-            self.send(text_data=json.dumps({
-                'type': 'get_next_tutee',
-                'next_tutee_pk': -1,
-                'next_tutee_nickname': tutee.profile.nickname,
-                'session_pk': session_pk,
-                'next_tutee_url': event['next_tutee_url'],
-            }))
+        # try:            
+        log = matching_models.SessionLog.objects.filter(tutor_session_id=session_pk, tutee_id=next_tutee_pk, start_time=next_tutee_startTime).get()
+        self.send(text_data=json.dumps({
+            'type': 'get_next_tutee',
+            'next_tutee_pk': next_tutee_pk,
+            'next_tutee_nickname': log.tutee.profile.nickname,
+            'session_pk': session_pk,
+            'next_tutee_url': event['next_tutee_url'],
+        }))
+        # except matching_models.SessionLog.DoesNotExist:
+        #     tutee = matching_models.User.objects.get(pk=next_tutee_pk);
+        #     self.send(text_data=json.dumps({
+        #         'type': 'get_next_tutee',
+        #         'next_tutee_pk': -1,
+        #         'next_tutee_nickname': tutee.profile.nickname,
+        #         'session_pk': session_pk,
+        #         'next_tutee_url': event['next_tutee_url'],
+        #     }))
 
 
 
     def letout_current_tutee(self, event):
         
         current_tutee_pk = event['current_tutee_pk']
+        current_tutee_finTime = event['current_tutee_finTime']
         session_pk = event['session_pk']
         print("current_tutee_pk : ", current_tutee_pk)
-        try:
-            log = matching_models.SessionLog.objects.get(tutor_session_id=session_pk,tutee_id=current_tutee_pk, is_waiting=False, start_time__isnull=False, fin_time__isnull=True)
-            log.fin_time = datetime.datetime.now()
-            log.save()
+        # try:
+        log = matching_models.SessionLog.objects.get(tutor_session_id=session_pk,tutee_id=current_tutee_pk, is_waiting=False, start_time__isnull=False, fin_time = current_tutee_finTime)
 
-            self.send(text_data=json.dumps({
-                'type': 'letout_current_tutee',
-                'current_tutee_pk': current_tutee_pk,
-                'current_tutee_nickname': log.tutee.profile.nickname,
-                'session_pk': session_pk,
-                'current_tutee_url': event['current_tutee_url'],
-            }))
-        except matching_models.SessionLog.DoesNotExist:
-            tutee = matching_models.User.objects.get(pk=current_tutee_pk)
-            self.send(text_data=json.dumps({
-                'type': 'letout_current_tutee',
-                'current_tutee_pk': -1,
-                'current_tutee_nickname': tutee.profile.nickname,
-                'session_pk': session_pk,
-                'current_tutee_url': event['current_tutee_url'],
-            }))
+        self.send(text_data=json.dumps({
+            'type': 'letout_current_tutee',
+            'current_tutee_pk': current_tutee_pk,
+            'current_tutee_nickname': log.tutee.profile.nickname,
+            'session_pk': session_pk,
+            'current_tutee_url': event['current_tutee_url'],
+        }))
+        # except matching_models.SessionLog.DoesNotExist:
+        #     tutee = matching_models.User.objects.get(pk=current_tutee_pk)
+        #     self.send(text_data=json.dumps({
+        #         'type': 'letout_current_tutee',
+        #         'current_tutee_pk': -1,
+        #         'current_tutee_nickname': tutee.profile.nickname,
+        #         'session_pk': session_pk,
+        #         'current_tutee_url': event['current_tutee_url'],
+        #     }))
 
     def new_waiting_tutee(self, event):
       new_tutee_turn = event['new_tutee_turn']

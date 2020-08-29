@@ -1196,12 +1196,14 @@ def start_new_tutoring(request, pk):
       fin_tutoring_cmt.save()
       context['current_tutee_pk'] = current_tutee.tutee.pk
       context['current_tutee_url'] = current_tutee_url
+      context['current_tutee_finTime'] = current_tutee.fin_time
     if next_tutee:
       next_tutee_url = "http://" + request.get_host() + reverse('matching:session_detail', args=[pk])
       start_tutoring_cmt = matching_models.Comment(user=next_tutee.tutee, tutorsession=session, pub_date=datetime.datetime.now(), content="튜터링시작"+str(session.pub_date))
       start_tutoring_cmt.save()
       context['next_tutee_pk'] = next_tutee.tutee.pk
       context['next_tutee_url'] = next_tutee_url
+      context['next_tutee_startTime'] = next_tutee.start_time
 
     return HttpResponse(json.dumps(context), content_type="application/json")
 
@@ -1215,11 +1217,18 @@ def get_next_tutee(request, session, req_user):
         next_tutee = matching_models.SessionLog.objects.filter(tutor_session=session, is_waiting=True).earliest('wait_time')
     except matching_models.SessionLog.DoesNotExist:
         next_tutee = None
+
+    if next_tutee:
+        next_tutee.start_time = datetime.datetime.now()
+        next_tutee.is_waiting = False
+        next_tutee.save()
     return next_tutee
 
 def fin_current_tutee(request, session):
     try:
         current_tutee = matching_models.SessionLog.objects.get(tutor_session=session, is_waiting=False, start_time__isnull=False, fin_time__isnull=True)
+        current_tutee.fin_time = datetime.datetime.now()
+        current_tutee.save()
     except:
         current_tutee = None
     return current_tutee
