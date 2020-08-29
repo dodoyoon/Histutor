@@ -199,7 +199,7 @@ def session_report_list(request, pk):
     if request.user.is_staff:
         report_list = matching_models.Report.objects.filter(session=session)
     elif request.user == session.tutor:
-        report_list = report_list.filter(writer=session.tutor)
+        report_list = matching_models.Report.objects.filter(session=session, writer=session.tutor)
     else:
         return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
     ctx['report_list'] = report_list
