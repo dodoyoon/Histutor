@@ -417,3 +417,16 @@ a:hover{
 #offline_radio{
   margin-left: 50px;
 }
+
+#lost_connection{
+  width: 500px;
+  font-size: 15px;
+  position: relative;
+  left: calc(50% - 250px);
+  margin: 5px;
+  visibility: hidden;
+}
+
+#lost_connection p{
+  padding: 8px;
+}

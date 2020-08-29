@@ -138,3 +138,8 @@ class SessionLog(models.Model):
    def __str__(self):
       return self.tutee.profile.nickname +' ' + str(self.is_waiting) +' ' + str(self.wait_time) + ' ' + self.tutor_session.title
 
+
+class TutorApplication(models.Model):
+   user = models.ForeignKey(User, on_delete=models.CASCADE)
+   date = models.DateTimeField(auto_now_add=True)
+   content = models.TextField()

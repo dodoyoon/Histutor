@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.db.models import F, Q, Count
 from django.views import generic
 from django.contrib.auth.models import User
-from .forms import PostForm, CommentForm, AcceptReportForm, AccuseForm, ReportForm, TutorReportForm, TutorSessionForm
+from .forms import PostForm, CommentForm, AcceptReportForm, AccuseForm, ReportForm, TutorReportForm, TutorSessionForm, TutorApplicationForm
 from django.contrib.auth.decorators import login_required
 from matching import models as matching_models
 from django.db import transaction
@@ -277,7 +277,7 @@ def post_detail(request, pk):
     ctx['start_msg'] = "튜터링시작"+post.user.last_name+str(post.pub_date)
     ctx['cancel_msg'] = "튜터링취소"+post.user.last_name+str(post.pub_date)
     ctx['fin_msg'] = "튜터링종료"+post.user.last_name+str(post.pub_date)
-
+    ctx['user_compare_msg'] = user.profile.nickname + '에게 답장'
     post.hit = post.hit + 1
     post.save()
     return render(request, 'matching/post_detail.html', ctx)
@@ -333,9 +333,23 @@ def send_message(request):
     if request.method == "GET":
         if request.GET['type'] == "session":
           session = matching_models.TutorSession.objects.get(pk = request.GET['postid'])
-          new_cmt = matching_models.Comment(user=request.user, tutorsession=session, pub_date=datetime.datetime.now(), content=request.GET['content'])
-          new_cmt.save()
-          return HttpResponse(new_cmt.id)
+
+          content = request.GET['content']
+          reply_to = request.GET.get('reply_to')
+          reply_content = request.GET.get('reply_content')
+
+          response = {}
+          if reply_to and reply_content:
+              new_cmt = matching_models.Comment(user=request.user, tutorsession=session, pub_date=datetime.datetime.now(), content=content, reply_to=reply_to, reply_content=reply_content)
+              response['reply_to'] = reply_to
+              response['reply_content'] = reply_content
+              new_cmt.save()
+          else:
+              new_cmt = matching_models.Comment(user=request.user, tutorsession=session, pub_date=datetime.datetime.now(), content=content)
+              new_cmt.save()
+
+          response['id'] = new_cmt.id
+          return HttpResponse(json.dumps(response), content_type="application/json")
         else:
           post = matching_models.Post.objects.get(pk=request.GET['postid'])
           if post.finding_match or request.user == post.tutor or request.user == post.user:
@@ -429,6 +443,15 @@ def userlist(request):
     return render(request, 'matching/admin_user_list.html', ctx)
 
 @staff_member_required
+def apply_list(request):
+    applylist = matching_models.TutorApplication.objects.all().exclude(user__profile__is_tutor=True)
+    ctx = {
+        'applylist' : applylist,
+    }
+
+    return render(request, 'matching/admin_apply_list.html', ctx)
+
+@staff_member_required
 def make_tutor(request, pk):
     user = matching_models.User.objects.get(pk=pk)
     userinfo = matching_models.Profile.objects.get(user=user)
@@ -446,6 +469,21 @@ def remove_tutor(request, pk):
 
     return redirect(reverse('matching:userlist'))
 
+@staff_member_required
+def make_staff(request, pk):
+    user = matching_models.User.objects.get(pk=pk)
+    userinfo.is_staff = True
+    user.save()
+
+    return redirect(reverse('matching:userlist'))
+
+@staff_member_required
+def remove_staff(request, pk):
+    user = matching_models.User.objects.get(pk=pk)
+    user.is_staff = False
+    user.save()
+
+    return redirect(reverse('matching:userlist'))
 
 @login_required(login_url=URL_LOGIN)
 def tutor_detail(request, pk):
@@ -534,6 +572,36 @@ def mypage_post(request):
     #posts = tutor_models.Post.objects.order_by('-pub_date')
     posts = list(chain(recruiting, onprocess, recruited))
 
+
+    if request.method == "POST":
+        form = TutorApplicationForm(request.POST)
+
+        if form.is_valid():
+            application = form.save(commit=False)
+
+            prev = matching_models.TutorApplication.objects.filter(user=request.user)
+            if prev.exists():
+                messages.error(request, '이미 튜터 신청을 했습니다. ')
+                return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
+
+            application.user = request.user
+            application.date = datetime.datetime.now()
+            application.save()
+
+            name = request.user.profile.nickname
+            url = "http://" + request.get_host() + reverse('matching:apply_list')
+            payload = '{"body":"' + name + '","connectColor":"#6C639C","connectInfo":[{"imageUrl":"' + url + '"}]}'
+
+            headers = {'Accept': 'application/vnd.tosslab.jandi-v2+json',
+            'Content-Type': 'application/json'}
+
+            r = requests.post("https://wh.jandi.com/connect-api/webhook/20949533/ee62d73c8d858690d41a1f51f63c7800", data=payload.encode('utf-8'), headers=headers)
+
+            return redirect('matching:mypage_post')
+    else:
+        form = TutorApplicationForm()
+
+
     current_post_page = request.GET.get('page', 1)
 
     post_paginator = Paginator(posts, 10)
@@ -567,7 +635,9 @@ def mypage_post(request):
         'posts' : posts,
         'postPaginator': post_paginator,
         'paginatorRange': paginatorRange,
+        'form' : form,
     }
+
     return render(request, 'matching/mypage_post.html', ctx)
 
 
@@ -941,6 +1011,8 @@ def session_detail(request, pk):
 
 
     comment_list = matching_models.Comment.objects.filter(tutorsession=session).order_by('pub_date')
+    ctx['user_compare_msg'] = req_user.profile.nickname + '에게 답장'
+    ctx['user'] = req_user
 
     ctx['session'] = session
     ctx['comment_list'] = comment_list

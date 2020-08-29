@@ -134,7 +134,9 @@
 </div>
 
 
-
+<div id="lost_connection" class="">
+  <p class="alert alert-warning text-center">❗ 서버와의 연결이 끊겼습니다. 페이지를 새로고침 해주세요.❗</p>
+</div>
 
 <div class="chat">
   <div class="title">
@@ -169,7 +171,12 @@
             <div id="comment{{ forloop.counter0 }}" class="received_with_msg msg_content" data-pk="{{comment.pk}}" data-username="{{comment.user.profile.nickname}}">
                 {% if comment.reply_to and comment.reply_content %}
                     <div class="reply_style">
-                        {{ comment.reply_to }} <br>
+                        {% if comment.reply_to == user_compare_msg %}
+                            나에게 답장
+                        {% else %}
+                            {{ comment.reply_to }}
+                        {% endif %}
+                        <br>
                         {{ comment.reply_content }}
                     </div>
                     <hr>
@@ -192,7 +199,12 @@
               <div id="comment{{ forloop.counter0 }}" class="msg_content msg_box" data-pk="{{comment.pk}}" data-username="{{comment.user.profile.nickname}}">
                   {% if comment.reply_to and comment.reply_content %}
                       <div class="reply_style">
-                          {{ comment.reply_to }} <br>
+                          {% if comment.reply_to == user_compare_msg %}
+                              나에게 답장
+                          {% else %}
+                              {{ comment.reply_to }}
+                          {% endif %}
+                          <br>
                           {{ comment.reply_content }}
                       </div>
                       <hr>
@@ -314,10 +326,12 @@
       const reply_max_len = 30;
 
       if(reply_to != "None" && reply_content != "None"){
-          console.log(reply_content.length);
           reply_to = reply_to.trim();
           reply_content = reply_content.trim();
-          console.log(reply_content.length);
+
+          if(reply_to == "{{user_compare_msg}}"){
+              reply_to = "나에게 답장";
+          }
       }
       // Set table structure
       /*var storage = document.getElementById("msg_history");
@@ -466,7 +480,8 @@
   };
 
   websocket.onclose = function(e){
-  console.error('Chat socket closed unexpectedly');
+    console.error('Chat socket closed unexpectedly');
+    document.getElementById('lost_connection').style.visibility = "visible";
   };
 
   function sendMessage(){
