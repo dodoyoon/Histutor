@@ -1048,7 +1048,7 @@ def session_detail(request, pk):
             ctx['report_post_pk'] = report.pk
             ctx['report_exist'] = True'''
 
-    if not req_user.profile.is_tutor:
+    if req_user != session.tutor:
         try:
             log = matching_models.SessionLog.objects.get(is_waiting=False, start_time__isnull=False, fin_time__isnull=True, tutee=req_user)
         except matching_models.SessionLog.DoesNotExist:
@@ -1104,9 +1104,7 @@ def waitingroom(request, pk):
 
     try: # 세션에서 튜터링 끝나지 않은 상태에서 다시 세션에 들어온 튜티 -> 바로 채팅방으로 보내야함.
         log = matching_models.SessionLog.objects.get(is_waiting=False, tutee=user, tutor_session=session, start_time__isnull=False, fin_time__isnull=True)
-        url = "http://" + request.get_host() + reverse('matching:session_detail', args=[session.pk])
-        context = {'next_tutee_pk' : user.pk, 'next_tutee_url' : url}
-        return HttpResponse(json.dumps(context), content_type="application/json")
+        return redirect('matching:session_detail', pk=session.pk)
     except matching_models.SessionLog.DoesNotExist:
         log = matching_models.SessionLog.objects.create(tutor_session=session, tutee=user)
         log.save()
