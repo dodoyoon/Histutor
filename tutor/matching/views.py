@@ -1013,8 +1013,8 @@ def session_detail(request, pk):
 
     ctx['session'] = session
     ctx['comment_list'] = comment_list
-    ctx['start_msg'] = "튜터링시작"
-    ctx['fin_msg'] = "튜터링종료"
+    ctx['start_msg'] = "튜터링시작" +str(session.pub_date)
+    ctx['fin_msg'] = "튜터링종료" +str(session.pub_date)
     ctx['pk'] = pk
     ctx['request'] = request
     session.hit = session.hit + 1
@@ -1156,14 +1156,14 @@ def start_new_tutoring(request, pk):
     next_tutee = get_next_tutee(request, session, request.user)
     if next_tutee:
       url = "http://" + request.get_host() + reverse('matching:session_detail', args=[pk])
-      start_tutoring_cmt = matching_models.Comment(user=next_tutee.tutee, tutorsession=session, pub_date=datetime.datetime.now(), content="튜터링시작")
+      start_tutoring_cmt = matching_models.Comment(user=next_tutee.tutee, tutorsession=session, pub_date=datetime.datetime.now(), content="튜터링시작"+str(session.pub_date))
       start_tutoring_cmt.save()
       context = {'next_tutee_pk' : next_tutee.pk, 'next_tutee_url' : url, 'session': session}
 
 
     if current_tutee :
       current_tutee_url = "http://" + request.get_host() + reverse('matching:mainpage', kwargs={'showtype':'all'})
-      fin_tutoring_cmt = matching_models.Comment(user=current_tutee.tutee, tutorsession=session, pub_date=datetime.datetime.now(), content="튜터링종료")
+      fin_tutoring_cmt = matching_models.Comment(user=current_tutee.tutee, tutorsession=session, pub_date=datetime.datetime.now(), content="튜터링종료"+str(session.pub_date))
       fin_tutoring_cmt.save()
       context['current_tutee_pk'] = current_tutee.pk
       context['current_tutee_url'] = current_tutee_url
