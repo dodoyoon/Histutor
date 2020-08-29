@@ -1155,6 +1155,8 @@ def start_new_tutoring(request, pk):
         return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
 
     context = {}
+    
+
     current_tutee = fin_current_tutee(request, session)
     next_tutee = get_next_tutee(request, session, request.user)
     if next_tutee:
