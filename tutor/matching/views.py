@@ -454,6 +454,7 @@ def apply_list(request):
 @staff_member_required
 def make_tutor(request, pk):
     user = matching_models.User.objects.get(pk=pk)
+    matching_models.TutorApplication.objects.filter(user=user).delete()
     userinfo = matching_models.Profile.objects.get(user=user)
     userinfo.is_tutor = True
     userinfo.save()
@@ -644,7 +645,7 @@ def mypage_post(request):
 def mypage_tutee_session(request):
     ctx = {}
 
-    posts = matching_models.SessionLog.objects.filter(tutee_id=request.user.pk)
+    posts = matching_models.SessionLog.objects.filter(tutee_id=request.user.pk, start_time__isnull=False, fin_time__isnull=False)
 
     current_post_page = request.GET.get('page', 1)
 
