@@ -152,6 +152,10 @@
         <div class="cancel_tutoring">
           &nbsp;&nbsp;튜터링 취소&nbsp;&nbsp;
         </div>
+        {% elif comment.content == fin_msg %}
+        <div class="cancel_tutoring">
+          &nbsp;&nbsp;튜터링 종료&nbsp;&nbsp;
+        </div>
         {% elif comment.user != user %}
         <div class="date">
           <script>
