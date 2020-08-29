@@ -640,7 +640,48 @@ def mypage_post(request):
 
     return render(request, 'matching/mypage_post.html', ctx)
 
+@login_required(login_url=URL_LOGIN)
+def mypage_tutee_session(request):
+    ctx = {}
+    
+    posts = matching_models.SessionLog.objects.filter(tutee_id=request.user.pk)
 
+    current_post_page = request.GET.get('page', 1)
+
+    post_paginator = Paginator(posts, 10)
+    try:
+        posts = post_paginator.page(current_post_page)
+    except PageNotAnInteger:
+        posts = post_paginator.page(1)
+    except EmptyPage:
+        posts = post_paginator.page(post_paginator.num_pages)
+
+    neighbors = 10
+    if post_paginator.num_pages > 2*neighbors:
+        start_index = max(1, int(current_post_page)-neighbors)
+        end_index = min(int(current_post_page)+neighbors, post_paginator.num_pages)
+        if end_index < start_index + 2*neighbors:
+            end_index = start_index + 2*neighbors
+        elif start_index > end_index - 2*neighbors:
+            start_index = end_index - 2*neighbors
+        if start_index < 1:
+            end_index -= start_index
+            start_index = 1
+        elif end_index > post_paginator.num_pages:
+            start_index -= end_index - post_paginator.num_pages
+            end_index = post_paginator.num_pages
+        paginatorRange = [f for f in range(start_index, end_index+1)]
+        paginatorRange[:(2*neighbors + 1)]
+    else:
+        paginatorRange = range(1, post_paginator.num_pages+1)
+
+    ctx = {
+        'posts' : posts,
+        'postPaginator': post_paginator,
+        'paginatorRange': paginatorRange,
+    }
+
+    return render(request, 'matching/mypage_tutee_session.html', ctx)
 
 @login_required(login_url=URL_LOGIN)
 def mypage_session(request):
@@ -838,7 +879,7 @@ def mainpage(request, showtype):
     tutoring_off = matching_models.TutorSession.objects.exclude(id__in=tutoring_on).order_by('-pub_date')
     recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
     onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True).order_by('-pub_date')
-    recruited = matching_models.Post.objects.filter(finding_match = False, fin_time__isnull = False).order_by('-pub_date')
+    recruited = matching_models.Post.objects.exclude(id__in=recruiting).exclude(id__in=onprocess).order_by('-pub_date') 
 
     ### 튜터링 검색기능 ###
     if search_word != '':
@@ -1165,14 +1206,10 @@ def start_new_tutoring(request, pk):
         return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
 
     context = {}
+    
+
     current_tutee = fin_current_tutee(request, session)
     next_tutee = get_next_tutee(request, session, request.user)
-    if next_tutee:
-      url = "http://" + request.get_host() + reverse('matching:session_detail', args=[pk])
-      start_tutoring_cmt = matching_models.Comment(user=next_tutee.tutee, tutorsession=session, pub_date=datetime.datetime.now(), content="튜터링시작"+str(session.pub_date))
-      start_tutoring_cmt.save()
-      context = {'next_tutee_pk' : next_tutee.pk, 'next_tutee_url' : url}
-
 
     if current_tutee :
       current_tutee_url = "http://" + request.get_host() + reverse('matching:mainpage', kwargs={'showtype':'all'})
@@ -1180,5 +1217,10 @@ def start_new_tutoring(request, pk):
       fin_tutoring_cmt.save()
       context['current_tutee_pk'] = current_tutee.pk
       context['current_tutee_url'] = current_tutee_url
+    if next_tutee:
+      url = "http://" + request.get_host() + reverse('matching:session_detail', args=[pk])
+      start_tutoring_cmt = matching_models.Comment(user=next_tutee.tutee, tutorsession=session, pub_date=datetime.datetime.now(), content="튜터링시작"+str(session.pub_date))
+      start_tutoring_cmt.save()
+      context = {'next_tutee_pk' : next_tutee.pk, 'next_tutee_url' : url}
 
     return HttpResponse(json.dumps(context), content_type="application/json")

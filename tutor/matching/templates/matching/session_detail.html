@@ -120,7 +120,7 @@
   <div style="margin:2% 0;">
     <form action="{% url 'matching:session_report_create' session.pk %}" method="POST">
       {% csrf_token %}
-    <button class="mybutton" type="submit">보고서쓰기</button>
+    <button class="mybutton" type="submit">보고서 쓰기</button>
     </form>
   </div>
 
@@ -311,19 +311,6 @@
     var req_username = "{{request.user.username}}";
     let current_tutee_pk = "{{request.user.pk}}";
 
-    let reply_to = data.reply_to;
-    let reply_content = data.reply_content;
-    const reply_max_len = 30;
-
-    if(reply_to != "None" && reply_content != "None"){
-        reply_to = reply_to.trim();
-        reply_content = reply_content.trim();
-
-        if(reply_to == "{{user_compare_msg}}"){
-            reply_to = "나에게 답장";
-        }
-    }
-
     // Set table structure
     /*var storage = document.getElementById("msg_history");
     alert(storage.scrollHeight);
@@ -333,6 +320,29 @@
       at_bottom = true;
     }
     if (data['type'] == "new_comment"){
+      let reply_to = data.reply_to;
+      let reply_content = data.reply_content;
+      const reply_max_len = 30;
+
+
+      console.log("On Message");
+      console.log(reply_to);
+      console.log(reply_content);
+
+      if(reply_to && reply_content){
+          if(reply_to != "None" && reply_content != "None"){
+              reply_to = reply_to.trim();
+              reply_content = reply_content.trim();
+
+              if(reply_to == "{{user_compare_msg}}"){
+                  reply_to = "나에게 답장";
+              }
+          }
+      }else{
+          reply_to = "None";
+          reply_content = "None";
+      }
+
       if(data['username']==req_username){
         var msg = document.createElement("div");
         msg.className = "outgoing_msg";
@@ -395,6 +405,69 @@
         incoming_msg.append(received_msg);
         storage.append(incoming_msg);
       }
+
+      // 밑의 로직과 같지만 이름이 중복이라서 new 붙여줌
+      let new_msg_content = document.getElementsByClassName("msg_content");
+      let reply_show_box = document.getElementById("reply_show_box");
+      let reply_show_box_child_num = reply_show_box.childNodes.length;
+      const reply_show_box_child_num_const = reply_show_box.childNodes.length;
+
+      // DOM의 변화를 추적하는 Observer
+      let target = document.getElementById("reply_show_box");
+      let observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+              reply_show_box_child_num = reply_show_box.childNodes.length;
+          });
+      });
+      let config = { childList: true };
+      observer.observe(target, config);
+      // observer.disconnect();
+
+      for (let i = 0; i < new_msg_content.length; i++) {
+          new_msg_content[i].addEventListener("dblclick", function() {
+              if(reply_show_box_child_num == reply_show_box_child_num_const){
+                  const pk = new_msg_content[i].dataset.pk; // 나중에 email noti 할거면 이걸로 ajax 써서 하면 될듯
+                  const username = new_msg_content[i].dataset.username;
+                  const content = truncateText(new_msg_content[i].lastChild.textContent.trim(), reply_max_len);
+
+                  let div = document.createElement("div"); // 선택된 comment의 정보를 담고있는 div
+                  div.id = "reply_info" ;
+                  let to_tag = document.createElement("p"); // who 정보를 담고있는 paragraph
+                  let content_tag = document.createElement("p"); // what content 정보를 담고 있는 paragraph
+                  let to_text = document.createTextNode(username + "에게 답장");
+                  let content_text = document.createTextNode(content);
+                  const hr = document.createElement("hr");
+
+                  let cancel_btn = document.createElement("button");
+                  cancel_btn.id = "cancel_btn";
+                  cancel_btn.class = "cancel_btn";
+                  cancel_btn.type = "button" ;
+                  cancel_btn.innerText = "X";
+
+                  // 안돼 ㅠㅠㅠ
+                  let icon = document.createElement("i");
+                  icon.class = "fa fa-times";
+                  icon.setAttribute("aria-hidden","true");
+                  cancel_btn.appendChild(icon);
+
+                  // 선택된 comment의 정보를 담고있는 div를 만들어보자!
+                  to_tag.appendChild(to_text) ;
+                  content_tag.appendChild(content_text) ;
+                  div.appendChild(hr) ;
+                  div.insertBefore(content_tag, div.childNodes[0]) ;
+                  div.insertBefore(to_tag, div.childNodes[0]) ;
+                  div.insertBefore(cancel_btn, div.childNodes[2]);
+                  // 채팅 입력하는 div에 같이 넣어주기
+                  reply_show_box.appendChild(div) ;
+
+                  let btn = document.getElementById("cancel_btn");
+                  btn.addEventListener("click", function() {
+                      reply_show_box.removeChild(reply_show_box.lastChild)
+                  });
+              }
+          });
+      }
+
     } else if (data['type'] == "letout_current_tutee"){
       var msg = document.createElement("div");
       msg.className = "cancel_tutoring";
@@ -413,68 +486,6 @@
 
     if(at_bottom){
       storage.scrollTop = storage.scrollHeight;
-    }
-
-    // 밑의 로직과 같지만 이름이 중복이라서 new 붙여줌
-    let new_msg_content = document.getElementsByClassName("msg_content");
-    let reply_show_box = document.getElementById("reply_show_box");
-    let reply_show_box_child_num = reply_show_box.childNodes.length;
-    const reply_show_box_child_num_const = reply_show_box.childNodes.length;
-
-    // DOM의 변화를 추적하는 Observer
-    let target = document.getElementById("reply_show_box");
-    let observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            reply_show_box_child_num = reply_show_box.childNodes.length;
-        });
-    });
-    let config = { childList: true };
-    observer.observe(target, config);
-    // observer.disconnect();
-
-    for (let i = 0; i < new_msg_content.length; i++) {
-        new_msg_content[i].addEventListener("dblclick", function() {
-            if(reply_show_box_child_num == reply_show_box_child_num_const){
-                const pk = new_msg_content[i].dataset.pk; // 나중에 email noti 할거면 이걸로 ajax 써서 하면 될듯
-                const username = new_msg_content[i].dataset.username;
-                const content = truncateText(new_msg_content[i].lastChild.textContent.trim(), reply_max_len);
-
-                let div = document.createElement("div"); // 선택된 comment의 정보를 담고있는 div
-                div.id = "reply_info" ;
-                let to_tag = document.createElement("p"); // who 정보를 담고있는 paragraph
-                let content_tag = document.createElement("p"); // what content 정보를 담고 있는 paragraph
-                let to_text = document.createTextNode(username + "에게 답장");
-                let content_text = document.createTextNode(content);
-                const hr = document.createElement("hr");
-
-                let cancel_btn = document.createElement("button");
-                cancel_btn.id = "cancel_btn";
-                cancel_btn.class = "cancel_btn";
-                cancel_btn.type = "button" ;
-                cancel_btn.innerText = "X";
-
-                // 안돼 ㅠㅠㅠ
-                let icon = document.createElement("i");
-                icon.class = "fa fa-times";
-                icon.setAttribute("aria-hidden","true");
-                cancel_btn.appendChild(icon);
-
-                // 선택된 comment의 정보를 담고있는 div를 만들어보자!
-                to_tag.appendChild(to_text) ;
-                content_tag.appendChild(content_text) ;
-                div.appendChild(hr) ;
-                div.insertBefore(content_tag, div.childNodes[0]) ;
-                div.insertBefore(to_tag, div.childNodes[0]) ;
-                div.insertBefore(cancel_btn, div.childNodes[2]);
-                // 채팅 입력하는 div에 같이 넣어주기
-                reply_show_box.appendChild(div) ;
-
-                let btn = document.getElementById("cancel_btn");
-                btn.addEventListener("click", function() {
-                    reply_show_box.removeChild(reply_show_box.lastChild)
-                });
-            }
-        });
     }
 
   };
@@ -519,6 +530,10 @@
         data_obj["reply_content"] = reply_content;
     }
 
+    console.log("SEND MESSAGE");
+    console.log(reply_to);
+    console.log(reply_content);
+
 
     $.ajax({
        url: "{% url 'matching:send_message' %}",
@@ -536,6 +551,9 @@
               data['reply_to'] = "None";
               data['reply_content'] = "None";
           }
+          console.log("BEFORE Consumer");
+          console.log(response.reply_to);
+          console.log(response.reply_content);
          websocket.send(JSON.stringify(data));
        },
        error: function(response){
@@ -582,7 +600,7 @@
             },
             error: function(request, status, error){
                 alert("로그인이 필요합니다.");
-                window.location.replace("/accounts/login/");
+                window.location.replace("/matching/login/");
             },
         });
   }

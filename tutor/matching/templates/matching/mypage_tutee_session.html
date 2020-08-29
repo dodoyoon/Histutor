@@ -3,30 +3,30 @@
 {% block content %}
 
 <div class="tableDiv mypage_table">
-  <ul class="nav nav-tabs">
-    <li class="nav-item">
-      <a class="nav-link" href="{% url 'matching:mypage_post' %}">모집한 튜터링</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="{% url 'matching:mypage_tutee_session' %}">참여한 튜터 세션</a>
-  </li>
-    {% if user.profile.is_tutor == True %}
-    <li class="nav-item">
-      <a class="nav-link active">진행한 튜터링</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="{% url 'matching:mypage_tutor_session' %}">진행한 튜터 세션</a>
-    </li>
-    {% endif %}
-  </ul>
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'matching:mypage_post' %}">모집한 튜터링</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active">참여한 튜터 세션</a>
+        </li>
+        {% if user.profile.is_tutor == True %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'matching:mypage_tutor_post' %}">진행한 튜터링</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'matching:mypage_tutor_session' %}">진행한 튜터 세션</a>
+        </li>
+        {% endif %}
+    </ul>
+    <br>
     <table id="post_table" class="table">
         <thead>
         <tr>
-          <th scope="col" style="width:100px" class="text-center">No.</th>
-          <!--<th scope="col" class="text-center">주제</th>-->
-          <th scope="col" class="text-center">제목</th>
-          <th scope="col" style="width:150px" class="text-center">작성자</th>
-          <th scope="col" style="width:150px" class="text-center">작성일</th>
+            <th scope="col" style="width:100px" class="text-center">No.</th>
+            <th scope="col" class="text-center">제목</th>
+            <th scope="col" style="width:150px" class="text-center">튜터</th>
+            <th scope="col" style="width:150px" class="text-center">참여일</th>
         </tr>
         </thead>
         <tbody>
@@ -34,26 +34,18 @@
         {% for post in posts %}
           <tr>
               <td class="text-center text-nowrap align-middle"> {{post.pk}} </td>
-              <!--<td scope="row" class="text-center">{{post.get_topic_display}}</td>-->
-              {% if post.finding_match ==  True %}
-              <td class="align-middle"> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title|truncatechars:50}}</a></td>
-              {% elif post.start_time != Null and post.fin_time == Null %}
-              <td class="align-middle"> <span id="ongoing" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title|truncatechars:50}}</a></td>
+              <td class="align-middle"> {{post.tutor_session.title}} </td>
+              <td class="text-center text-nowrap align-middle">{{post.tutor_session.tutor.profile.nickname}}</td>
+              {% if post.start_time|date:'Y-m-d' == today|date:'Y-m-d' %}
+              <td class="text-center text-nowrap align-middle">{{post.start_time|date:'H:i'}}</td>
               {% else %}
-              <td class="align-middle"> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:post_detail' post.pk %}">{{post.title|truncatechars:50}}</a></td>
+              <td class="text-center text-nowrap align-middle">{{post.start_time|date:'Y-m-d'}}</td>
               {% endif %}
-              <td class="text-center text-nowrap align-middle">{{post.user.profile.nickname}}</td>
-              {% if post.pub_date|date:'Y-m-d' == today|date:'Y-m-d' %}
-              <td class="text-center text-nowrap align-middle">{{post.pub_date|date:'H:i'}}</td>
-              {% else %}
-              <td class="text-center text-nowrap align-middle">{{post.pub_date|date:'Y-m-d'}}</td>
-              {% endif %}
-
           </tr>
         {% endfor %}
         {% else %}
           <tr>
-              <td class="text-center" colspan="4"> 진행한 튜터링이 없음 </td>
+              <td class="text-center" colspan="4"> 모집한 튜터링이 없음 </td>
           </tr>
         {% endif %}
         </tbody>

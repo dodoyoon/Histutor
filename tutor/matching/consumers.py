@@ -188,12 +188,13 @@ class SessionDetailConsumer(WebsocketConsumer):
         text_data_json = json.loads(text_data)
         type1 = text_data_json['type']
 
-        # reply_to = text_data_json['reply_to']
-        # reply_content = text_data_json['reply_content']
 
         data={}
 
         if type1 == "new_comment":
+          reply_to = text_data_json['reply_to']
+          reply_content = text_data_json['reply_content']
+
           comment_id = text_data_json['comment_id']
           data['type'] = 'new_comment'
           data['id'] = comment_id
@@ -215,8 +216,6 @@ class SessionDetailConsumer(WebsocketConsumer):
                     'type': 'get_next_tutee',
                     'pk': next_tutee_pk,
                     'next_tutee_url': next_tutee_url,
-                    'reply_to' : reply_to,
-                    'reply_content' : reply_content,
                 }
             )
           elif type2 == "letout_current_tutee":
@@ -228,8 +227,6 @@ class SessionDetailConsumer(WebsocketConsumer):
                     'type': 'letout_current_tutee',
                     'current_tutee_pk': current_tutee_pk,
                     'current_tutee_url': current_tutee_url,
-                    'reply_to' : reply_to,
-                    'reply_content' : reply_content,
                 }
             )
         elif type1 == "new_waiting_tutee":
@@ -263,6 +260,9 @@ class SessionDetailConsumer(WebsocketConsumer):
         am_or_pm = am_or_pm[0] + '.' + am_or_pm[1] + '.'
         date = time + ' ' + am_or_pm
         profile = matching_models.Profile.objects.get(user=comment.user)
+        print("new_comment")
+        print(event['reply_to'])
+        print(event['reply_content'])
 
         # Send message to WebSocket
         self.send(text_data=json.dumps({
@@ -299,8 +299,6 @@ class SessionDetailConsumer(WebsocketConsumer):
         'next_tutee_nickname': log.tutee.profile.nickname,
         'session_pk': log.tutor_session.pk,
         'next_tutee_url': event['next_tutee_url'],
-        # 'reply_to': event['reply_to'],
-        # 'reply_content': event['reply_content'],
       }))
 
     def letout_current_tutee(self, event):
@@ -313,8 +311,6 @@ class SessionDetailConsumer(WebsocketConsumer):
         'current_tutee_nickname': log.tutee.profile.nickname,
         'session_pk': log.tutor_session.pk,
         'current_tutee_url': event['current_tutee_url'],
-        # 'reply_to': event['reply_to'],
-        # 'reply_content': event['reply_content'],
       }))
 
     def new_waiting_tutee(self, event):
