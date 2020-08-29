@@ -53,7 +53,6 @@ def save_profile(request, pk):
         profile.phone = "010" + str(request.POST['phone1']) + str(request.POST['phone2'])
         profile.save()
         return redirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
-    print("nickname : ", user.profile.nickname)
     return render(request, 'matching/save_profile.html', {'nickname': user.profile.nickname})
 
 def user_check(request):
@@ -643,7 +642,7 @@ def mypage_post(request):
 @login_required(login_url=URL_LOGIN)
 def mypage_tutee_session(request):
     ctx = {}
-    
+
     posts = matching_models.SessionLog.objects.filter(tutee_id=request.user.pk)
 
     current_post_page = request.GET.get('page', 1)
@@ -879,7 +878,7 @@ def mainpage(request, showtype):
     tutoring_off = matching_models.TutorSession.objects.exclude(id__in=tutoring_on).order_by('-pub_date')
     recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
     onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True).order_by('-pub_date')
-    recruited = matching_models.Post.objects.exclude(id__in=recruiting).exclude(id__in=onprocess).order_by('-pub_date') 
+    recruited = matching_models.Post.objects.exclude(id__in=recruiting).exclude(id__in=onprocess).order_by('-pub_date')
 
     ### 튜터링 검색기능 ###
     if search_word != '':
@@ -1116,7 +1115,6 @@ def waitingroom(request, pk):
 
     if waitingTutee:
         tuteeTurn = waitingTutee.ranking()
-        print("TUTEE TURN: " , tuteeTurn)
         totalWaiting = len(waitingList)
         waitingAfterTutee = totalWaiting - tuteeTurn
 
@@ -1208,7 +1206,7 @@ def start_new_tutoring(request, pk):
         return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
 
     context = {}
-    
+
 
     current_tutee = fin_current_tutee(request, session)
     next_tutee = get_next_tutee(request, session, request.user)
