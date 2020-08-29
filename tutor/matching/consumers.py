@@ -185,6 +185,7 @@ class SessionDetailConsumer(WebsocketConsumer):
 
     # Receive message from WebSocket
     def receive(self, text_data):
+        print("RECEIVE")
         text_data_json = json.loads(text_data)
         type1 = text_data_json['type']
 
@@ -305,7 +306,7 @@ class SessionDetailConsumer(WebsocketConsumer):
                 'session_pk': session_pk,
                 'next_tutee_url': event['next_tutee_url'],
             }))
-        except:
+        except matching_models.SessionLog.DoesNotExist:
             tutee = matching_models.User.objects.get(pk=next_tutee_pk);
             self.send(text_data=json.dumps({
                 'type': 'get_next_tutee',
@@ -334,7 +335,7 @@ class SessionDetailConsumer(WebsocketConsumer):
                 'session_pk': session_pk,
                 'current_tutee_url': event['current_tutee_url'],
             }))
-        except:
+        except matching_models.SessionLog.DoesNotExist:
             tutee = matching_models.User.objects.get(pk=current_tutee_pk)
             self.send(text_data=json.dumps({
                 'type': 'letout_current_tutee',

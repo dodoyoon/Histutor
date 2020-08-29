@@ -74,17 +74,20 @@
     const data = JSON.parse(e.data);
     let tuteePk = "{{tuteePk}}";
     let tuteeTurn = parseInt(document.getElementById("currentNumber").innerHTML);
-    // alert("received");
+    //alert("received");
 
     if (data['type'] == "get_next_tutee"){
-      // alert(tuteePk +" vs " + data['next_tutee_pk']);
+	console.log("get next tutee");
+	
+      console.log("tutee pk: " + tuteePk +" vs " + "next tutee pk: " + data['next_tutee_pk']);
       if (tuteePk == data['next_tutee_pk']){
-        // alert("go to " + data['next_tutee_url']);
+        console.log("go to " + data['next_tutee_url']);
         // alert(document.location);
         document.location.href = data['next_tutee_url'], true;
       }
     }
     else if (data['type'] == "new_waiting_tutee"){
+	    console.log("new waiting tutee");
       if (tuteeTurn != data['new_tutee_turn']){
         let waitingAfter = document.getElementById("waitingAfterNumber");
         waitingAfter.innerHTML = parseInt(waitingAfter.innerHTML + 1);
@@ -92,6 +95,7 @@
         totalWaiting.innerHTML = parseInt(totalWaiting.innerHTML) + 1;
       }
     } else if (data['type'] == "waiting_tutee_out"){
+	    console.log("waiting tutee out");
       let waiting_tutee_turn = data['waiting_tutee_turn'];
       if (tuteeTurn != waiting_tutee_turn){
         let totalWaiting = document.getElementById("totalWaitingNumber");
