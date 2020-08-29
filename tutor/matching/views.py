@@ -1196,14 +1196,14 @@ def start_new_tutoring(request, pk):
       fin_tutoring_cmt.save()
       context['current_tutee_pk'] = current_tutee.tutee.pk
       context['current_tutee_url'] = current_tutee_url
-      context['current_tutee_finTime'] = current_tutee.fin_time
+      context['current_tutee_finTime'] = current_tutee.fin_time.strftime('%Y-%m-%dT%H:%M:%S.%f')
     if next_tutee:
       next_tutee_url = "http://" + request.get_host() + reverse('matching:session_detail', args=[pk])
       start_tutoring_cmt = matching_models.Comment(user=next_tutee.tutee, tutorsession=session, pub_date=datetime.datetime.now(), content="튜터링시작"+str(session.pub_date))
       start_tutoring_cmt.save()
       context['next_tutee_pk'] = next_tutee.tutee.pk
       context['next_tutee_url'] = next_tutee_url
-      context['next_tutee_startTime'] = next_tutee.start_time
+      context['next_tutee_startTime'] = next_tutee.start_time.strftime('%Y-%m-%dT%H:%M:%S.%f')
 
     return HttpResponse(json.dumps(context), content_type="application/json")
 
