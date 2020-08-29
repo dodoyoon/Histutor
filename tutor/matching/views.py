@@ -640,7 +640,48 @@ def mypage_post(request):
 
     return render(request, 'matching/mypage_post.html', ctx)
 
+@login_required(login_url=URL_LOGIN)
+def mypage_tutee_session(request):
+    ctx = {}
+    
+    posts = matching_models.SessionLog.objects.filter(tutee_id=request.user.pk)
 
+    current_post_page = request.GET.get('page', 1)
+
+    post_paginator = Paginator(posts, 10)
+    try:
+        posts = post_paginator.page(current_post_page)
+    except PageNotAnInteger:
+        posts = post_paginator.page(1)
+    except EmptyPage:
+        posts = post_paginator.page(post_paginator.num_pages)
+
+    neighbors = 10
+    if post_paginator.num_pages > 2*neighbors:
+        start_index = max(1, int(current_post_page)-neighbors)
+        end_index = min(int(current_post_page)+neighbors, post_paginator.num_pages)
+        if end_index < start_index + 2*neighbors:
+            end_index = start_index + 2*neighbors
+        elif start_index > end_index - 2*neighbors:
+            start_index = end_index - 2*neighbors
+        if start_index < 1:
+            end_index -= start_index
+            start_index = 1
+        elif end_index > post_paginator.num_pages:
+            start_index -= end_index - post_paginator.num_pages
+            end_index = post_paginator.num_pages
+        paginatorRange = [f for f in range(start_index, end_index+1)]
+        paginatorRange[:(2*neighbors + 1)]
+    else:
+        paginatorRange = range(1, post_paginator.num_pages+1)
+
+    ctx = {
+        'posts' : posts,
+        'postPaginator': post_paginator,
+        'paginatorRange': paginatorRange,
+    }
+
+    return render(request, 'matching/mypage_tutee_session.html', ctx)
 
 @login_required(login_url=URL_LOGIN)
 def mypage_session(request):
