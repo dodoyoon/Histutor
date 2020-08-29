@@ -554,7 +554,7 @@
           console.log("BEFORE Consumer");
           console.log(response.reply_to);
           console.log(response.reply_content);
-         websocket.send(JSON.stringify(data));
+          websocket.send(JSON.stringify(data));
        },
        error: function(response){
           //alert("ERROR!!\n" + response);
@@ -582,7 +582,6 @@
                   'type2': 'letout_current_tutee',
                   'current_tutee_pk' : response.current_tutee_pk,
                   'current_tutee_url' : response.current_tutee_url,
-                  'session' : response.session,
                 }))
               }
 
@@ -593,7 +592,6 @@
                   'type2': 'get_next_tutee',
                   'next_tutee_pk': response.next_tutee_pk,
                   'next_tutee_url': response.next_tutee_url,
-                  'session': response.session,
                 }));
               }
 

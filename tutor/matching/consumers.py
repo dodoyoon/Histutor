@@ -199,6 +199,9 @@ class SessionDetailConsumer(WebsocketConsumer):
           data['id'] = comment_id
           data['reply_to'] = reply_to
           data['reply_content'] = reply_content
+          print(">>>>RECEIVE")
+          print(reply_to)
+          print(reply_content)
 
           # Send message to room group
           async_to_sync(self.channel_layer.group_send)(
@@ -241,7 +244,7 @@ class SessionDetailConsumer(WebsocketConsumer):
         am_or_pm = am_or_pm[0] + '.' + am_or_pm[1] + '.'
         date = time + ' ' + am_or_pm
         profile = matching_models.Profile.objects.get(user=comment.user)
-        print("new_comment")
+        print(">>>new_comment")
         print(event['reply_to'])
         print(event['reply_content'])
 
