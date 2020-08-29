@@ -462,6 +462,13 @@ def make_tutor(request, pk):
     return redirect(reverse('matching:userlist'))
 
 @staff_member_required
+def remove_application(request, pk):
+    user = matching_models.User.objects.get(pk=pk)
+    matching_models.TutorApplication.objects.get(user=user).delete()
+
+    return redirect(reverse('matching:apply_list'))
+
+@staff_member_required
 def remove_tutor(request, pk):
     user = matching_models.User.objects.get(pk=pk)
     userinfo = matching_models.Profile.objects.get(user=user)

@@ -29,6 +29,7 @@
             <th scope="col" class="text-center">이메일</th>
             <th scope="col" class="text-center">신청일</th>
             <th scope="col" class="text-center">튜터 권한 지정</th>
+            <th scope="col" class="text-center">거절</th>
           </tr>
           </thead>
           <tbody>
@@ -41,6 +42,9 @@
                 <td class="text-center text-nowrap align-middle">
                     <button class="mybutton" type="submit"  data-toggle="modal" data-target="#makeTutor{{apply.user.pk}}">지정</button>
                 </td>
+                <td class="text-center text-nowrap align-middle">
+                  <button class="mybutton" type="submit"  data-toggle="modal" data-target="#remove{{apply.user.pk}}">거절</button>
+              </td>
             </tr>
 
             <div id="applymodal{{apply.pk}}" class="modal fade" role="dialog">
@@ -80,6 +84,27 @@
                 </div>
             </div>
             </div>
+
+            <div class="modal fade" id="remove{{apply.user.pk}}" role="dialog">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                  <div class="modal-header">
+                      <h4 class="modal-title">튜터 권한 거절</h4>
+                  </div>
+                  <div class="modal-body">
+                      <p>{{apply.user.email}} : {{ appply.user.profile.nickname}} </p>
+                      <p>해당 사용자에게 튜터 신청을 거절하시겠습니까?</p>
+                      <div class="row" style="float: right;">
+                          <div class="col-12-xs text-center" style="margin-right: 1em;">
+                              <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" type="button" class="close" data-dismiss="modal">No</button>
+                              <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" onclick="location.href='{% url "matching:remove_application" apply.user.pk %}'">Yes</button>
+                          </div>
+                      </div>
+                  </div>
+      
+                  </div>
+              </div>
+              </div>
           {% endfor %}
           </tbody>
       </table>

@@ -35,6 +35,7 @@ urlpatterns = [
   path('admin/list', views.userlist, name='userlist'),
   path('admin/apply-list/', views.apply_list, name='apply_list'),
   path('admin/make-tutor/<int:pk>', views.make_tutor, name='make_tutor'),
+  path('admin/remove-apply/<int:pk>', views.remove_application, name='remove_application'),
   path('admin/remove-tutor/<int:pk>', views.remove_tutor, name='remove_tutor'),
   path('admin/make-staff/<int:pk>', views.make_staff, name='make_staff'),
   path('admin/remove-staff/<int:pk>', views.remove_staff, name='remove_staff'),
