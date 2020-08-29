@@ -194,14 +194,15 @@ def post_report_list(request, pk):
 
 def session_report_list(request, pk):
     session = matching_models.TutorSession.objects.get(pk=pk)
-    ctx = {'session': session, 'report_list': None}
+    ctx = {'session': session}
     if request.user.is_staff:
         report_list = matching_models.Report.objects.filter(session=session)
+        ctx['report_list'] = report_list
     elif request.user == session.tutor:
         report_list = report_list.filter(writer=session.tutor)
+        ctx['report_list'] = report_list
     else:
         return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
-    ctx['report_list'] = report_list
     return render(request, 'matching/session_report_list.html', ctx)
 
 
