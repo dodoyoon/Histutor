@@ -1028,8 +1028,6 @@ def session_detail(request, pk):
         except matching_models.SessionLog.DoesNotExist:
             return redirect('matching:waitingroom', pk=pk)
 
-        if not log:
-
     comment_list = matching_models.Comment.objects.filter(tutorsession=session).order_by('pub_date')
     ctx['user_compare_msg'] = req_user.profile.nickname + '에게 답장'
     ctx['user'] = req_user
