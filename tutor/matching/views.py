@@ -838,7 +838,7 @@ def mainpage(request, showtype):
     tutoring_off = matching_models.TutorSession.objects.exclude(id__in=tutoring_on).order_by('-pub_date')
     recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
     onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True).order_by('-pub_date')
-    recruited = matching_models.Post.objects.filter(finding_match = False, fin_time__isnull = False).order_by('-pub_date')
+    recruited = matching_models.Post.objects.exclude(id__in=recruiting).exclude(id__in=onprocess).order_by('-pub_date') 
 
     ### 튜터링 검색기능 ###
     if search_word != '':
