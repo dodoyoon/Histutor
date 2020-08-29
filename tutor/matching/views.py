@@ -1010,6 +1010,7 @@ def session_detail(request, pk):
 
     comment_list = matching_models.Comment.objects.filter(tutorsession=session).order_by('pub_date')
     ctx['user_compare_msg'] = req_user.profile.nickname + '에게 답장'
+    ctx['user'] = req_user
 
     ctx['session'] = session
     ctx['comment_list'] = comment_list
@@ -1158,7 +1159,7 @@ def start_new_tutoring(request, pk):
       url = "http://" + request.get_host() + reverse('matching:session_detail', args=[pk])
       start_tutoring_cmt = matching_models.Comment(user=next_tutee.tutee, tutorsession=session, pub_date=datetime.datetime.now(), content="튜터링시작"+str(session.pub_date))
       start_tutoring_cmt.save()
-      context = {'next_tutee_pk' : next_tutee.pk, 'next_tutee_url' : url, 'session': session}
+      context = {'next_tutee_pk' : next_tutee.pk, 'next_tutee_url' : url}
 
 
     if current_tutee :
@@ -1167,6 +1168,5 @@ def start_new_tutoring(request, pk):
       fin_tutoring_cmt.save()
       context['current_tutee_pk'] = current_tutee.pk
       context['current_tutee_url'] = current_tutee_url
-      context['session'] = session
 
     return HttpResponse(json.dumps(context), content_type="application/json")

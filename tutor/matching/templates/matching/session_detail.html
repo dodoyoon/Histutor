@@ -315,14 +315,13 @@
     let reply_content = data.reply_content;
     const reply_max_len = 30;
 
-    console.log(reply_to);
-    console.log(reply_content);
-
     if(reply_to != "None" && reply_content != "None"){
-        console.log(reply_content.length);
         reply_to = reply_to.trim();
         reply_content = reply_content.trim();
-        console.log(reply_content.length);
+
+        if(reply_to == "{{user_compare_msg}}"){
+            reply_to = "나에게 답장";
+        }
     }
 
     // Set table structure
@@ -335,8 +334,6 @@
     }
     if (data['type'] == "new_comment"){
       if(data['username']==req_username){
-        //console.log("outgoing");
-
         var msg = document.createElement("div");
         msg.className = "outgoing_msg";
         var inner_msg = document.createElement("div");
@@ -367,7 +364,6 @@
         storage.append(msg);
 
       }else{
-        //console.log("incoming");
         var incoming_msg = document.createElement("div");
         incoming_msg.className = "incoming_msg";
         var received_msg = document.createElement("div");
@@ -523,7 +519,6 @@
         data_obj["reply_content"] = reply_content;
     }
 
-    console.log(data_obj) ;
 
     $.ajax({
        url: "{% url 'matching:send_message' %}",
@@ -541,7 +536,6 @@
               data['reply_to'] = "None";
               data['reply_content'] = "None";
           }
-          console.log(data) ;
          websocket.send(JSON.stringify(data));
        },
        error: function(response){
@@ -550,6 +544,7 @@
     });
   }
 
+  {% if user.profile.is_tutor %}
   document.getElementById("start_new_tutoring").onclick = function(){
     $.ajax({
             type: "POST",
@@ -591,6 +586,7 @@
             },
         });
   }
+  {% endif %}
 
   function truncateText(truncated, maxLength) {
     if (truncated.length > maxLength) {
@@ -598,9 +594,8 @@
     }
     return truncated;
   }
-    console.log("Document is ready Before");
+
   $( document ).ready(function() {
-      console.log("Document is ready");
       let msg_content = document.getElementsByClassName("msg_content");
       let reply_show_box = document.getElementById("reply_show_box");
       let reply_show_box_child_num = reply_show_box.childNodes.length;
@@ -628,8 +623,6 @@
 
       for (let i = 0; i < msg_content.length; i++) {
           msg_content[i].addEventListener("dblclick", function() {
-              console.log(reply_show_box_child_num);
-              console.log(reply_show_box_child_num_const);
               if(reply_show_box_child_num == reply_show_box_child_num_const){
                   const pk = msg_content[i].dataset.pk; // 나중에 email noti 할거면 이걸로 ajax 써서 하면 될듯
                   const username = msg_content[i].dataset.username;
