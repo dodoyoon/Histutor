@@ -1056,7 +1056,7 @@ def end_session(request, pk):
         session.fin_time = datetime.datetime.now()
         session.save()
         current_tutoring = matching_models.SessionLog.objects.filter(tutor_session=session, start_time__isnull=False, fin_time__isnull=True).update(fin_time=session.fin_time)
-    return redirect(reverse('matching:session_detail', kwargs={'pk':pk}))
+    return redirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
 
 
 
