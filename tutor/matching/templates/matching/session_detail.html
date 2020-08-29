@@ -590,26 +590,23 @@
             },
             dataType: "json",
             success: function(response){
-              // alert(response.current_tutee_pk);
-              // alert(response.next_tutee_pk);
-
               if (response.current_tutee_pk != undefined ){
-                // alert("letout_current_tutee");
-                websocket.send(JSON.stringify({
+                websocket.send(JSON.stringifㄴy({
                   'type': 'start_new_tutoring',
                   'type2': 'letout_current_tutee',
                   'current_tutee_pk' : response.current_tutee_pk,
                   'current_tutee_url' : response.current_tutee_url,
+                  'session_pk' : response.session_pk,
                 }))
               }
 
               if (response.next_tutee_pk != undefined){
-                // alert("get_next_tutee");
                 websocket.send(JSON.stringify({
                   'type': 'start_new_tutoring',
                   'type2': 'get_next_tutee',
                   'next_tutee_pk': response.next_tutee_pk,
                   'next_tutee_url': response.next_tutee_url,
+                  'session_pk' : response.session_pk,
                 }));
               }
 
