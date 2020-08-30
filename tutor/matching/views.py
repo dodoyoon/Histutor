@@ -1093,7 +1093,7 @@ def waitingroom(request, pk):
     }
 
     if waitingTutee:
-        tuteeTurn = waitingTutee.ranking()
+        tuteeTurn = waitingTutee.ranking(session)
         totalWaiting = len(waitingList)
         waitingAfterTutee = totalWaiting - tuteeTurn
 
