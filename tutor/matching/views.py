@@ -1134,6 +1134,7 @@ def not_waiting(request):
 
     if log:
         log.wait_time = datetime.datetime.now()
+        log.is_waiting = False
         log.save()
 
     context = {
