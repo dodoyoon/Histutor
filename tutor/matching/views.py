@@ -1077,6 +1077,8 @@ def waitingroom(request, pk):
     except matching_models.SessionLog.DoesNotExist:
       try: 
         log = matching_models.SessionLog.objects.get(is_waiting=True, tutor_session = session, tutee = user)
+        log.wait_time = datetime.datetime.now()
+        log.save()
       except matching_models.SessionLog.DoesNotExist:
         log = matching_models.SessionLog.objects.create(tutor_session=session, tutee=user)
         log.save()
@@ -1133,7 +1135,7 @@ def not_waiting(request):
         log = None
 
     if log:
-        log.wait_time = datetime.datetime.now()
+        # log.wait_time = datetime.datetime.now()
         log.is_waiting = False
         log.save()
 
