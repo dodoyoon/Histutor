@@ -90,7 +90,7 @@
 	    console.log("new waiting tutee");
       if (tuteeTurn != data['new_tutee_turn']){
         let waitingAfter = document.getElementById("waitingAfterNumber");
-        waitingAfter.innerHTML = parseInt(waitingAfter.innerHTML + 1);
+        waitingAfter.innerHTML = parseInt(waitingAfter.innerHTML) + 1;
         let totalWaiting = document.getElementById("totalWaitingNumber");
         totalWaiting.innerHTML = parseInt(totalWaiting.innerHTML) + 1;
       }
