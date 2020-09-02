@@ -986,6 +986,9 @@ def mainpage(request, showtype):
                 ctx['session_report_exist'] = True
                 ctx['unwritten_session_report'] = report
 
+    time = datetime.datetime.now()
+    ctx['time'] = time.strftime("%Y/%m/%d %H:%M")
+
     return render(request, 'matching/main.html', ctx)
 
 

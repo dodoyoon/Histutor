@@ -17,6 +17,13 @@
 
 {% block content %}
 
+  <div id="refreshDiv">
+  <button id="refreshBtn"> 
+    <img id="refresh" src="https://image.flaticon.com/icons/svg/560/560463.svg" alt="Refresh">
+  </button>
+  <p class="text-center">마지막으로 재시작한 시간 : {{time}}</p>
+</div>
+
 <div>
   <ul class="messages">
     {% for message in messages %}
@@ -32,7 +39,7 @@
       <tr>
         <th class="align-middle text-center text-nowrap">진행중인 튜터세션</th>
         <td class="align-middle text-center text-nowrap">튜터 : {{ ongoing_session.user.profile.nickname }}</td>
-        <td class="align-middle" location.href= "{% url 'matching:session_detail' ongoing_session.pk %}">방 이름</td> : <a href="{% url 'matching:session_detail' ongoing_session.pk %}">{{ ongoing_session.title|truncatechars:50 }}</a></td>
+        <td class="align-middle" location.href= "{% url 'matching:session_detail' ongoing_session.pk %}">방 이름: <a href="{% url 'matching:session_detail' ongoing_session.pk %}">{{ ongoing_session.title|truncatechars:50 }}</a></td>
         <td class="align-middle text-center">
             <button class="mybutton" type="submit"  data-toggle="modal" data-target="#endSession">세션종료</button>
         </td>
@@ -426,6 +433,9 @@
 
 <script>
   
+  document.getElementById("refreshDiv").addEventListener("click", function(){
+    location.reload();
+  });
 
   let user = {{user.pk}};
 
