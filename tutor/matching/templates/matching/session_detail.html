@@ -485,12 +485,13 @@
       }
 
     } else if (data['type'] == "letout_current_tutee"){
-	console.log("req username: " + req_username + " vs " + " current tutee nickname :" +  data['current_tutee_nickname']);
+	// console.log("req username: " + req_username + " vs " + " current tutee nickname :" +  data['current_tutee_nickname']);
       var msg = document.createElement("div");
       msg.className = "cancel_tutoring";
       msg.innerHTML = `&nbsp;&nbsp;튜터링 종료 - ${data['current_tutee_nickname']}&nbsp;&nbsp;`;
       storage.append(msg);
       if (current_tutee_pk == data['current_tutee_pk']){
+        alert("튜터링이 끝났습니다. 메인페이지로 이동합니다.");
         // alert("Redirecting to mainpage");
         document.location.href = data['current_tutee_url'], true;
       }
