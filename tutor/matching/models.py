@@ -58,14 +58,14 @@ class Post(models.Model):
       return self.get_topic_display() + ' ' + self.title
 
 SESSION_TYPE = (
-      ('on', '온라인'), ('off', '오프라인'), ('onoff','온/오프라인'),
+      ('on', '대면'), ('off', '비대면'), ('onoff','병행'),
 )
 class TutorSession(models.Model):
    tutor = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='ses')
    title = models.CharField(max_length=300)
    session_type = models.CharField(choices=SESSION_TYPE, default='onoff', max_length=10)
    pub_date = models.DateTimeField(auto_now_add=True)
-   start_time = models.DateTimeField(null=True)
+   start_time = models.DateTimeFieldㄴ(null=True)
    expected_fin_time = models.DateTimeField(null=True)
    fin_time = models.DateTimeField(null=True)
    hit = models.PositiveIntegerField(default=0)
