@@ -407,9 +407,40 @@ def post_edit(request, pk):
 def admin_home(request):
     tutorlist = matching_models.User.objects.filter(profile__is_tutor=True).order_by('-profile__tutor_tutoringTime')
 
+    current_post_page = request.GET.get('page', 1)
+    tutor_paginator = Paginator(tutorlist, 10)
+    try:
+        tutorlist = tutor_paginator.page(current_post_page)
+    except PageNotAnInteger:
+        tutorlist = tutor_paginator.page(1)
+    except EmptyPage:
+        tutorlist = tutor_paginator.page(tutor_paginator.num_pages)
+
+    neighbors = 10
+    if tutor_paginator.num_pages > 2*neighbors:
+        start_index = max(1, int(current_post_page)-neighbors)
+        end_index = min(int(current_post_page)+neighbors, tutor_paginator.num_pages)
+        if end_index < start_index + 2*neighbors:
+            end_index = start_index + 2*neighbors
+        elif start_index > end_index - 2*neighbors:
+            start_index = end_index - 2*neighbors
+        if start_index < 1:
+            end_index -= start_index
+            start_index = 1
+        elif end_index > tutor_paginator.num_pages:
+            start_index -= end_index - tutor_paginator.num_pages
+            end_index = tutor_paginator.num_pages
+        paginatorRange = [f for f in range(start_index, end_index+1)]
+        paginatorRange[:(2*neighbors + 1)]
+    else:
+        paginatorRange = range(1, tutor_paginator.num_pages+1)
+
     ctx = {
         'tutorlist': tutorlist,
+        'tutorPaginator': tutor_paginator,
+        'paginatorRange': paginatorRange,
     }
+
 
     return render(request, 'matching/admin_tutor_list.html', ctx)
 
@@ -421,9 +452,40 @@ def tutee_list(request):
         num_posts = Count('post_relation')
     )
 
+    current_post_page = request.GET.get('page', 1)
+    tutee_paginator = Paginator(tutee_list, 10)
+    try:
+        tutee_list = tutee_paginator.page(current_post_page)
+    except PageNotAnInteger:
+        tutee_list = tutee_paginator.page(1)
+    except EmptyPage:
+        tutee_list = tutee_paginator.page(tutee_paginator.num_pages)
+
+    neighbors = 10
+    if tutee_paginator.num_pages > 2*neighbors:
+        start_index = max(1, int(current_post_page)-neighbors)
+        end_index = min(int(current_post_page)+neighbors, tutee_paginator.num_pages)
+        if end_index < start_index + 2*neighbors:
+            end_index = start_index + 2*neighbors
+        elif start_index > end_index - 2*neighbors:
+            start_index = end_index - 2*neighbors
+        if start_index < 1:
+            end_index -= start_index
+            start_index = 1
+        elif end_index > tutee_paginator.num_pages:
+            start_index -= end_index - tutee_paginator.num_pages
+            end_index = tutee_paginator.num_pages
+        paginatorRange = [f for f in range(start_index, end_index+1)]
+        paginatorRange[:(2*neighbors + 1)]
+    else:
+        paginatorRange = range(1, tutee_paginator.num_pages+1)
+
     ctx = {
         'tutee_list': tutee_list,
+        'tuteePaginator': tutee_paginator,
+        'paginatorRange': paginatorRange,
     }
+
     return render(request, 'matching/admin_tutee_list.html', ctx)
 
 @staff_member_required
@@ -434,8 +496,39 @@ def userlist(request):
     else:
         userlist = matching_models.User.objects.all()
 
+
+    current_post_page = request.GET.get('page', 1)
+    user_paginator = Paginator(userlist, 10)
+    try:
+        userlist = user_paginator.page(current_post_page)
+    except PageNotAnInteger:
+        userlist = user_paginator.page(1)
+    except EmptyPage:
+        userlist = user_paginator.page(user_paginator.num_pages)
+
+    neighbors = 10
+    if user_paginator.num_pages > 2*neighbors:
+        start_index = max(1, int(current_post_page)-neighbors)
+        end_index = min(int(current_post_page)+neighbors, user_paginator.num_pages)
+        if end_index < start_index + 2*neighbors:
+            end_index = start_index + 2*neighbors
+        elif start_index > end_index - 2*neighbors:
+            start_index = end_index - 2*neighbors
+        if start_index < 1:
+            end_index -= start_index
+            start_index = 1
+        elif end_index > user_paginator.num_pages:
+            start_index -= end_index - user_paginator.num_pages
+            end_index = user_paginator.num_pages
+        paginatorRange = [f for f in range(start_index, end_index+1)]
+        paginatorRange[:(2*neighbors + 1)]
+    else:
+        paginatorRange = range(1, user_paginator.num_pages+1)
+
     ctx = {
         'userlist': userlist,
+        'userPaginator': user_paginator,
+        'paginatorRange': paginatorRange,
     }
 
     if search_word != '':
@@ -446,9 +539,41 @@ def userlist(request):
 @staff_member_required
 def apply_list(request):
     applylist = matching_models.TutorApplication.objects.all().exclude(user__profile__is_tutor=True)
+
+    current_post_page = request.GET.get('page', 1)
+    apply_paginator = Paginator(applylist, 10)
+    try:
+        applylist = apply_paginator.page(current_post_page)
+    except PageNotAnInteger:
+        applylist = apply_paginator.page(1)
+    except EmptyPage:
+        applylist = apply_paginator.page(apply_paginator.num_pages)
+
+    neighbors = 10
+    if apply_paginator.num_pages > 2*neighbors:
+        start_index = max(1, int(current_post_page)-neighbors)
+        end_index = min(int(current_post_page)+neighbors, apply_paginator.num_pages)
+        if end_index < start_index + 2*neighbors:
+            end_index = start_index + 2*neighbors
+        elif start_index > end_index - 2*neighbors:
+            start_index = end_index - 2*neighbors
+        if start_index < 1:
+            end_index -= start_index
+            start_index = 1
+        elif end_index > apply_paginator.num_pages:
+            start_index -= end_index - apply_paginator.num_pages
+            end_index = apply_paginator.num_pages
+        paginatorRange = [f for f in range(start_index, end_index+1)]
+        paginatorRange[:(2*neighbors + 1)]
+    else:
+        paginatorRange = range(1, apply_paginator.num_pages+1)
+
     ctx = {
-        'applylist' : applylist,
+        'applylist': applylist,
+        'applyPaginator': apply_paginator,
+        'paginatorRange': paginatorRange,
     }
+
 
     return render(request, 'matching/admin_apply_list.html', ctx)
 
@@ -1079,7 +1204,7 @@ def waitingroom(request, pk):
         log = matching_models.SessionLog.objects.get(is_waiting=False, tutee=user, tutor_session=session, start_time__isnull=False, fin_time__isnull=True)
         return redirect('matching:session_detail', pk=session.pk)
     except matching_models.SessionLog.DoesNotExist:
-      try: 
+      try:
         log = matching_models.SessionLog.objects.get(is_waiting=True, tutor_session = session, tutee = user)
         log.wait_time = datetime.datetime.now()
         log.save()
