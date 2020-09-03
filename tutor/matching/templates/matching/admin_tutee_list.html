@@ -44,6 +44,42 @@
 
   </div>
 
+  {% if tutee_list %}
+  {% if tutee_list.has_other_pages %}
+  <nav aria-label="...">
+    <ul class="pagination">
+      {% if tutee_list.number == 1 %}
+        <li class="page-item"><span class="page-link">⇤<span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li class="page-item"><a class="page-link" href="?page=1">⇤</a></li>
+      {% endif %}
+      {% if tutee_list.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ tutee_list.previous_page_number }}">&laquo;</a></li>
+      {% else %}
+        <li class="page-item"><span class="page-link">&laquo;<span class="sr-only">(current)</span></span></li>
+      {% endif %}
+      {% for i in paginatorRange %}
+        {% if tutee_list.number == i %}
+          <li class="page-item active"><span class="page-link">{{ i }}<span class="sr-only">(current)</span></span></li>
+        {% else %}
+          <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+        {% endif %}
+      {% endfor %}
+      {% if tutee_list.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{tutee_list.next_page_number}}">&raquo;</a></li>
+      {% else %}
+      <li class="page-item"><span class="page-link">&raquo;<span class="sr-only">(current)</span></span></li>
+      {% endif %}
+      {% if tutee_list.number == tuteePaginator.num_pages %}
+        <li class="page-item"><span class="page-link">⇥<span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li class="page-item"><a class="page-link" href="?page={{tuteePaginator.num_pages}}">⇥</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+  {% endif %}
+
 </div>
 
 
