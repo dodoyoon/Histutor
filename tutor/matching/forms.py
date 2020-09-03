@@ -2,6 +2,7 @@ from django import forms
 from .models import Post, Report, Comment, TutorSession, TutorApplication
 from django.forms import ModelChoiceField
 from tempus_dominus.widgets import DateTimePicker, TimePicker
+import datetime
 
 class AccuseForm(forms.ModelForm):
     class Meta:
@@ -55,6 +56,32 @@ class TutorSessionForm(forms.ModelForm):
     class Meta:
         model = TutorSession
         fields = ('title', 'session_type', 'location', 'start_time', 'expected_fin_time')
+
+    def __init__(self, *args, **kwargs):
+        super(TutorSessionForm, self).__init__(*args, **kwargs)
+        now = datetime.datetime.now()
+        year_info = now.strftime('%Y-%m-%d')
+        hour = now.hour
+        min = now.minute
+
+        if min > 10:
+            hour += 1
+
+        start_time_str = year_info + " " + str(hour) + ':00'
+        end_time_str = year_info + " " + str(hour+1) + ':00'
+
+        self.fields['start_time'].widget = DateTimePicker(
+            options={
+                'defaultDate': start_time_str,
+            }
+        )
+
+        self.fields['expected_fin_time'].widget = DateTimePicker(
+            options={
+                'defaultDate': end_time_str,
+            }
+        )
+
 
 class TutorApplicationForm(forms.ModelForm):
     content = forms.CharField(widget=forms.TextInput(attrs={'placeholder': '신청 이유를 간단하게 적어주세요.'}))
