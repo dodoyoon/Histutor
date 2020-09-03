@@ -49,6 +49,7 @@ def save_profile(request, pk):
         return redirect('/accounts/login/')
     if request.method == 'POST':
         profile = user.profile
+        profile.nickname = request.POST['nickname']
         profile.signin = True
         profile.phone = "010" + str(request.POST['phone1']) + str(request.POST['phone2'])
         profile.save()
