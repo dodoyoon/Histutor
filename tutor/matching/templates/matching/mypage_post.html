@@ -3,9 +3,6 @@
 {% block content %}
 
 {% if not user.profile.is_tutor %}
-<a style="margin-top: 50px; margin-right:100px; float:right;">
-<button class="mybutton" type="button"  data-toggle="modal" data-target="#applyTutor">튜터 신청하기</button>
-</a>
 <div id="applyTutor" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <form class="form-style-7 session_report_create" id="session_create" action="" method="POST">
@@ -33,6 +30,9 @@
 {% endif %}
 
 <div class="tableDiv mypage_table">
+    <div style="float:right;">
+    <button class="mybutton" type="button"  data-toggle="modal" data-target="#applyTutor">튜터 신청하기</button>
+    </div>
   <ul class="nav nav-tabs">
     <li class="nav-item">
       <a class="nav-link active">모집한 튜터링</a>
