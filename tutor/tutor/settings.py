@@ -25,7 +25,7 @@ SECRET_KEY = '$0+k15+_qw!%t3%t!!^@gy((rnhbch95yxxx0rm8j4uvnr9lg9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['34.64.147.240', '127.0.0.1', 'histutor.tk', 'localhost']
+ALLOWED_HOSTS = ['34.64.147.240', '127.0.0.1', 'histutor.tk', 'localhost', 'histutor.cafe24.com', '210.114.18.16:80']
 
 
 # Application definition
@@ -136,7 +136,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 
-SITE_ID = 12
+SITE_ID = 14
 
 ACCOUNT_LOGOUT_REDIRECT_URL ="/matching"
 LOGIN_REDIRECT_URL = 'matching:user_check'
