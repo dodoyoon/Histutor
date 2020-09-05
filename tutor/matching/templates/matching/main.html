@@ -309,7 +309,7 @@
       <div class="modal-body">
         <p>채팅방의 주제를 파악할 수 있는 방 이름을 작성해주세요. (15자 이상)</p>
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form.title }}
       </div>
       <div class="modal-footer">
         <button type="submit" class="btn btn-default">Submit</button>
