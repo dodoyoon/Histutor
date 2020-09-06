@@ -597,10 +597,8 @@
                 websocket.send(JSON.stringify({
                   'type': 'start_new_tutoring',
                   'type2': 'letout_current_tutee',
-                  'current_tutee_pk' : response.current_tutee_pk,
+                  'current_sessionLog_pk' : response.current_sessionLog_pk,
                   'current_tutee_url' : response.current_tutee_url,
-                  'current_tutee_finTime' : response.current_tutee_finTime,
-                  'session_pk' : response.session_pk,
                 }))
               }
 
@@ -608,10 +606,8 @@
                 websocket.send(JSON.stringify({
                   'type': 'start_new_tutoring',
                   'type2': 'get_next_tutee',
-                  'next_tutee_pk': response.next_tutee_pk,
+                  'next_sessionlog_pk': response.next_sessionlog_pk,
                   'next_tutee_url': response.next_tutee_url,
-                  'next_tutee_startTime' : response.next_tutee_startTime,
-                  'session_pk' : response.session_pk,
                 }));
               }
 
