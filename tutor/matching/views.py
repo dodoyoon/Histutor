@@ -25,7 +25,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 import datetime
 
 
-URL_LOGIN = "/matching"
+LOGIN_REDIRECT_URL = "/matching"
 # DEFAULT PAGE
 
 def index(request):
@@ -41,7 +41,7 @@ def redirect_to_main(request):
     return redirect('matching:mainpage', showtype='all')
 
 
-@login_required(login_url=URL_LOGIN)
+@login_required(login_url=LOGIN_REDIRECT_URL)
 @transaction.atomic
 def save_profile(request, pk):
     user = matching_models.User.objects.get(pk=pk)
@@ -80,7 +80,7 @@ def user_check(request):
 #     context_object_name = 'report'
 #     form_class = ReportForm
 #     template_name = 'matching/report_edit.html'
-@login_required(login_url=URL_LOGIN)
+@login_required(login_url=LOGIN_REDIRECT_URL)
 def session_report_create(request, pk):
     try:
         session = get_object_or_404(matching_models.TutorSession, pk=pk)
@@ -119,7 +119,7 @@ def session_report_create(request, pk):
     return render(request, 'matching/session_report_create.html', ctx)
 
 
-@login_required(login_url=URL_LOGIN)
+@login_required(login_url=LOGIN_REDIRECT_URL)
 def tutee_report(request, pk):
     post = matching_models.Post.objects.get(pk=pk)
     if not (post.user == request.user or post.tutor == request.user):
@@ -209,7 +209,7 @@ def session_report_list(request, pk):
 
 
 
-@login_required(login_url=URL_LOGIN)
+@login_required(login_url=LOGIN_REDIRECT_URL)
 def post_new(request):
     if request.method == "POST":
         form = PostForm(request.POST)
@@ -245,7 +245,7 @@ def post_new(request):
     return render(request, 'matching/post_new.html', ctx)
 
 
-@login_required(login_url=URL_LOGIN)
+@login_required(login_url=LOGIN_REDIRECT_URL)
 def post_detail(request, pk):
     ctx={}
 
@@ -379,7 +379,7 @@ def send_message(request):
 
 
 
-@login_required(login_url=URL_LOGIN)
+@login_required(login_url=LOGIN_REDIRECT_URL)
 def post_edit(request, pk):
     ctx={}
     post = matching_models.Post.objects.get(pk=pk)
@@ -402,7 +402,7 @@ def post_edit(request, pk):
 
 
 
-@login_required(login_url=URL_LOGIN)
+@login_required(login_url=LOGIN_REDIRECT_URL)
 @staff_member_required
 def admin_home(request):
     tutorlist = matching_models.User.objects.filter(profile__is_tutor=True).order_by('-profile__tutor_tutoringTime')
@@ -444,7 +444,7 @@ def admin_home(request):
 
     return render(request, 'matching/admin_tutor_list.html', ctx)
 
-@login_required(login_url=URL_LOGIN)
+@login_required(login_url=LOGIN_REDIRECT_URL)
 @staff_member_required
 def tutee_list(request):
 
@@ -619,7 +619,7 @@ def remove_staff(request, pk):
 
     return redirect(reverse('matching:userlist'))
 
-@login_required(login_url=URL_LOGIN)
+@login_required(login_url=LOGIN_REDIRECT_URL)
 def tutor_detail(request, pk):
     if not request.user.is_staff:
         return redirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
@@ -637,7 +637,7 @@ def tutor_detail(request, pk):
 
     return render(request, 'matching/tutor_detail.html', ctx)
 
-@login_required(login_url=URL_LOGIN)
+@login_required(login_url=LOGIN_REDIRECT_URL)
 def tutee_detail(request, pk):
     if not request.user.is_staff:
         return redirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
@@ -686,7 +686,7 @@ def cancel_tutoring(request, pk):
 
 
 
-@login_required(login_url=URL_LOGIN)
+@login_required(login_url=LOGIN_REDIRECT_URL)
 def mypage(request):
     ctx = {}
     if request.user.profile.is_tutor:
@@ -694,7 +694,7 @@ def mypage(request):
     return redirect(reverse('matching:mypage_post'))
 
 
-@login_required(login_url=URL_LOGIN)
+@login_required(login_url=LOGIN_REDIRECT_URL)
 def mypage_post(request):
     ctx = {}
     post = matching_models.Post.objects.filter(user=request.user)
@@ -774,7 +774,7 @@ def mypage_post(request):
 
     return render(request, 'matching/mypage_post.html', ctx)
 
-@login_required(login_url=URL_LOGIN)
+@login_required(login_url=LOGIN_REDIRECT_URL)
 def mypage_tutee_session(request):
     ctx = {}
 
@@ -817,7 +817,7 @@ def mypage_tutee_session(request):
 
     return render(request, 'matching/mypage_tutee_session.html', ctx)
 
-@login_required(login_url=URL_LOGIN)
+@login_required(login_url=LOGIN_REDIRECT_URL)
 def mypage_session(request):
     ctx = {}
 
@@ -861,7 +861,7 @@ def mypage_session(request):
     return render(request, 'matching/mypage_session.html', ctx)
 
 
-@login_required(login_url=URL_LOGIN)
+@login_required(login_url=LOGIN_REDIRECT_URL)
 def mypage_tutor_post(request):
     ctx = {}
     post = matching_models.Post.objects.filter(tutor=request.user)
@@ -910,7 +910,7 @@ def mypage_tutor_post(request):
     return render(request, 'matching/mypage_tutor_post.html', ctx)
 
 import requests, datetime
-@login_required(login_url=URL_LOGIN)
+@login_required(login_url=LOGIN_REDIRECT_URL)
 def mainpage(request, showtype):
     post = matching_models.Post.objects.filter(user = request.user, finding_match = True)
     post_exist = False
@@ -1119,7 +1119,7 @@ def mainpage(request, showtype):
 
 
 
-@login_required(login_url=URL_LOGIN)
+@login_required(login_url=LOGIN_REDIRECT_URL)
 def session_detail(request, pk):
     ctx={
         'today' : timezone.now(),
@@ -1173,7 +1173,7 @@ def session_detail(request, pk):
     session.save()
     return render(request, 'matching/session_detail.html', ctx)
 
-@login_required(login_url=URL_LOGIN)
+@login_required(login_url=LOGIN_REDIRECT_URL)
 def end_session(request, pk):
     session = matching_models.TutorSession.objects.get(pk=pk)
     if request.user == session.tutor:
@@ -1184,7 +1184,7 @@ def end_session(request, pk):
 
 
 
-@login_required(login_url=URL_LOGIN)
+@login_required(login_url=LOGIN_REDIRECT_URL)
 def waitingroom(request, pk):
     user = matching_models.User.objects.get(username=request.user.username)
 
