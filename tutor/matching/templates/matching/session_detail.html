@@ -593,7 +593,7 @@
             },
             dataType: "json",
             success: function(response){
-              if (response.current_tutee_pk != undefined ){
+              if (response.current_sessionLog_pk != undefined ){
                 websocket.send(JSON.stringify({
                   'type': 'start_new_tutoring',
                   'type2': 'letout_current_tutee',
@@ -602,7 +602,7 @@
                 }))
               }
 
-              if (response.next_tutee_pk != undefined){
+              if (response.next_sessionlog_pk != undefined){
                 websocket.send(JSON.stringify({
                   'type': 'start_new_tutoring',
                   'type2': 'get_next_tutee',
