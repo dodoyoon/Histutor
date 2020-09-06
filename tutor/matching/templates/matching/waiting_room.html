@@ -29,14 +29,15 @@
     <div id="current">내 대기 순서 : <div id="currentNumber" class="inline">{{tuteeTurn}}</div></div>
     <div id="waitingAfter">내 뒤 : <div id="waitingAfterNumber" class="inline">{{waitingAfterTutee.0}}</div></div>
   </div>
+    {% load static %}
   <div id="line_image">
-    <img class="stickMan" src="https://image.flaticon.com/icons/svg/59/59805.svg">
-    <img class="stickMan" src="https://image.flaticon.com/icons/svg/10/10522.svg">
-    <img class="stickMan" src="https://image.flaticon.com/icons/svg/10/10522.svg">
-    <img class="stickMan" src="https://image.flaticon.com/icons/svg/10/10581.svg">
-    <img class="stickMan" src="https://image.flaticon.com/icons/svg/10/10522.svg">
-    <img class="stickMan" src="https://image.flaticon.com/icons/svg/10/10522.svg">
-    <img class="stickMan" src="https://image.flaticon.com/icons/svg/10/10522.svg">
+    <img class="stickMan" src="{% static 'matching/images/door.png' %}">
+    <img class="stickMan" src="{% static 'matching/images/man.png' %}">
+    <img class="stickMan" src="{% static 'matching/images/man.png' %}">
+    <img class="stickMan" src="{% static 'matching/images/yay.png' %}">
+    <img class="stickMan" src="{% static 'matching/images/man.png' %}">
+    <img class="stickMan" src="{% static 'matching/images/man.png' %}">
+    <img class="stickMan" src="{% static 'matching/images/man.png' %}">
   </div>
   {% if session.session_type == 'onoff'%}
   <div id="attend_type">
@@ -61,8 +62,8 @@
   <div id="waiting">No Waiting</div>
   <br><br><br><br><br><br>
   <div id="line_image" style="text-align: center;">
-    <img class="stickMan" src="https://image.flaticon.com/icons/svg/59/59805.svg">
-    <img class="stickMan" src="https://image.flaticon.com/icons/svg/10/10581.svg">
+    <img class="stickMan" src="{% static 'matching/images/door.png' %}">
+    <img class="stickMan" src="{% static 'matching/images/yay.png' %}">
   </div>
     {% endif %}
 </div>
