@@ -185,7 +185,6 @@ class SessionDetailConsumer(WebsocketConsumer):
 
     # Receive message from WebSocket
     def receive(self, text_data):
-        print("RECEIVE")
         text_data_json = json.loads(text_data)
         type1 = text_data_json['type']
 
@@ -298,7 +297,6 @@ class SessionDetailConsumer(WebsocketConsumer):
         next_tutee_pk = event['next_tutee_pk']
         next_tutee_startTime = event['next_tutee_startTime']
         session_pk = event['session_pk']
-        print("next_tutee_pk : ", next_tutee_pk)
         # try:            
         log = matching_models.SessionLog.objects.filter(tutor_session_id=session_pk, tutee_id=next_tutee_pk, start_time=next_tutee_startTime).get()
         self.send(text_data=json.dumps({
@@ -325,7 +323,6 @@ class SessionDetailConsumer(WebsocketConsumer):
         current_tutee_pk = event['current_tutee_pk']
         current_tutee_finTime = event['current_tutee_finTime']
         session_pk = event['session_pk']
-        print("current_tutee_pk : ", current_tutee_pk)
         # try:
         log = matching_models.SessionLog.objects.get(tutor_session_id=session_pk,tutee_id=current_tutee_pk, is_waiting=False, start_time__isnull=False, fin_time = current_tutee_finTime)
 
