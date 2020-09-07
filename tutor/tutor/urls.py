@@ -20,8 +20,8 @@ from matching import views
 from django.views.generic import RedirectView
 
 urlpatterns = [
+    path('', include('matching.urls')),
     path('matching/', include('matching.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
-    url(r'^', RedirectView.as_view(url='matching/')),
 ]
