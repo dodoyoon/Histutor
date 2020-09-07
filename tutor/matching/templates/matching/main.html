@@ -18,7 +18,7 @@
 {% block content %}
 
   <div id="refreshDiv">
-  <button id="refreshBtn"> 
+  <button id="refreshBtn">
     <img id="refresh" src="https://image.flaticon.com/icons/svg/560/560463.svg" alt="Refresh">
   </button>
   <p class="text-center">마지막으로 재시작한 시간 : {{time}}</p>
@@ -60,7 +60,7 @@
                   </div>
               </div>
             </div>
-    
+
           </div>
         </div>
       </div>
@@ -432,14 +432,14 @@
 </div>
 
 <script>
-  
+
   document.getElementById("refreshDiv").addEventListener("click", function(){
     location.reload();
   });
 
   let user = {{user.pk}};
 
-  const websocket = new WebSocket('ws://' + window.location.host + '/ws/tutorhome/');
+  const websocket = new WebSocket('wss://' + window.location.host + '/ws/tutorhome/');
 
   websocket.onmessage = function(e) {
     const data = JSON.parse(e.data);

@@ -69,7 +69,7 @@
 </div>
 
 <script>
-  const websocket = new WebSocket('ws://' + window.location.host + '/ws/session/' + "{{pk}}" + '/');
+  const websocket = new WebSocket('wss://' + window.location.host + '/ws/session/' + "{{pk}}" + '/');
 
   websocket.onmessage = function(e){
     const data = JSON.parse(e.data);
@@ -79,7 +79,7 @@
 
     if (data['type'] == "get_next_tutee"){
 	// console.log("get next tutee");
-	
+
       // console.log("tutee pk: " + tuteePk +" vs " + "next tutee pk: " + data['next_tutee_pk']);
       if (tuteePk == data['next_tutee_pk']){
         alert("학우님 차례가 되어서 튜터링 채팅방으로 이동합니다.");
