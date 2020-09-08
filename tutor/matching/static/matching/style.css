@@ -441,7 +441,7 @@ a:hover{
 #refreshDiv{
   position: relative;
   float: right;
-  top: 40px;
+  top: 15px;
   right: 8%;
   z-index: 5;
   width: 350px;
