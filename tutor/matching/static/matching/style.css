@@ -484,3 +484,37 @@ footer a {
   color: inherit ; 
   text-decoration: underline;
 }
+
+#loading-image {
+  max-width:100%;
+  width:80px;
+  height:80px;
+}
+
+
+.t_rex_desc_btn  {
+	background-color:#5246a0;
+    -webkit-border-top-left-radius:28px;
+    -moz-border-radius-topleft:28px;
+    border-top-left-radius:28px;
+    -webkit-border-top-right-radius:28px;
+    -moz-border-radius-topright:28px;
+    border-top-right-radius:28px;
+    -webkit-border-bottom-right-radius:28px;
+    -moz-border-radius-bottomright:28px;
+    border-bottom-right-radius:28px;
+    -webkit-border-bottom-left-radius:28px;
+    -moz-border-radius-bottomleft:28px;
+    border-bottom-left-radius:28px;
+    text-indent:0;
+	border:1px solid #5246a0;
+	display:inline-block;
+	color:white;
+	font-size:13px;
+	font-style:normal;
+    height:30px;
+	line-height:20px;
+    width:300px;
+	text-decoration:none;
+    text-align:center;
+}
