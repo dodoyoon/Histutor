@@ -65,11 +65,11 @@ def user_check(request):
             else:
                 return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
         except(KeyError, matching_models.User.DoesNotExist):
-            return HttpResponseRedirect(reverse('matching:index'))
+            return HttpResponseRedirect(reverse('matching:login'))
     else:
         messages.info(request, '한동 이메일로 로그인해주세요.')
         matching_models.User.objects.filter(pk=request.user.pk).delete()
-        return HttpResponseRedirect(reverse('matching:index'))
+        return HttpResponseRedirect(reverse('matching:login'))
 
 # #TODO : method decorator should be added
 # class ReportUpdate(UpdateView):
