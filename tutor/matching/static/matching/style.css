@@ -462,3 +462,19 @@ a:hover{
   position: relative;
   top: 3px;
 }
+
+#footer{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  bottom: 0px;
+  width: 100vw;
+  padding-top: 15px;
+  background-color: #918abd;
+  color: white;
+}
+
+#footer a {
+  color: white;
+}
