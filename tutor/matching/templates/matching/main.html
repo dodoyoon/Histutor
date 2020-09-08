@@ -16,11 +16,8 @@
 {% endblock %}
 
 {% block content %}
-<div id="refreshDiv">
-  <button id="refreshBtn">
-    <img id="refresh" src="https://image.flaticon.com/icons/svg/560/560463.svg" alt="Refresh">
-  </button>
-  <p class="text-center">마지막으로 재시작한 시간 : {{time}} </p>
+<div id="refreshDiv" style="text-align:right;">
+  <p style="font-size:15px;">마지막 업데이트: {{time}} </p>
 </div>
 
 <div>
@@ -444,11 +441,5 @@
 <footer>
     <p class='manual'>Histutor 사용법을 알고 싶으신가요?&nbsp;<a href="https://www.notion.so/Histutor-Guideline-1112f633040742a280749b9a449a13b2" target="_blank">이곳</a>에서 확인하세요!</p>
 </footer>
-
-<script>
-    document.getElementById("refreshDiv").addEventListener("click", function(){
-        location.reload();
-    });
-</script>
 
 {% endblock %}
