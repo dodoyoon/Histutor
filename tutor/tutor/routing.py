@@ -11,4 +11,4 @@ application = ProtocolTypeRouter({
     ),
 })
 
-#ASGI_APPLICATION = "tutor.routing.application"
+ASGI_APPLICATION = "tutor.routing.application"

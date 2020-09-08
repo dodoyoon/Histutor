@@ -439,7 +439,7 @@
 
   let user = {{user.pk}};
 
-  const websocket = new WebSocket('wss://' + window.location.host + '/ws/tutorhome/');
+  const websocket = new WebSocket('wss://' + window.location.host + ':8443/ws/tutorhome/');
 
   websocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
