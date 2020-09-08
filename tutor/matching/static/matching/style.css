@@ -459,6 +459,12 @@ a:hover{
   top: 3px;
 }
 
+.page_bottom{
+  display:flex;
+  justify-content:space-between;
+  flex-wrap: wrap;
+}
+
 footer{
   display: flex;
   align-items: center;
