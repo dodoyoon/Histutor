@@ -20,7 +20,7 @@
   <button id="refreshBtn">
     <img id="refresh" src="https://image.flaticon.com/icons/svg/560/560463.svg" alt="Refresh">
   </button>
-  <p class="text-center">마지막으로 재시작한 시간 : {{time}}</p>
+  <p class="text-center">마지막으로 재시작한 시간 : {{time}} </p>
 </div>
 
 <div>
@@ -322,21 +322,21 @@
 
 
 <div id="mainpage_table_div" class="tableDiv">
-  <a href="{% url 'matching:mainpage' 'all' %}"><button class="mybutton">all</button></a>
-  <a href="{% url 'matching:mainpage' 'session' %}"><button class="mybutton">TA 세션</button></a>
-  <a href="{% url 'matching:mainpage' 'tutoring' %}"><button class="mybutton">튜터링</button></a>
-
-    <div id="search" class="col-md-4 col-md-offset-3">
-        <form action="" class="search-form" method="get">
-            <div class="form-group has-feedback">
-        		<label for="search" class="sr-only">Search</label>
-        		<input id="search_label" type="text" class="form-control" name="search_word" id="search" placeholder="search">
-          		<span id="search_icon" class="fas fa-search form-control-feedback" ></span>
-        	</div>
-        </form>
-    </div>
-
-
+  <a href="{% url 'matching:mainpage' 'all' %}"><button class="mybutton main_tab" value='all' style="position:relative; bottom:6px">all</button></a>
+  <a href="{% url 'matching:mainpage' 'session' %}"><button class="mybutton main_tab" value='session' style="position:relative; bottom:6px">TA 세션</button></a>
+  <a href="{% url 'matching:mainpage' 'tutoring' %}"><button class="mybutton main_tab" value='tutoring' style="position:relative; bottom:6px">튜터링</button></a>
+  <script>
+    let pathname = window.location.pathname ; 
+    const selected = pathname.split('/')[2] ;
+    const mainTabArr = document.getElementsByClassName('main_tab') ; 
+    for(let tab of mainTabArr){
+      if(tab.value === selected){
+        tab.style.background = 'rgb(212 207 231)' ; 
+        break ; 
+      }
+    }
+  </script>
+  <br>
     <table id="mainpage_table" class="table">
         <thead>
         <tr>
@@ -428,6 +428,20 @@
       </ul>
     </nav>
     {% endif %}
+
+    <div id="search" class="col-md-4 col-md-offset-3">
+      <form action="" class="search-form" method="get">
+          <div class="form-group has-feedback">
+          <label for="search" class="sr-only">Search</label>
+          <input id="search_label" type="text" class="form-control" name="search_word" id="search" placeholder="search">
+            <span id="search_icon" class="fas fa-search form-control-feedback" ></span>
+        </div>
+      </form>
+  </div>
+</div>
+
+<div id="footer">
+  <p>Histutor 사용법을 모르시나요? 그럼 <a href="https://www.notion.so/Histutor-Guideline-1112f633040742a280749b9a449a13b2">여기</a>를 방문해보세요. </p>
 </div>
 
 <script>
