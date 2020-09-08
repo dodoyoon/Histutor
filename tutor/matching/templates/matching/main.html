@@ -395,54 +395,55 @@
         </tbody>
     </table>
 
-    {% if posts.has_other_pages %}
-    <nav aria-label="...">
-      <ul class="pagination">
-        {% if posts.number == 1 %}
-          <li class="page-item"><span class="page-link">⇤<span class="sr-only">(current)</span></span></li>
-        {% else %}
-          <li class="page-item"><a class="page-link" href="?page=1">⇤</a></li>
-        {% endif %}
-        {% if posts.has_previous %}
-          <li class="page-item"><a class="page-link" href="?page={{ posts.previous_page_number }}">&laquo;</a></li>
-        {% else %}
-          <li class="page-item"><span class="page-link">&laquo;<span class="sr-only">(current)</span></span></li>
-        {% endif %}
-        {% for i in paginatorRange %}
-          {% if posts.number == i %}
-            <li class="page-item active"><span class="page-link">{{ i }}<span class="sr-only">(current)</span></span></li>
+    <div class='page_bottom'>
+      {% if posts.has_other_pages %}
+      <nav aria-label="...">
+        <ul class="pagination">
+          {% if posts.number == 1 %}
+            <li class="page-item"><span class="page-link">⇤<span class="sr-only">(current)</span></span></li>
           {% else %}
-            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            <li class="page-item"><a class="page-link" href="?page=1">⇤</a></li>
           {% endif %}
-        {% endfor %}
-        {% if posts.has_next %}
-        <li class="page-item"><a class="page-link" href="?page={{posts.next_page_number}}">&raquo;</a></li>
-        {% else %}
-        <li class="page-item"><span class="page-link">&raquo;<span class="sr-only">(current)</span></span></li>
-        {% endif %}
-        {% if posts.number == postPaginator.num_pages %}
-          <li class="page-item"><span class="page-link">⇥<span class="sr-only">(current)</span></span></li>
-        {% else %}
-          <li class="page-item"><a class="page-link" href="?page={{postPaginator.num_pages}}">⇥</a></li>
-        {% endif %}
-      </ul>
-    </nav>
-    {% endif %}
-
-    <div id="search" class="col-md-4 col-md-offset-3">
-      <form action="" class="search-form" method="get">
-          <div class="form-group has-feedback">
-          <label for="search" class="sr-only">Search</label>
-          <input id="search_label" type="text" class="form-control" name="search_word" id="search" placeholder="search">
-            <span id="search_icon" class="fas fa-search form-control-feedback" ></span>
-        </div>
-      </form>
-  </div>
+          {% if posts.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ posts.previous_page_number }}">&laquo;</a></li>
+          {% else %}
+            <li class="page-item"><span class="page-link">&laquo;<span class="sr-only">(current)</span></span></li>
+          {% endif %}
+          {% for i in paginatorRange %}
+            {% if posts.number == i %}
+              <li class="page-item active"><span class="page-link">{{ i }}<span class="sr-only">(current)</span></span></li>
+            {% else %}
+              <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+          {% endfor %}
+          {% if posts.has_next %}
+          <li class="page-item"><a class="page-link" href="?page={{posts.next_page_number}}">&raquo;</a></li>
+          {% else %}
+          <li class="page-item"><span class="page-link">&raquo;<span class="sr-only">(current)</span></span></li>
+          {% endif %}
+          {% if posts.number == postPaginator.num_pages %}
+            <li class="page-item"><span class="page-link">⇥<span class="sr-only">(current)</span></span></li>
+          {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{postPaginator.num_pages}}">⇥</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+      {% endif %}
+      <div id="search" class="col-md-4 col-md-offset-3">
+        <form action="" class="search-form" method="get">
+            <div class="form-group has-feedback">
+            <label for="search" class="sr-only">Search</label>
+            <input id="search_label" type="text" class="form-control" name="search_word" id="search" placeholder="search">
+              <span id="search_icon" class="fas fa-search form-control-feedback" ></span>
+          </div>
+        </form>
+      </div>
+    </div>
 </div>
 
-<div id="footer">
-  <p>Histutor 사용법을 모르시나요? 그럼 <a href="https://www.notion.so/Histutor-Guideline-1112f633040742a280749b9a449a13b2">여기</a>를 방문해보세요. </p>
-</div>
+<footer>
+    <p class='manual'>Histutor 사용법을 알고 싶으신가요?&nbsp;<a href="https://www.notion.so/Histutor-Guideline-1112f633040742a280749b9a449a13b2" target="_blank">이곳</a>에서 확인하세요!</p>
+</footer>
 
 <script>
     document.getElementById("refreshDiv").addEventListener("click", function(){
