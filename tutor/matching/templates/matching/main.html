@@ -323,9 +323,9 @@
 
 
 <div id="mainpage_table_div" class="tableDiv">
-  <a href="{% url 'matching:mainpage' 'all' %}"><button class="mybutton main_tab" value='all'>all</button></a>
-  <a href="{% url 'matching:mainpage' 'session' %}"><button class="mybutton main_tab" value='session'>TA 세션</button></a>
-  <a href="{% url 'matching:mainpage' 'tutoring' %}"><button class="mybutton main_tab" value='tutoring'>튜터링</button></a>
+  <a href="{% url 'matching:mainpage' 'all' %}"><button class="mybutton main_tab" value='all' style="position:relative; bottom:6px">all</button></a>
+  <a href="{% url 'matching:mainpage' 'session' %}"><button class="mybutton main_tab" value='session' style="position:relative; bottom:6px">TA 세션</button></a>
+  <a href="{% url 'matching:mainpage' 'tutoring' %}"><button class="mybutton main_tab" value='tutoring' style="position:relative; bottom:6px">튜터링</button></a>
   <script>
     let pathname = window.location.pathname ; 
     const selected = pathname.split('/')[2] ;
@@ -337,17 +337,7 @@
       }
     }
   </script>
-  <div id="search" class="col-md-4 col-md-offset-3">
-        <form action="" class="search-form" method="get">
-            <div class="form-group has-feedback">
-        		<label for="search" class="sr-only">Search</label>
-        		<input id="search_label" type="text" class="form-control" name="search_word" id="search" placeholder="search">
-          		<span id="search_icon" class="fas fa-search form-control-feedback" ></span>
-        	</div>
-        </form>
-    </div>
-
-
+  <br>
     <table id="mainpage_table" class="table">
         <thead>
         <tr>
@@ -439,6 +429,16 @@
       </ul>
     </nav>
     {% endif %}
+
+    <div id="search" class="col-md-4 col-md-offset-3">
+      <form action="" class="search-form" method="get">
+          <div class="form-group has-feedback">
+          <label for="search" class="sr-only">Search</label>
+          <input id="search_label" type="text" class="form-control" name="search_word" id="search" placeholder="search">
+            <span id="search_icon" class="fas fa-search form-control-feedback" ></span>
+        </div>
+      </form>
+  </div>
 </div>
 
 <script>
