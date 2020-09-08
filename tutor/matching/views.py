@@ -1010,7 +1010,6 @@ def mainpage(request, showtype):
     end = start + datetime.timedelta(days=1)
 
     tutoring_on = matching_models.TutorSession.objects.filter(start_time__range=(start, end), fin_time__isnull=True)
-    tutoring_off = matching_models.TutorSession.objects.exclude(id__in=tutoring_on).order_by('-pub_date')
     recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
     onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True).order_by('-pub_date')
     recruited = matching_models.Post.objects.exclude(id__in=recruiting).exclude(id__in=onprocess).order_by('-pub_date')
@@ -1018,17 +1017,16 @@ def mainpage(request, showtype):
     ### 튜터링 검색기능 ###
     if search_word != '':
         tutoring_on = tutoring_on.filter(title__icontains=search_word)
-        tutoring_off = tutoring_off.filter(title__icontains=search_word)
         recruiting = recruiting.filter(title__icontains=search_word)
         onprocess = onprocess.filter(title__icontains=search_word)
         recruited = recruited.filter(title__icontains=search_word)
 
     if showtype == 'session':
-        posts = list(chain(tutoring_on,tutoring_off))
+        posts = list(chain(tutoring_on))
     elif showtype == 'tutoring':
         posts = list(chain(recruiting, onprocess,recruited))
     elif showtype == 'all':
-        posts = list(chain(tutoring_on,recruiting, onprocess,recruited, tutoring_off))
+        posts = list(chain(tutoring_on,recruiting, onprocess,recruited))
     else:
         return redirect('matching:mainpage', showtype='all')
 
@@ -1112,7 +1110,7 @@ def mainpage(request, showtype):
                 ctx['session_report_exist'] = True
                 ctx['unwritten_session_report'] = report
 
-    time = timezone.now()
+    time = timezone.localtime()
     ctx['time'] = time.strftime("%Y/%m/%d %H:%M")
 
     return render(request, 'matching/main.html', ctx)
@@ -1307,7 +1305,6 @@ def set_attending_type(request):
 @require_POST
 def start_new_tutoring(request, pk):
   if request.method == 'POST':
-
     try:
         session = get_object_or_404(matching_models.TutorSession, pk=pk)
     except matching_models.TutorSession.DoesNotExist:
