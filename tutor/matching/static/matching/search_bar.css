@@ -1,3 +1,4 @@
+
 .search-form .form-group {
   float: right !important;
   transition: all 0.35s, border-radius 0s;
@@ -48,11 +49,14 @@
 }
 
 #search{
-  float: right;
+  display:flex;
   top: 7px;
   margin-right: 10px;
   padding-right: 0px;
   z-index: 1;
+}
+#search *{
+  display:flex;
 }
 
 #search_label{
@@ -61,4 +65,7 @@
 
 #search_icon{
   padding-right: 5px;
+}
+form.search-form{
+  width:inherit;
 }
