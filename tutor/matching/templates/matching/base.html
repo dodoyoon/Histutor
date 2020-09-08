@@ -13,8 +13,6 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
-		<!-- 이게 있으면 Modal이 안나옴 -->
-		<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
 		<link rel="stylesheet" type="text/css" href="{% static 'matching/base.css' %}">
 		<link rel="stylesheet" type="text/css" href="{% static 'matching/style.css' %}">
 		<link rel="stylesheet" type="text/css" href="{% static 'matching/search_bar.css' %}">
@@ -52,14 +50,6 @@
 						{% endif %}
 					{% endif %}
 				  </li>
-				<!--
-					<li class="nav-item active">
-						<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="#">Link</a>
-					</li>
-				-->
 			  </ul>
 			  <form class="form-inline my-2 my-lg-0">
 				{% if user.is_authenticated %}
