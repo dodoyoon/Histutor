@@ -463,7 +463,7 @@ a:hover{
   top: 3px;
 }
 
-#footer{
+footer{
   display: flex;
   align-items: center;
   justify-content: center;
@@ -471,11 +471,14 @@ a:hover{
   bottom: 0px;
   width: 100vw;
   padding-top: 15px;
-  background-color: #918abd;
-  color: white;
+  background-color:white;
+  color: #918abd;
+}
+footer .manual{
+  display:flex;
 }
 
-#footer a {
-  color: white;
+footer a {
+  color: inherit ; 
   text-decoration: underline;
 }
