@@ -18,9 +18,10 @@ from django.urls import path, include
 from django.conf.urls import url
 from matching import views
 from django.views.generic import RedirectView
+from matching.views import login
 
 urlpatterns = [
-    path('', include('matching.urls')),
+    path('', login, name='login'),
     path('matching/', include('matching.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),

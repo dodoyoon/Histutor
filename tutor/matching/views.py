@@ -28,14 +28,11 @@ import datetime
 LOGIN_REDIRECT_URL = "/matching"
 # DEFAULT PAGE
 
-def index(request):
+def login(request):
     if request.user.is_authenticated:
         return redirect('matching:mainpage', showtype='all')
     else:
-        return redirect('login/')
-
-def login(request):
-    return render(request, 'matching/account_login.html', {})
+        return render(request, 'matching/account_login.html', {})
 
 def redirect_to_main(request):
     return redirect('matching:mainpage', showtype='all')
