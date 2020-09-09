@@ -6,6 +6,7 @@
 		<meta name="viewport" content="width=device-width, user-scalable=no">
 
 		{% load static %}
+		{% load google_translate %}
 		<!-- Bootstrap CSS -->
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
@@ -19,7 +20,28 @@
 		<link rel="stylesheet" type="text/css" href="{% static 'matching/session_report.css' %}">
 		<script src="https://kit.fontawesome.com/f99623035e.js" crossorigin="anonymous"></script>
 
+		<style>
+			@font-face {
+				font-family: NanumSquareRoundB;
+				src: url("{% static 'matching/fonts/NanumSquareRoundB.ttf' %}");
+			}
+			@font-face {
+				font-family: NanumSquareRoundEB;
+				src: url("{% static 'matching/fonts/NanumSquareRoundEB.ttf' %}");
+			}
+			@font-face {
+				font-family: NanumSquareRoundL;
+				src: url("{% static 'matching/fonts/NanumSquareRoundL.ttf' %}");
+			}
+			@font-face {
+				font-family: NanumSquareRoundR;
+				src: url("{% static 'matching/fonts/NanumSquareRoundR.ttf' %}");
+			}
 
+			body{
+			    font-family: NanumSquareRoundR;
+			}
+		</style>
 
 		{% block title %}
 		<title>HisTutor</title>
@@ -60,7 +82,8 @@
 			  </form>
 			</div>
 		  </nav>
-
+    
+    {% google_translate type='vertical' language='ko' %}
 		<div style="overflow-x: scroll; overflow-y:unset">
 
 		<!--<div class="container-fluid">-->
