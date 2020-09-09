@@ -93,7 +93,7 @@ text-indent:0;
 	font-style:normal;
 height:30px;
 	line-height:20px;
-width:100px;
+width:110px;
 	text-decoration:none;
   text-align:center;
 }.mybutton:hover {
@@ -481,7 +481,7 @@ footer .manual{
 }
 
 footer a {
-  color: inherit ; 
+  color: inherit ;
   text-decoration: underline;
 }
 
