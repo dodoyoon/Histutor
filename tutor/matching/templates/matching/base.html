@@ -73,17 +73,17 @@
 					{% endif %}
 				  </li>
 			  </ul>
-			  <form class="form-inline my-2 my-lg-0">
+			  <div class="form-inline my-2 my-lg-0">
 				{% if user.is_authenticated %}
 					<a id="logout" href="{% url 'account_logout' %}">Logout</a>
 					<a class="navbar-brand">{{ user.profile.nickname }}</a>
 					<button type="button" onclick="location.href='{% url "matching:mypage" %}'" class="status">My Page</button>
 				{% endif %}
-			  </form>
+			  </div>
 			</div>
 		  </nav>
+		  <div style="display:inline-block;">{% google_translate type='vertical' language='ko' %}</div>
     
-    {% google_translate type='vertical' language='ko' %}
 		<div style="overflow-x: scroll; overflow-y:unset">
 
 		<!--<div class="container-fluid">-->
