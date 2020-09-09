@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'channels',
     'tempus_dominus',
+    'google_translate',
 ]
 
 MIDDLEWARE = [
