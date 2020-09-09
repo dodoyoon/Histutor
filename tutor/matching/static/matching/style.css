@@ -62,6 +62,7 @@
 #mainpage_table_div{
   position: relative;
   top: 30px;
+  margin-bottom: 100px;
 }
 
 #post-top{
@@ -469,7 +470,7 @@ footer{
   display: flex;
   align-items: center;
   justify-content: center;
-  position: absolute;
+  position: fixed;
   bottom: 0px;
   width: 100vw;
   padding-top: 15px;
