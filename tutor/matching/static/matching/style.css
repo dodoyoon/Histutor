@@ -1,3 +1,7 @@
+html, body{
+  height: 100%;
+}
+
 /* TUTEE HOME*/
 #tutee_home{
     border: 1px solid red;
