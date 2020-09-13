@@ -137,7 +137,7 @@
         </div>
       </div>
     </div>
-    
+
 
     {% if my_report %}
     <button class="mybutton" type="submit" onclick="location.href='{% url "matching:report_detail" my_report.pk %}'">보고서 보기</button>
@@ -322,8 +322,8 @@
   var storage = document.getElementById("msg_history");
   storage.scrollTop = storage.scrollHeight;
 
-  // const websocket = new WebSocket('wss://' + window.location.host + ':8443/ws/post/' + "{{post.pk}}" + '/');
-  const websocket = new WebSocket('ws://' + window.location.host + '/ws/post/' + "{{post.pk}}" + '/');
+  const websocket = new WebSocket('wss://' + window.location.host + ':8443/ws/post/' + "{{post.pk}}" + '/');
+  // const websocket = new WebSocket('ws://' + window.location.host + '/ws/post/' + "{{post.pk}}" + '/');
 
   websocket.onmessage = function(e) {
       const data = JSON.parse(e.data);
@@ -564,7 +564,8 @@
        data: data_obj,
        success: function(response){
            let data = {
-               'postid': response.id
+               'postid': response.id,
+               'type': 'new_comment'
            };
            if(response.reply_to && response.reply_content){
                data['reply_to'] = response.reply_to;
@@ -749,7 +750,7 @@
     });
   });
 
-  
+
 
 </script>
 {% endblock %}
