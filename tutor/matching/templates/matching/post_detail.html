@@ -89,6 +89,7 @@
     <button id="start_tutoring" class="mybutton" type="submit">튜터링 시작</button>
     {% else %}
     <button id="start_tutoring" class="mybutton hide" type="submit">튜터링 시작</button>
+
     {% endif %}
     {% if post.start_time and not post.fin_time and user == post.tutor %}
     <button class="mybutton" type="submit"  data-toggle="modal" data-target="#cancelTutoringModal">튜터링 취소</button>
@@ -136,7 +137,7 @@
         </div>
       </div>
     </div>
-    
+
 
     {% if my_report %}
     <button class="mybutton" type="submit" onclick="location.href='{% url "matching:report_detail" my_report.pk %}'">보고서 보기</button>
@@ -520,6 +521,7 @@
   websocket.onclose = function(e){
     console.error('Chat socket closed unexpectedly');
     document.getElementById('lost_connection').style.visibility = "visible";
+    document.getElementById("msg_send_btn").disabled = true;
   };
 
   function sendMessage(){
@@ -562,7 +564,8 @@
        data: data_obj,
        success: function(response){
            let data = {
-               'postid': response.id
+               'postid': response.id,
+               'type': 'new_comment'
            };
            if(response.reply_to && response.reply_content){
                data['reply_to'] = response.reply_to;
@@ -747,7 +750,7 @@
     });
   });
 
-  
+
 
 </script>
 {% endblock %}

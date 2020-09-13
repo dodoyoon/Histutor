@@ -41,7 +41,7 @@ class Post(models.Model):
    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="post_relation")
    tutor = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
    topic = models.CharField(choices=TOPIC_CHOICES, max_length=200, default='etc')
-   title = models.CharField(max_length=200)
+   title = models.CharField(max_length=70)
    finding_match = models.BooleanField(null=True,default=True)
    pub_date = models.DateTimeField(auto_now_add=True)
    cancel_reason = models.TextField(null=True)
@@ -62,7 +62,7 @@ SESSION_TYPE = (
 )
 class TutorSession(models.Model):
    tutor = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='ses')
-   title = models.CharField(max_length=300)
+   title = models.CharField(max_length=70)
    session_type = models.CharField(choices=SESSION_TYPE, default='onoff', max_length=10)
    pub_date = models.DateTimeField(auto_now_add=True)
    start_time = models.DateTimeField(null=True)

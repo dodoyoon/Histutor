@@ -22,24 +22,16 @@
 
 		<style>
 			@font-face {
-				font-family: NanumSquareRoundB;
-				src: url("{% static 'matching/fonts/NanumSquareRoundB.ttf' %}");
+				font-family: BinggraeMelona;
+				src: url("{% static 'matching/fonts/BinggraeMelona.ttf' %}");
 			}
 			@font-face {
-				font-family: NanumSquareRoundEB;
-				src: url("{% static 'matching/fonts/NanumSquareRoundEB.ttf' %}");
-			}
-			@font-face {
-				font-family: NanumSquareRoundL;
-				src: url("{% static 'matching/fonts/NanumSquareRoundL.ttf' %}");
-			}
-			@font-face {
-				font-family: NanumSquareRoundR;
-				src: url("{% static 'matching/fonts/NanumSquareRoundR.ttf' %}");
+				font-family: IropkeBatangM;
+				src: url("{% static 'matching/fonts/IropkeBatangM.ttf' %}");
 			}
 
 			body{
-			    font-family: NanumSquareRoundR;
+			    font-family: BinggraeMelona;
 			}
 		</style>
 
@@ -58,7 +50,7 @@
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 			  <span class="navbar-toggler-icon"></span>
 			</button>
-		
+
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			  <ul class="navbar-nav mr-auto">
 				  <li class="nav-item">
@@ -71,8 +63,13 @@
 						<button class="status" disabled>tutee</button>
 						{% endif %}
 					{% endif %}
-				  </li>
-			  </ul>
+					</li>
+					<li>
+						<button class='language'>
+							<img src="{% static 'matching/images/google_translate.png' %}" style='width:1.8rem; margin-left:1rem'> 
+						</button>
+					</li>
+				</ul>
 			  <div class="form-inline my-2 my-lg-0">
 				{% if user.is_authenticated %}
 					<a id="logout" href="{% url 'account_logout' %}">Logout</a>
@@ -81,15 +78,12 @@
 				{% endif %}
 			  </div>
 			</div>
-		  </nav>
-		  <div style="display:inline-block;">{% google_translate type='vertical' language='ko' %}</div>
-    
-		<div style="overflow-x: scroll; overflow-y:unset; height:100vh;">
-
-		<!--<div class="container-fluid">-->
+		</nav>
+		<div class='language hidden'>
+			<div style="display:inline-block;">{% google_translate type='vertical' language='ko' %}</div>
+		</div>
 			{% block content %}
 			{% endblock %}
-		<!--</div>-->
 
 		</div>
 
@@ -98,5 +92,7 @@
 		<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+		<script type='module' src="{% static 'matching/js/index.js' %}" ></script>
+		<script type='module' src="{% static 'matching/js/main.js' %}" ></script>
 	</body>
 </html>

@@ -10,7 +10,7 @@ class AccuseForm(forms.ModelForm):
         fields = ['join_tutee', 'content']
 
 class PostForm(forms.ModelForm):
-    title = forms.CharField(widget=forms.TextInput(attrs={'size': '50', 'placeholder': '예) OS에 Deadlock에 대해서 도움이 필요합니다.', 'minlength': '15'}))
+    title = forms.CharField(widget=forms.TextInput(attrs={'size': '50', 'placeholder': '예) OS에 Deadlock에 대해서 도움이 필요합니다.', 'minlength': '15', 'maxlength': '70'}))
     class Meta:
         model = Post
         fields = ['title']
@@ -73,12 +73,14 @@ class TutorSessionForm(forms.ModelForm):
         self.fields['start_time'].widget = DateTimePicker(
             options={
                 'defaultDate': start_time_str,
+                'vertical': 'top',
             }
         )
 
         self.fields['expected_fin_time'].widget = DateTimePicker(
             options={
                 'defaultDate': end_time_str,
+                'vertical': 'top',
             }
         )
 

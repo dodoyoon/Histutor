@@ -49,7 +49,11 @@
         </tr>
         <tr>
           <td class="text-center text-nowrap align-middle"><b>장소</b></td>
+          {% if session.location is not None%}
           <td class="text-center text-nowrap align-middle">{{session.location}}</td>
+          {% else %}
+          <td class="text-center text-nowrap align-middle">미정</td>
+          {% endif %}
         </tr>
         <tr>
           <td class="text-center text-nowrap align-middle"><b>시작 시간</b></td>
@@ -235,37 +239,6 @@
   </div>
 </div>
 
-<!--
-{% if report_exist %}
-    <div id="reportModal" class="modal fade" role="dialog">
-      <div class="modal-dialog">
-        <form action="{% url 'matching:tutee_report' report_post_pk %}" method="POST">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title">보고서쓰기</h4>
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-          </div>
-          <div class="modal-body">
-            {% csrf_token %}
-            <p>튜터링 시간 : {{report_form.duration_time}} 분</p>
-            {% if report_form.join_tutee %}
-            <p>튜터링에 참여한 튜티 정보를 입력해주세요.</p>
-            {{report_form.join_tutee}}
-            <br>
-            {% endif %}
-            <p>튜터링 내용 등을 간단히 적어주세요 <br />(튜터링 보고서는 운영자 및 담당 교수만 확인할 수 있습니다.)</p>
-            {{report_form.content}}
-          </div>
-          <div class="modal-footer">
-            <button type="submit" class="btn btn-default">Submit</button>
-          </div>
-        </div>
-        </form>
-
-      </div>
-    </div>
-{% endif %}-->
-
 <script>
 
   const makeUrl = function(text){
@@ -320,10 +293,6 @@
     var req_username = "{{request.user.username}}";
     let current_tutee_pk = "{{request.user.pk}}";
 
-    // Set table structure
-    /*var storage = document.getElementById("msg_history");
-    alert(storage.scrollHeight);
-    storage.scrollTop = storage.scrollHeight;*/
     var at_bottom = false;
     if(storage.scrollTop == storage.scrollHeight - storage.offsetHeight){
       at_bottom = true;
@@ -487,28 +456,36 @@
 
     } else if (data['type'] == "letout_current_tutee"){
 	// console.log("req username: " + req_username + " vs " + " current tutee nickname :" +  data['current_tutee_nickname']);
-      var msg = document.createElement("div");
+      const msg = document.createElement("div");
       msg.className = "cancel_tutoring";
       msg.innerHTML = `&nbsp;&nbsp;튜터링 종료 - ${data['current_tutee_nickname']}&nbsp;&nbsp;`;
       storage.append(msg);
       if (current_tutee_pk == data['current_tutee_pk']){
         alert("튜터링이 끝났습니다. 메인페이지로 이동합니다.");
-        // alert("Redirecting to mainpage");
         document.location.href = data['current_tutee_url'], true;
       }
     } else if (data['type'] == "get_next_tutee"){
-      var msg = document.createElement("div");
+      const msg = document.createElement("div");
       msg.className = "start_tutoring";
-      msg.innerHTML = `✨&nbsp;&nbsp;튜터링 시작 - ${data['next_tutee_nickname']}&nbsp;&nbsp;✨`;
+      const attendTypeNode = document.createElement('span');
+      attendTypeNode.className='attend_type'
+      attendTypeNode.innerText = data['attend_online'] ? '비대면' : '대면' ;
+      const startTextNode = document.createTextNode(`튜터링 시작 - ${data['next_tutee_nickname']}✨`);
+      msg.innerHTML = '✨' ;
+      msg.appendChild(attendTypeNode) ;
+      msg.appendChild(startTextNode);
       storage.append(msg);
     } else if (data['type'] == "new_waiting_tutee"){
-      // alert("NEW");
       let waiting_tutee = document.getElementById("waiting_tutee");
       waiting_tutee.innerHTML = parseInt(waiting_tutee.innerHTML) + 1;
     } else if (data['type'] == "waiting_tutee_out"){
-      // alert("OUT");
       let waiting_tutee = document.getElementById("waiting_tutee");
-      waiting_tutee.innerHTML = parseInt(waiting_tutee.innerHTML) - 1;
+      let waiting_tutee_value = parseInt(waiting_tutee.innerHTML) - 1;
+
+      if(waiting_tutee_value < 0){
+          waiting_tutee_value = 0;
+      }
+      waiting_tutee.innerHTML = waiting_tutee_value;
     }
 
     if(at_bottom){
@@ -521,6 +498,7 @@
     console.error('Chat socket closed unexpectedly');
     document.getElementById("start_new_tutoring").disabled = true;
     document.getElementById('lost_connection').style.visibility = "visible";
+    document.getElementById("msg_send_btn").disabled = true;
   };
 
   function sendMessage(){
