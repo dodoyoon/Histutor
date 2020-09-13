@@ -322,17 +322,6 @@
   <a href="{% url 'matching:mainpage' 'all' %}"><button class="mybutton main_tab" value='all' style="position:relative; bottom:6px">all</button></a>
   <a href="{% url 'matching:mainpage' 'session' %}"><button class="mybutton main_tab" value='session' style="position:relative; bottom:6px">TA 세션</button></a>
   <a href="{% url 'matching:mainpage' 'tutoring' %}"><button class="mybutton main_tab" value='tutoring' style="position:relative; bottom:6px">튜터링</button></a>
-  <script>
-    let pathname = window.location.pathname ;
-    const selected = pathname.split('/')[2] ;
-    const mainTabArr = document.getElementsByClassName('main_tab') ;
-    for(let tab of mainTabArr){
-      if(tab.value === selected){
-        tab.style.background = 'rgb(212 207 231)' ;
-        break ;
-      }
-    }
-  </script>
   <br>
     <table id="mainpage_table" class="table">
         <thead>
