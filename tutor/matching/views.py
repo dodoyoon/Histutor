@@ -272,9 +272,9 @@ def post_detail(request, pk):
 
     ctx['post'] = post
     ctx['comment_list'] = comment_list
-    ctx['start_msg'] = "튜터링시작"+post.user.last_name+str(post.pub_date)
-    ctx['cancel_msg'] = "튜터링취소"+post.user.last_name+str(post.pub_date)
-    ctx['fin_msg'] = "튜터링종료"+post.user.last_name+str(post.pub_date)
+    ctx['start_msg'] = "튜터링시작"+str(post.pub_date)
+    ctx['cancel_msg'] = "튜터링취소"+str(post.pub_date)
+    ctx['fin_msg'] = "튜터링종료"+str(post.pub_date)
     ctx['user_compare_msg'] = user.profile.nickname + '에게 답장'
     post.hit = post.hit + 1
     post.save()
@@ -286,6 +286,7 @@ def set_tutor(request, postpk, userpk):
     post = matching_models.Post.objects.filter(tutor=request.user, fin_time__isnull=True)
     if post:
         # 튜터가 하나 이상의 튜터링을 동시에 진행할 수 없음
+        messages.error(request, '이미 진행하고 있는 튜터링이 있습니다.')
         return redirect('matching:post_detail', pk=postpk)
 
     try:
@@ -312,19 +313,14 @@ def set_tutor(request, postpk, userpk):
     post.start_time = timezone.localtime(timezone.now())
     post.save()
 
-    start_tutoring_cmt = matching_models.Comment(user=tutor, post=post, pub_date=post.start_time, content="튜터링시작"+post.user.last_name+str(post.pub_date))
+    start_tutoring_cmt = matching_models.Comment(user=tutor, post=post, pub_date=timezone.now(), content="튜터링시작"+str(post.pub_date))
     start_tutoring_cmt.save()
 
-    channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(
-      'new_comment',
-      {
-        'type': 'star_comment',
-        'id': start_tutoring_cmt.pk,
-      }
-  )
+    context = {
+      'start_tutoring_cmt_pk' : start_tutoring_cmt.pk
+    }
 
-    return redirect('matching:post_detail', pk=post.pk)
+    return HttpResponse(json.dumps(context), content_type="application/json")
 
 @login_required
 def send_message(request):
@@ -662,15 +658,21 @@ def fin_tutoring(request, pk):
     post = matching_models.Post.objects.get(pk=pk)
     post.fin_time = timezone.localtime(timezone.now())
     post.save()
-    fin_tutoring_cmt = matching_models.Comment(user=post.tutor, post=post, pub_date=timezone.now(), content="튜터링종료"+post.user.last_name+str(post.pub_date))
+    fin_tutoring_cmt = matching_models.Comment(user=post.tutor, post=post, pub_date=timezone.now(), content="튜터링종료"+str(post.pub_date))
     fin_tutoring_cmt.save()
-    return redirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
+
+    context = {
+      'finish_tutoring_cmt_pk' : fin_tutoring_cmt.pk,
+      'mainpage_url': "http://" + request.get_host() + reverse('matching:mainpage', kwargs={'showtype':'all'})
+    }
+
+    return HttpResponse(json.dumps(context), content_type="application/json")
 
 # Tutor가 튜터링 중도 취소
 def cancel_tutoring(request, pk):
     post = matching_models.Post.objects.get(pk=pk)
 
-    cancel_tutoring_cmt = matching_models.Comment(user=post.tutor, post=post, pub_date=timezone.now(), content="튜터링취소"+post.user.last_name+str(post.pub_date))
+    cancel_tutoring_cmt = matching_models.Comment(user=post.tutor, post=post, pub_date=timezone.now(), content="튜터링취소"+str(post.pub_date))
     cancel_tutoring_cmt.save()
 
     post.tutor = None
@@ -678,8 +680,12 @@ def cancel_tutoring(request, pk):
     post.start_time = None
     post.save()
 
+    context = {
+      'cancel_tutoring_cmt_pk' : cancel_tutoring_cmt.pk,
+      'mainpage_url': "http://" + request.get_host() + reverse('matching:mainpage', kwargs={'showtype':'all'})
+    }
 
-    return redirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
+    return HttpResponse(json.dumps(context), content_type="application/json")
 
 
 
@@ -1230,17 +1236,6 @@ def waitingroom(request, pk):
         ctx['tuteeTurn'] = tuteeTurn
         ctx['waitingAfterTutee'] = waitingAfterTutee, # waitingAfterTutee is int, but ctx['...'] is tuple?
         ctx['totalWaiting'] = totalWaiting
-
-        channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-          'new_comment_session',
-          {
-            'type': 'new_waiting_tutee',
-            'new_tutee_turn': tuteeTurn,
-          }
-        )
-    if len(waitingList) == 1:
-        ctx['no_waiting'] = True
     
     if session.start_time > timezone.localtime(timezone.now()):
       ctx['started'] = True
