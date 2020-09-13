@@ -24,15 +24,21 @@
     </div>
     {% endif %}
     <div id="waiting_list">
-        {% if not no_waiting %}
       <div id="waiting">Waiting...<img id="loading-image" src="{% static 'matching/images/loading.gif' %}" alt="Loading..." /></div>
-      <div id="wait_for_turn" class="text-center">순서가 올 때까지 조금만 기다려주세요.</div>
+      <div id="wait_for_turn" class="text-center">
+        {% if no_waiting%}
+          현재 튜터링이 진행중입니다. 순서가 올 때까지 조금만 기다려주세요.
+        {% else %}
+          순서가 올 때까지 조금만 기다려주세요.
+        {% endif %}
+      </div>
       <div id="waiting_info" class="flex-container text-center">
         <div id="totalWaiting">총 대기자 수 : <span id="totalWaitingNumber" class="inline">{{totalWaiting}}</span></div>
         <div id="waitingBefore">내 앞 : <span id="waitingBeforeNumber" class="inline">{{waitingBeforeTutee}}</span></div>
         <div id="current">내 대기 순서 : <span id="currentNumber" class="inline">{{tuteeTurn}}</span></div>
         <div id="waitingAfter">내 뒤 : <span id="waitingAfterNumber" class="inline">{{waitingAfterTutee.0}}</span></div>
       </div>
+      
         <!-- t_rex_place -->
         <!-- T-Rex -->
         <div id="t" class="offline">
@@ -54,20 +60,12 @@
         <div style="text-align:center;">
             <button class="t_rex_desc_btn" type="button" disabled>Press Space to Start</button>
         </div>
-        {% else %}
-      <div id="waiting">No Waiting</div>
-      <br><br><br><br><br><br>
-      <div id="line_image" style="text-align: center;">
-        <img class="stickMan" src="{% static 'matching/images/door.png' %}">
-        <img class="stickMan" src="{% static 'matching/images/yay.png' %}">
-      </div>
-        {% endif %}
     </div>
 </div>
 
 <script>
-  const websocket = new WebSocket('wss://' + window.location.host + ':8443/ws/session/' + "{{pk}}" + '/');
-  // const websocket = new WebSocket('ws://' + window.location.host + '/ws/session/' + "{{pk}}" + '/');
+  // const websocket = new WebSocket('wss://' + window.location.host + ':8443/ws/session/' + "{{pk}}" + '/');
+  const websocket = new WebSocket('ws://' + window.location.host + '/ws/session/' + "{{pk}}" + '/');
 
   websocket.onmessage = function(e){
     const data = JSON.parse(e.data);
@@ -151,45 +149,45 @@
         return null;
     };
 
-    document.getElementById("online_radio").onclick = function(){
-      $.ajax({
-            type: "POST",
-            url: "{% url 'matching:set_attending_type' %}",
-            data: {
-                'pk': {{pk}},
-                'online': this.value,
-                'csrfmiddlewaretoken': '{{ csrf_token }}'
-            },
-            dataType: "json",
-            success: function(response){
-              alert(response.message);
-            },
-            error: function(request, status, error){
-                alert("로그인이 필요합니다.");
-                window.location.replace("/accounts/login/");
-            },
-        });
-    }
+    // document.getElementById("online_radio").onclick = function(){
+    //   $.ajax({
+    //         type: "POST",
+    //         url: "{% url 'matching:set_attending_type' %}",
+    //         data: {
+    //             'pk': {{pk}},
+    //             'online': this.value,
+    //             'csrfmiddlewaretoken': '{{ csrf_token }}'
+    //         },
+    //         dataType: "json",
+    //         success: function(response){
+    //           alert(response.message);
+    //         },
+    //         error: function(request, status, error){
+    //             alert("로그인이 필요합니다.");
+    //             window.location.replace("/accounts/login/");
+    //         },
+    //     });
+    // }
 
-    document.getElementById("offline_radio").onclick = function(){
-      $.ajax({
-            type: "POST",
-            url: "{% url 'matching:set_attending_type' %}",
-            data: {
-                'pk': {{pk}},
-                'online': this.value,
-                'csrfmiddlewaretoken': '{{ csrf_token }}'
-            },
-            dataType: "json",
-            success: function(response){
-              alert(response.message);
-            },
-            error: function(request, status, error){
-                alert("로그인이 필요합니다.");
-                window.location.replace("/accounts/login/");
-            },
-        });
-    }
+    // document.getElementById("offline_radio").onclick = function(){
+    //   $.ajax({
+    //         type: "POST",
+    //         url: "{% url 'matching:set_attending_type' %}",
+    //         data: {
+    //             'pk': {{pk}},
+    //             'online': this.value,
+    //             'csrfmiddlewaretoken': '{{ csrf_token }}'
+    //         },
+    //         dataType: "json",
+    //         success: function(response){
+    //           alert(response.message);
+    //         },
+    //         error: function(request, status, error){
+    //             alert("로그인이 필요합니다.");
+    //             window.location.replace("/accounts/login/");
+    //         },
+    //     });
+    // }
 
     document.onkeydown = function(evt) {
         evt = evt || window.event;

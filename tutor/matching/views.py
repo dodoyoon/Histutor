@@ -1239,8 +1239,7 @@ def waitingroom(request, pk):
             'new_tutee_turn': tuteeTurn,
           }
         )
-
-    else:
+    if len(waitingList) == 1:
         ctx['no_waiting'] = True
 
     return render(request, 'matching/waiting_room.html', ctx)

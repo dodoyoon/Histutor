@@ -342,6 +342,15 @@ a:hover{
   padding-bottom: 0px;
 }
 
+#no_waiting{
+  border: 1px solid red;
+  position: relative;
+  left: calc(50% - 100px);
+  font-size: 30px;
+  width: 200px;
+  padding-bottom: 0px;
+}
+
 
 .inline{
   display: inline;
@@ -522,4 +531,8 @@ footer a {
     width:300px;
 	text-decoration:none;
     text-align:center;
+}
+
+.hide {
+  display: none;
 }
