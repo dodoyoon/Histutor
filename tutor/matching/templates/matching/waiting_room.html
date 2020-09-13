@@ -38,7 +38,7 @@
         <div id="current">내 대기 순서 : <span id="currentNumber" class="inline">{{tuteeTurn}}</span></div>
         <div id="waitingAfter">내 뒤 : <span id="waitingAfterNumber" class="inline">{{waitingAfterTutee.0}}</span></div>
       </div>
-      
+
         <!-- t_rex_place -->
         <!-- T-Rex -->
         <div id="t" class="offline">
@@ -97,15 +97,34 @@
       let waiting_tutee_turn = data['waiting_tutee_turn'];
       if (tuteeTurn != waiting_tutee_turn){
         let totalWaiting = document.getElementById("totalWaitingNumber");
-        totalWaiting.innerHTML = parseInt(totalWaiting.innerHTML) - 1;
+        let value1 = parseInt(totalWaiting.innerHTML) - 1;
+
+        if(value1 < 0){
+            value1 = 0;
+        }
+        totalWaiting.innerHTML = value1;
+
         if (tuteeTurn < waiting_tutee_turn){
           let waitingAfter = document.getElementById("waitingAfterNumber");
-          waitingAfter.innerHTML = parseInt(waitingAfter.innerHTML) -1;
+          let value2 = parseInt(waitingAfter.innerHTML) -1;
+          if(value2 < 0){
+              value2 = 0;
+          }
+          waitingAfter.innerHTML = value2;
         } else {
           let current_tutee_turn = document.getElementById("currentNumber");
-          current_tutee_turn.innerHTML = parseInt(current_tutee_turn.innerHTML) - 1;
+          let value3 = parseInt(current_tutee_turn.innerHTML) - 1;
+          let value4 = parseInt(waitingBefore.innerHTML) - 1;
+
+          if(value3 < 0){
+              value3 = 0;
+          }
+          if(value4 < 0){
+              value4 = 0;
+          }
+          current_tutee_turn.innerHTML = value3;
           let waitingBefore = document.getElementById("waitingBeforeNumber");
-          waitingBefore.innerHTML = parseInt(waitingBefore.innerHTML) - 1;
+          waitingBefore.innerHTML = value4;
         }
       }
     }
