@@ -91,7 +91,8 @@ class NewPostConsumer(WebsocketConsumer):
 
 class PostDetailConsumer(WebsocketConsumer):
     def connect(self):
-        self.group_name = 'new_comment'
+        self.group_number = self.scope['url_route']['kwargs']['postId']
+        self.group_name = 'new_comment' + self.group_number
 
         # Join room group
         async_to_sync(self.channel_layer.group_add)(
@@ -111,21 +112,51 @@ class PostDetailConsumer(WebsocketConsumer):
     # Receive message from WebSocket
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        post_id = text_data_json['postid']
-        reply_to = text_data_json['reply_to']
-        reply_content = text_data_json['reply_content']
+        message_type = text_data_json['type']
 
-        data={
-            'type': 'new_comment',
-            'id': post_id,
-            'reply_to': reply_to,
-            'reply_content': reply_content,
-        }
+        if message_type == "start_tutoring_cmt":
+          start_tutoring_cmt_pk = text_data_json['start_tutoring_cmt_pk']
+          async_to_sync(self.channel_layer.group_send)(
+                self.group_name,
+                {
+                    'type': 'start_tutoring_cmt',
+                    'start_tutoring_cmt_pk': start_tutoring_cmt_pk,
+                }
+            )
+        elif message_type == "cancel_tutoring_cmt":
+          cancel_tutoring_cmt_pk = text_data_json['cancel_tutoring_cmt_pk']
+          async_to_sync(self.channel_layer.group_send)(
+                self.group_name,
+                {
+                    'type': 'cancel_tutoring_cmt',
+                    'cancel_tutoring_cmt_pk': cancel_tutoring_cmt_pk,
+                }
+            )
+        elif message_type == "finish_tutoring_cmt":
+          finish_tutoring_cmt_pk = text_data_json['finish_tutoring_cmt_pk']
+          async_to_sync(self.channel_layer.group_send)(
+                self.group_name,
+                {
+                    'type': 'finish_tutoring_cmt',
+                    'finish_tutoring_cmt_pk': finish_tutoring_cmt_pk,
+                }
+            )
+        else: 
+          post_id = text_data_json['postid']
+          reply_to = text_data_json['reply_to']
+          reply_content = text_data_json['reply_content']
 
-        # Send message to room group
-        async_to_sync(self.channel_layer.group_send)(
-            self.group_name, data
-        )
+          data={
+              'type': 'new_comment',
+              'id': post_id,
+              'reply_to': reply_to,
+              'reply_content': reply_content,
+          }
+
+          # Send message to room group
+          async_to_sync(self.channel_layer.group_send)(
+              self.group_name, data
+          )
 
     # Receive message from room group
     def new_comment(self, event):
@@ -152,21 +183,36 @@ class PostDetailConsumer(WebsocketConsumer):
         }))
 
     # Receive message from room group
-    def star_comment(self, event):
-        id = event['id']
-        comment = matching_models.Comment.objects.get(pk=id)
+    def start_tutoring_cmt(self, event):
+        start_tutoring_cmt_pk = event['start_tutoring_cmt_pk']
+        cmt = matching_models.Comment.objects.get(pk = start_tutoring_cmt_pk)
 
         # Send message to WebSocket
         self.send(text_data=json.dumps({
-            'type': 'star_comment',
-            'id': id,
-            'content': comment.content,
-            'username': comment.user.username,
+            'type': 'start_tutoring_cmt',
+            'start_tutoring_cmt_pk': event['start_tutoring_cmt_pk'],
+            'tutor_name': cmt.user.profile.nickname,
+        }))
+
+    def cancel_tutoring_cmt(self, event):
+
+        # Send message to WebSocket
+        self.send(text_data=json.dumps({
+            'type': 'cancel_tutoring_cmt',
+            'cancel_tutoring_cmt_pk': event['cancel_tutoring_cmt_pk']
+        }))
+
+    def finish_tutoring_cmt(self, event):
+        # Send message to WebSocket
+        self.send(text_data=json.dumps({
+            'type': 'finish_tutoring_cmt',
+            'finish_tutoring_cmt_pk': event['finish_tutoring_cmt_pk']
         }))
 
 class SessionDetailConsumer(WebsocketConsumer):
     def connect(self):
-        self.group_name = 'new_comment_session'
+        self.group_number = self.scope['url_route']['kwargs']['sessionId']
+        self.group_name = 'new_comment_session' + self.group_number
 
         # Join room group
         async_to_sync(self.channel_layer.group_add)(
@@ -230,6 +276,7 @@ class SessionDetailConsumer(WebsocketConsumer):
                 }
             )
         elif type1 == "new_waiting_tutee":
+
           new_tutee_turn = text_data_json['new_tutee_turn']
           async_to_sync(self.channel_layer.group_send)(
               self.group_name,

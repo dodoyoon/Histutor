@@ -342,7 +342,6 @@ a:hover{
   padding-bottom: 0px;
 }
 
-
 .inline{
   display: inline;
 }
@@ -522,4 +521,8 @@ footer a {
     width:300px;
 	text-decoration:none;
     text-align:center;
+}
+
+.hide {
+  display: none;
 }
