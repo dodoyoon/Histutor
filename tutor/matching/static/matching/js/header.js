@@ -1,8 +1,9 @@
-(function(){
-  const languageButton = document.querySelector('button.language') ; 
-  languageButton.addEventListener('click', (e) => {
-    console.dir(e);
-    const selectLanguageBox = document.querySelector('div.language') ; 
-    selectLanguageBox.classList.toggle('hidden') ; 
-  })
-})();
+const selectLanguageBox = document.querySelector('div.language') ; 
+export const languageHandler = (e) => {
+  selectLanguageBox.classList.toggle('hidden') ; 
+}
+export const closeLanguageHandler = (e) => {
+  if(e.target.className === 'language' || e.target.closest('.language')) return ; 
+  if(!selectLanguageBox.classList.contains('hidden'))
+    selectLanguageBox.classList.add('hidden') ;
+}
