@@ -71,12 +71,7 @@ def user_check(request):
         matching_models.User.objects.filter(pk=request.user.pk).delete()
         return HttpResponseRedirect(reverse('matching:login'))
 
-# #TODO : method decorator should be added
-# class ReportUpdate(UpdateView):
-#     model = Report
-#     context_object_name = 'report'
-#     form_class = ReportForm
-#     template_name = 'matching/report_edit.html'
+
 @login_required(login_url=LOGIN_REDIRECT_URL)
 def session_report_create(request, pk):
     try:
@@ -599,7 +594,7 @@ def remove_tutor(request, pk):
 @staff_member_required
 def make_staff(request, pk):
     user = matching_models.User.objects.get(pk=pk)
-    userinfo.is_staff = True
+    user.is_staff = True
     user.save()
 
     return redirect(reverse('matching:userlist'))

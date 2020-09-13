@@ -24,6 +24,26 @@
     </div>
     {% endif %}
     <div id="waiting_list">
+        {% if not no_waiting %}
+        {% if session.session_type == 'onoff'%}
+        <div id="attend_type">
+          <div id="explain_attend" class="text-center">세션에 참가할 방법을 선택해주세요.</div>
+          <div id="radio_buttons" class="text-center">
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="attend_type" id="online_radio" value="true" checked>
+              <label class="form-check-label" for="online">
+                온라인
+              </label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="attend_type" id="offline_radio" value="false">
+              <label class="form-check-label" for="offline">
+                오프라인
+              </label>
+            </div>
+          </div>
+        </div>
+        {% endif %}
       <div id="waiting">Waiting...<img id="loading-image" src="{% static 'matching/images/loading.gif' %}" alt="Loading..." /></div>
       <div id="wait_for_turn" class="text-center">
         {% if started %}
@@ -71,21 +91,14 @@
     const data = JSON.parse(e.data);
     let tuteePk = "{{tuteePk}}";
     let tuteeTurn = parseInt(document.getElementById("currentNumber").innerHTML);
-    //alert("received");
 
     if (data['type'] == "get_next_tutee"){
-	// console.log("get next tutee");
-
-      // console.log("tutee pk: " + tuteePk +" vs " + "next tutee pk: " + data['next_tutee_pk']);
       if (tuteePk == data['next_tutee_pk']){
         alert("학우님 차례가 되어서 튜터링 채팅방으로 이동합니다.");
-        // console.log("go to " + data['next_tutee_url']);
-        // alert(document.location);
         document.location.href = data['next_tutee_url'], true;
       }
     }
     else if (data['type'] == "new_waiting_tutee"){
-	    // console.log("new waiting tutee");
       if (tuteeTurn != data['new_tutee_turn']){
         let waitingAfter = document.getElementById("waitingAfterNumber");
         waitingAfter.innerHTML = parseInt(waitingAfter.innerHTML) + 1;
@@ -93,7 +106,6 @@
         totalWaiting.innerHTML = parseInt(totalWaiting.innerHTML) + 1;
       }
     } else if (data['type'] == "waiting_tutee_out"){
-	    // console.log("waiting tutee out");
       let waiting_tutee_turn = data['waiting_tutee_turn'];
       if (tuteeTurn != waiting_tutee_turn){
         let totalWaiting = document.getElementById("totalWaitingNumber");
@@ -126,8 +138,6 @@
                 'csrfmiddlewaretoken': '{{ csrf_token }}'
             }, // 서버로 데이터 전송시 옵션
             dataType: "json", // 서버측에서 전송한 데이터를 어떤 형식의 데이터로서 해석할 것인가를 지정, 없으면 알아서 판단
-            // 서버측에서 전송한 Response 데이터 형식 (json)
-            // {'likes_count': post.like_count, 'message': message }
             success: function(response){ // 통신 성공시 - 동적으로 좋아요 갯수 변경, 유저 목록 변경
                 //alert(response.message);
                 // websocket.send(JSON.stringify({
@@ -149,45 +159,44 @@
         return null;
     };
 
-    // document.getElementById("online_radio").onclick = function(){
-    //   $.ajax({
-    //         type: "POST",
-    //         url: "{% url 'matching:set_attending_type' %}",
-    //         data: {
-    //             'pk': {{pk}},
-    //             'online': this.value,
-    //             'csrfmiddlewaretoken': '{{ csrf_token }}'
-    //         },
-    //         dataType: "json",
-    //         success: function(response){
-    //           alert(response.message);
-    //         },
-    //         error: function(request, status, error){
-    //             alert("로그인이 필요합니다.");
-    //             window.location.replace("/accounts/login/");
-    //         },
-    //     });
-    // }
 
-    // document.getElementById("offline_radio").onclick = function(){
-    //   $.ajax({
-    //         type: "POST",
-    //         url: "{% url 'matching:set_attending_type' %}",
-    //         data: {
-    //             'pk': {{pk}},
-    //             'online': this.value,
-    //             'csrfmiddlewaretoken': '{{ csrf_token }}'
-    //         },
-    //         dataType: "json",
-    //         success: function(response){
-    //           alert(response.message);
-    //         },
-    //         error: function(request, status, error){
-    //             alert("로그인이 필요합니다.");
-    //             window.location.replace("/accounts/login/");
-    //         },
-    //     });
-    // }
+    document.getElementById("online_radio").onclick = function(){
+      $.ajax({
+            type: "POST",
+            url: "{% url 'matching:set_attending_type' %}",
+            data: {
+                'pk': {{pk}},
+                'online': this.value,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            dataType: "json",
+            success: function(response){
+            },
+            error: function(request, status, error){
+                alert("로그인이 필요합니다.");
+                window.location.replace("/accounts/login/");
+            },
+        });
+    }
+
+    document.getElementById("offline_radio").onclick = function(){
+      $.ajax({
+            type: "POST",
+            url: "{% url 'matching:set_attending_type' %}",
+            data: {
+                'pk': {{pk}},
+                'online': this.value,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            dataType: "json",
+            success: function(response){
+            },
+            error: function(request, status, error){
+                alert("로그인이 필요합니다.");
+                window.location.replace("/accounts/login/");
+            },
+        });
+    }
 
     document.onkeydown = function(evt) {
         evt = evt || window.event;
