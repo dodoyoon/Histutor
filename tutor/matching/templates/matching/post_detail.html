@@ -350,7 +350,7 @@
         inner_msg.className = "sent_msg";
         var msg_time = document.createElement("span");
         msg_time.className = "sent_time_date";
-        msg_time.innerHTML += data['date'];
+        msg_time.innerHTML += "&nbsp;" + data['date'] + "&nbsp;";
         var msg_content = document.createElement("div");
         msg_content.className = "msg_box";
         msg_content.className += " msg_content";
@@ -398,7 +398,7 @@
         received_with_msg.innerHTML += makeUrl(data['content']);
         var received_time_date = document.createElement("span");
         received_time_date.className = "received_time_date";
-        received_time_date.innerHTML += data['date'];
+        received_time_date.innerHTML += "&nbsp;" + data['date'] + "&nbsp;";
         received_msg.append(received_name);
         received_msg.append(received_with_msg);
         received_msg.append(received_time_date);
