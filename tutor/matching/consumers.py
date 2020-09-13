@@ -213,6 +213,7 @@ class SessionDetailConsumer(WebsocketConsumer):
     def connect(self):
         self.group_number = self.scope['url_route']['kwargs']['sessionId']
         self.group_name = 'new_comment_session' + self.group_number
+        print(self.group_name)
 
         # Join room group
         async_to_sync(self.channel_layer.group_add)(
