@@ -24,7 +24,6 @@
     </div>
     {% endif %}
     <div id="waiting_list">
-        {% if not no_waiting %}
         {% if session.session_type == 'onoff'%}
         <div id="attend_type">
           <div id="explain_attend" class="text-center">세션에 참가할 방법을 선택해주세요.</div>
@@ -58,7 +57,7 @@
         <div id="current">내 대기 순서 : <span id="currentNumber" class="inline">{{tuteeTurn}}</span></div>
         <div id="waitingAfter">내 뒤 : <span id="waitingAfterNumber" class="inline">{{waitingAfterTutee.0}}</span></div>
       </div>
-      
+
         <!-- t_rex_place -->
         <!-- T-Rex -->
         <div id="t" class="offline">
