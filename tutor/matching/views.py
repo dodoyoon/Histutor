@@ -1253,6 +1253,15 @@ def waitingroom(request, pk):
         ctx['tuteeTurn'] = tuteeTurn
         ctx['waitingAfterTutee'] = waitingAfterTutee, # waitingAfterTutee is int, but ctx['...'] is tuple?
         ctx['totalWaiting'] = totalWaiting
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+          'new_comment_session',
+          {
+            'type': 'new_waiting_tutee',
+            'new_tutee_turn': tuteeTurn,
+          }
+        )
     
     if session.start_time > timezone.localtime(timezone.now()):
       ctx['started'] = True
