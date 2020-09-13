@@ -321,8 +321,8 @@
   var storage = document.getElementById("msg_history");
   storage.scrollTop = storage.scrollHeight;
 
-  // const websocket = new WebSocket('wss://' + window.location.host + ':8443/ws/post/' + "{{post.pk}}" + '/');
-  const websocket = new WebSocket('ws://' + window.location.host + '/ws/post/' + "{{post.pk}}" + '/');
+  const websocket = new WebSocket('wss://' + window.location.host + ':8443/ws/post/' + "{{post.pk}}" + '/');
+  // const websocket = new WebSocket('ws://' + window.location.host + '/ws/post/' + "{{post.pk}}" + '/');
 
   websocket.onmessage = function(e) {
       const data = JSON.parse(e.data);
@@ -706,7 +706,7 @@
   document.getElementById("cancel_tutoring").addEventListener("click", function(event) {
     $.ajax({
       type: "POST",
-      url: "{% url 'matching:cancel_tutoring' post.pk %}",
+      url: "{% url 'matching:cancel_tutoring_realTime' post.pk %}",
       data: {
         'csrfmiddlewaretoken': '{{ csrf_token }}',
       },
@@ -728,7 +728,7 @@
   document.getElementById("finish_tutoring").addEventListener("click", function(event) {
     $.ajax({
       type: "POST",
-      url: "{% url 'matching:fin_tutoring' post.pk %}",
+      url: "{% url 'matching:fin_tutoring_realTime' post.pk %}",
       data: {
         'csrfmiddlewaretoken': '{{ csrf_token }}',
       },

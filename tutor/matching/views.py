@@ -661,6 +661,16 @@ def fin_tutoring(request, pk):
     fin_tutoring_cmt = matching_models.Comment(user=post.tutor, post=post, pub_date=timezone.now(), content="튜터링종료"+str(post.pub_date))
     fin_tutoring_cmt.save()
 
+    return redirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
+
+# Tutor가 끝낼 때
+def fin_tutoring_realTime(request, pk):
+    post = matching_models.Post.objects.get(pk=pk)
+    post.fin_time = timezone.localtime(timezone.now())
+    post.save()
+    fin_tutoring_cmt = matching_models.Comment(user=post.tutor, post=post, pub_date=timezone.now(), content="튜터링종료"+str(post.pub_date))
+    fin_tutoring_cmt.save()
+
     context = {
       'finish_tutoring_cmt_pk' : fin_tutoring_cmt.pk,
       'mainpage_url': "http://" + request.get_host() + reverse('matching:mainpage', kwargs={'showtype':'all'})
@@ -669,7 +679,7 @@ def fin_tutoring(request, pk):
     return HttpResponse(json.dumps(context), content_type="application/json")
 
 # Tutor가 튜터링 중도 취소
-def cancel_tutoring(request, pk):
+def cancel_tutoring_realTime(request, pk):
     post = matching_models.Post.objects.get(pk=pk)
 
     cancel_tutoring_cmt = matching_models.Comment(user=post.tutor, post=post, pub_date=timezone.now(), content="튜터링취소"+str(post.pub_date))
@@ -687,6 +697,18 @@ def cancel_tutoring(request, pk):
 
     return HttpResponse(json.dumps(context), content_type="application/json")
 
+def cancel_tutoring(request, pk):
+    post = matching_models.Post.objects.get(pk=pk)
+
+    cancel_tutoring_cmt = matching_models.Comment(user=post.tutor, post=post, pub_date=timezone.now(), content="튜터링취소"+str(post.pub_date))
+    cancel_tutoring_cmt.save()
+
+    post.tutor = None
+    post.finding_match = True
+    post.start_time = None
+    post.save()
+
+    return redirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
 
 
 @login_required(login_url=LOGIN_REDIRECT_URL)
