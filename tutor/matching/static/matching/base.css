@@ -48,3 +48,29 @@
     margin: 0 30%;
     border: 1px solid transparent;
 }
+
+button.language{
+    outline: none;
+    border: none;
+
+    background: transparent;
+}
+div.language{
+    display:inline-block;
+    position: absolute;
+    width: 15vw;
+    height: 10vw;
+    z-index: 1;
+    border-radius:1rem;
+
+    margin-left: 10%;
+    padding:3% 0;
+
+    box-shadow: 0px 2px 10px 4px #cbccce;
+    background-color: white;
+    text-align:center;
+}
+
+div.language.hidden{
+    display:none;
+}
