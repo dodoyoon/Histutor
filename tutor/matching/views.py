@@ -603,7 +603,7 @@ def remove_tutor(request, pk):
 @staff_member_required
 def make_staff(request, pk):
     user = matching_models.User.objects.get(pk=pk)
-    userinfo.is_staff = True
+    user.is_staff = True
     user.save()
 
     return redirect(reverse('matching:userlist'))
