@@ -295,6 +295,7 @@ class SessionDetailConsumer(WebsocketConsumer):
             'next_tutee_nickname': log.tutee.profile.nickname,
             'session_pk': log.tutor_session.pk,
             'next_tutee_url': event['next_tutee_url'],
+            'attend_online' : log.attend_online,
         }))
 
 

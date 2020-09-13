@@ -209,11 +209,11 @@ img{ max-width:100%;}
   background: #FFFFFB none repeat scroll 0 0;
   border-radius: 3px;
   color: #646464;
-  font-size: 14px;
-  padding: 5px 12px 5px 12px;
+  font-size: 0.9rem;
+  padding: 0.2rem;
   text-align: center;
   display: block;
-  width:220px;
+  width: 15rem;
   border: #F6F395 solid;
   left: calc(50% - 110px);
   margin: 1% 0% 1% 0%;
@@ -224,11 +224,11 @@ img{ max-width:100%;}
   background: #FFFFFB none repeat scroll 0 0;
   border-radius: 3px;
   color: #646464;
-  font-size: 14px;
-  padding: 5px 12px 5px 12px;
+  font-size: 0.9rem;
+  padding: 0.2rem;
   text-align: center;
   display: block;
-  width:220px;
+  width: 15rem;
   border: #f5d389 solid;
   left: calc(50% - 110px);
   margin: 1% 0% 1% 0%;
@@ -247,12 +247,12 @@ img{ max-width:100%;}
   background: #FFFFFB none repeat scroll 0 0;
   border-radius: 3px;
   color: #646464;
-  font-size: 14px;
   margin: 1% 0% 1% 0%;
-  padding: 5px 12px 5px 12px;
+  font-size: 0.9rem;
+  padding: 0.2rem;
   text-align: center;
   display: inline-block;
-  width:220px;
+  width: 15rem;
   border: #b8afc6 solid;
   left: calc(50% - 110px);
 }
@@ -269,4 +269,10 @@ img{ max-width:100%;}
     right: 0;
     top: 11px;
     width: 33px;
+}
+
+div.start_tutoring > span.attend_type {
+  border-radius: 50%;
+  border: 1px solid #F6F395;
+  font-size: 0.5rem;
 }
