@@ -1251,7 +1251,7 @@ def waitingroom(request, pk):
 
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
-          'new_comment_session',
+          'new_comment_session' + session.pk,
           {
             'type': 'new_waiting_tutee',
             'new_tutee_turn': tuteeTurn,
