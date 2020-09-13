@@ -80,7 +80,7 @@
     <button class="mybutton" type="submit" onclick="location.href='{% url "matching:post_report_list" post.pk  %}'">보고서 목록</button>
     {% endif %}
 
-    {% if post.tutor is null and user.profile.is_tutor and post.finding_match %}
+    {% if post.tutor is null and user.profile.is_tutor and post.finding_match and post.user != user %}
     <button class="mybutton" type="submit" onclick="location.href='{% url "matching:set_tutor" postpk=post.pk userpk=user.pk  %}'">튜터링 시작</button>
     {% endif %}
     {% if post.start_time and not post.fin_time and user == post.tutor %}
