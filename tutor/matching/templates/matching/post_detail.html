@@ -709,7 +709,7 @@
   document.getElementById("cancel_tutoring").addEventListener("click", function(event) {
     $.ajax({
       type: "POST",
-      url: "{% url 'matching:cancel_tutoring' post.pk %}",
+      url: "{% url 'matching:cancel_tutoring_realTime' post.pk %}",
       data: {
         'csrfmiddlewaretoken': '{{ csrf_token }}',
       },
@@ -731,7 +731,7 @@
   document.getElementById("finish_tutoring").addEventListener("click", function(event) {
     $.ajax({
       type: "POST",
-      url: "{% url 'matching:fin_tutoring' post.pk %}",
+      url: "{% url 'matching:fin_tutoring_realTime' post.pk %}",
       data: {
         'csrfmiddlewaretoken': '{{ csrf_token }}',
       },
