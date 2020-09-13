@@ -492,6 +492,7 @@
   websocket.onclose = function(e){
     console.error('Chat socket closed unexpectedly');
     document.getElementById('lost_connection').style.visibility = "visible";
+    document.getElementById("msg_send_btn").disabled = true;
   };
 
   function sendMessage(){
