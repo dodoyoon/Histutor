@@ -521,6 +521,7 @@
     console.error('Chat socket closed unexpectedly');
     document.getElementById("start_new_tutoring").disabled = true;
     document.getElementById('lost_connection').style.visibility = "visible";
+    document.getElementById("msg_send_btn").disabled = true;
   };
 
   function sendMessage(){
