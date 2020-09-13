@@ -1241,6 +1241,9 @@ def waitingroom(request, pk):
         )
     if len(waitingList) == 1:
         ctx['no_waiting'] = True
+    
+    if session.start_time > timezone.localtime(timezone.now()):
+      ctx['started'] = True
 
     return render(request, 'matching/waiting_room.html', ctx)
 

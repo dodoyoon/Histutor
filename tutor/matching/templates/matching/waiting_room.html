@@ -26,10 +26,10 @@
     <div id="waiting_list">
       <div id="waiting">Waiting...<img id="loading-image" src="{% static 'matching/images/loading.gif' %}" alt="Loading..." /></div>
       <div id="wait_for_turn" class="text-center">
-        {% if no_waiting%}
-          현재 튜터링이 진행중입니다. 순서가 올 때까지 조금만 기다려주세요.
+        {% if started %}
+          튜터링 세션이 아직 시작하지 않았습니다. 시작될 때까지 조금만 기다려주세요.
         {% else %}
-          순서가 올 때까지 조금만 기다려주세요.
+          현재 튜터링 세션이 진행중입니다. 순서가 올 때까지 조금만 기다려주세요.
         {% endif %}
       </div>
       <div id="waiting_info" class="flex-container text-center">
