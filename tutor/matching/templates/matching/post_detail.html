@@ -697,7 +697,7 @@
               }));
             },
             error: function(request, status, error){
-                alert("로그인이 필요합니다.");
+                alert("이미 튜터링이 진행중입니다.");
                 window.location.replace("/matching/login/");
             },
         });
@@ -719,7 +719,7 @@
         window.location.href = response.mainpage_url;
       },
       error: function(request, status, error){
-          alert("로그인이 필요합니다.");
+          alert("이미 튜터링 취소되었습니다.");
           window.location.replace("/matching/login/");
       },
     });
@@ -741,7 +741,7 @@
         window.location.href = response.mainpage_url;
       },
       error: function(request, status, error){
-          alert("로그인이 필요합니다.");
+          alert("이미 튜터링이 종료되었습니다.");
           window.location.replace("/matching/login/");
       },
     });
