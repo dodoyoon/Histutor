@@ -341,27 +341,22 @@ def send_message(request):
           return HttpResponse(json.dumps(response), content_type="application/json")
         else:
           post = matching_models.Post.objects.get(pk=request.GET['postid'])
-          if post.finding_match or request.user == post.tutor or request.user == post.user:
-              content = request.GET['content']
-              reply_to = request.GET.get('reply_to')
-              reply_content = request.GET.get('reply_content')
+          content = request.GET['content']
+          reply_to = request.GET.get('reply_to')
+          reply_content = request.GET.get('reply_content')
 
-              response = {}
-              if reply_to and reply_content:
-                  new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=timezone.localtime(timezone.now()), content=content, reply_to=reply_to, reply_content=reply_content)
-                  response['reply_to'] = reply_to
-                  response['reply_content'] = reply_content
-                  new_cmt.save()
-              else:
-                  new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=timezone.localtime(timezone.now()), content=content)
-                  new_cmt.save()
-
-              response['id'] = new_cmt.id
-              return HttpResponse(json.dumps(response), content_type="application/json")
-
+          response = {}
+          if reply_to and reply_content:
+              new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=timezone.localtime(timezone.now()), content=content, reply_to=reply_to, reply_content=reply_content)
+              response['reply_to'] = reply_to
+              response['reply_content'] = reply_content
+              new_cmt.save()
           else:
-              messages.error(request, '해당 방은 튜터링이 시작되었습니다.')
-              return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
+              new_cmt = matching_models.Comment(user=request.user, post=post, pub_date=timezone.localtime(timezone.now()), content=content)
+              new_cmt.save()
+
+          response['id'] = new_cmt.id
+          return HttpResponse(json.dumps(response), content_type="application/json")
     else:
         return HttpResponse('NOT A GET REQUEST')
 
@@ -1253,7 +1248,7 @@ def waitingroom(request, pk):
         ctx['tuteeTurn'] = tuteeTurn
         ctx['waitingAfterTutee'] = waitingAfterTutee, # waitingAfterTutee is int, but ctx['...'] is tuple?
         ctx['totalWaiting'] = totalWaiting
-    
+
     if session.start_time > timezone.localtime(timezone.now()):
       ctx['started'] = True
 
