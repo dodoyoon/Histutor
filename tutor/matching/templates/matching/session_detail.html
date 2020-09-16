@@ -124,13 +124,15 @@
     <button id="start_new_tutoring" class="mybutton" type="submit">새 튜터링 시작</button>
   </div>
   {% endif %}
-
+  
+  {% if session.fin_time and user == session.tutor and not my_report %}
   <div style="margin:2% 0;">
     <form action="{% url 'matching:session_report_create' session.pk %}" method="POST">
       {% csrf_token %}
     <button class="mybutton" type="submit">보고서 쓰기</button>
     </form>
   </div>
+  {% endif %}
 
   {% if my_report %}
   <button class="mybutton" type="submit" onclick="location.href='{% url "matching:session_report_list" session.pk%}'">보고서 보기</button>

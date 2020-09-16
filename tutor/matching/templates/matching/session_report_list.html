@@ -5,6 +5,13 @@
 {% endblock %}
 
 {% block content %}
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <p class="success_report">{{ message }}</p>
+    {% endfor %}
+</ul>
+{% endif %}
 <div id="reportDetail" class="list-type1">
     <ol>
       <div class="session_info">
@@ -26,14 +33,6 @@
             {{report.writer.profile.nickname}}
         </div>
         {% endif %}
-        <div class="list-box">
-            <li><a href="#">튜티</a></li>
-            {{report.join_tutee}}
-        </div>
-      <div class="list-box">
-        <li><a href="#">튜터링 시간</a></li>
-        {{report.duration_time}}분
-      </div>
       <div class="list-box">
         <li><a href="#">보고서</a></li>
         {{report.content}}
