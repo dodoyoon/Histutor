@@ -114,7 +114,7 @@ class Report(models.Model):
 
    def __str__(self):
       if self.session:
-         return self.join_tutee + ' ' + self.session.title
+         return self.session.title
       return self.post.get_topic_display() + ' ' + self.post.title
 
    def get_absolute_url(self):

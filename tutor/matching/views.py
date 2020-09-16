@@ -83,9 +83,10 @@ def session_report_create(request, pk):
     if user != session.tutor:
         messages.add_message(request, messages.ERROR, '담당 튜터에게만 보고서 작성 권한이 있습니다.')
         return redirect('matching:mainpage', showtype='all')
-
-    log_list = matching_models.SessionLog.objects.filter(tutor_session=session, fin_time__isnull=False, report__isnull=True)
-    ctx = {'log_list' : log_list}
+        
+    report_query = matching_models.Report.objects.filter(session=pk)
+    if report_query.exists():
+        return redirect('matching:mainpage', showtype='all')
 
     if request.method == "POST":
         form = TutorReportForm(request.POST)
@@ -95,19 +96,12 @@ def session_report_create(request, pk):
             report.writer = user
             report.session = session
             report.content = form.cleaned_data['content']
-            report.join_tutee = form.cleaned_data['join_tutee']
-            tutee_username = request.POST.get('username', None)
-            try:
-                report.tutee = matching_models.User.objects.get(username=tutee_username)
-            except:
-                report.tutee = None
             report.save()
-            log_list.filter(tutee=report.tutee).update(report=report)
             messages.add_message(request, messages.SUCCESS, '보고서가 제출되었습니다.')
-            return redirect('matching:session_report_create', pk=pk)
+            return redirect('matching:session_report_list', pk=pk)
     else:
         form = TutorReportForm()
-    ctx['form'] = form
+    ctx = {'form' : form}
     return render(request, 'matching/session_report_create.html', ctx)
 
 
