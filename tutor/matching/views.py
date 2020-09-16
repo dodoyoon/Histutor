@@ -1023,8 +1023,13 @@ def mainpage(request, showtype):
     search_word = request.GET.get('search_word', '') # GET request의 인자중에 q 값이 있으면 가져오고, 없으면 빈 문자열 넣기
     start = datetime.date.today()
     end = start + datetime.timedelta(days=1)
+    start = start - datetime.timedelta(days=1)
 
     tutoring_on = matching_models.TutorSession.objects.filter(start_time__range=(start, end), fin_time__isnull=True)
+    tutoring_before_start = matching_models.TutorSession.objects.exclude(id__in=tutoring_on).filter(start_time__gte=end).order_by('start_time')
+    tutoring_others = matching_models.TutorSession.objects.exclude(id__in=tutoring_on).exclude(id__in=tutoring_before_start).order_by('-pub_date')
+    tutoring_off = list(chain(tutoring_before_start, tutoring_others))
+    #tutoring_off = matching_models.TutorSession.objects.exclude(id__in=tutoring_on).order_by('').order_by('-pub_date')
     recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
     onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True).order_by('-pub_date')
     recruited = matching_models.Post.objects.exclude(id__in=recruiting).exclude(id__in=onprocess).order_by('-pub_date')
@@ -1032,16 +1037,17 @@ def mainpage(request, showtype):
     ### 튜터링 검색기능 ###
     if search_word != '':
         tutoring_on = tutoring_on.filter(title__icontains=search_word)
+        tutoring_off = tutoring_off.filter(title__icontains=search_word)
         recruiting = recruiting.filter(title__icontains=search_word)
         onprocess = onprocess.filter(title__icontains=search_word)
         recruited = recruited.filter(title__icontains=search_word)
 
     if showtype == 'session':
-        posts = list(chain(tutoring_on))
+        posts = list(chain(tutoring_on, tutoring_off))
     elif showtype == 'tutoring':
         posts = list(chain(recruiting, onprocess,recruited))
     elif showtype == 'all':
-        posts = list(chain(tutoring_on,recruiting, onprocess,recruited))
+        posts = list(chain(tutoring_on, recruiting, onprocess, tutoring_off, recruited))
     else:
         return redirect('matching:mainpage', showtype='all')
 
