@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from django.db.models import F, Q, Count
+from django.db.models import F, Q, Count, Max, Sum, Min
 from django.views import generic
 from django.contrib.auth.models import User
 from .forms import PostForm, CommentForm, AcceptReportForm, AccuseForm, ReportForm, TutorReportForm, TutorSessionForm, TutorApplicationForm
@@ -420,6 +420,114 @@ def admin_home(request):
 
 
     return render(request, 'matching/admin_tutor_list.html', ctx)
+
+
+@login_required(login_url=LOGIN_REDIRECT_URL)
+@staff_member_required
+def admin_session_list(request):
+    session_list = matching_models.TutorSession.objects.all().order_by('-start_time')
+    log_list = matching_models.SessionLog.objects.all()
+
+    for session in session_list:
+        finished_logs = log_list.filter(tutor_session=session, fin_time__isnull=False)
+        total_num_tutoring = finished_logs.count()
+        no_show_logs = log_list.filter(tutor_session=session, start_time__isnull=True)
+        no_show_cnt = no_show_logs.count()
+
+        total_tutoring_time = 0
+        for log in finished_logs:
+            fin_time = log.fin_time
+            start_time = log.start_time
+            time_diff = fin_time - start_time
+            time_diff_min = (time_diff.seconds % 3600) // 60
+            total_tutoring_time += time_diff_min
+
+        session.total_num_tutoring = total_num_tutoring
+        session.total_tutoring_time = total_tutoring_time
+        # session.no_show_cnt = no_show_cnt
+        session.save()
+
+
+    current_post_page = request.GET.get('page', 1)
+    session_paginator = Paginator(session_list, 10)
+    try:
+        session_list = session_paginator.page(current_post_page)
+    except PageNotAnInteger:
+        session_list = session_paginator.page(1)
+    except EmptyPage:
+        session_list = session_paginator.page(session_paginator.num_pages)
+
+    neighbors = 10
+    if session_paginator.num_pages > 2*neighbors:
+        start_index = max(1, int(current_post_page)-neighbors)
+        end_index = min(int(current_post_page)+neighbors, session_paginator.num_pages)
+        if end_index < start_index + 2*neighbors:
+            end_index = start_index + 2*neighbors
+        elif start_index > end_index - 2*neighbors:
+            start_index = end_index - 2*neighbors
+        if start_index < 1:
+            end_index -= start_index
+            start_index = 1
+        elif end_index > session_paginator.num_pages:
+            start_index -= end_index - session_paginator.num_pages
+            end_index = session_paginator.num_pages
+        paginatorRange = [f for f in range(start_index, end_index+1)]
+        paginatorRange[:(2*neighbors + 1)]
+    else:
+        paginatorRange = range(1, session_paginator.num_pages+1)
+
+    ctx = {
+        'sessionlist': session_list,
+        'sessionPaginator': session_paginator,
+        'paginatorRange': paginatorRange,
+    }
+
+
+    return render(request, 'matching/admin_session_list.html', ctx)
+
+
+@login_required(login_url=LOGIN_REDIRECT_URL)
+@staff_member_required
+def session_log_detail(request, session_pk):
+    # session_list = matching_models.TutorSession.objects.all().order_by('-start_time')
+    #
+    # current_post_page = request.GET.get('page', 1)
+    # session_paginator = Paginator(session_list, 10)
+    # try:
+    #     session_list = session_paginator.page(current_post_page)
+    # except PageNotAnInteger:
+    #     session_list = session_paginator.page(1)
+    # except EmptyPage:
+    #     session_list = session_paginator.page(session_paginator.num_pages)
+    #
+    # neighbors = 10
+    # if session_paginator.num_pages > 2*neighbors:
+    #     start_index = max(1, int(current_post_page)-neighbors)
+    #     end_index = min(int(current_post_page)+neighbors, session_paginator.num_pages)
+    #     if end_index < start_index + 2*neighbors:
+    #         end_index = start_index + 2*neighbors
+    #     elif start_index > end_index - 2*neighbors:
+    #         start_index = end_index - 2*neighbors
+    #     if start_index < 1:
+    #         end_index -= start_index
+    #         start_index = 1
+    #     elif end_index > session_paginator.num_pages:
+    #         start_index -= end_index - session_paginator.num_pages
+    #         end_index = session_paginator.num_pages
+    #     paginatorRange = [f for f in range(start_index, end_index+1)]
+    #     paginatorRange[:(2*neighbors + 1)]
+    # else:
+    #     paginatorRange = range(1, session_paginator.num_pages+1)
+    #
+    # ctx = {
+    #     'sessionlist': session_list,
+    #     'sessionPaginator': session_paginator,
+    #     'paginatorRange': paginatorRange,
+    # }
+
+
+    return render(request, 'matching/session_log_detail.html', ctx)
+
 
 @login_required(login_url=LOGIN_REDIRECT_URL)
 @staff_member_required
@@ -1248,7 +1356,7 @@ def waitingroom(request, pk):
             'new_tutee_turn': tuteeTurn,
           }
         )
-    
+
     if session.start_time > timezone.localtime(timezone.now()):
       ctx['started'] = True
 

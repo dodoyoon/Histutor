@@ -5,130 +5,133 @@
 {% endblock %}
 
 {% block content %}
-<h3 style="margin-left:130px; margin-top:20px; color:#8f86c4;">튜터: {{tutor.profile.nickname}}</h3>
+<div class="container">
+    <h3 style="margin-top:20px; margin-bottom:20px; color:#8f86c4;">튜터: {{tutor.profile.nickname}}</h3>
 
-<ul class="nav nav-tabs" id="myTab" role="tablist">
-    <li class="nav-item">
-        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">튜터링</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">TA 세션</a>
-    </li>
-</ul>
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">튜터링</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">TA 세션</a>
+        </li>
+    </ul>
 
-<div class="tab-content" id="myTabContent">
-    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-    
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
 
-<div id="post_table_div" class="tableDiv">
-    <table id="post_table" class="table">
-        <thead>
-        <tr>
-          <th scope="col" style="width:50px" class="text-center">번호</th>
-          <th scope="col" style="width:100px" class="text-center">Status</th>
-          <th scope="col" style="width:400px" class="text-center">방 이름</th>
-          <th scope="col" class="text-center">튜티</th>
-          <th scope="col" class="text-center">튜터링 시작 시간</th>
-          <th scope="col" class="text-center">튜터링 종료 시간</th>
-          <th scope="col" class="text-center">보고서</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for post in postlist %}
-          <tr>
-              <td class="text-center text-nowrap align-middle"> {{post.pk}} </td>
-              {% if post.finding_match ==  True %}
-                  <td class="text-center text-nowrap align-middle" style="color:#0c6b27"> 모집중 </td>
-              {% elif post.start_time != Null and post.fin_time == Null %}
-                  <td class="text-center text-nowrap align-middle" style="color:#2112bf"> 진행중 </td>
-              {% elif not post.report and post.user == request.user and post.tutor %}
-                  <td class="text-center text-nowrap align-middle" style="color:#b1100a"> 보고서 미작성 </td>
-              {% else %}
-                  <td class="text-center text-nowrap align-middle" style="color:#bbb"> 종료 </td>
-              {% endif %}
-              <td class="text-center text-nowrap align-middle">
-                <a href='{% url "matching:post_detail" post.pk %}'>
-                {{post.title}}
-                </a>
-              </td>
-              <td class="text-center text-nowrap align-middle">
-                  {{post.user}}
-              </td>
-              {% if post.start_time == None %}
-                  <td class="text-center text-nowrap align-middle"> - </td>
-              {% else %}
-                  <td class="text-center text-nowrap align-middle">{{post.start_time}}</td>
-              {% endif %}
 
-              {% if post.fin_time == None %}
-                  <td class="text-center text-nowrap align-middle"> - </td>
-              {% else %}
-                  <td class="text-center text-nowrap align-middle">{{post.fin_time}}</td>
-              {% endif %}
-      
-              <td class="text-center text-nowrap align-middle">
-                <button class="mybutton" type="submit" onclick="location.href='{% url "matching:post_report_list" post.pk  %}'">보고서 목록</button>
-              </td>
-          </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <div id="post_table_div" class="tableDiv">
+        <table id="post_table" class="table">
+            <thead>
+            <tr>
+              <th scope="col" style="width:50px" class="text-center">번호</th>
+              <th scope="col" style="width:100px" class="text-center">Status</th>
+              <th scope="col" style="width:400px" class="text-center">방 이름</th>
+              <th scope="col" class="text-center">튜티</th>
+              <th scope="col" class="text-center">튜터링 시작 시간</th>
+              <th scope="col" class="text-center">튜터링 종료 시간</th>
+              <th scope="col" class="text-center">보고서</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for post in postlist %}
+              <tr>
+                  <td class="text-center text-nowrap align-middle"> {{post.pk}} </td>
+                  {% if post.finding_match ==  True %}
+                      <td class="text-center text-nowrap align-middle" style="color:#0c6b27"> 모집중 </td>
+                  {% elif post.start_time != Null and post.fin_time == Null %}
+                      <td class="text-center text-nowrap align-middle" style="color:#2112bf"> 진행중 </td>
+                  {% elif not post.report and post.user == request.user and post.tutor %}
+                      <td class="text-center text-nowrap align-middle" style="color:#b1100a"> 보고서 미작성 </td>
+                  {% else %}
+                      <td class="text-center text-nowrap align-middle" style="color:#bbb"> 종료 </td>
+                  {% endif %}
+                  <td class="text-center text-nowrap align-middle">
+                    <a href='{% url "matching:post_detail" post.pk %}'>
+                    {{post.title}}
+                    </a>
+                  </td>
+                  <td class="text-center text-nowrap align-middle">
+                      {{post.user}}
+                  </td>
+                  {% if post.start_time == None %}
+                      <td class="text-center text-nowrap align-middle"> - </td>
+                  {% else %}
+                      <td class="text-center text-nowrap align-middle">{{post.start_time}}</td>
+                  {% endif %}
+
+                  {% if post.fin_time == None %}
+                      <td class="text-center text-nowrap align-middle"> - </td>
+                  {% else %}
+                      <td class="text-center text-nowrap align-middle">{{post.fin_time}}</td>
+                  {% endif %}
+
+                  <td class="text-center text-nowrap align-middle">
+                    <button class="mybutton" type="submit" onclick="location.href='{% url "matching:post_report_list" post.pk  %}'">보고서 목록</button>
+                  </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    </div>
+
+    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+    <div id="post_table_div" class="tableDiv">
+        <table id="post_table" class="table">
+            <thead>
+            <tr>
+              <th scope="col" style="width:50px" class="text-center">번호</th>
+              <th scope="col" style="width:100px" class="text-center">Status</th>
+              <th scope="col" style="width:400px" class="text-center">방 이름</th>
+              <th scope="col" class="text-center">튜터링 시작 시간</th>
+              <th scope="col" class="text-center">튜터링 종료 시간</th>
+              <th scope="col" class="text-center">보고서</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for session in sessionlist %}
+              <tr>
+                  <td class="text-center text-nowrap align-middle"> {{session.pk}} </td>
+                  <td class="text-center text-nowrap align-middle">
+                    {% if today < session.start_time and not session.fin_time %}
+                    <a style="color:#0c6b27;"><b> 진행 예정</b></a>
+                    {% elif session.fin_time is NULL %}
+                    <a style="color:#4858b7;"><b> 진행중 </b></a>
+                    {% else %}
+                    <a style="color:#bbb;"><b> 종료 </b></a>
+                    {% endif %}
+                  </td>
+                  <td class="text-center text-nowrap align-middle">
+                    <a href='{% url "matching:session_detail" session.pk %}'>
+                    {{session.title}}
+                    </a>
+                  </td>
+                  {% if session.start_time == None %}
+                      <td class="text-center text-nowrap align-middle"> - </td>
+                  {% else %}
+                      <td class="text-center text-nowrap align-middle">{{session.start_time}}</td>
+                  {% endif %}
+
+                  {% if session.fin_time == None %}
+                      <td class="text-center text-nowrap align-middle"> - </td>
+                  {% else %}
+                      <td class="text-center text-nowrap align-middle">{{session.fin_time}}</td>
+                  {% endif %}
+
+                  <td class="text-center text-nowrap align-middle">
+                    <button class="mybutton" type="submit" onclick="location.href='{% url "matching:session_report_list" session.pk  %}'">보고서 목록</button>
+                  </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </div>
+    </div>
 </div>
 
-</div>
-
-<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-<div id="post_table_div" class="tableDiv">
-    <table id="post_table" class="table">
-        <thead>
-        <tr>
-          <th scope="col" style="width:50px" class="text-center">번호</th>
-          <th scope="col" style="width:100px" class="text-center">Status</th>
-          <th scope="col" style="width:400px" class="text-center">방 이름</th>
-          <th scope="col" class="text-center">튜터링 시작 시간</th>
-          <th scope="col" class="text-center">튜터링 종료 시간</th>
-          <th scope="col" class="text-center">보고서</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for session in sessionlist %}
-          <tr>
-              <td class="text-center text-nowrap align-middle"> {{session.pk}} </td>
-              <td class="text-center text-nowrap align-middle">
-                {% if today < session.start_time and not session.fin_time %}
-                <a style="color:#0c6b27;"><b> 진행 예정</b></a>
-                {% elif session.fin_time is NULL %}
-                <a style="color:#4858b7;"><b> 진행중 </b></a>
-                {% else %}
-                <a style="color:#bbb;"><b> 종료 </b></a>
-                {% endif %}
-              </td>
-              <td class="text-center text-nowrap align-middle">
-                <a href='{% url "matching:session_detail" session.pk %}'>
-                {{session.title}}
-                </a>
-              </td>
-              {% if session.start_time == None %}
-                  <td class="text-center text-nowrap align-middle"> - </td>
-              {% else %}
-                  <td class="text-center text-nowrap align-middle">{{session.start_time}}</td>
-              {% endif %}
-
-              {% if session.fin_time == None %}
-                  <td class="text-center text-nowrap align-middle"> - </td>
-              {% else %}
-                  <td class="text-center text-nowrap align-middle">{{session.fin_time}}</td>
-              {% endif %}
-      
-              <td class="text-center text-nowrap align-middle">
-                <button class="mybutton" type="submit" onclick="location.href='{% url "matching:session_report_list" session.pk  %}'">보고서 목록</button>
-              </td>
-          </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-</div>
-</div>
-</div>
 
 {% endblock %}
