@@ -340,12 +340,12 @@
             <tr>
                 <td class="text-center text-nowrap align-middle"> {{post.pk}} </td>
                 {% if post.session_type %}
-                  {% if today < post.start_time %}
-                  <td class="text-center text-nowrap align-middle" style="color:#0c6b27"> 진행 예정 </td>
-                  {% elif post.fin_time is NULL %}
-                  <td class="text-center text-nowrap align-middle" style="color:#2112bf"> 진행중 </td>
-                  {% else %}
+                  {% if post.fin_time %}
                   <td class="text-center text-nowrap align-middle" style="color:#bbb"> 종료 </td>
+                  {% elif today < post.start_time %}
+                  <td class="text-center text-nowrap align-middle" style="color:#0c6b27"> 진행 예정 </td>
+                  {% else %}
+                  <td class="text-center text-nowrap align-middle" style="color:#2112bf"> 진행중 </td>
                   {% endif %}
                   <td class="text-center text-nowrap align-middle">TA 세션</td>
                   <td class="align-middle" style="padding-left:4vw;">
