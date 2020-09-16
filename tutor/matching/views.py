@@ -1170,7 +1170,7 @@ def session_detail(request, pk):
             ctx['report_post_pk'] = report.pk
             ctx['report_exist'] = True'''
 
-    if request.user != session.tutor:
+    if (request.user != session.tutor) and not request.user.is_staff :
         try:
             log = matching_models.SessionLog.objects.get(is_waiting=False, start_time__isnull=False, fin_time__isnull=True, tutee=req_user, tutor_session=session)
         except matching_models.SessionLog.DoesNotExist:
