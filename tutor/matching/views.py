@@ -84,8 +84,9 @@ def session_report_create(request, pk):
         messages.add_message(request, messages.ERROR, '담당 튜터에게만 보고서 작성 권한이 있습니다.')
         return redirect('matching:mainpage', showtype='all')
 
-    log_list = matching_models.SessionLog.objects.filter(tutor_session=session, fin_time__isnull=False, report__isnull=True)
-    ctx = {'log_list' : log_list}
+    report_query = matching_models.Report.objects.filter(session=pk)
+    if report_query.exists():
+        return redirect('matching:mainpage', showtype='all')
 
     if request.method == "POST":
         form = TutorReportForm(request.POST)
@@ -95,19 +96,12 @@ def session_report_create(request, pk):
             report.writer = user
             report.session = session
             report.content = form.cleaned_data['content']
-            report.join_tutee = form.cleaned_data['join_tutee']
-            tutee_username = request.POST.get('username', None)
-            try:
-                report.tutee = matching_models.User.objects.get(username=tutee_username)
-            except:
-                report.tutee = None
             report.save()
-            log_list.filter(tutee=report.tutee).update(report=report)
             messages.add_message(request, messages.SUCCESS, '보고서가 제출되었습니다.')
-            return redirect('matching:session_report_create', pk=pk)
+            return redirect('matching:session_report_list', pk=pk)
     else:
         form = TutorReportForm()
-    ctx['form'] = form
+    ctx = {'form' : form}
     return render(request, 'matching/session_report_create.html', ctx)
 
 
@@ -1158,17 +1152,7 @@ def session_detail(request, pk):
     if my_report.exists(): #사용자가 쓴 보고서 존재
         ctx['my_report'] = my_report
         ctx['my_report_pk'] = my_report[0].pk
-    '''report_to_write = matching_models.Post.objects.filter(user=user, pk=pk, report__isnull=True, tutor__isnull=False)
-
-    if report_to_write.exists():
-        for report in report_to_write:
-            if report.tutor == report.user:
-                report_form = TutorReportForm()
-            else:
-                report_form = ReportForm()
-            ctx['report_form'] = report_form
-            ctx['report_post_pk'] = report.pk
-            ctx['report_exist'] = True'''
+    
 
     if request.user != session.tutor:
         try:
