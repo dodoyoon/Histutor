@@ -83,7 +83,7 @@ def session_report_create(request, pk):
     if user != session.tutor:
         messages.add_message(request, messages.ERROR, '담당 튜터에게만 보고서 작성 권한이 있습니다.')
         return redirect('matching:mainpage', showtype='all')
-        
+
     report_query = matching_models.Report.objects.filter(session=pk)
     if report_query.exists():
         return redirect('matching:mainpage', showtype='all')
@@ -1146,17 +1146,7 @@ def session_detail(request, pk):
     if my_report.exists(): #사용자가 쓴 보고서 존재
         ctx['my_report'] = my_report
         ctx['my_report_pk'] = my_report[0].pk
-    '''report_to_write = matching_models.Post.objects.filter(user=user, pk=pk, report__isnull=True, tutor__isnull=False)
-
-    if report_to_write.exists():
-        for report in report_to_write:
-            if report.tutor == report.user:
-                report_form = TutorReportForm()
-            else:
-                report_form = ReportForm()
-            ctx['report_form'] = report_form
-            ctx['report_post_pk'] = report.pk
-            ctx['report_exist'] = True'''
+    
 
     if request.user != session.tutor:
         try:
