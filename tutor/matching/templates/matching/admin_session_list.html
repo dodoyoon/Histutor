@@ -44,9 +44,9 @@
           <tbody>
           {% for session in sessionlist %}
             <tr>
-                <td class="text-center text-nowrap align-middle"> {{session.pk}} </td>
-                <td class="text-center text-nowrap align-middle"><a href="{% url 'matching:session_log_detail' session.pk %}">{{session.title}}</a></td>
-                <td class="text-center text-nowrap align-middle"> {{session.tutor.profile.nickname}} </td>
+                <td class="text-center text-nowrap align-middle"> {{session.id}} </td>
+                <td class="text-center text-nowrap align-middle"><a href="{% url 'matching:session_log_detail' session.id %}">{{session.title}}</a></td>
+                <td class="text-center text-nowrap align-middle"> {{session.tutor}} </td>
                 <td class="text-center text-nowrap align-middle"> {{session.total_num_tutoring}} </td>
                 <td class="text-center text-nowrap align-middle"> {{session.total_tutoring_time}} </td>
                 <td class="text-center text-nowrap align-middle"> {{session.no_show_cnt}} </td>

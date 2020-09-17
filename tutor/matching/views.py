@@ -425,13 +425,18 @@ def admin_home(request):
 @login_required(login_url=LOGIN_REDIRECT_URL)
 @staff_member_required
 def admin_session_list(request):
-    session_list = matching_models.TutorSession.objects.all().order_by('-start_time')
+    session_list = matching_models.TutorSession.objects.all().order_by('-start_time').annotate()
     log_list = matching_models.SessionLog.objects.all()
 
-    for session in session_list:
-        finished_logs = log_list.filter(tutor_session=session, fin_time__isnull=False)
+    session_dict = session_list.values()
+    #print(session_dict)
+
+    for session in session_dict:
+        session_obj = session_list.get(pk=session['id'])
+        session['tutor'] = session_obj.tutor.profile.nickname
+        finished_logs = log_list.filter(tutor_session_id=session['id'], fin_time__isnull=False)
         total_num_tutoring = finished_logs.count()
-        no_show_logs = log_list.filter(tutor_session=session, start_time__isnull=True)
+        no_show_logs = log_list.filter(tutor_session_id=session['id'], start_time__isnull=True)
         no_show_cnt = no_show_logs.count()
 
         total_tutoring_time = 0
@@ -442,10 +447,10 @@ def admin_session_list(request):
             time_diff_min = (time_diff.seconds % 3600) // 60
             total_tutoring_time += time_diff_min
 
-        session.total_num_tutoring = total_num_tutoring
-        session.total_tutoring_time = total_tutoring_time
-        # session.no_show_cnt = no_show_cnt
-        session.save()
+        session['total_num_tutoring'] = total_num_tutoring
+        session['total_tutoring_time'] = total_tutoring_time
+        session['no_show_cnt'] = no_show_cnt
+        #session.save()
 
 
     current_post_page = request.GET.get('page', 1)
@@ -477,7 +482,7 @@ def admin_session_list(request):
         paginatorRange = range(1, session_paginator.num_pages+1)
 
     ctx = {
-        'sessionlist': session_list,
+        'sessionlist': session_dict,
         'sessionPaginator': session_paginator,
         'paginatorRange': paginatorRange,
     }
