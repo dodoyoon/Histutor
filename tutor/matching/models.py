@@ -127,6 +127,7 @@ class SessionLog(models.Model):
    tutee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="log_tutee")
    report = models.ForeignKey(Report, on_delete= models.SET_NULL, null=True)
    is_waiting = models.BooleanField(default=True)
+   is_no_show = models.BooleanField(default=False)
    wait_time = models.DateTimeField(auto_now_add=True)
    start_time = models.DateTimeField(null=True)
    fin_time = models.DateTimeField(null=True)
