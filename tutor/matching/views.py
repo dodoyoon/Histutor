@@ -436,7 +436,7 @@ def admin_session_list(request):
         session['tutor'] = session_obj.tutor.profile.nickname
         finished_logs = log_list.filter(tutor_session_id=session['id'], fin_time__isnull=False)
         total_num_tutoring = finished_logs.count()
-        no_show_logs = log_list.filter(tutor_session_id=session['id'], start_time__isnull=True)
+        no_show_logs = log_list.filter(tutor_session_id=session['id'], start_time__isnull=False, fin_time__isnull=False, is_no_show=True)
         no_show_cnt = no_show_logs.count()
 
         total_tutoring_time = 0
