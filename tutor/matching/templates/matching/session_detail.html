@@ -508,7 +508,12 @@
     } else if (data['type'] == "waiting_tutee_out"){
       // alert("OUT");
       let waiting_tutee = document.getElementById("waiting_tutee");
-      waiting_tutee.innerHTML = parseInt(waiting_tutee.innerHTML) - 1;
+      let waiting_tutee_value = parseInt(waiting_tutee.innerHTML) - 1;
+
+      if(waiting_tutee_value < 0){
+          waiting_tutee_value = 0;
+      }
+      waiting_tutee.innerHTML = waiting_tutee_value;
     }
 
     if(at_bottom){
