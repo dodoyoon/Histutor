@@ -9,13 +9,13 @@
 <div class="tableDiv mypage_table">
 <ul class="nav nav-tabs">
   <li class="nav-item">
-    <a class="nav-link active">튜터 현황</a>
+    <a class="nav-link" href="{% url 'matching:admin_home' %}">튜터 현황</a>
   </li>
   <li class="nav-item">
     <a class="nav-link" href="{% url 'matching:tutee_list' %}">튜티 현황</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="{% url 'matching:admin_session_list' %}">TA세션별 통계</a>
+    <a class="nav-link active" href="{% url 'matching:admin_session_list' %}">TA세션별 통계</a>
   </li>
   <li class="nav-item">
     <a class="nav-link" href="{% url 'matching:userlist' %}">사용자 목록</a>
@@ -34,18 +34,22 @@
           <tr>
             <th scope="col" style="width:50px" class="text-center">번호</th>
             <!--<th scope="col" class="text-center">주제</th>-->
-            <th scope="col" style="width:200px" class="text-center">학생</th>
-            <th scope="col" style="width:150px" class="text-center">이메일</th>
-            <th scope="col" style="width:150px" class="text-center">시간</th>
+            <th scope="col" style="width:200px" class="text-center">방 이름</th>
+            <th scope="col" style="width:150px" class="text-center">튜터 이름</th>
+            <th scope="col" style="width:150px" class="text-center">총 응대 횟수</th>
+            <th scope="col" style="width:150px" class="text-center">총 응대 시간</th>
+            <th scope="col" style="width:150px" class="text-center">No Show 횟수</th>
           </tr>
           </thead>
           <tbody>
-          {% for tutor in tutorlist %}
+          {% for session in sessionlist %}
             <tr>
-                <td class="text-center text-nowrap align-middle"> {{tutor.pk}} </td>
-                <td class="text-center text-nowrap align-middle"><a href="{% url 'matching:tutor_detail' tutor.pk %}">{{tutor.profile.nickname}}</a></td>
-                <td class="text-center text-nowrap align-middle">{{tutor.email}}</td>
-                <td class="text-center text-nowrap align-middle">{{tutor.profile.tutor_tutoringTime}}</td>
+                <td class="text-center text-nowrap align-middle"> {{session.id}} </td>
+                <td class="text-center text-nowrap align-middle"><a href="{% url 'matching:session_log_detail' session.id %}">{{session.title}}</a></td>
+                <td class="text-center text-nowrap align-middle"> {{session.tutor}} </td>
+                <td class="text-center text-nowrap align-middle"> {{session.total_num_tutoring}} </td>
+                <td class="text-center text-nowrap align-middle"> {{session.total_tutoring_time}} </td>
+                <td class="text-center text-nowrap align-middle"> {{session.no_show_cnt}} </td>
             </tr>
           {% endfor %}
           </tbody>
@@ -53,36 +57,36 @@
 
   </div>
 
-  {% if tutorlist %}
-  {% if tutorlist.has_other_pages %}
+  {% if sessionlist %}
+  {% if sessionlist.has_other_pages %}
   <nav aria-label="...">
     <ul class="pagination">
-      {% if tutorlist.number == 1 %}
+      {% if sessionlist.number == 1 %}
         <li class="page-item"><span class="page-link">⇤<span class="sr-only">(current)</span></span></li>
       {% else %}
         <li class="page-item"><a class="page-link" href="?page=1">⇤</a></li>
       {% endif %}
-      {% if tutorlist.has_previous %}
-        <li class="page-item"><a class="page-link" href="?page={{ tutorlist.previous_page_number }}">&laquo;</a></li>
+      {% if sessionlist.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ sessionlist.previous_page_number }}">&laquo;</a></li>
       {% else %}
         <li class="page-item"><span class="page-link">&laquo;<span class="sr-only">(current)</span></span></li>
       {% endif %}
       {% for i in paginatorRange %}
-        {% if tutorlist.number == i %}
+        {% if sessionlist.number == i %}
           <li class="page-item active"><span class="page-link">{{ i }}<span class="sr-only">(current)</span></span></li>
         {% else %}
           <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
         {% endif %}
       {% endfor %}
-      {% if tutorlist.has_next %}
-      <li class="page-item"><a class="page-link" href="?page={{tutorlist.next_page_number}}">&raquo;</a></li>
+      {% if sessionlist.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{sessionlist.next_page_number}}">&raquo;</a></li>
       {% else %}
       <li class="page-item"><span class="page-link">&raquo;<span class="sr-only">(current)</span></span></li>
       {% endif %}
-      {% if tutorlist.number == tutorPaginator.num_pages %}
+      {% if sessionlist.number == sessionPaginator.num_pages %}
         <li class="page-item"><span class="page-link">⇥<span class="sr-only">(current)</span></span></li>
       {% else %}
-        <li class="page-item"><a class="page-link" href="?page={{tutorPaginator.num_pages}}">⇥</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{sessionPaginator.num_pages}}">⇥</a></li>
       {% endif %}
     </ul>
   </nav>
