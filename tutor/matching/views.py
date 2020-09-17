@@ -494,41 +494,43 @@ def admin_session_list(request):
 @login_required(login_url=LOGIN_REDIRECT_URL)
 @staff_member_required
 def session_log_detail(request, session_pk):
-    # session_list = matching_models.TutorSession.objects.all().order_by('-start_time')
-    #
-    # current_post_page = request.GET.get('page', 1)
-    # session_paginator = Paginator(session_list, 10)
-    # try:
-    #     session_list = session_paginator.page(current_post_page)
-    # except PageNotAnInteger:
-    #     session_list = session_paginator.page(1)
-    # except EmptyPage:
-    #     session_list = session_paginator.page(session_paginator.num_pages)
-    #
-    # neighbors = 10
-    # if session_paginator.num_pages > 2*neighbors:
-    #     start_index = max(1, int(current_post_page)-neighbors)
-    #     end_index = min(int(current_post_page)+neighbors, session_paginator.num_pages)
-    #     if end_index < start_index + 2*neighbors:
-    #         end_index = start_index + 2*neighbors
-    #     elif start_index > end_index - 2*neighbors:
-    #         start_index = end_index - 2*neighbors
-    #     if start_index < 1:
-    #         end_index -= start_index
-    #         start_index = 1
-    #     elif end_index > session_paginator.num_pages:
-    #         start_index -= end_index - session_paginator.num_pages
-    #         end_index = session_paginator.num_pages
-    #     paginatorRange = [f for f in range(start_index, end_index+1)]
-    #     paginatorRange[:(2*neighbors + 1)]
-    # else:
-    #     paginatorRange = range(1, session_paginator.num_pages+1)
-    #
-    # ctx = {
-    #     'sessionlist': session_list,
-    #     'sessionPaginator': session_paginator,
-    #     'paginatorRange': paginatorRange,
-    # }
+    session = matching_models.TutorSession.objects.get(pk=session_pk)
+
+    loglist = matching_models.SessionLog.objects.filter(tutor_session=session)
+    
+    current_post_page = request.GET.get('page', 1)
+    log_paginator = Paginator(loglist, 10)
+    try:
+        loglist = log_paginator.page(current_post_page)
+    except PageNotAnInteger:
+        loglist = log_paginator.page(1)
+    except EmptyPage:
+        loglist = log_paginator.page(log_paginator.num_pages)
+    
+    neighbors = 10
+    if log_paginator.num_pages > 2*neighbors:
+        start_index = max(1, int(current_post_page)-neighbors)
+        end_index = min(int(current_post_page)+neighbors, log_paginator.num_pages)
+        if end_index < start_index + 2*neighbors:
+            end_index = start_index + 2*neighbors
+        elif start_index > end_index - 2*neighbors:
+            start_index = end_index - 2*neighbors
+        if start_index < 1:
+            end_index -= start_index
+            start_index = 1
+        elif end_index > log_paginator.num_pages:
+            start_index -= end_index - log_paginator.num_pages
+            end_index = log_paginator.num_pages
+        paginatorRange = [f for f in range(start_index, end_index+1)]
+        paginatorRange[:(2*neighbors + 1)]
+    else:
+        paginatorRange = range(1, log_paginator.num_pages+1)
+    
+    ctx = {
+        'loglist': loglist,
+        'logPaginator': log_paginator,
+        'paginatorRange': paginatorRange,
+    }
 
 
     return render(request, 'matching/session_log_detail.html', ctx)

@@ -1,1 +1,76 @@
-Hello
+{% extends "matching/base.html" %}
+{% block content %}
+
+<div class="tableDiv mypage_table">
+
+    <div id="post_table_div" class="tableDiv">
+        <table id="post_table" class="table">
+            <thead>
+            <tr>
+              <th scope="col" style="width:50px" class="text-center">번호</th>
+              <!--<th scope="col" class="text-center">주제</th>-->
+              <th scope="col" style="width:200px" class="text-center">튜티 이름</th>
+              <th scope="col" style="width:150px" class="text-center">시작 시간</th>
+              <th scope="col" style="width:150px" class="text-center">끝 시간</th>
+              <th scope="col" style="width:150px" class="text-center">대면/비대면</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for log in loglist %}
+              <tr>
+                  <td class="text-center text-nowrap align-middle"> {{log.pk}} </td>
+                  <td class="text-center text-nowrap align-middle">{{log.tutee.profile.nickname}}</a></td>
+                  <td class="text-center text-nowrap align-middle"> {{log.start_time}} </td>
+                  <td class="text-center text-nowrap align-middle"> {{log.fin_time}} </td>
+                  {% if log.attend_online %}
+                  <td class="text-center text-nowrap align-middle"> 비대면 </td>
+                  {% else %}
+                  <td class="text-center text-nowrap align-middle"> 대면 </td>
+                  {% endif %}
+              </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+  
+    </div>
+  
+    {% if loglist %}
+    {% if loglist.has_other_pages %}
+    <nav aria-label="...">
+      <ul class="pagination">
+        {% if loglist.number == 1 %}
+          <li class="page-item"><span class="page-link">⇤<span class="sr-only">(current)</span></span></li>
+        {% else %}
+          <li class="page-item"><a class="page-link" href="?page=1">⇤</a></li>
+        {% endif %}
+        {% if loglist.has_previous %}
+          <li class="page-item"><a class="page-link" href="?page={{ loglist.previous_page_number }}">&laquo;</a></li>
+        {% else %}
+          <li class="page-item"><span class="page-link">&laquo;<span class="sr-only">(current)</span></span></li>
+        {% endif %}
+        {% for i in paginatorRange %}
+          {% if loglist.number == i %}
+            <li class="page-item active"><span class="page-link">{{ i }}<span class="sr-only">(current)</span></span></li>
+          {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+          {% endif %}
+        {% endfor %}
+        {% if loglist.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{loglist.next_page_number}}">&raquo;</a></li>
+        {% else %}
+        <li class="page-item"><span class="page-link">&raquo;<span class="sr-only">(current)</span></span></li>
+        {% endif %}
+        {% if loglist.number == logPaginator.num_pages %}
+          <li class="page-item"><span class="page-link">⇥<span class="sr-only">(current)</span></span></li>
+        {% else %}
+          <li class="page-item"><a class="page-link" href="?page={{logPaginator.num_pages}}">⇥</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
+    {% endif %}
+  
+  </div>
+
+{% endblock %}
+
