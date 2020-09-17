@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from django.db.models import F, Q, Count
+from django.db.models import F, Q, Count, Max, Sum, Min
 from django.views import generic
 from django.contrib.auth.models import User
 from .forms import PostForm, CommentForm, AcceptReportForm, AccuseForm, ReportForm, TutorReportForm, TutorSessionForm, TutorApplicationForm
@@ -84,8 +84,9 @@ def session_report_create(request, pk):
         messages.add_message(request, messages.ERROR, '담당 튜터에게만 보고서 작성 권한이 있습니다.')
         return redirect('matching:mainpage', showtype='all')
 
-    log_list = matching_models.SessionLog.objects.filter(tutor_session=session, fin_time__isnull=False, report__isnull=True)
-    ctx = {'log_list' : log_list}
+    report_query = matching_models.Report.objects.filter(session=pk)
+    if report_query.exists():
+        return redirect('matching:mainpage', showtype='all')
 
     if request.method == "POST":
         form = TutorReportForm(request.POST)
@@ -95,19 +96,12 @@ def session_report_create(request, pk):
             report.writer = user
             report.session = session
             report.content = form.cleaned_data['content']
-            report.join_tutee = form.cleaned_data['join_tutee']
-            tutee_username = request.POST.get('username', None)
-            try:
-                report.tutee = matching_models.User.objects.get(username=tutee_username)
-            except:
-                report.tutee = None
             report.save()
-            log_list.filter(tutee=report.tutee).update(report=report)
             messages.add_message(request, messages.SUCCESS, '보고서가 제출되었습니다.')
-            return redirect('matching:session_report_create', pk=pk)
+            return redirect('matching:session_report_list', pk=pk)
     else:
         form = TutorReportForm()
-    ctx['form'] = form
+    ctx = {'form' : form}
     return render(request, 'matching/session_report_create.html', ctx)
 
 
@@ -426,6 +420,114 @@ def admin_home(request):
 
 
     return render(request, 'matching/admin_tutor_list.html', ctx)
+
+
+@login_required(login_url=LOGIN_REDIRECT_URL)
+@staff_member_required
+def admin_session_list(request):
+    session_list = matching_models.TutorSession.objects.all().order_by('-start_time')
+    log_list = matching_models.SessionLog.objects.all()
+
+    for session in session_list:
+        finished_logs = log_list.filter(tutor_session=session, fin_time__isnull=False)
+        total_num_tutoring = finished_logs.count()
+        no_show_logs = log_list.filter(tutor_session=session, start_time__isnull=True)
+        no_show_cnt = no_show_logs.count()
+
+        total_tutoring_time = 0
+        for log in finished_logs:
+            fin_time = log.fin_time
+            start_time = log.start_time
+            time_diff = fin_time - start_time
+            time_diff_min = (time_diff.seconds % 3600) // 60
+            total_tutoring_time += time_diff_min
+
+        session.total_num_tutoring = total_num_tutoring
+        session.total_tutoring_time = total_tutoring_time
+        # session.no_show_cnt = no_show_cnt
+        session.save()
+
+
+    current_post_page = request.GET.get('page', 1)
+    session_paginator = Paginator(session_list, 10)
+    try:
+        session_list = session_paginator.page(current_post_page)
+    except PageNotAnInteger:
+        session_list = session_paginator.page(1)
+    except EmptyPage:
+        session_list = session_paginator.page(session_paginator.num_pages)
+
+    neighbors = 10
+    if session_paginator.num_pages > 2*neighbors:
+        start_index = max(1, int(current_post_page)-neighbors)
+        end_index = min(int(current_post_page)+neighbors, session_paginator.num_pages)
+        if end_index < start_index + 2*neighbors:
+            end_index = start_index + 2*neighbors
+        elif start_index > end_index - 2*neighbors:
+            start_index = end_index - 2*neighbors
+        if start_index < 1:
+            end_index -= start_index
+            start_index = 1
+        elif end_index > session_paginator.num_pages:
+            start_index -= end_index - session_paginator.num_pages
+            end_index = session_paginator.num_pages
+        paginatorRange = [f for f in range(start_index, end_index+1)]
+        paginatorRange[:(2*neighbors + 1)]
+    else:
+        paginatorRange = range(1, session_paginator.num_pages+1)
+
+    ctx = {
+        'sessionlist': session_list,
+        'sessionPaginator': session_paginator,
+        'paginatorRange': paginatorRange,
+    }
+
+
+    return render(request, 'matching/admin_session_list.html', ctx)
+
+
+@login_required(login_url=LOGIN_REDIRECT_URL)
+@staff_member_required
+def session_log_detail(request, session_pk):
+    # session_list = matching_models.TutorSession.objects.all().order_by('-start_time')
+    #
+    # current_post_page = request.GET.get('page', 1)
+    # session_paginator = Paginator(session_list, 10)
+    # try:
+    #     session_list = session_paginator.page(current_post_page)
+    # except PageNotAnInteger:
+    #     session_list = session_paginator.page(1)
+    # except EmptyPage:
+    #     session_list = session_paginator.page(session_paginator.num_pages)
+    #
+    # neighbors = 10
+    # if session_paginator.num_pages > 2*neighbors:
+    #     start_index = max(1, int(current_post_page)-neighbors)
+    #     end_index = min(int(current_post_page)+neighbors, session_paginator.num_pages)
+    #     if end_index < start_index + 2*neighbors:
+    #         end_index = start_index + 2*neighbors
+    #     elif start_index > end_index - 2*neighbors:
+    #         start_index = end_index - 2*neighbors
+    #     if start_index < 1:
+    #         end_index -= start_index
+    #         start_index = 1
+    #     elif end_index > session_paginator.num_pages:
+    #         start_index -= end_index - session_paginator.num_pages
+    #         end_index = session_paginator.num_pages
+    #     paginatorRange = [f for f in range(start_index, end_index+1)]
+    #     paginatorRange[:(2*neighbors + 1)]
+    # else:
+    #     paginatorRange = range(1, session_paginator.num_pages+1)
+    #
+    # ctx = {
+    #     'sessionlist': session_list,
+    #     'sessionPaginator': session_paginator,
+    #     'paginatorRange': paginatorRange,
+    # }
+
+
+    return render(request, 'matching/session_log_detail.html', ctx)
+
 
 @login_required(login_url=LOGIN_REDIRECT_URL)
 @staff_member_required
@@ -1023,8 +1125,13 @@ def mainpage(request, showtype):
     search_word = request.GET.get('search_word', '') # GET request의 인자중에 q 값이 있으면 가져오고, 없으면 빈 문자열 넣기
     start = datetime.date.today()
     end = start + datetime.timedelta(days=1)
+    start = start - datetime.timedelta(days=1)
 
     tutoring_on = matching_models.TutorSession.objects.filter(start_time__range=(start, end), fin_time__isnull=True)
+    tutoring_before_start = matching_models.TutorSession.objects.exclude(id__in=tutoring_on).filter(start_time__gte=end).order_by('start_time')
+    tutoring_others = matching_models.TutorSession.objects.exclude(id__in=tutoring_on).exclude(id__in=tutoring_before_start).order_by('-pub_date')
+    tutoring_off = list(chain(tutoring_before_start, tutoring_others))
+    #tutoring_off = matching_models.TutorSession.objects.exclude(id__in=tutoring_on).order_by('').order_by('-pub_date')
     recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
     onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True).order_by('-pub_date')
     recruited = matching_models.Post.objects.exclude(id__in=recruiting).exclude(id__in=onprocess).order_by('-pub_date')
@@ -1032,16 +1139,17 @@ def mainpage(request, showtype):
     ### 튜터링 검색기능 ###
     if search_word != '':
         tutoring_on = tutoring_on.filter(title__icontains=search_word)
+        tutoring_off = tutoring_off.filter(title__icontains=search_word)
         recruiting = recruiting.filter(title__icontains=search_word)
         onprocess = onprocess.filter(title__icontains=search_word)
         recruited = recruited.filter(title__icontains=search_word)
 
     if showtype == 'session':
-        posts = list(chain(tutoring_on))
+        posts = list(chain(tutoring_on, tutoring_off))
     elif showtype == 'tutoring':
         posts = list(chain(recruiting, onprocess,recruited))
     elif showtype == 'all':
-        posts = list(chain(tutoring_on,recruiting, onprocess,recruited))
+        posts = list(chain(tutoring_on, recruiting, onprocess, tutoring_off, recruited))
     else:
         return redirect('matching:mainpage', showtype='all')
 
@@ -1152,19 +1260,9 @@ def session_detail(request, pk):
     if my_report.exists(): #사용자가 쓴 보고서 존재
         ctx['my_report'] = my_report
         ctx['my_report_pk'] = my_report[0].pk
-    '''report_to_write = matching_models.Post.objects.filter(user=user, pk=pk, report__isnull=True, tutor__isnull=False)
+    
 
-    if report_to_write.exists():
-        for report in report_to_write:
-            if report.tutor == report.user:
-                report_form = TutorReportForm()
-            else:
-                report_form = ReportForm()
-            ctx['report_form'] = report_form
-            ctx['report_post_pk'] = report.pk
-            ctx['report_exist'] = True'''
-
-    if request.user != session.tutor:
+    if (request.user != session.tutor) and not request.user.is_staff:
         try:
             log = matching_models.SessionLog.objects.get(is_waiting=False, start_time__isnull=False, fin_time__isnull=True, tutee=req_user, tutor_session=session)
         except matching_models.SessionLog.DoesNotExist:
@@ -1258,7 +1356,7 @@ def waitingroom(request, pk):
             'new_tutee_turn': tuteeTurn,
           }
         )
-    
+
     if session.start_time > timezone.localtime(timezone.now()):
       ctx['started'] = True
 

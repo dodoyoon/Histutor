@@ -18,9 +18,9 @@ class PostForm(forms.ModelForm):
 class TutorReportForm(forms.ModelForm):
     class Meta:
         model = Report
-        fields = ['join_tutee', 'content', 'duration_time']
+        fields = ['content']
         widgets = {
-            'content': forms.Textarea(attrs={'cols':28, 'rows':8, 'required':True,'maxlength':1000, 'autofocus':True}),
+            'content': forms.Textarea(attrs={'cols':28, 'rows':14, 'required':True,'maxlength':1000, 'autofocus':True}),
         }
 
     def __init__(self, *args, **kwargs):

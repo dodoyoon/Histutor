@@ -70,6 +70,9 @@ class TutorSession(models.Model):
    fin_time = models.DateTimeField(null=True)
    hit = models.PositiveIntegerField(default=0)
    location = models.CharField(max_length=500, null=True, blank=True)
+   total_num_tutoring = models.PositiveIntegerField(default=0)
+   total_tutoring_time = models.PositiveIntegerField(default=0)
+   no_show_cnt = models.PositiveIntegerField(default=0)
 
 
    @property
@@ -114,7 +117,7 @@ class Report(models.Model):
 
    def __str__(self):
       if self.session:
-         return self.join_tutee + ' ' + self.session.title
+         return self.session.title
       return self.post.get_topic_display() + ' ' + self.post.title
 
    def get_absolute_url(self):
