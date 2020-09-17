@@ -945,10 +945,34 @@ def mypage_tutee_session(request):
 def mypage_session(request):
     ctx = {}
 
-    session = matching_models.TutorSession.objects.filter(tutor=request.user).order_by('-pub_date')
-    current_session_page = request.GET.get('page', 1)
+    session_list = matching_models.TutorSession.objects.filter(tutor=request.user).order_by('-pub_date')
+    log_list = matching_models.SessionLog.objects.all()
 
-    session_paginator = Paginator(session, 10)
+    session_dict = session_list.values()
+    # print(session_dict)
+
+    for session in session_dict:
+        session_obj = session_list.get(pk=session['id'])
+        finished_logs = log_list.filter(tutor_session_id=session['id'], fin_time__isnull=False)
+        total_num_tutoring = finished_logs.count()
+        no_show_logs = log_list.filter(tutor_session_id=session['id'], is_no_show=True)
+        no_show_cnt = no_show_logs.count()
+
+        total_tutoring_time = 0
+        for log in finished_logs:
+            fin_time = log.fin_time
+            start_time = log.start_time
+            time_diff = fin_time - start_time
+            time_diff_min = (time_diff.seconds % 3600) // 60
+            total_tutoring_time += time_diff_min
+
+        session['total_num_tutoring'] = total_num_tutoring
+        session['total_tutoring_time'] = total_tutoring_time
+        session['no_show_cnt'] = no_show_cnt
+        #session.save()
+
+    current_session_page = request.GET.get('page', 1)
+    session_paginator = Paginator(session_list, 10)
     try:
         sessions = session_paginator.page(current_session_page)
     except PageNotAnInteger:
@@ -976,7 +1000,7 @@ def mypage_session(request):
         paginatorRange = range(1, session_paginator.num_pages+1)
 
     ctx = {
-        'sessions': sessions,
+        'sessions': session_dict,
         'sessionPaginator': session_paginator,
         'paginatorRange': paginatorRange,
         'today': timezone.localtime(timezone.now()),
@@ -1267,7 +1291,7 @@ def session_detail(request, pk):
     if my_report.exists(): #사용자가 쓴 보고서 존재
         ctx['my_report'] = my_report
         ctx['my_report_pk'] = my_report[0].pk
-    
+
 
     if (request.user != session.tutor) and not request.user.is_staff:
         try:

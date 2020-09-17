@@ -26,15 +26,17 @@
           <th scope="col" style="width:100px" class="text-center">No.</th>
           <th scope="col" class="text-center">상태</th>
           <th scope="col" class="text-center">방 이름</th>
-          <th scope="col" style="width:150px" class="text-center">작성자</th>
-          <th scope="col" style="width:150px" class="text-center">작성일</th>
+          <th scope="col" class="text-center">총 응대 횟수</th>
+          <th scope="col" class="text-center">총 응대 시간</th>
+          <th scope="col" class="text-center">No Show 횟수</th>
+          <th scope="col" class="text-center">작성일</th>
         </tr>
         </thead>
         <tbody>
         {% if sessions %}
         {% for session in sessions %}
           <tr>
-              <td class="text-center text-nowrap align-middle"> {{session.pk}} </td>
+              <td class="text-center text-nowrap align-middle"> {{session.id}} </td>
               <td class="text-center text-nowrap align-middle">
                 {% if today < session.start_time and not session.fin_time %}
                 <a style="color:#0c6b27;"><b> 진행 예정</b></a>
@@ -45,13 +47,17 @@
                 {% endif %}
               </td>
               {% if session.finding_match ==  True %}
-              <td class="align-middle"> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:session_detail' session.pk %}">{{session.title|truncatechars:50}}</a></td>
+              <td class="align-middle"> <span id="finding" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:session_detail' session.id %}">{{session.title|truncatechars:50}}</a></td>
               {% elif session.start_time != Null and session.fin_time == Null %}
-              <td class="align-middle"> <span id="ongoing" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:session_detail' session.pk %}">{{session.title|truncatechars:50}}</a></td>
+              <td class="align-middle"> <span id="ongoing" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:session_detail' session.id %}">{{session.title|truncatechars:50}}</a></td>
               {% else %}
-              <td class="align-middle"> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:session_detail' session.pk %}">{{session.title|truncatechars:50}}</a></td>
+              <td class="align-middle"> <span id="found" class="dot"></span> &nbsp;&nbsp;<a href="{% url 'matching:session_detail' session.id %}">{{session.title|truncatechars:50}}</a></td>
               {% endif %}
-              <td class="text-center text-nowrap align-middle">{{session.tutor.profile.nickname}}</td>
+
+              <td class="text-center text-nowrap align-middle"> {{session.total_num_tutoring}} </td>
+              <td class="text-center text-nowrap align-middle"> {{session.total_tutoring_time}} </td>
+              <td class="text-center text-nowrap align-middle"> {{session.no_show_cnt}} </td>
+
               {% if session.pub_date|date:'Y-m-d' == today|date:'Y-m-d' %}
               <td class="text-center text-nowrap align-middle">{{session.pub_date|date:'H:i'}}</td>
               {% else %}
