@@ -1347,7 +1347,6 @@ def waitingroom(request, pk):
         ctx['waitingAfterTutee'] = waitingAfterTutee, # waitingAfterTutee is int, but ctx['...'] is tuple?
         ctx['totalWaiting'] = totalWaiting
 
-        print('new_comment_session' + str(session.pk))
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
           'new_comment_session' + str(session.pk),
