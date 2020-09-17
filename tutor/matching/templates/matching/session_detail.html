@@ -97,6 +97,7 @@
   {% if session.tutor == user %}
   {% if not session.fin_time %}
   <button class="mybutton" type="submit"  data-toggle="modal" data-target="#endSession">튜터 세션 종료</button>
+  <button id="no_show_btn" class="mybutton hide" type="submit"  data-toggle="modal" data-target="#noShow">No Show</button>
 
   <div class="modal fade" id="endSession" role="dialog">
     <div class="modal-dialog">
@@ -109,7 +110,27 @@
           <div class="row" style="float: right;">
               <div class="col-12-xs text-center" style="margin-right: 1em;">
                   <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" type="button" class="close" data-dismiss="modal">No</button>
-                  <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" onclick="location.href='{% url "matching:end_session" session.pk %}'">Yes</button>
+                  <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;">Yes</button>
+              </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="noShow" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">튜티 참여 여부 확인</h4>
+        </div>
+        <div class="modal-body">
+          <p><div id="current_tutee" data-tutee_id="{{current_tutee.tutee.profile.pk}}" style="display: inline;">{{current_tutee.tutee.profile.nickname}}{{current_tutee.tutee.profile.pk}}</div>님이 튜터링에 참여하였습니까?</p>
+          <div class="row" style="float: right;">
+              <div class="col-12-xs text-center" style="margin-right: 1em;">
+                  <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" onclick="no_show_clicked()">No</button>
+                  <button id="no_show_no_btn" class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" type="button" class="close" data-dismiss="modal">Yes</button>
               </div>
           </div>
         </div>
@@ -314,8 +335,8 @@
   var storage = document.getElementById("msg_history");
   storage.scrollTop = storage.scrollHeight;
 
-  const websocket = new WebSocket('wss://' + window.location.host + ':8443/ws/session/' + "{{pk}}" + '/');
-  // const websocket = new WebSocket('ws://' + window.location.host + '/ws/session/' + "{{pk}}" + '/');
+  // const websocket = new WebSocket('wss://' + window.location.host + ':8443/ws/session/' + "{{pk}}" + '/');
+  const websocket = new WebSocket('ws://' + window.location.host + '/ws/session/' + "{{pk}}" + '/');
 
   websocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
@@ -499,6 +520,10 @@
         document.location.href = data['current_tutee_url'], true;
       }
     } else if (data['type'] == "get_next_tutee"){
+      let tutee_name = document.getElementById("current_tutee");
+      tutee_name.innerHTML = data['next_tutee_nickname'];
+      tutee_name.dataset.tutee_id = data['next_tutee_pk'];
+
       var msg = document.createElement("div");
       msg.className = "start_tutoring";
       msg.innerHTML = `✨&nbsp;&nbsp;튜터링 시작 - ${data['next_tutee_nickname']}&nbsp;&nbsp;✨`;
@@ -593,11 +618,30 @@
 
   {% if user.profile.is_tutor and not session.fin_time and user == session.tutor %}
   document.getElementById("start_new_tutoring").onclick = function(){
+    let current_tutee = document.getElementById("current_tutee");
+
+    if (current_tutee.dataset.tutee_id != ""){
+      document.getElementById("no_show_btn").click();
+    } else {
+      start_new_tutoring_ajax("False");
+    }
+  }
+
+  const no_show_clicked = () => {
+    document.getElementById("no_show_no_btn").click();
+    let current_tutee = document.getElementById("current_tutee");
+    let is_no_show;
+    
+    start_new_tutoring_ajax("True");
+  }
+
+  const start_new_tutoring_ajax = (is_no_show) => {
     $.ajax({
             type: "POST",
             url: "{% url 'matching:start_new_tutoring' session.pk %}",
             data: {
               'csrfmiddlewaretoken': '{{ csrf_token }}',
+              'is_no_show': is_no_show,
             },
             dataType: "json",
             success: function(response){
@@ -626,6 +670,7 @@
             },
         });
   }
+
   {% endif %}
 
   function truncateText(truncated, maxLength) {

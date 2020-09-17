@@ -1268,6 +1268,12 @@ def session_detail(request, pk):
         except matching_models.SessionLog.DoesNotExist:
             return redirect('matching:waitingroom', pk=pk)
 
+    try:
+      current_tutee = matching_models.SessionLog.objects.get(is_waiting=False, start_time__isnull=False, fin_time__isnull=True, tutor_session=session)
+      ctx['current_tutee'] = current_tutee
+    except matching_models.SessionLog.DoesNotExist:
+      print("No ongoing tutee")
+
     comment_list = matching_models.Comment.objects.filter(tutorsession=session).order_by('pub_date')
     ctx['user_compare_msg'] = req_user.profile.nickname + '에게 답장'
     ctx['user'] = req_user
@@ -1434,6 +1440,9 @@ def start_new_tutoring(request, pk):
     next_tutee = get_next_tutee(request, session, request.user)
 
     if current_tutee :
+      if request.POST['is_no_show'] == "True":
+        current_tutee.is_no_show = True
+        current_tutee.save()
       current_tutee_url = "http://" + request.get_host() + reverse('matching:mainpage', kwargs={'showtype':'all'})
       fin_tutoring_cmt = matching_models.Comment(user=current_tutee.tutee, tutorsession=session, pub_date=timezone.localtime(timezone.now()), content="튜터링종료"+str(session.pub_date))
       fin_tutoring_cmt.save()
