@@ -36,16 +36,16 @@
             <!--<th scope="col" class="text-center">주제</th>-->
             <th scope="col" style="width:200px" class="text-center">학생</th>
             <th scope="col" style="width:150px" class="text-center">이메일</th>
-            <th scope="col" style="width:150px" class="text-center">시간</th>
+            <th scope="col" style="width:150px" class="text-center">총 튜터링 시간</th>
           </tr>
           </thead>
           <tbody>
-          {% for tutor in tutorlist %}
+          {% for tutor in tutorList %}
             <tr>
-                <td class="text-center text-nowrap align-middle"> {{tutor.pk}} </td>
-                <td class="text-center text-nowrap align-middle"><a href="{% url 'matching:tutor_detail' tutor.pk %}">{{tutor.profile.nickname}}</a></td>
+                <td class="text-center text-nowrap align-middle"> {{tutor.id}} </td>
+                <td class="text-center text-nowrap align-middle"><a href="{% url 'matching:tutor_detail' tutor.id %}">{{tutor.profile.nickname}}</a></td>
                 <td class="text-center text-nowrap align-middle">{{tutor.email}}</td>
-                <td class="text-center text-nowrap align-middle">{{tutor.profile.tutor_tutoringTime}}</td>
+                <td class="text-center text-nowrap align-middle">{{tutor.totalTutoringTime}}</td>
             </tr>
           {% endfor %}
           </tbody>
@@ -53,33 +53,33 @@
 
   </div>
 
-  {% if tutorlist %}
-  {% if tutorlist.has_other_pages %}
+  {% if tutorList %}
+  {% if tutorList.has_other_pages %}
   <nav aria-label="...">
     <ul class="pagination">
-      {% if tutorlist.number == 1 %}
+      {% if tutorList.number == 1 %}
         <li class="page-item"><span class="page-link">⇤<span class="sr-only">(current)</span></span></li>
       {% else %}
         <li class="page-item"><a class="page-link" href="?page=1">⇤</a></li>
       {% endif %}
-      {% if tutorlist.has_previous %}
-        <li class="page-item"><a class="page-link" href="?page={{ tutorlist.previous_page_number }}">&laquo;</a></li>
+      {% if tutorList.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ tutorList.previous_page_number }}">&laquo;</a></li>
       {% else %}
         <li class="page-item"><span class="page-link">&laquo;<span class="sr-only">(current)</span></span></li>
       {% endif %}
       {% for i in paginatorRange %}
-        {% if tutorlist.number == i %}
+        {% if tutorList.number == i %}
           <li class="page-item active"><span class="page-link">{{ i }}<span class="sr-only">(current)</span></span></li>
         {% else %}
           <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
         {% endif %}
       {% endfor %}
-      {% if tutorlist.has_next %}
-      <li class="page-item"><a class="page-link" href="?page={{tutorlist.next_page_number}}">&raquo;</a></li>
+      {% if tutorList.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{tutorList.next_page_number}}">&raquo;</a></li>
       {% else %}
       <li class="page-item"><span class="page-link">&raquo;<span class="sr-only">(current)</span></span></li>
       {% endif %}
-      {% if tutorlist.number == tutorPaginator.num_pages %}
+      {% if tutorList.number == tutorPaginator.num_pages %}
         <li class="page-item"><span class="page-link">⇥<span class="sr-only">(current)</span></span></li>
       {% else %}
         <li class="page-item"><a class="page-link" href="?page={{tutorPaginator.num_pages}}">⇥</a></li>

@@ -382,16 +382,39 @@ def post_edit(request, pk):
 @login_required(login_url=LOGIN_REDIRECT_URL)
 @staff_member_required
 def admin_home(request):
-    tutorlist = matching_models.User.objects.filter(profile__is_tutor=True).order_by('-profile__tutor_tutoringTime')
+    tutorList = matching_models.User.objects.filter(profile__is_tutor=True)
+    tutorDict = tutorList.values()
+
+    for tutor in tutorDict:
+        totalTutoringTime = 0
+        sessionList = matching_models.TutorSession.objects.filter(tutor_id=tutor['id'])
+        tutoringList = matching_models.Post.objects.filter(tutor_id=tutor['id'], fin_time__isnull=False)
+        hours = 0
+        minutes = 0
+        for session in sessionList:
+            logList = matching_models.SessionLog.objects.filter(tutor_session_id=session.id, fin_time__isnull=False, is_no_show=False)
+            for log in logList:
+                time_diff = log.fin_time - log.start_time
+                hours += time_diff.seconds//3600
+                minutes += time_diff.seconds//60%60
+        for tutoring in tutoringList:
+            time_diff = tutoring.fin_time - tutoring.start_time
+            hours += time_diff.seconds//3600
+            minutes += time_diff.seconds//60%60
+        
+        hours += minutes // 60
+        minutes = minutes % 60
+
+        tutor['totalTutoringTime'] = '{0}시간 {1}분'.format(str(hours),str(minutes))
 
     current_post_page = request.GET.get('page', 1)
-    tutor_paginator = Paginator(tutorlist, 10)
+    tutor_paginator = Paginator(tutorList, 10)
     try:
-        tutorlist = tutor_paginator.page(current_post_page)
+        tutorList = tutor_paginator.page(current_post_page)
     except PageNotAnInteger:
-        tutorlist = tutor_paginator.page(1)
+        tutorList = tutor_paginator.page(1)
     except EmptyPage:
-        tutorlist = tutor_paginator.page(tutor_paginator.num_pages)
+        tutorList = tutor_paginator.page(tutor_paginator.num_pages)
 
     neighbors = 10
     if tutor_paginator.num_pages > 2*neighbors:
@@ -413,9 +436,9 @@ def admin_home(request):
         paginatorRange = range(1, tutor_paginator.num_pages+1)
 
     ctx = {
-        'tutorlist': tutorlist,
+        'tutorList': tutorDict,
         'tutorPaginator': tutor_paginator,
-        'paginatorRange': paginatorRange,
+        'paginatorRange': paginatorRange
     }
 
 
@@ -1384,7 +1407,6 @@ def waitingroom(request, pk):
         ctx['waitingAfterTutee'] = waitingAfterTutee, # waitingAfterTutee is int, but ctx['...'] is tuple?
         ctx['totalWaiting'] = totalWaiting
 
-        print('new_comment_session' + str(session.pk))
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
           'new_comment_session' + str(session.pk),
