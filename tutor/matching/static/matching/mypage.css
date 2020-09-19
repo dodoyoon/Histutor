@@ -1,0 +1,38 @@
+div.edit_profile {
+  padding: 1rem 10rem;
+  text-align: center;
+  color:#3c0d57;
+}
+div.edit_profile input {
+  overflow: visible;
+  border-color: #8f63a8;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+}
+div.edit_profile input:focus{
+  border-color:#d7bfe6;
+  box-shadow: 0 0 0.1rem;
+  outline: none;
+}
+button.edit{
+  margin: 0 1rem;
+  border:0.15rem solid #8f63a8;
+  border-radius: 1rem;
+
+  outline:none;
+  background-color:white;
+  color: #3c0d57;
+}
+button.edit:hover{
+  background-color: #f6f2f8;
+}
+.messages > p.success_edit{
+  width:fit-content; 
+  margin:auto;
+  padding: 0.3rem 5rem;
+}
+
+div.edit_profile{
+  margin:auto 0;
+}
