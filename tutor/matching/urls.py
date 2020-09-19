@@ -23,6 +23,7 @@ urlpatterns = [
   path('mypage/tutee-session/', views.mypage_tutee_session, name='mypage_tutee_session'),
   path('mypage/tutor-session/', views.mypage_session, name='mypage_tutor_session'),
   path('mypage/tutor_post/', views.mypage_tutor_post, name='mypage_tutor_post'),
+  path('mypage/profile/<int:pk>', views.ProfileUpdateView.as_view(), name='mypage_profile'),
   path('post/detail/close_post/<int:pk>', views.close_post, name='close_post'),
   path('post/detail/fin_tutoring/<int:pk>', views.fin_tutoring, name='fin_tutoring'),
   path('post/detail/fin_tutoring_realTime/<int:pk>', views.fin_tutoring_realTime, name='fin_tutoring_realTime'),
