@@ -17,10 +17,10 @@
     <li class="nav-item">
       <a class="nav-link" href="{% url 'matching:mypage_tutor_session' %}">진행한 튜터 세션</a>
     </li>
+    {% endif %}
     <li class="nav-item">
       <a class="nav-link" href="{% url 'matching:mypage_profile' user.pk %}">닉네임 수정</a>
     </li>
-    {% endif %}
   </ul>
     <table id="post_table" class="table">
         <thead>
