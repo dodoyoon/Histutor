@@ -216,14 +216,14 @@
   <div class="create_room">
     {% if user.profile.is_tutor %}
     {% if post_exist %}
-    <button id="makeRoombtn" class="mybutton" type="button"  data-toggle="modal" data-target="#tutorsession">QnA 방 만들기</button>
+    <button id="makeRoombtn" class="mybutton" type="button"  data-toggle="modal" data-target="#tutorsession">새로운 방 만들기</button>
     {% else %}
-    <button id="makeRoombtn" class="mybutton" type="button"  data-toggle="modal" data-target="#tutortutee">QnA 방 만들기</button>
+    <button id="makeRoombtn" class="mybutton" type="button"  data-toggle="modal" data-target="#tutortutee">새로운 방 만들기</button>
     {% endif %}
     {% elif post_exist == False %}
-    <button id="makeRoombtn" class="mybutton" type="button"  data-toggle="modal" data-target="#tuteesession">QnA 방 만들기</button>
+    <button id="makeRoombtn" class="mybutton" type="button"  data-toggle="modal" data-target="#tuteesession">새로운 방 만들기</button>
     {% else %}
-    <button id="makeRoombtn" class="mybutton" type="button"  data-toggle="modal" data-target="#myModal" disabled>QnA 방 만들기</button>
+    <button id="makeRoombtn" class="mybutton" type="button"  data-toggle="modal" data-target="#myModal" disabled>새로운 방 만들기</button>
     {% endif %}
   </div>
 
@@ -233,11 +233,11 @@
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title">방 새로 만들기</h4>
+        <h4 class="modal-title">새로운 방 만들기</h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
-        <p>TA session을 연다면 튜터, 튜티로서 질문을 할 계획이면 튜티를 눌러주세요. </p>
+        <p>TA session을 연다면 TA 세션을, 자유로운 질문을 한다면 QnA를 눌러주세요. </p>
         <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" type="button" class="close" data-dismiss="modal" data-toggle="modal" href="#tutorsession">TA 세션</button>
         <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" type="button" data-dismiss="modal" data-toggle="modal" href="#tuteesession">QnA</button>
       </div>
