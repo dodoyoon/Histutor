@@ -525,3 +525,7 @@ footer a {
 .hide {
   display: none;
 }
+
+table#mainpage_table td.title{
+  width:50%;
+}
