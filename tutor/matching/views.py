@@ -243,11 +243,6 @@ def post_detail(request, pk):
         messages.error(request, '해당 방은 존재하지 않습니다.')
         return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
 
-# % if post.finding_match ==  True %}
-#                   {% elif post.start_time != Null and post.fin_time == Null %}
-#                   <td class="text-center text-nowrap align-middle" style="color:#2112bf"> 진행중 </td>
-#                   {% else %}
-
     if post.finding_match:
         pass
     elif post.start_time and not post.fin_time:
