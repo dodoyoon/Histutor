@@ -18,6 +18,7 @@
 		<link rel="stylesheet" type="text/css" href="{% static 'matching/style.css' %}">
 		<link rel="stylesheet" type="text/css" href="{% static 'matching/search_bar.css' %}">
 		<link rel="stylesheet" type="text/css" href="{% static 'matching/session_report.css' %}">
+		<link rel="stylesheet" type="text/css" href="{% static 'matching/mypage.css' %}">
 		<script src="https://kit.fontawesome.com/f99623035e.js" crossorigin="anonymous"></script>
 
 		<style>
@@ -82,8 +83,11 @@
 		<div class='language hidden'>
 			<div style="display:inline-block;">{% google_translate type='vertical' language='ko' %}</div>
 		</div>
+		<main>
 			{% block content %}
 			{% endblock %}
+		</main>
+
 
 		</div>
 

@@ -473,10 +473,8 @@ footer{
   display: flex;
   align-items: center;
   justify-content: center;
-  position: fixed;
-  bottom: 0px;
+  position: relative;
   width: 100vw;
-  padding-top: 15px;
   background-color:white;
   color: #918abd;
 }
@@ -525,4 +523,8 @@ footer a {
 
 .hide {
   display: none;
+}
+
+table#mainpage_table td.title{
+  width:50%;
 }

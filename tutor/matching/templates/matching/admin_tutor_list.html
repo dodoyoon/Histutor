@@ -33,17 +33,16 @@
           <thead>
           <tr>
             <th scope="col" style="width:50px" class="text-center">번호</th>
-            <!--<th scope="col" class="text-center">주제</th>-->
             <th scope="col" style="width:200px" class="text-center">학생</th>
             <th scope="col" style="width:150px" class="text-center">이메일</th>
-            <th scope="col" style="width:150px" class="text-center">총 튜터링 시간</th>
+            <th scope="col" style="width:150px" class="text-center">총 세션 + QnA 진행 시간</th>
           </tr>
           </thead>
           <tbody>
           {% for tutor in tutorList %}
             <tr>
                 <td class="text-center text-nowrap align-middle"> {{tutor.id}} </td>
-                <td class="text-center text-nowrap align-middle"><a href="{% url 'matching:tutor_detail' tutor.id %}">{{tutor.profile.nickname}}</a></td>
+                <td class="text-center text-nowrap align-middle"><a href="{% url 'matching:tutor_detail' tutor.id %}">{{tutor.nickname}}</a></td>
                 <td class="text-center text-nowrap align-middle">{{tutor.email}}</td>
                 <td class="text-center text-nowrap align-middle">{{tutor.totalTutoringTime}}</td>
             </tr>

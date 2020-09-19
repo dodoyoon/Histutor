@@ -22,6 +22,8 @@ from .models import Report
 from django.utils import timezone
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.messages.views import SuccessMessageMixin
+from django import forms
 import datetime
 
 
@@ -243,6 +245,17 @@ def post_detail(request, pk):
         messages.error(request, '해당 방은 존재하지 않습니다.')
         return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
 
+    if post.finding_match:
+        pass
+    elif post.start_time and not post.fin_time:
+        pass
+    else:
+        if not request.user == post.user and not request.user == post.tutor and not request.user.is_staff:
+            messages.error(request, '해당 QnA는 이미 종료되었습니다.')
+            return HttpResponseRedirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
+
+
+
     user = matching_models.User.objects.get(username=request.user.username)
     post = matching_models.Post.objects.get(pk=pk)
     my_report = matching_models.Report.objects.filter(writer=user, post=pk)
@@ -387,6 +400,7 @@ def admin_home(request):
 
     for tutor in tutorDict:
         totalTutoringTime = 0
+        tutor['nickname'] = matching_models.Profile.objects.filter(id=tutor['id']).get().nickname
         sessionList = matching_models.TutorSession.objects.filter(tutor_id=tutor['id'])
         tutoringList = matching_models.Post.objects.filter(tutor_id=tutor['id'], fin_time__isnull=False)
         hours = 0
@@ -841,6 +855,27 @@ def mypage(request):
     if request.user.profile.is_tutor:
         return redirect(reverse('matching:mypage_tutor_session'))
     return redirect(reverse('matching:mypage_post'))
+
+class ProfileUpdateView(SuccessMessageMixin, UpdateView):
+    model = matching_models.Profile
+    fields = ['nickname']
+    context_object_name = 'profile'
+    template_name = 'matching/mypage_profile_update.html'
+    success_message = '닉네임이 %(nickname)s 으로 수정되었습니다.'
+
+    def get_object(self):
+        profile = get_object_or_404(matching_models.Profile, pk=self.kwargs['pk'])
+        return profile
+
+    def get_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class()
+        form = super(ProfileUpdateView, self).get_form(form_class)
+        form.fields['nickname'].widget = forms.TextInput(attrs={'placeholder':'학번+이름 (예:20김튜티)', 'size':30})
+        return form
+
+    def get_success_url(self):
+        return reverse('matching:mypage_profile', kwargs={'pk':self.object.pk})
 
 
 @login_required(login_url=LOGIN_REDIRECT_URL)

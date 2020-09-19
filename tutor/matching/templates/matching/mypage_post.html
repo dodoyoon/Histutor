@@ -35,19 +35,22 @@
     </div>
   <ul class="nav nav-tabs">
     <li class="nav-item">
-      <a class="nav-link active">모집한 튜터링</a>
+      <a class="nav-link active">모집한 QnA</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="{% url 'matching:mypage_tutee_session' %}">참여한 튜터 세션</a>
+      <a class="nav-link" href="{% url 'matching:mypage_tutee_session' %}">참여한 TA 세션</a>
   </li>
     {% if user.profile.is_tutor == True %}
     <li class="nav-item">
-      <a class="nav-link" href="{% url 'matching:mypage_tutor_post' %}">진행한 튜터링</a>
+      <a class="nav-link" href="{% url 'matching:mypage_tutor_post' %}">진행한 QnA</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="{% url 'matching:mypage_tutor_session' %}">진행한 튜터 세션</a>
+      <a class="nav-link" href="{% url 'matching:mypage_tutor_session' %}">진행한 TA 세션</a>
     </li>
     {% endif %}
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'matching:mypage_profile' user.pk %}">닉네임 수정</a>
+    </li>
   </ul>
     <table id="post_table" class="table">
         <thead>
@@ -82,7 +85,7 @@
         {% endfor %}
         {% else %}
           <tr>
-              <td class="text-center" colspan="4"> 모집한 튜터링이 없음 </td>
+              <td class="text-center" colspan="4"> 모집한 QnA이 없음 </td>
           </tr>
         {% endif %}
         </tbody>
