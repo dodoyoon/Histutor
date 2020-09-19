@@ -20,8 +20,8 @@
               <tr>
                   <td class="text-center text-nowrap align-middle"> {{log.pk}} </td>
                   <td class="text-center text-nowrap align-middle">{{log.tutee.profile.nickname}}</a></td>
-                  <td class="text-center text-nowrap align-middle"> {{log.start_time}} </td>
-                  <td class="text-center text-nowrap align-middle"> {{log.fin_time}} </td>
+                  <td class="text-center text-nowrap align-middle"> {{log.start_time | date:'Y-m-d H:i'}} </td>
+                  <td class="text-center text-nowrap align-middle"> {{log.fin_time | date:'Y-m-d H:i'}} </td>
                   {% if log.attend_online %}
                   <td class="text-center text-nowrap align-middle"> 비대면 </td>
                   {% else %}
@@ -71,6 +71,5 @@
     {% endif %}
   
   </div>
-
 {% endblock %}
 

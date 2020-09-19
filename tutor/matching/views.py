@@ -391,12 +391,15 @@ def admin_home(request):
         tutoringList = matching_models.Post.objects.filter(tutor_id=tutor['id'], fin_time__isnull=False)
         hours = 0
         minutes = 0
+        print("=====tutor : ", tutor['id'])
+        print("-session : ")
         for session in sessionList:
             logList = matching_models.SessionLog.objects.filter(tutor_session_id=session.id, fin_time__isnull=False, is_no_show=False)
             for log in logList:
                 time_diff = log.fin_time - log.start_time
                 hours += time_diff.seconds//3600
                 minutes += time_diff.seconds//60%60
+
         for tutoring in tutoringList:
             time_diff = tutoring.fin_time - tutoring.start_time
             hours += time_diff.seconds//3600
@@ -404,7 +407,6 @@ def admin_home(request):
         
         hours += minutes // 60
         minutes = minutes % 60
-
         tutor['totalTutoringTime'] = '{0}시간 {1}분'.format(str(hours),str(minutes))
 
     current_post_page = request.GET.get('page', 1)
@@ -457,24 +459,26 @@ def admin_session_list(request):
     for session in session_dict:
         session_obj = session_list.get(pk=session['id'])
         session['tutor'] = session_obj.tutor.profile.nickname
-        finished_logs = log_list.filter(tutor_session_id=session['id'], fin_time__isnull=False)
+        finished_logs = log_list.filter(tutor_session_id=session['id'], start_time__isnull=False, fin_time__isnull=False, is_no_show=False)
         total_num_tutoring = finished_logs.count()
         no_show_logs = log_list.filter(tutor_session_id=session['id'], start_time__isnull=False, fin_time__isnull=False, is_no_show=True)
         no_show_cnt = no_show_logs.count()
 
         total_tutoring_time = 0
+        hours = 0
+        minutes = 0
+
         for log in finished_logs:
-            fin_time = log.fin_time
-            start_time = log.start_time
-            time_diff = fin_time - start_time
-            time_diff_min = (time_diff.seconds % 3600) // 60
-            total_tutoring_time += time_diff_min
+            time_diff = log.fin_time - log.start_time
+            hours += time_diff.seconds//3600
+            minutes += time_diff.seconds//60%60
+
+        hours += minutes // 60
+        minutes = minutes % 60
 
         session['total_num_tutoring'] = total_num_tutoring
-        session['total_tutoring_time'] = total_tutoring_time
+        session['total_tutoring_time'] = '{0}시간 {1}분'.format(str(hours),str(minutes))
         session['no_show_cnt'] = no_show_cnt
-        #session.save()
-
 
     current_post_page = request.GET.get('page', 1)
     session_paginator = Paginator(session_list, 10)
@@ -557,6 +561,7 @@ def session_log_detail(request, session_pk):
 
 
     return render(request, 'matching/session_log_detail.html', ctx)
+
 
 
 @login_required(login_url=LOGIN_REDIRECT_URL)
