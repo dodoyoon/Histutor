@@ -400,6 +400,7 @@ def admin_home(request):
 
     for tutor in tutorDict:
         totalTutoringTime = 0
+        tutor['nickname'] = matching_models.Profile.objects.filter(id=tutor['id']).get().nickname
         sessionList = matching_models.TutorSession.objects.filter(tutor_id=tutor['id'])
         tutoringList = matching_models.Post.objects.filter(tutor_id=tutor['id'], fin_time__isnull=False)
         hours = 0
