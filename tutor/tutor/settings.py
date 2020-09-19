@@ -137,7 +137,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 
-SITE_ID = 13
+SITE_ID = 17
 
 ACCOUNT_LOGOUT_REDIRECT_URL ="/matching"
 LOGIN_REDIRECT_URL = 'matching:user_check'
@@ -161,8 +161,8 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            # "hosts": [("redis://:AledmaThakd@172.17.0.2:6379/0")],
-            "hosts": [('127.0.0.1', 6379)],
+            "hosts": [("redis://:AledmaThakd@172.17.0.2:6379/0")],
+            # "hosts": [('127.0.0.1', 6379)],
         },
     },
 }
