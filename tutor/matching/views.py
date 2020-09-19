@@ -391,8 +391,6 @@ def admin_home(request):
         tutoringList = matching_models.Post.objects.filter(tutor_id=tutor['id'], fin_time__isnull=False)
         hours = 0
         minutes = 0
-        print("=====tutor : ", tutor['id'])
-        print("-session : ")
         for session in sessionList:
             logList = matching_models.SessionLog.objects.filter(tutor_session_id=session.id, fin_time__isnull=False, is_no_show=False)
             for log in logList:
@@ -404,7 +402,7 @@ def admin_home(request):
             time_diff = tutoring.fin_time - tutoring.start_time
             hours += time_diff.seconds//3600
             minutes += time_diff.seconds//60%60
-        
+
         hours += minutes // 60
         minutes = minutes % 60
         tutor['totalTutoringTime'] = '{0}시간 {1}분'.format(str(hours),str(minutes))
@@ -454,7 +452,6 @@ def admin_session_list(request):
     log_list = matching_models.SessionLog.objects.all()
 
     session_dict = session_list.values()
-    #print(session_dict)
 
     for session in session_dict:
         session_obj = session_list.get(pk=session['id'])
@@ -524,7 +521,7 @@ def session_log_detail(request, session_pk):
     session = matching_models.TutorSession.objects.get(pk=session_pk)
 
     loglist = matching_models.SessionLog.objects.filter(tutor_session=session)
-    
+
     current_post_page = request.GET.get('page', 1)
     log_paginator = Paginator(loglist, 10)
     try:
@@ -533,7 +530,7 @@ def session_log_detail(request, session_pk):
         loglist = log_paginator.page(1)
     except EmptyPage:
         loglist = log_paginator.page(log_paginator.num_pages)
-    
+
     neighbors = 10
     if log_paginator.num_pages > 2*neighbors:
         start_index = max(1, int(current_post_page)-neighbors)
@@ -552,7 +549,7 @@ def session_log_detail(request, session_pk):
         paginatorRange[:(2*neighbors + 1)]
     else:
         paginatorRange = range(1, log_paginator.num_pages+1)
-    
+
     ctx = {
         'loglist': loglist,
         'logPaginator': log_paginator,
@@ -977,7 +974,6 @@ def mypage_session(request):
     log_list = matching_models.SessionLog.objects.all()
 
     session_dict = session_list.values()
-    # print(session_dict)
 
     for session in session_dict:
         session_obj = session_list.get(pk=session['id'])
