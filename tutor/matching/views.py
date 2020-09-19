@@ -1414,6 +1414,7 @@ def waitingroom(request, pk):
           {
             'type': 'new_waiting_tutee',
             'new_tutee_turn': tuteeTurn,
+            'waiting_tutee_pk': waitingTutee.pk,
           }
         )
 

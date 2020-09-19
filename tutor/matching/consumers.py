@@ -279,11 +279,13 @@ class SessionDetailConsumer(WebsocketConsumer):
         elif type1 == "new_waiting_tutee":
 
           new_tutee_turn = text_data_json['new_tutee_turn']
+          waiting_tutee_pk = text_data_json['waiting_tutee_pk']
           async_to_sync(self.channel_layer.group_send)(
               self.group_name,
               {
                   'type': 'new_waiting_tutee',
                   'new_tutee_turn': new_tutee_turn,
+                  'waiting_tutee_pk': waiting_tutee_pk,
               }
           )
         elif type1 == "waiting_tutee_out":
@@ -364,10 +366,14 @@ class SessionDetailConsumer(WebsocketConsumer):
 
     def new_waiting_tutee(self, event):
       new_tutee_turn = event['new_tutee_turn']
+      waiting_tutee_pk = event['waiting_tutee_pk']
+
+      log = matching_models.SessionLog.objects.get(pk=waiting_tutee_pk)
 
       self.send(text_data=json.dumps({
         'type': 'new_waiting_tutee',
         'new_tutee_turn': new_tutee_turn,
+        'waiting_tutee_nickname': log.tutee.profile.nickname,
       }))
 
     def waiting_tutee_out(self, event):
