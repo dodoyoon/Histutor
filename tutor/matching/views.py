@@ -391,12 +391,15 @@ def admin_home(request):
         tutoringList = matching_models.Post.objects.filter(tutor_id=tutor['id'], fin_time__isnull=False)
         hours = 0
         minutes = 0
+        print("=====tutor : ", tutor['id'])
+        print("-session : ")
         for session in sessionList:
             logList = matching_models.SessionLog.objects.filter(tutor_session_id=session.id, fin_time__isnull=False, is_no_show=False)
             for log in logList:
                 time_diff = log.fin_time - log.start_time
                 hours += time_diff.seconds//3600
                 minutes += time_diff.seconds//60%60
+
         for tutoring in tutoringList:
             time_diff = tutoring.fin_time - tutoring.start_time
             hours += time_diff.seconds//3600
@@ -404,7 +407,6 @@ def admin_home(request):
         
         hours += minutes // 60
         minutes = minutes % 60
-
         tutor['totalTutoringTime'] = '{0}시간 {1}분'.format(str(hours),str(minutes))
 
     current_post_page = request.GET.get('page', 1)
@@ -457,24 +459,26 @@ def admin_session_list(request):
     for session in session_dict:
         session_obj = session_list.get(pk=session['id'])
         session['tutor'] = session_obj.tutor.profile.nickname
-        finished_logs = log_list.filter(tutor_session_id=session['id'], fin_time__isnull=False)
+        finished_logs = log_list.filter(tutor_session_id=session['id'], start_time__isnull=False, fin_time__isnull=False, is_no_show=False)
         total_num_tutoring = finished_logs.count()
         no_show_logs = log_list.filter(tutor_session_id=session['id'], start_time__isnull=True)
         no_show_cnt = no_show_logs.count()
 
         total_tutoring_time = 0
+        hours = 0
+        minutes = 0
+
         for log in finished_logs:
-            fin_time = log.fin_time
-            start_time = log.start_time
-            time_diff = fin_time - start_time
-            time_diff_min = (time_diff.seconds % 3600) // 60
-            total_tutoring_time += time_diff_min
+            time_diff = log.fin_time - log.start_time
+            hours += time_diff.seconds//3600
+            minutes += time_diff.seconds//60%60
+
+        hours += minutes // 60
+        minutes = minutes % 60
 
         session['total_num_tutoring'] = total_num_tutoring
-        session['total_tutoring_time'] = total_tutoring_time
+        session['total_tutoring_time'] = '{0}시간 {1}분'.format(str(hours),str(minutes))
         session['no_show_cnt'] = no_show_cnt
-        #session.save()
-
 
     current_post_page = request.GET.get('page', 1)
     session_paginator = Paginator(session_list, 10)
@@ -517,44 +521,47 @@ def admin_session_list(request):
 @login_required(login_url=LOGIN_REDIRECT_URL)
 @staff_member_required
 def session_log_detail(request, session_pk):
-    # session_list = matching_models.TutorSession.objects.all().order_by('-start_time')
-    #
-    # current_post_page = request.GET.get('page', 1)
-    # session_paginator = Paginator(session_list, 10)
-    # try:
-    #     session_list = session_paginator.page(current_post_page)
-    # except PageNotAnInteger:
-    #     session_list = session_paginator.page(1)
-    # except EmptyPage:
-    #     session_list = session_paginator.page(session_paginator.num_pages)
-    #
-    # neighbors = 10
-    # if session_paginator.num_pages > 2*neighbors:
-    #     start_index = max(1, int(current_post_page)-neighbors)
-    #     end_index = min(int(current_post_page)+neighbors, session_paginator.num_pages)
-    #     if end_index < start_index + 2*neighbors:
-    #         end_index = start_index + 2*neighbors
-    #     elif start_index > end_index - 2*neighbors:
-    #         start_index = end_index - 2*neighbors
-    #     if start_index < 1:
-    #         end_index -= start_index
-    #         start_index = 1
-    #     elif end_index > session_paginator.num_pages:
-    #         start_index -= end_index - session_paginator.num_pages
-    #         end_index = session_paginator.num_pages
-    #     paginatorRange = [f for f in range(start_index, end_index+1)]
-    #     paginatorRange[:(2*neighbors + 1)]
-    # else:
-    #     paginatorRange = range(1, session_paginator.num_pages+1)
-    #
-    # ctx = {
-    #     'sessionlist': session_list,
-    #     'sessionPaginator': session_paginator,
-    #     'paginatorRange': paginatorRange,
-    # }
+    session = matching_models.TutorSession.objects.get(pk=session_pk)
+
+    loglist = matching_models.SessionLog.objects.filter(tutor_session=session)
+    
+    current_post_page = request.GET.get('page', 1)
+    log_paginator = Paginator(loglist, 10)
+    try:
+        loglist = log_paginator.page(current_post_page)
+    except PageNotAnInteger:
+        loglist = log_paginator.page(1)
+    except EmptyPage:
+        loglist = log_paginator.page(log_paginator.num_pages)
+    
+    neighbors = 10
+    if log_paginator.num_pages > 2*neighbors:
+        start_index = max(1, int(current_post_page)-neighbors)
+        end_index = min(int(current_post_page)+neighbors, log_paginator.num_pages)
+        if end_index < start_index + 2*neighbors:
+            end_index = start_index + 2*neighbors
+        elif start_index > end_index - 2*neighbors:
+            start_index = end_index - 2*neighbors
+        if start_index < 1:
+            end_index -= start_index
+            start_index = 1
+        elif end_index > log_paginator.num_pages:
+            start_index -= end_index - log_paginator.num_pages
+            end_index = log_paginator.num_pages
+        paginatorRange = [f for f in range(start_index, end_index+1)]
+        paginatorRange[:(2*neighbors + 1)]
+    else:
+        paginatorRange = range(1, log_paginator.num_pages+1)
+    
+    ctx = {
+        'loglist': loglist,
+        'logPaginator': log_paginator,
+        'paginatorRange': paginatorRange,
+    }
 
 
     return render(request, 'matching/session_log_detail.html', ctx)
+
 
 
 @login_required(login_url=LOGIN_REDIRECT_URL)
