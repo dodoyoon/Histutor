@@ -473,10 +473,9 @@ footer{
   display: flex;
   align-items: center;
   justify-content: center;
-  position: fixed;
+  position: relative;
   bottom: 0px;
   width: 100vw;
-  padding-top: 15px;
   background-color:white;
   color: #918abd;
 }
