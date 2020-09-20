@@ -709,7 +709,7 @@
   const no_show_clicked = () => {
     document.getElementById("no_show_no_btn").click();
     let current_tutee = document.getElementById("current_tutee");
-    let is_no_show;
+    current_tutee.dataset.tutee_id = "";
     
     start_new_tutoring_ajax("True");
   }
