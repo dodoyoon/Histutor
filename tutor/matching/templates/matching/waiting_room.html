@@ -79,7 +79,11 @@
       });
 
       notification.onclick = function () {
-        window.location.href = url;
+        document.location.href = url;
+      };
+
+      notification.onclose = function () {
+        document.location.href = url;
       };
     }
 
@@ -93,7 +97,11 @@
           });
 
           notification.onclick = function () {
-            window.location.href = url;
+            document.location.href = url;
+          };
+
+          notification.onclose = function () {
+            document.location.href = url;
           };
         }
       });
@@ -137,9 +145,7 @@
       if (tuteePk == data['next_tutee_pk']){
         // console.log("go to " + data['next_tutee_url']);
         // alert(document.location);
-        if (isTabVisible() == true || isTabVisible() == false)
-          tuteeNotification(data['next_tutee_url']);
-        window.location.href = data['next_tutee_url'];
+        tuteeNotification(data['next_tutee_url']);
       }
     }
     else if (data['type'] == "new_waiting_tutee"){
