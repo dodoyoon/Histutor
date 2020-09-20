@@ -126,7 +126,7 @@
           <h4 class="modal-title">튜티 참여 여부 확인</h4>
         </div>
         <div class="modal-body">
-          <p><div id="current_tutee" data-tutee_id="{{current_tutee.tutee.profile.pk}}" style="display: inline;">{{current_tutee.tutee.profile.nickname}}{{current_tutee.tutee.profile.pk}}</div>님이 튜터링에 참여하였습니까?</p>
+          <p><div id="current_tutee" data-tutee_id="{{current_tutee.tutee.profile.pk}}" style="display: inline;">{{current_tutee.tutee.profile.nickname}}</div>님이 튜터링에 참여하였습니까?</p>
           <div class="row" style="float: right;">
               <div class="col-12-xs text-center" style="margin-right: 1em;">
                   <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" onclick="no_show_clicked()">No</button>
@@ -365,6 +365,54 @@
   const websocket = new WebSocket('wss://' + window.location.host + ':8443/ws/session/' + "{{pk}}" + '/');
   // const websocket = new WebSocket('ws://' + window.location.host + '/ws/session/' + "{{pk}}" + '/');
 
+  const isTabVisible = (function () {
+    let stateKey,
+      eventKey,
+      keys = {
+        hidden: "visibilitychange",
+        webkitHidden: "webkitvisibilitychange",
+        mozHidden: "mozvisibilitychange",
+        msHidden: "msvisibilitychange",
+      };
+    for (stateKey in keys) {
+      if (stateKey in document) {
+        eventKey = keys[stateKey];
+        break;
+      }
+    }
+    return function (c) {
+      if (c) document.addEventListener(eventKey, c);
+      return !document[stateKey];
+    };
+  })();
+
+  const messageNotification = (nickname) => {
+    // check browser support for notifications
+    if (!("Notification" in window)) {
+      alert("This browser does not support desktop notification");
+    }
+
+    // check notification permissions
+    else if (Notification.permission === "granted") {
+      // create a notification
+      let notification = new Notification("새로운 메시지가 왔습니다", {
+        body: nickname,
+      });
+    }
+
+    // Otherwise, ask for permission
+    else if (Notification.permission !== "granted") {
+      Notification.requestPermission().then(function (permission) {
+        // If the user accepts,create a notification
+        if (permission === "granted") {
+          let notification = new Notification("새로운 메시지가 왔습니다", {
+            body: nickname,
+          });
+        }
+      });
+    }
+  }
+
   websocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
     var req_username = "{{request.user.username}}";
@@ -428,6 +476,10 @@
         storage.append(msg);
 
       }else{
+
+        if (isTabVisible() == false)
+          messageNotification(data['nickname']);
+
         var incoming_msg = document.createElement("div");
         incoming_msg.className = "incoming_msg";
         var received_msg = document.createElement("div");
