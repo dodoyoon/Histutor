@@ -20,7 +20,7 @@
   <div id="refreshDiv" style="text-align:right;">
     <p style="font-size:15px;">마지막 업데이트: {{time}} </p>
   </div>
-  
+
   <div>
     <ul class="messages">
       {% for message in messages %}
@@ -41,7 +41,7 @@
               <button class="mybutton" type="submit"  data-toggle="modal" data-target="#endSession">세션종료</button>
           </td>
         </tr>
-  
+
         <div class="modal fade" id="endSession" role="dialog">
           <div class="modal-dialog">
             <div class="modal-content">
@@ -57,11 +57,11 @@
                     </div>
                 </div>
               </div>
-  
+
             </div>
           </div>
         </div>
-  
+
         {% endif %}
         {% if ongoing_post %}
         <tr>
@@ -72,7 +72,7 @@
               <button class="mybutton" type="submit"  data-toggle="modal" data-target="#postDeleteModal">모집취소</button>
           </td>
         </tr>
-  
+
         <div class="modal fade" id="postDeleteModal" role="dialog">
           <div class="modal-dialog">
             <div class="modal-content">
@@ -88,11 +88,11 @@
                     </div>
                 </div>
               </div>
-  
+
             </div>
           </div>
         </div>
-  
+
         {% elif ongoing_tutoring_tutee %}
         <tr>
           <th class="align-middle text-center text-nowrap">진행중인 QnA</th>
@@ -110,8 +110,8 @@
           <button class="mybutton" type="submit"  data-toggle="modal" data-target="#finishTutoringModal">QnA 완료</button>
           </td>
         </tr>
-  
-  
+
+
         <div class="modal fade" id="cancelTutoringModal" role="dialog">
           <div class="modal-dialog">
             <div class="modal-content">
@@ -127,11 +127,11 @@
                     </div>
                 </div>
               </div>
-  
+
             </div>
           </div>
         </div>
-  
+
         <div class="modal fade" id="finishTutoringModal" role="dialog">
           <div class="modal-dialog">
             <div class="modal-content">
@@ -147,13 +147,13 @@
                     </div>
                 </div>
               </div>
-  
+
             </div>
           </div>
         </div>
         {% endif %}
-  
-  
+
+
         {% if report_exist %}
         <tr>
           <th class="align-middle text-center text-nowrap">작성하지 않은 보고서</th>
@@ -163,7 +163,7 @@
           <button class="mybutton" type="button"  data-toggle="modal" data-target="#reportModal" style="float:left">보고서 쓰기</button>
           </td>
         </tr>
-  
+
         <!-- Report Modal -->
         <div id="reportModal" class="modal fade" role="dialog">
           <div class="modal-dialog">
@@ -191,12 +191,12 @@
               </div>
             </div>
             </form>
-  
+
           </div>
         </div>
         <!-- Report Modal End -->
         {% endif %}
-  
+
         {% if session_report_exist %}
         <tr>
           <th class="align-middle text-center text-nowrap">작성하지 않은 TA세션 보고서</th>
@@ -210,7 +210,7 @@
           </td>
         </tr>
         {% endif %}
-  
+
       </tbody>
     </div>
     </table>
@@ -227,7 +227,7 @@
       <button id="makeRoombtn" class="mybutton" type="button"  data-toggle="modal" data-target="#myModal" disabled>새로운 방 만들기</button>
       {% endif %}
     </div>
-  
+
   <div id="tutortutee" class="modal fade" role="dialog">
     <div class="modal-dialog">
       <form action="" method="POST">
@@ -247,10 +247,10 @@
         </div>
       </div>
       </form>
-  
+
     </div>
   </div>
-  
+
   <div id="tutorsession" class="modal fade" role="dialog">
     <div class="modal-dialog">
       <form class="form-style-7 session_report_create" id="session_create" action="" method="POST">
@@ -289,10 +289,10 @@
         </div>
       </div>
       </form>
-  
+
     </div>
   </div>
-  
+
     <!-- Modal -->
   <div id="tuteesession" class="modal fade" role="dialog">
     <div class="modal-dialog">
@@ -313,12 +313,12 @@
         </div>
       </div>
       </form>
-  
+
     </div>
   </div>
   </div>
-  
-  
+
+
   <div id="mainpage_table_div" class="tableDiv">
     <a href="{% url 'matching:mainpage' 'all' %}"><button class="mybutton main_tab" value='all' style="position:relative; bottom:6px">all</button></a>
     <a href="{% url 'matching:mainpage' 'session' %}"><button class="mybutton main_tab" value='session' style="position:relative; bottom:6px">TA 세션</button></a>
@@ -342,7 +342,7 @@
               <td class="text-center text-nowrap align-middle"></td>
               <td class="text-center text-nowrap align-middle" style="color:#bbb"></td>
               <td class="text-center text-nowrap align-middle" style="color:red"> 공지 </td>
-              <td class="align-middle title"><a href="https://www.notion.so/20-09-21-9c716eb8d8224b7499a1fcf7e272865a">알림 기능 및 닉네임 수정 기능 추가</a></td>
+              <td class="align-middle title"><a href="https://www.notion.so/20-09-21-9c716eb8d8224b7499a1fcf7e272865a">알림 및 닉네임 기능 업데이트 안내</a></td>
               <td class="text-center text-nowrap align-middle">관리자</td>
               <td class="text-center text-nowrap align-middle">2020-09-21</td>
               <td class="text-center text-nowrap align-middle"></td>
@@ -387,12 +387,12 @@
                   <td class="text-center text-nowrap align-middle">{{post.pub_date|date:'Y-m-d'}}</td>
                   {% endif %}
                   <td class="text-center text-nowrap align-middle">{{post.hit}}</td>
-  
+
               </tr>
           {% endfor %}
           </tbody>
       </table>
-  
+
       <div class='page_bottom'>
         {% if posts.has_other_pages %}
         <nav aria-label="...">

@@ -124,13 +124,14 @@
       <div class="modal-content">
         <div class="modal-header">
           <h4 class="modal-title">튜티 참여 여부 확인</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         <div class="modal-body">
           <p><div id="current_tutee" data-tutee_id="{{current_tutee.tutee.profile.pk}}" style="display: inline;">{{current_tutee.tutee.profile.nickname}}</div>님이 튜터링에 참여하였습니까?</p>
           <div class="row" style="float: right;">
               <div class="col-12-xs text-center" style="margin-right: 1em;">
                   <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" onclick="no_show_clicked()">No</button>
-                  <button id="no_show_no_btn" class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" type="button" class="close" data-dismiss="modal" onclick="start_new_tutoring_ajax('False')">Yes</button>
+                  <button id="no_show_no_btn" class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px; background-color: #D4CFE7;" type="button" class="close" data-dismiss="modal" onclick="start_new_tutoring_ajax('False')">Yes</button>
               </div>
           </div>
         </div>
@@ -145,7 +146,7 @@
     <button id="start_new_tutoring" class="mybutton" type="submit">새 튜터링 시작</button>
   </div>
   {% endif %}
-  
+
   {% if session.fin_time and user == session.tutor and not my_report %}
   <div style="margin:2% 0;">
     <form action="{% url 'matching:session_report_create' session.pk %}" method="POST">
@@ -710,7 +711,7 @@
     document.getElementById("no_show_no_btn").click();
     let current_tutee = document.getElementById("current_tutee");
     current_tutee.dataset.tutee_id = "";
-    
+
     start_new_tutoring_ajax("True");
   }
 
