@@ -417,7 +417,7 @@
     const data = JSON.parse(e.data);
     var req_username = "{{request.user.username}}";
     let current_tutee_pk = "{{request.user.pk}}";
-    let isTutor = "{{isTutor}}";
+    let isSessionTutor = "{{isSessionTutor}}";
 
     // Set table structure
     /*var storage = document.getElementById("msg_history");
@@ -612,7 +612,7 @@
       let waiting_tutee = document.getElementById("waiting_tutee");
       waiting_tutee.innerHTML = parseInt(waiting_tutee.innerHTML) + 1;
       
-      if (isTutor == "True")
+      if (isSessionTutor == "True")
         tutorNotification(data['waiting_tutee_nickname']);
     } else if (data['type'] == "waiting_tutee_out"){
       // alert("OUT");
