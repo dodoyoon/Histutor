@@ -124,8 +124,9 @@
       if (tuteePk == data['next_tutee_pk']){
         // console.log("go to " + data['next_tutee_url']);
         // alert(document.location);
-        tuteeNotification(data['next_tutee_url']);
         document.location.href = data['next_tutee_url'];
+	tuteeNotification(data['next_tutee_url']);
+        //document.location.href = data['next_tutee_url'];
       }
     }
     else if (data['type'] == "new_waiting_tutee"){
@@ -199,8 +200,8 @@
                 // }));
             },
             error: function(request, status, error){ // 통신 실패시 - 로그인 페이지 리다이렉트
-                alert("로그인이 필요합니다.");
-                window.location.replace("/accounts/login/");
+                //alert("로그인이 필요합니다.");
+                //window.location.replace("/accounts/login/");
             },
         });
 
