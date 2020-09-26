@@ -374,6 +374,7 @@ class SessionDetailConsumer(WebsocketConsumer):
         'type': 'new_waiting_tutee',
         'new_tutee_turn': new_tutee_turn,
         'waiting_tutee_nickname': log.tutee.profile.nickname,
+        'waiting_tutee_pk': waiting_tutee_pk
       }))
 
     def waiting_tutee_out(self, event):

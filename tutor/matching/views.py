@@ -1378,6 +1378,7 @@ def session_detail(request, pk):
     ctx['request'] = request
     waitingList = matching_models.SessionLog.objects.filter(is_waiting=True, tutor_session=session)
     ctx['waiting_tutee'] = len(waitingList)
+    ctx['tutor_pk'] = session.tutor.profile.pk
     session.hit = session.hit + 1
     session.save()
     return render(request, 'matching/session_detail.html', ctx)
