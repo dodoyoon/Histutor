@@ -345,6 +345,7 @@ def send_message(request):
               new_cmt.save()
 
           response['id'] = new_cmt.id
+          response['url'] = "https://" + request.get_host() + reverse('matching:session_detail', args=[session.pk])
           return HttpResponse(json.dumps(response), content_type="application/json")
         else:
           post = matching_models.Post.objects.get(pk=request.GET['postid'])
@@ -363,6 +364,7 @@ def send_message(request):
               new_cmt.save()
 
           response['id'] = new_cmt.id
+          response['url'] = "https://" + request.get_host() + reverse('matching:post_detail', args=[post.pk])
           return HttpResponse(json.dumps(response), content_type="application/json")
     else:
         return HttpResponse('NOT A GET REQUEST')
@@ -811,7 +813,7 @@ def fin_tutoring_realTime(request, pk):
 
     context = {
       'finish_tutoring_cmt_pk' : fin_tutoring_cmt.pk,
-      'mainpage_url': "http://" + request.get_host() + reverse('matching:mainpage', kwargs={'showtype':'all'})
+      'mainpage_url': "https://" + request.get_host() + reverse('matching:mainpage', kwargs={'showtype':'all'})
     }
 
     return HttpResponse(json.dumps(context), content_type="application/json")
@@ -830,7 +832,7 @@ def cancel_tutoring_realTime(request, pk):
 
     context = {
       'cancel_tutoring_cmt_pk' : cancel_tutoring_cmt.pk,
-      'mainpage_url': "http://" + request.get_host() + reverse('matching:mainpage', kwargs={'showtype':'all'})
+      'mainpage_url': "https://" + request.get_host() + reverse('matching:mainpage', kwargs={'showtype':'all'})
     }
 
     return HttpResponse(json.dumps(context), content_type="application/json")
@@ -907,7 +909,7 @@ def mypage_post(request):
             application.save()
 
             name = request.user.profile.nickname
-            url = "http://" + request.get_host() + reverse('matching:apply_list')
+            url = "https://" + request.get_host() + reverse('matching:apply_list')
             payload = '{"body":"' + name + '","connectColor":"#6C639C","connectInfo":[{"imageUrl":"' + url + '"}]}'
 
             headers = {'Accept': 'application/vnd.tosslab.jandi-v2+json',
@@ -1199,7 +1201,7 @@ def mainpage(request, showtype):
             )
             '''
             title = post.title
-            url = "http://" + request.get_host() + reverse('matching:post_detail', args=[post.pk])
+            url = "https://" + request.get_host() + reverse('matching:post_detail', args=[post.pk])
             payload = '{"body":"' + title + '","connectColor":"#6C639C","connectInfo":[{"imageUrl":"' + url + '"}]}'
 
             headers = {'Accept': 'application/vnd.tosslab.jandi-v2+json',
@@ -1376,6 +1378,7 @@ def session_detail(request, pk):
     ctx['request'] = request
     waitingList = matching_models.SessionLog.objects.filter(is_waiting=True, tutor_session=session)
     ctx['waiting_tutee'] = len(waitingList)
+    ctx['tutor_pk'] = session.tutor.profile.pk
     session.hit = session.hit + 1
     session.save()
     return render(request, 'matching/session_detail.html', ctx)
@@ -1533,13 +1536,13 @@ def start_new_tutoring(request, pk):
       if request.POST['is_no_show'] == "True":
         current_tutee.is_no_show = True
         current_tutee.save()
-      current_tutee_url = "http://" + request.get_host() + reverse('matching:mainpage', kwargs={'showtype':'all'})
+      current_tutee_url = "https://" + request.get_host() + reverse('matching:mainpage', kwargs={'showtype':'all'})
       fin_tutoring_cmt = matching_models.Comment(user=current_tutee.tutee, tutorsession=session, pub_date=timezone.localtime(timezone.now()), content="튜터링종료"+str(session.pub_date))
       fin_tutoring_cmt.save()
       context['current_sessionLog_pk'] = current_tutee.pk
       context['current_tutee_url'] = current_tutee_url
     if next_tutee:
-      next_tutee_url = "http://" + request.get_host() + reverse('matching:session_detail', args=[pk])
+      next_tutee_url = "https://" + request.get_host() + reverse('matching:session_detail', args=[pk])
       start_tutoring_cmt = matching_models.Comment(user=next_tutee.tutee, tutorsession=session, pub_date=timezone.now(), content="튜터링시작"+str(session.pub_date))
       start_tutoring_cmt.save()
       context['next_sessionlog_pk'] = next_tutee.pk
