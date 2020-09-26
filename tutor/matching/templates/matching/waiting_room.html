@@ -39,6 +39,10 @@
         <div id="waitingAfter">내 뒤 : <span id="waitingAfterNumber" class="inline">{{waitingAfterTutee.0}}</span></div>
       </div>
 
+      <div id="check_notification">
+        Notification 상태 : <p id="notification_status"></p>
+      </div>
+
         <!-- t_rex_place -->
         <!-- T-Rex -->
         <div id="t" class="offline">
@@ -64,6 +68,12 @@
 </div>
 
 <script>
+
+  const set_notification_status = () =>  {
+    let status = Notification.permission;
+    document.getElementById("notification_status").innerHTML = status;
+  }
+  set_notification_status();
 
   const tuteeNotification = (url) => {
     // check browser support for notifications
@@ -108,8 +118,8 @@
     }
   }
 
-  const websocket = new WebSocket('wss://' + window.location.host + ':8443/ws/session/' + "{{pk}}" + '/');
-  // const websocket = new WebSocket('ws://' + window.location.host + '/ws/session/' + "{{pk}}" + '/');
+  // const websocket = new WebSocket('wss://' + window.location.host + ':8443/ws/session/' + "{{pk}}" + '/');
+  const websocket = new WebSocket('ws://' + window.location.host + '/ws/session/' + "{{pk}}" + '/');
 
   websocket.onmessage = function(e){
     const data = JSON.parse(e.data);
