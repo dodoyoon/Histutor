@@ -134,9 +134,9 @@
       if (tuteePk == data['next_tutee_pk']){
         // console.log("go to " + data['next_tutee_url']);
         // alert(document.location);
-        document.location.href = data['next_tutee_url'];
+        window.location.replace = data['next_tutee_url'];
 	      tuteeNotification(data['next_tutee_url']);
-        //document.location.href = data['next_tutee_url'];
+
       }
     }
     else if (data['type'] == "new_waiting_tutee"){
