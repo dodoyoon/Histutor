@@ -75,7 +75,7 @@
   }
   set_notification_status();
 
-  const tuteeNotification = (url) => {
+  const        = (url) => {
     // check browser support for notifications
     if (!("Notification" in window)) {
       alert("This browser does not support desktop notification");
@@ -135,7 +135,7 @@
         // console.log("go to " + data['next_tutee_url']);
         // alert(document.location);
         document.location.href = data['next_tutee_url'];
-	tuteeNotification(data['next_tutee_url']);
+	      tuteeNotification(data['next_tutee_url']);
         //document.location.href = data['next_tutee_url'];
       }
     }
@@ -168,6 +168,8 @@
           waitingAfter.innerHTML = value2;
         } else {
           let current_tutee_turn = document.getElementById("currentNumber");
+          let waitingBefore = document.getElementById("waitingBeforeNumber");
+
           let value3 = parseInt(current_tutee_turn.innerHTML) - 1;
           let value4 = parseInt(waitingBefore.innerHTML) - 1;
 
@@ -178,7 +180,6 @@
               value4 = 0;
           }
           current_tutee_turn.innerHTML = value3;
-          let waitingBefore = document.getElementById("waitingBeforeNumber");
           waitingBefore.innerHTML = value4;
         }
       }
