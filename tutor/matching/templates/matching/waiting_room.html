@@ -89,11 +89,11 @@
       });
 
       notification.onclick = function () {
-        document.location.href = url;
+        window.location.href = url;
       };
 
       notification.onclose = function () {
-        document.location.href = url;
+        window.location.href = url;
       };
     }
 
@@ -107,19 +107,19 @@
           });
 
           notification.onclick = function () {
-            document.location.href = url;
+            window.location.href = url;
           };
 
           notification.onclose = function () {
-            document.location.href = url;
+            window.location.href = url;
           };
         }
       });
     }
   }
 
-  // const websocket = new WebSocket('wss://' + window.location.host + ':8443/ws/session/' + "{{pk}}" + '/');
-  const websocket = new WebSocket('ws://' + window.location.host + '/ws/session/' + "{{pk}}" + '/');
+  const websocket = new WebSocket('wss://' + window.location.host + ':8443/ws/session/' + "{{pk}}" + '/');
+  //const websocket = new WebSocket('ws://' + window.location.host + '/ws/session/' + "{{pk}}" + '/');
 
   websocket.onmessage = function(e){
     const data = JSON.parse(e.data);
@@ -132,8 +132,6 @@
 
       // console.log("tutee pk: " + tuteePk +" vs " + "next tutee pk: " + data['next_tutee_pk']);
       if (tuteePk == data['next_tutee_pk']){
-        // console.log("go to " + data['next_tutee_url']);
-        // alert(document.location);
         window.location.replace = data['next_tutee_url'];
 	      tuteeNotification(data['next_tutee_url']);
 
