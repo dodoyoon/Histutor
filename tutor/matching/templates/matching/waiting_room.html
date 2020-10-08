@@ -140,8 +140,8 @@
 
       // console.log("tutee pk: " + tuteePk +" vs " + "next tutee pk: " + data['next_tutee_pk']);
       if (tuteePk == data['next_tutee_pk']){
+        window.location.href = url;
 	      tuteeNotification(data['next_tutee_url']);
-
       }
     }
     else if (data['type'] == "new_waiting_tutee"){
