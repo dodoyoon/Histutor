@@ -88,17 +88,23 @@
         body: "notification을 클릭해주세요.",
       });
 
-      notification.onclick = function () {
-        window.location.href = url;
-      };
+      if(notification){
+        console.log("Exist!");
+      }else{
+        console.log("NOT Exist!");
+      }
+    
+      // notification.onclick = function () {
+      //   window.location.href = url;
+      // };
 
-      notification.onclose = function () {
-        window.location.href = url;
-      };
+      // notification.onclose = function () {
+      //   window.location.href = url;
+      // };
 
-      notification.onshow = function () {
-        window.location.href = url;
-      };
+      // notification.onshow = function () {
+      //   window.location.href = url;
+      // };
     }
 
     // Otherwise, ask for permission
@@ -110,17 +116,23 @@
             body: "notification을 클릭해주세요.",
           });
 
-          notification.onclick = function () {
-            window.location.href = url;
-          };
+          if(notification){
+            console.log("Exist!");
+          }else{
+            console.log("NOT Exist!");
+          }
 
-          notification.onclose = function () {
-            window.location.href = url;
-          };
+          // notification.onclick = function () {
+          //   window.location.href = url;
+          // };
 
-          notification.onshow = function () {
-            window.location.href = url;
-          };
+          // notification.onclose = function () {
+          //   window.location.href = url;
+          // };
+
+          // notification.onshow = function () {
+          //   window.location.href = url;
+          // };
         }
       });
     }
@@ -161,7 +173,7 @@
 
       // console.log("tutee pk: " + tuteePk +" vs " + "next tutee pk: " + data['next_tutee_pk']);
       if (tuteePk == data['next_tutee_pk']){
-        window.location.href = data['next_tutee_url'];
+        // window.location.href = data['next_tutee_url'];
         if (isTabVisibleWaiting() == false){
           tuteeNotification(data['next_tutee_url']);
         }else{
