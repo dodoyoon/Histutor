@@ -95,6 +95,10 @@
       notification.onclose = function () {
         window.location.href = url;
       };
+
+      notification.onshow = function () {
+        window.location.href = url;
+      };
     }
 
     // Otherwise, ask for permission
@@ -111,6 +115,10 @@
           };
 
           notification.onclose = function () {
+            window.location.href = url;
+          };
+
+          notification.onshow = function () {
             window.location.href = url;
           };
         }
@@ -132,7 +140,6 @@
 
       // console.log("tutee pk: " + tuteePk +" vs " + "next tutee pk: " + data['next_tutee_pk']);
       if (tuteePk == data['next_tutee_pk']){
-        window.location.replace = data['next_tutee_url'];
 	      tuteeNotification(data['next_tutee_url']);
 
       }
