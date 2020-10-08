@@ -162,10 +162,12 @@
       // console.log("tutee pk: " + tuteePk +" vs " + "next tutee pk: " + data['next_tutee_pk']);
       if (tuteePk == data['next_tutee_pk']){
         // window.location.href = data['next_tutee_url'];
-        console.log(isTabVisibleWaiting());
-        // if (isTabVisibleWaiting() == false)
+
+        if (isTabVisibleWaiting() == false)
+            console.log("false");
         //   tuteeNotification(data['next_tutee_url']);
-        // else
+        else
+            console.log("true");
         //   tuteeNotification(data['next_tutee_url']);
       }
     }
