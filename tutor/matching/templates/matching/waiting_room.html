@@ -129,7 +129,7 @@
   const websocket = new WebSocket('wss://' + window.location.host + ':8443/ws/session/' + "{{pk}}" + '/');
   //const websocket = new WebSocket('ws://' + window.location.host + '/ws/session/' + "{{pk}}" + '/');
 
-  const isTabVisible = (function () {
+  const isTabVisibleWaiting = (function () {
     let stateKey,
       eventKey,
       keys = {
@@ -163,7 +163,7 @@
       if (tuteePk == data['next_tutee_pk']){
         window.location.href = data['next_tutee_url'];
 
-        if (isTabVisible() == false)
+        if (isTabVisibleWaiting() == false)
           tuteeNotification(data['next_tutee_url']);
         else
           tuteeNotification(data['next_tutee_url']);
