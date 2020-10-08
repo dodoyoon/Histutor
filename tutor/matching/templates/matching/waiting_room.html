@@ -162,11 +162,11 @@
       // console.log("tutee pk: " + tuteePk +" vs " + "next tutee pk: " + data['next_tutee_pk']);
       if (tuteePk == data['next_tutee_pk']){
         window.location.href = data['next_tutee_url'];
-
-        if (isTabVisibleWaiting() == false)
-          tuteeNotification(data['next_tutee_url']);
-        else
-          tuteeNotification(data['next_tutee_url']);
+        console.log(isTabVisibleWaiting());
+        // if (isTabVisibleWaiting() == false)
+        //   tuteeNotification(data['next_tutee_url']);
+        // else
+        //   tuteeNotification(data['next_tutee_url']);
       }
     }
     else if (data['type'] == "new_waiting_tutee"){
