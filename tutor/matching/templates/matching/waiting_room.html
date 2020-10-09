@@ -127,8 +127,9 @@
   //const websocket = new WebSocket('ws://' + window.location.host + '/ws/session/' + "{{pk}}" + '/');
 
   websocket.onmessage = function(e){
+    console.log("Websocket Onmessage");
     const data = JSON.parse(e.data);
-    let tuteePk = {{tuteePk}};
+    let tuteePk = "{{tuteePk}}";
     let tuteeTurn = parseInt(document.getElementById("currentNumber").innerHTML);
     //alert("received");
 
@@ -138,8 +139,8 @@
       // console.log("tutee pk: " + tuteePk +" vs " + "next tutee pk: " + data['next_tutee_pk']);
       console.log(`tuteePk : ${typeof tuteePk}, ${tuteePk}`);
       console.log(`data : ${typeof data['next_tutee_pk']}, ${data['next_tutee_pk']}`);
-      if (tuteePk === data['next_tutee_pk']){
-        console.log("if (tuteePk === data['next_tutee_pk']){");
+      if (tuteePk === `${data['next_tutee_pk']}`){
+        console.log("I'm in the IF statement");
         // if (isTabVisibleWaiting() == false){
         //   tuteeNotification();
         // }else{
@@ -157,7 +158,8 @@
         let totalWaiting = document.getElementById("totalWaitingNumber");
         totalWaiting.innerHTML = parseInt(totalWaiting.innerHTML) + 1;
       }
-    } else if (data['type'] == "waiting_tutee_out"){
+    } 
+    else if (data['type'] == "waiting_tutee_out"){
 	    // console.log("waiting tutee out");
       let waiting_tutee_turn = data['waiting_tutee_turn'];
       if (tuteeTurn != waiting_tutee_turn){
