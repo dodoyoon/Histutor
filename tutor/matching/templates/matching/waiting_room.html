@@ -97,7 +97,6 @@
   // })();
 
   const tuteeNotification = () => {
-    console.log("Currently in tuteeNotification");
     // check browser support for notifications
     if (!("Notification" in window)) {
       alert("This browser does not support desktop notification");
@@ -144,8 +143,7 @@
         //   tuteeNotification();
         // }   
         tuteeNotification();      
-        console.log("Just before moving to the session page");
-        // window.location.href = data['next_tutee_url'];
+        window.location.href = data['next_tutee_url'];
       }
     }
     else if (data['type'] == "new_waiting_tutee"){
