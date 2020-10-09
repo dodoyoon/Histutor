@@ -134,18 +134,17 @@
 
     if (data['type'] == "get_next_tutee"){
 	// console.log("get next tutee");
-      tuteeNotification();
-      window.location.href = data['next_tutee_url'];
+
       // console.log("tutee pk: " + tuteePk +" vs " + "next tutee pk: " + data['next_tutee_pk']);
-      // if (tuteePk == data['next_tutee_pk']){
-      //   tuteeNotification();
-      //   window.location.href = data['next_tutee_url'];
-      //   // if (isTabVisibleWaiting() == false){
-      //   //   tuteeNotification();
-      //   // }else{
-      //   //   tuteeNotification();
-      //   // }         
-      // }
+      if (tuteePk == data['next_tutee_pk']){
+        // tuteeNotification();
+        if (isTabVisibleWaiting() == false){
+          tuteeNotification();
+        }else{
+          tuteeNotification();
+        }         
+        window.location.href = data['next_tutee_url'];
+      }
     }
     else if (data['type'] == "new_waiting_tutee"){
 	    // console.log("new waiting tutee");
