@@ -96,7 +96,7 @@
     };
   })();
 
-  const tuteeNotification = (url) => {
+  const tuteeNotification = () => {
     // check browser support for notifications
     if (!("Notification" in window)) {
       alert("This browser does not support desktop notification");
@@ -108,14 +108,6 @@
       let notification = new Notification("학우님 차례가 되었습니다.", {
         body: "notification을 클릭해주세요.",
       });
-    
-      notification.onclick = function () {
-        window.location.href = url;
-      };
-
-      notification.onclose = function () {
-        window.location.href = url;
-      };
     }
 
     // Otherwise, ask for permission
@@ -126,14 +118,6 @@
           let notification = new Notification("학우님 차례가 되었습니다.", {
             body: "notification을 클릭해주세요.",
           });
-
-          notification.onclick = function () {
-            window.location.href = url;
-          };
-
-          notification.onclose = function () {
-            window.location.href = url;
-          };
         }
       });
     }
@@ -155,9 +139,9 @@
       if (tuteePk == data['next_tutee_pk']){
         window.location.href = data['next_tutee_url'];
         if (isTabVisibleWaiting() == false){
-          tuteeNotification(data['next_tutee_url']);
+          tuteeNotification();
         }else{
-          tuteeNotification(data['next_tutee_url']);
+          tuteeNotification();
         }         
       }
     }
