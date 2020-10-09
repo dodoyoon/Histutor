@@ -545,7 +545,7 @@
       storage.append(msg);
       if (current_tutee_pk == data['current_tutee_pk']){
         // alert("Redirecting to mainpage");
-        document.location.href = data['current_tutee_url'], true;
+        window.location.href = data['current_tutee_url']; // true가 있었음
       }
     } else if (data['type'] == "get_next_tutee"){
       let tutee_name = document.getElementById("current_tutee");
