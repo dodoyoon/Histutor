@@ -97,6 +97,7 @@
   // })();
 
   const tuteeNotification = () => {
+    console.log("Currently in tuteeNotification");
     // check browser support for notifications
     if (!("Notification" in window)) {
       alert("This browser does not support desktop notification");
@@ -137,13 +138,14 @@
 
       // console.log("tutee pk: " + tuteePk +" vs " + "next tutee pk: " + data['next_tutee_pk']);
       if (tuteePk == data['next_tutee_pk']){
-        // tuteeNotification();
-        if (isTabVisibleWaiting() == false){
-          tuteeNotification();
-        }else{
-          tuteeNotification();
-        }         
-        window.location.href = data['next_tutee_url'];
+        // if (isTabVisibleWaiting() == false){
+        //   tuteeNotification();
+        // }else{
+        //   tuteeNotification();
+        // }   
+        tuteeNotification();      
+        console.log("Just before moving to the session page");
+        // window.location.href = data['next_tutee_url'];
       }
     }
     else if (data['type'] == "new_waiting_tutee"){
