@@ -121,12 +121,6 @@
         }
       });
     }
-
-    else{
-      let notification = new Notification("학우님 차례가 되었습니다.", {
-        body: "notification을 클릭해주세요.",
-      });
-    }
   }
 
   const websocket = new WebSocket('wss://' + window.location.host + ':8443/ws/session/' + "{{pk}}" + '/');
@@ -142,14 +136,14 @@
 	// console.log("get next tutee");
 
       // console.log("tutee pk: " + tuteePk +" vs " + "next tutee pk: " + data['next_tutee_pk']);
-      if (tuteePk == data['next_tutee_pk']){
+      if (tuteePk === data['next_tutee_pk']){
         // if (isTabVisibleWaiting() == false){
         //   tuteeNotification();
         // }else{
         //   tuteeNotification();
         // }   
-        tuteeNotification();      
-        window.location.href = data['next_tutee_url'];
+        tuteeNotification();
+        // window.location.href = data['next_tutee_url'];
       }
     }
     else if (data['type'] == "new_waiting_tutee"){
