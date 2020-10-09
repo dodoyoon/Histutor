@@ -128,7 +128,7 @@
 
   websocket.onmessage = function(e){
     const data = JSON.parse(e.data);
-    let tuteePk = "{{tuteePk}}";
+    let tuteePk = {{tuteePk}};
     let tuteeTurn = parseInt(document.getElementById("currentNumber").innerHTML);
     //alert("received");
 
