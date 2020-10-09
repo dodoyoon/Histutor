@@ -75,26 +75,26 @@
   }
   set_notification_status();
 
-  const isTabVisibleWaiting = (function () {
-    let stateKey,
-      eventKey,
-      keys = {
-        hidden: "visibilitychange",
-        webkitHidden: "webkitvisibilitychange",
-        mozHidden: "mozvisibilitychange",
-        msHidden: "msvisibilitychange",
-      };
-    for (stateKey in keys) {
-      if (stateKey in document) {
-        eventKey = keys[stateKey];
-        break;
-      }
-    }
-    return function (c) {
-      if (c) document.addEventListener(eventKey, c);
-      return !document[stateKey];
-    };
-  })();
+  // const isTabVisibleWaiting = (function () {
+  //   let stateKey,
+  //     eventKey,
+  //     keys = {
+  //       hidden: "visibilitychange",
+  //       webkitHidden: "webkitvisibilitychange",
+  //       mozHidden: "mozvisibilitychange",
+  //       msHidden: "msvisibilitychange",
+  //     };
+  //   for (stateKey in keys) {
+  //     if (stateKey in document) {
+  //       eventKey = keys[stateKey];
+  //       break;
+  //     }
+  //   }
+  //   return function (c) {
+  //     if (c) document.addEventListener(eventKey, c);
+  //     return !document[stateKey];
+  //   };
+  // })();
 
   const tuteeNotification = () => {
     // check browser support for notifications
@@ -137,12 +137,13 @@
 
       // console.log("tutee pk: " + tuteePk +" vs " + "next tutee pk: " + data['next_tutee_pk']);
       if (tuteePk == data['next_tutee_pk']){
+        tuteeNotification();
         window.location.href = data['next_tutee_url'];
-        if (isTabVisibleWaiting() == false){
-          tuteeNotification();
-        }else{
-          tuteeNotification();
-        }         
+        // if (isTabVisibleWaiting() == false){
+        //   tuteeNotification();
+        // }else{
+        //   tuteeNotification();
+        // }         
       }
     }
     else if (data['type'] == "new_waiting_tutee"){
