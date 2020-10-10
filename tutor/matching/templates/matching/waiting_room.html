@@ -69,8 +69,10 @@
     </div>
 </div>
 
-<script type="module" src="/home/team/tutor_match/tutor/matching/static/matching/howler.js"></script>
+<script type="module" src="/home/team/tutor_match/tutor/matching/static/matching/howler.js/dist/howler.js"></script>
 <script>
+  import {Howl, Howler} from 'howler';
+
   const set_notification_status = () =>  {
     let status = Notification.permission;
     document.getElementById("notification_status").innerHTML = status;
