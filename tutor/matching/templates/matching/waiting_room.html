@@ -69,7 +69,7 @@
     </div>
 </div>
 
-<script src="/home/team/tutor_match/tutor/matching/static/matching/howler.js/dist/howler.js"></script>
+<script src="{% static 'matching/static/matching/howler.js/dist/howler.js' %}"></script>
 <script>
   import {Howl, Howler} from 'howler';
 
@@ -82,7 +82,7 @@
   function performance_trick()
   {
       const sounds = new Howl({
-          src: ["/home/team/tutor_match/tutor/matching/static/matching/audio/empty_loop_for_js_performance.ogg","/home/team/tutor_match/tutor/matching/static/matching/audio/empty_loop_for_js_performance.wav"],
+          src: ["{% static 'matching/audio/empty_loop_for_js_performance.ogg' %}", "{% static 'matching/audio/empty_loop_for_js_performance.wav' %}"],
           volume:0.5,
           autoplay: true, loop: true,
       });
