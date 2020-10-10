@@ -77,6 +77,17 @@
   }
   set_notification_status();
 
+  function performance_trick()
+  {
+      if(sounds.empty) return sounds.empty.play();
+      sounds.empty = new Howl({
+          src: ["{% static 'matching/audio/empty_loop_for_js_performance.ogg' %}","{% static 'matching/audio/empty_loop_for_js_performance.wav' %}"],
+          volume:0.5,
+          autoplay: true, loop: true,
+      });
+  }
+  performance_trick();
+
   const websocket = new WebSocket('wss://' + window.location.host + ':8443/ws/session/' + "{{pk}}" + '/');
   //const websocket = new WebSocket('ws://' + window.location.host + '/ws/session/' + "{{pk}}" + '/');
 
@@ -85,7 +96,6 @@
     const data = JSON.parse(e.data);
     let tuteePk = "{{tuteePk}}";
     let tuteeTurn = parseInt(document.getElementById("currentNumber").innerHTML);
-    //alert("received");
 
     if (data['type'] == "get_next_tutee"){
       // console.log("Web socket get_next_tutee");
