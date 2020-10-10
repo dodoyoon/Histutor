@@ -79,6 +79,7 @@
 
   function performance_trick()
   {
+      const sounds ;
       if(sounds.empty) return sounds.empty.play();
       sounds.empty = new Howl({
           src: ["{% static 'matching/audio/empty_loop_for_js_performance.ogg' %}","{% static 'matching/audio/empty_loop_for_js_performance.wav' %}"],
