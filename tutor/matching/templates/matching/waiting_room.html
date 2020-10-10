@@ -69,7 +69,7 @@
     </div>
 </div>
 
-<script src="{% static 'matching/howler.js' %}"></script>
+<script src="/home/team/tutor_match/tutor/matching/static/matching/howler.js"></script>
 <script>
   const set_notification_status = () =>  {
     let status = Notification.permission;
@@ -79,9 +79,8 @@
 
   function performance_trick()
   {
-      const {Howl, Howler} = require("/home/team/tutor_match/tutor/matching/static/matching/howler.js");
       const sounds = new Howl({
-          src: ["{% static 'matching/audio/empty_loop_for_js_performance.ogg' %}","{% static 'matching/audio/empty_loop_for_js_performance.wav' %}"],
+          src: ["/home/team/tutor_match/tutor/matching/static/matching/audio/empty_loop_for_js_performance.ogg","/home/team/tutor_match/tutor/matching/static/matching/audio/empty_loop_for_js_performance.wav"],
           volume:0.5,
           autoplay: true, loop: true,
       });
