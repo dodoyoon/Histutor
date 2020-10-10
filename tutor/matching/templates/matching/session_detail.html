@@ -336,7 +336,7 @@
   var storage = document.getElementById("msg_history");
   storage.scrollTop = storage.scrollHeight;
 
-  const tutorNotification = (nickname) => {
+  const send_notification = (nickname, message) => {
     // check browser support for notifications
     if (!("Notification" in window)) {
       alert("This browser does not support desktop notification");
@@ -345,7 +345,7 @@
     // check notification permissions
     else if (Notification.permission === "granted") {
       // create a notification
-      let notification = new Notification("새로운 튜티가 대기방에 입장하였습니다.", {
+      let notification = new Notification(message, {
         body: nickname,
       });
     }
@@ -355,7 +355,7 @@
       Notification.requestPermission().then(function (permission) {
         // If the user accepts,create a notification
         if (permission === "granted") {
-          let notification = new Notification("새로운 튜티가 대기방에 입장하였습니다.", {
+          let notification = new Notification(message, {
             body: nickname,
           });
         }
@@ -460,6 +460,8 @@
         received_msg.append(received_time_date);
         incoming_msg.append(received_msg);
         storage.append(incoming_msg);
+
+        send_notification(data['nickname'], "문자왔어요!");
       }
 
       // 밑의 로직과 같지만 이름이 중복이라서 new 붙여줌
@@ -562,7 +564,7 @@
       waiting_tutee.innerHTML = parseInt(waiting_tutee.innerHTML) + 1;
       
       if (isSessionTutor == "True")
-        tutorNotification(data['waiting_tutee_nickname']);
+        send_notification(data['waiting_tutee_nickname'], "새로운 튜티가 대기방에 입장하였습니다.");
     } else if (data['type'] == "waiting_tutee_out"){
       // alert("OUT");
       let waiting_tutee = document.getElementById("waiting_tutee");
