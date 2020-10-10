@@ -77,9 +77,9 @@
   }
   set_notification_status();
 
-  import {Howl, Howler} from '/home/team/tutor_match/tutor/matching/static/matching/howler.js';
   function performance_trick()
   {
+      const {Howl, Howler} = require("/home/team/tutor_match/tutor/matching/static/matching/howler.js");
       const sounds = new Howl({
           src: ["{% static 'matching/audio/empty_loop_for_js_performance.ogg' %}","{% static 'matching/audio/empty_loop_for_js_performance.wav' %}"],
           volume:0.5,
