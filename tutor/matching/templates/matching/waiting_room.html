@@ -87,7 +87,7 @@
 
     if (data['type'] == "get_next_tutee"){
       console.log("Web socket get_next_tutee");
-      console.log(`window focus? ${window.hasFocus()}, ${document.hasFocus()}`);
+      console.log(`window focus? ${document.hasFocus()}`);
 
       if (tuteePk === `${data['next_tutee_pk']}`){
         console.log("tuteePk === next_tutee_pk");
