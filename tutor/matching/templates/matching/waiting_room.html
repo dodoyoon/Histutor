@@ -96,32 +96,32 @@
   //   };
   // })();
 
-  const tuteeNotification = () => {
-    // check browser support for notifications
-    if (!("Notification" in window)) {
-      alert("This browser does not support desktop notification");
-    }
+  // const tuteeNotification = () => {
+  //   // check browser support for notifications
+  //   if (!("Notification" in window)) {
+  //     alert("This browser does not support desktop notification");
+  //   }
 
-    // check notification permissions
-    else if (Notification.permission === "granted") {
-      // create a notification
-      let notification = new Notification("학우님 차례가 되었습니다.", {
-        body: "notification을 클릭해주세요.",
-      });
-    }
+  //   // check notification permissions
+  //   else if (Notification.permission === "granted") {
+  //     // create a notification
+  //     let notification = new Notification("학우님 차례가 되었습니다.", {
+  //       body: "notification을 클릭해주세요.",
+  //     });
+  //   }
 
-    // Otherwise, ask for permission
-    else if (Notification.permission !== "granted") {
-      Notification.requestPermission().then(function (permission) {
-        // If the user accepts,create a notification
-        if (permission === "granted") {
-          let notification = new Notification("학우님 차례가 되었습니다.", {
-            body: "notification을 클릭해주세요.",
-          });
-        }
-      });
-    }
-  }
+  //   // Otherwise, ask for permission
+  //   else if (Notification.permission !== "granted") {
+  //     Notification.requestPermission().then(function (permission) {
+  //       // If the user accepts,create a notification
+  //       if (permission === "granted") {
+  //         let notification = new Notification("학우님 차례가 되었습니다.", {
+  //           body: "notification을 클릭해주세요.",
+  //         });
+  //       }
+  //     });
+  //   }
+  // }
 
   const websocket = new WebSocket('wss://' + window.location.host + ':8443/ws/session/' + "{{pk}}" + '/');
   //const websocket = new WebSocket('ws://' + window.location.host + '/ws/session/' + "{{pk}}" + '/');
@@ -137,23 +137,13 @@
 	// console.log("get next tutee");
 
       // console.log("tutee pk: " + tuteePk +" vs " + "next tutee pk: " + data['next_tutee_pk']);
-      console.log(`tuteePk : ${typeof tuteePk}, ${tuteePk}`);
-      console.log(`data : ${typeof data['next_tutee_pk']}, ${data['next_tutee_pk']}`);
       if (tuteePk === `${data['next_tutee_pk']}`){
-        console.log("I'm in the IF statement");
         // if (isTabVisibleWaiting() == false){
         //   tuteeNotification();
         // }else{
         //   tuteeNotification();
         // }
-        if(!document.hasFocus()) {
-          console.log("The tab is not focused!");
-          tuteeNotification();
-        }else{
-          console.log("FOCUS!!!");
-          tuteeNotification();
-        }
-        // window.location.href = data['next_tutee_url'];
+        window.location.href = data['next_tutee_url'];
       }
     }
     else if (data['type'] == "new_waiting_tutee"){
