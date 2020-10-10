@@ -483,7 +483,7 @@
         storage.append(incoming_msg);
 
         if(isTabVisible() == false)
-          send_notification(data['nickname'], "문자왔어요!");
+          send_notification(data['nickname'], data['content']);
       }
 
       // 밑의 로직과 같지만 이름이 중복이라서 new 붙여줌
