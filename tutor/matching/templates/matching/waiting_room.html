@@ -86,12 +86,12 @@
     //alert("received");
 
     if (data['type'] == "get_next_tutee"){
-      window.focus();
-      window.location.href = data['next_tutee_url'];
-      // if (tuteePk === `${data['next_tutee_pk']}`){
-      //   window.focus();
-      //   window.location.href = data['next_tutee_url'];
-      // }
+      console.log("Web socket get_next_tutee");
+      if (tuteePk === `${data['next_tutee_pk']}`){
+        console.log("tuteePk === next_tutee_pk")
+        window.focus();
+        // window.location.href = data['next_tutee_url'];
+      }
     }
     else if (data['type'] == "new_waiting_tutee"){
 	    // console.log("new waiting tutee");
