@@ -363,6 +363,27 @@
     }
   }
 
+  const isTabVisible = (function () {
+    let stateKey,
+      eventKey,
+      keys = {
+        hidden: "visibilitychange",
+        webkitHidden: "webkitvisibilitychange",
+        mozHidden: "mozvisibilitychange",
+        msHidden: "msvisibilitychange",
+      };
+    for (stateKey in keys) {
+      if (stateKey in document) {
+        eventKey = keys[stateKey];
+        break;
+      }
+    }
+    return function (c) {
+      if (c) document.addEventListener(eventKey, c);
+      return !document[stateKey];
+    };
+  })();
+
   const websocket = new WebSocket('wss://' + window.location.host + ':8443/ws/session/' + "{{pk}}" + '/');
   // const websocket = new WebSocket('ws://' + window.location.host + '/ws/session/' + "{{pk}}" + '/');
 
@@ -428,7 +449,7 @@
         inner_msg.append(msg_content);
         msg.append(inner_msg);
         storage.append(msg);
-jrkj
+
       }else{
         var incoming_msg = document.createElement("div");
         incoming_msg.className = "incoming_msg";
@@ -461,7 +482,8 @@ jrkj
         incoming_msg.append(received_msg);
         storage.append(incoming_msg);
 
-        send_notification(data['nickname'], "문자왔어요!");
+        if(isTabVisible() == false)
+          send_notification(data['nickname'], "문자왔어요!");
       }
 
       // 밑의 로직과 같지만 이름이 중복이라서 new 붙여줌
