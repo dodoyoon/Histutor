@@ -145,9 +145,12 @@
         //   tuteeNotification();
         // }else{
         //   tuteeNotification();
-        // }   
+        // }
         if(!document.hasFocus()) {
           console.log("The tab is not focused!");
+          tuteeNotification();
+        }else{
+          console.log("FOCUS!!!");
           tuteeNotification();
         }
         // window.location.href = data['next_tutee_url'];
