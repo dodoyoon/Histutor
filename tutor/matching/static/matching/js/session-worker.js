@@ -4,7 +4,7 @@ onmessage = ({ data }) => {
   websocket.onmessage = ({ data }) => {
     const { type, next_tutee_pk, next_tutee_url } = JSON.parse(data);
     if(type === req_type && next_tutee_pk === tuteePk){
-      send_notification(undefined, "학우님의 차례가 되었습니다.");
+      send_notification("학우님의 차례가 되었습니다.");
       postMessage(next_tutee_url);
     }
   }
