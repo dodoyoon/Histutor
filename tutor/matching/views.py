@@ -1222,7 +1222,7 @@ def mainpage(request, showtype):
     tutoring_on = matching_models.TutorSession.objects.filter(start_time__range=(start, end), fin_time__isnull=True)
     tutoring_before_start = matching_models.TutorSession.objects.exclude(id__in=tutoring_on).filter(start_time__gte=end).order_by('start_time')
     tutoring_others = matching_models.TutorSession.objects.exclude(id__in=tutoring_on).exclude(id__in=tutoring_before_start).order_by('-pub_date')
-    tutoring_off = list(chain(tutoring_before_start, tutoring_others))
+    tutoring_off = tutoring_before_start | tutoring_others
     #tutoring_off = matching_models.TutorSession.objects.exclude(id__in=tutoring_on).order_by('').order_by('-pub_date')
     recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
     onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True).order_by('-pub_date')
