@@ -39,8 +39,7 @@
         <div id="waitingAfter">내 뒤 : <span id="waitingAfterNumber" class="inline">{{waitingAfterTutee.0}}</span></div>
       </div>
 
-      <div id="check_notification">
-        Notification 상태 : <p id="notification_status"></p>
+      <div id="notification_container">
       </div>
 
         <!-- t_rex_place -->
@@ -69,11 +68,6 @@
 
 <script>
 
-  const set_notification_status = () =>  {
-    let status = Notification.permission;
-    document.getElementById("notification_status").innerHTML = status;
-  }
-  set_notification_status();
 
   const send_notification = (nickname, message) => {
     if (!("Notification" in window)) {
