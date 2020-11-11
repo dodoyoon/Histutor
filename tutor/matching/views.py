@@ -1385,8 +1385,8 @@ def session_detail(request, pk):
 
 @login_required(login_url=LOGIN_REDIRECT_URL)
 def end_session(request, pk):
+    session = matching_models.TutorSession.objects.get(pk=pk)
     if request.user == session.tutor:
-        session = matching_models.TutorSession.objects.get(pk=pk)
         session.fin_time = timezone.localtime(timezone.now())
         session.save()
         current_tutoring = matching_models.SessionLog.objects.filter(tutor_session=session, start_time__isnull=False, fin_time__isnull=True).update(fin_time=session.fin_time)
@@ -1396,7 +1396,7 @@ def end_session(request, pk):
           'new_comment_session' + str(session.pk),
           {
             'type': 'end_session',
-            'sessionPK': 'session.pk'
+            'sessionPk': 'session.pk'
           }
         )
 
