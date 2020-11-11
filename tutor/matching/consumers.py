@@ -297,6 +297,15 @@ class SessionDetailConsumer(WebsocketConsumer):
                   'waiting_tutee_turn': waiting_tutee_turn,
               }
           )
+        elif type1 == "end_session":
+        sessionPk = text_data_json['sessionPk']
+        async_to_sync(self.channel_layer.group_send)(
+            self.group_name,
+            {
+                'type': 'end_session',
+                'sessionPk': sessionPk,
+            }
+        )
 
 
     # Receive message from room group
@@ -384,3 +393,11 @@ class SessionDetailConsumer(WebsocketConsumer):
         'type': 'waiting_tutee_out',
         'waiting_tutee_turn': waiting_tutee_turn,
       }))
+
+    def end_session(self, event):
+      sessionPk = event['sessionPk']
+
+      self.send(text_data=json.dumps({
+        'type': 'end_session',
+        'sessionPk': sessionPk,
+      })) 
