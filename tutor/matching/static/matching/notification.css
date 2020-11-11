@@ -1,0 +1,25 @@
+#notification_container{
+  display: flex;
+  justify-content: center;
+  margin: 2% 10%;
+}
+.noti-warning{
+  padding: 1rem 2rem;
+  box-shadow: 0rem 0rem 0.2rem 0.01rem #C2443D;
+}
+.noti-success{
+  padding: 1rem 2rem;
+  box-shadow: 0rem 0rem 0.2rem 0.01rem #8755AA;
+}
+#notification_container > div{
+  text-align: center;
+}
+.noti__title{
+  font-weight: bold;
+}
+.noti__helptext{
+  font-size: small;
+}
+.noti__link{
+  background:#F4E1E2;
+}
