@@ -298,14 +298,14 @@ class SessionDetailConsumer(WebsocketConsumer):
               }
           )
         elif type1 == "end_session":
-        sessionPk = text_data_json['sessionPk']
-        async_to_sync(self.channel_layer.group_send)(
-            self.group_name,
-            {
-                'type': 'end_session',
-                'sessionPk': sessionPk,
-            }
-        )
+            sessionPk = text_data_json['sessionPk']
+            async_to_sync(self.channel_layer.group_send)(
+                self.group_name,
+                {
+                    'type': 'end_session',
+                    'sessionPk': sessionPk,
+                }
+            )
 
 
     # Receive message from room group
