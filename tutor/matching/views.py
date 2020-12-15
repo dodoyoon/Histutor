@@ -423,8 +423,8 @@ def admin_home(request):
 
         print("Tutoring minutes: ", tutoring_minutes)
         print("Q&A minutes: ", QnA_minutes)
-        tutor['TutoringTime'] = '{0}분'.format(str(tutoring_minutes))
-        tutor['QnATime'] = '{0}분'.format(str(QnA_minutes))
+        tutor['TutoringTime'] = '{0}'.format(str(tutoring_minutes))
+        tutor['QnATime'] = '{0}'.format(str(QnA_minutes))
 
     current_post_page = request.GET.get('page', 1)
     tutor_paginator = Paginator(tutorList, 10)
