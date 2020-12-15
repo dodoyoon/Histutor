@@ -405,23 +405,26 @@ def admin_home(request):
         tutor['nickname'] = matching_models.Profile.objects.filter(id=tutor['id']).get().nickname
         sessionList = matching_models.TutorSession.objects.filter(tutor_id=tutor['id'])
         tutoringList = matching_models.Post.objects.filter(tutor_id=tutor['id'], fin_time__isnull=False)
-        hours = 0
-        minutes = 0
+        tutoring_minutes = 0
+        QnA_minutes = 0
+
+        # 튜터세션별 진행시간 합하기
         for session in sessionList:
             logList = matching_models.SessionLog.objects.filter(tutor_session_id=session.id, fin_time__isnull=False, is_no_show=False)
             for log in logList:
                 time_diff = log.fin_time - log.start_time
-                hours += time_diff.seconds//3600
-                minutes += time_diff.seconds//60%60
+                tutoring_minutes += (time_diff.seconds//60)%60
+                
 
+        # Q&A별로 진행시간 합하기
         for tutoring in tutoringList:
             time_diff = tutoring.fin_time - tutoring.start_time
-            hours += time_diff.seconds//3600
-            minutes += time_diff.seconds//60%60
+            QnA_minutes += (time_diff.seconds//60)%60
 
-        hours += minutes // 60
-        minutes = minutes % 60
-        tutor['totalTutoringTime'] = '{0}시간 {1}분'.format(str(hours),str(minutes))
+        print("Tutoring minutes: ", tutoring_minutes)
+        print("Q&A minutes: ", QnA_minutes)
+        tutor['TutoringTime'] = '{0}분'.format(str(tutoring_minutes))
+        tutor['QnATime'] = '{0}분'.format(str(QnA_minutes))
 
     current_post_page = request.GET.get('page', 1)
     tutor_paginator = Paginator(tutorList, 10)
