@@ -493,7 +493,7 @@ def csv_export(request):
                 time_diff = log.fin_time - log.start_time
                 tutoring_minutes += (time_diff.seconds//60)%60
 
-        writer.writerow([tutor.profile.nickname, tutor.username, cnt, tutoring_minutes])
+        writer.writerow([tutor['nickname'], tutor.username, cnt, tutoring_minutes])
 
     return response
 
