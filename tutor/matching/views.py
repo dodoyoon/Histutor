@@ -25,7 +25,10 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django import forms
 import datetime
 from django.db.models import Count, Max, Sum, Subquery, OuterRef, F, Min, Value, DateTimeField, CharField
-
+#CSV import
+from tablib import Dataset
+import pandas
+import magic, copy, csv
 
 LOGIN_REDIRECT_URL = "/matching"
 # DEFAULT PAGE
