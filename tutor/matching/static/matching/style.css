@@ -120,6 +120,7 @@ width:110px;
   top: 4px;
   float: right;
   z-index: 1;
+  font-size:75%;
 }
 
 #mainpage_ongoing_table_div {
@@ -386,7 +387,7 @@ a:hover{
   background:#eef8cc;
   margin: 0 0 0 0;
   border-radius:50%;
-  font-size:1px;
+  font-size:65%;
   height:28px;
   padding-top:1%;
 }

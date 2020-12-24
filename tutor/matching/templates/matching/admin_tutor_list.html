@@ -35,7 +35,8 @@
             <th scope="col" style="width:50px" class="text-center">번호</th>
             <th scope="col" style="width:200px" class="text-center">학생</th>
             <th scope="col" style="width:150px" class="text-center">이메일</th>
-            <th scope="col" style="width:150px" class="text-center">총 세션 + QnA 진행 시간</th>
+            <th scope="col" style="width:150px" class="text-center">코딩아워 진행시간(분)</th>
+            <th scope="col" style="width:150px" class="text-center">Q&A 진행시간(분)</th>
           </tr>
           </thead>
           <tbody>
@@ -44,7 +45,8 @@
                 <td class="text-center text-nowrap align-middle"> {{tutor.id}} </td>
                 <td class="text-center text-nowrap align-middle"><a href="{% url 'matching:tutor_detail' tutor.id %}">{{tutor.nickname}}</a></td>
                 <td class="text-center text-nowrap align-middle">{{tutor.email}}</td>
-                <td class="text-center text-nowrap align-middle">{{tutor.totalTutoringTime}}</td>
+                <td class="text-center text-nowrap align-middle">{{tutor.TutoringTime}}</td>
+                <td class="text-center text-nowrap align-middle">{{tutor.QnATime}}</td>
             </tr>
           {% endfor %}
           </tbody>

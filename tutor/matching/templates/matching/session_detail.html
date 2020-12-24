@@ -110,7 +110,7 @@
           <div class="row" style="float: right;">
               <div class="col-12-xs text-center" style="margin-right: 1em;">
                   <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" type="button" class="close" data-dismiss="modal">No</button>
-                  <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" onclick="location.href='{% url "matching:end_session" session.pk %}'">Yes</button>
+                  <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" onclick="location.href='{% url "matching:end_session" session.pk%}'">Yes</button>
               </div>
           </div>
         </div>
@@ -124,14 +124,14 @@
       <div class="modal-content">
         <div class="modal-header">
           <h4 class="modal-title">튜티 참여 여부 확인</h4>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         <div class="modal-body">
           <p><div id="current_tutee" data-tutee_id="{{current_tutee.tutee.profile.pk}}" style="display: inline;">{{current_tutee.tutee.profile.nickname}}</div>님이 튜터링에 참여하였습니까?</p>
+          <button id="closemodal" class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" data-dismiss="modal" aria-label="Close">취소</button>
           <div class="row" style="float: right;">
               <div class="col-12-xs text-center" style="margin-right: 1em;">
                   <button class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" onclick="no_show_clicked()">No</button>
-                  <button id="no_show_no_btn" class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px; background-color: #D4CFE7;" type="button" class="close" data-dismiss="modal" onclick="start_new_tutoring_ajax('False')">Yes</button>
+                  <button id="no_show_no_btn" class="btn btn-md" style="border: 2px solid #6C639C; border-radius: 15px;" type="button" class="close" data-dismiss="modal" onclick="start_new_tutoring_ajax('False')">Yes</button>
               </div>
           </div>
         </div>
@@ -146,7 +146,7 @@
     <button id="start_new_tutoring" class="mybutton" type="submit">새 튜터링 시작</button>
   </div>
   {% endif %}
-
+  
   {% if session.fin_time and user == session.tutor and not my_report %}
   <div style="margin:2% 0;">
     <form action="{% url 'matching:session_report_create' session.pk %}" method="POST">
@@ -336,7 +336,7 @@
   var storage = document.getElementById("msg_history");
   storage.scrollTop = storage.scrollHeight;
 
-  const tutorNotification = (nickname) => {
+  const send_notification = (nickname, message) => {
     // check browser support for notifications
     if (!("Notification" in window)) {
       alert("This browser does not support desktop notification");
@@ -345,7 +345,7 @@
     // check notification permissions
     else if (Notification.permission === "granted") {
       // create a notification
-      let notification = new Notification("새로운 튜티가 대기방에 입장하였습니다.", {
+      let notification = new Notification(message, {
         body: nickname,
       });
     }
@@ -355,16 +355,13 @@
       Notification.requestPermission().then(function (permission) {
         // If the user accepts,create a notification
         if (permission === "granted") {
-          let notification = new Notification("새로운 튜티가 대기방에 입장하였습니다.", {
+          let notification = new Notification(message, {
             body: nickname,
           });
         }
       });
     }
   }
-
-  const websocket = new WebSocket('wss://' + window.location.host + ':8443/ws/session/' + "{{pk}}" + '/');
-  // const websocket = new WebSocket('ws://' + window.location.host + '/ws/session/' + "{{pk}}" + '/');
 
   const isTabVisible = (function () {
     let stateKey,
@@ -387,37 +384,14 @@
     };
   })();
 
-  const messageNotification = (nickname) => {
-    // check browser support for notifications
-    if (!("Notification" in window)) {
-      alert("This browser does not support desktop notification");
-    }
-
-    // check notification permissions
-    else if (Notification.permission === "granted") {
-      // create a notification
-      let notification = new Notification("새로운 메시지가 왔습니다", {
-        body: nickname,
-      });
-    }
-
-    // Otherwise, ask for permission
-    else if (Notification.permission !== "granted") {
-      Notification.requestPermission().then(function (permission) {
-        // If the user accepts,create a notification
-        if (permission === "granted") {
-          let notification = new Notification("새로운 메시지가 왔습니다", {
-            body: nickname,
-          });
-        }
-      });
-    }
-  }
+  const websocket = new WebSocket('wss://' + window.location.host + ':8443/ws/session/' + "{{pk}}" + '/');
+  // const websocket = new WebSocket('ws://' + window.location.host + '/ws/session/' + "{{pk}}" + '/');
 
   websocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
     var req_username = "{{request.user.username}}";
     let current_tutee_pk = "{{request.user.pk}}";
+    let isSessionTutor = "{{isSessionTutor}}";
 
     // Set table structure
     /*var storage = document.getElementById("msg_history");
@@ -477,10 +451,6 @@
         storage.append(msg);
 
       }else{
-
-        if (isTabVisible() == false)
-          messageNotification(data['nickname']);
-
         var incoming_msg = document.createElement("div");
         incoming_msg.className = "incoming_msg";
         var received_msg = document.createElement("div");
@@ -511,6 +481,9 @@
         received_msg.append(received_time_date);
         incoming_msg.append(received_msg);
         storage.append(incoming_msg);
+
+        if(isTabVisible() == false)
+          send_notification(data['nickname'], data['content']);
       }
 
       // 밑의 로직과 같지만 이름이 중복이라서 new 붙여줌
@@ -596,7 +569,7 @@
       storage.append(msg);
       if (current_tutee_pk == data['current_tutee_pk']){
         // alert("Redirecting to mainpage");
-        document.location.href = data['current_tutee_url'], true;
+        window.location.href = data['current_tutee_url']; // true가 있었음
       }
     } else if (data['type'] == "get_next_tutee"){
       let tutee_name = document.getElementById("current_tutee");
@@ -611,7 +584,9 @@
       // alert("NEW");
       let waiting_tutee = document.getElementById("waiting_tutee");
       waiting_tutee.innerHTML = parseInt(waiting_tutee.innerHTML) + 1;
-      tutorNotification(data['waiting_tutee_nickname']);
+      
+      if (isSessionTutor == "True")
+        send_notification(data['waiting_tutee_nickname'], "새로운 튜티가 대기방에 입장하였습니다.");
     } else if (data['type'] == "waiting_tutee_out"){
       // alert("OUT");
       let waiting_tutee = document.getElementById("waiting_tutee");
@@ -711,11 +686,13 @@
     document.getElementById("no_show_no_btn").click();
     let current_tutee = document.getElementById("current_tutee");
     current_tutee.dataset.tutee_id = "";
-
+    
     start_new_tutoring_ajax("True");
   }
 
   const start_new_tutoring_ajax = (is_no_show) => {
+    let current_tutee = document.getElementById("current_tutee");
+    current_tutee.dataset.tutee_id = "";
     $.ajax({
             type: "POST",
             url: "{% url 'matching:start_new_tutoring' session.pk %}",
@@ -745,8 +722,8 @@
 
             },
             error: function(request, status, error){
-                alert("로그인이 필요합니다.");
-                window.location.replace("/matching/login/");
+                //alert("로그인이 필요합니다.");
+                //window.location.replace("/matching/login/");
             },
         });
   }

@@ -405,23 +405,26 @@ def admin_home(request):
         tutor['nickname'] = matching_models.Profile.objects.filter(id=tutor['id']).get().nickname
         sessionList = matching_models.TutorSession.objects.filter(tutor_id=tutor['id'])
         tutoringList = matching_models.Post.objects.filter(tutor_id=tutor['id'], fin_time__isnull=False)
-        hours = 0
-        minutes = 0
+        tutoring_minutes = 0
+        QnA_minutes = 0
+
+        # 튜터세션별 진행시간 합하기
         for session in sessionList:
             logList = matching_models.SessionLog.objects.filter(tutor_session_id=session.id, fin_time__isnull=False, is_no_show=False)
             for log in logList:
                 time_diff = log.fin_time - log.start_time
-                hours += time_diff.seconds//3600
-                minutes += time_diff.seconds//60%60
+                tutoring_minutes += (time_diff.seconds//60)%60
+                
 
+        # Q&A별로 진행시간 합하기
         for tutoring in tutoringList:
             time_diff = tutoring.fin_time - tutoring.start_time
-            hours += time_diff.seconds//3600
-            minutes += time_diff.seconds//60%60
+            QnA_minutes += (time_diff.seconds//60)%60
 
-        hours += minutes // 60
-        minutes = minutes % 60
-        tutor['totalTutoringTime'] = '{0}시간 {1}분'.format(str(hours),str(minutes))
+        print("Tutoring minutes: ", tutoring_minutes)
+        print("Q&A minutes: ", QnA_minutes)
+        tutor['TutoringTime'] = '{0}'.format(str(tutoring_minutes))
+        tutor['QnATime'] = '{0}'.format(str(QnA_minutes))
 
     current_post_page = request.GET.get('page', 1)
     tutor_paginator = Paginator(tutorList, 10)
@@ -1222,7 +1225,7 @@ def mainpage(request, showtype):
     tutoring_on = matching_models.TutorSession.objects.filter(start_time__range=(start, end), fin_time__isnull=True)
     tutoring_before_start = matching_models.TutorSession.objects.exclude(id__in=tutoring_on).filter(start_time__gte=end).order_by('start_time')
     tutoring_others = matching_models.TutorSession.objects.exclude(id__in=tutoring_on).exclude(id__in=tutoring_before_start).order_by('-pub_date')
-    tutoring_off = list(chain(tutoring_before_start, tutoring_others))
+    tutoring_off = tutoring_before_start | tutoring_others
     #tutoring_off = matching_models.TutorSession.objects.exclude(id__in=tutoring_on).order_by('').order_by('-pub_date')
     recruiting = matching_models.Post.objects.filter(finding_match = True).order_by('-pub_date')
     onprocess = matching_models.Post.objects.filter(start_time__isnull = False, fin_time__isnull = True).order_by('-pub_date')
@@ -1378,6 +1381,7 @@ def session_detail(request, pk):
     ctx['request'] = request
     waitingList = matching_models.SessionLog.objects.filter(is_waiting=True, tutor_session=session)
     ctx['waiting_tutee'] = len(waitingList)
+    ctx['isSessionTutor'] = req_user.profile.pk == session.tutor.profile.pk
     session.hit = session.hit + 1
     session.save()
     return render(request, 'matching/session_detail.html', ctx)
@@ -1389,7 +1393,19 @@ def end_session(request, pk):
         session.fin_time = timezone.localtime(timezone.now())
         session.save()
         current_tutoring = matching_models.SessionLog.objects.filter(tutor_session=session, start_time__isnull=False, fin_time__isnull=True).update(fin_time=session.fin_time)
-    return redirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
+        
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+          'new_comment_session' + str(session.pk),
+          {
+            'type': 'end_session',
+            'sessionPk': 'session.pk'
+          }
+        )
+
+        return redirect(reverse('matching:mainpage', kwargs={'showtype':'all'}))
+    else:
+        return redirect(reverse('matching:session_detail'), args=[pk])
 
 
 
