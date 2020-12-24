@@ -479,6 +479,7 @@ def csv_export(request):
     for tutor in tutorDict:
         totalTutoringTime = 0
         tutor['nickname'] = matching_models.Profile.objects.filter(id=tutor['id']).get().nickname
+        tutor['username'] = matching_models.User.objects.filter(id=tutor['id']).get().username
         sessionList = matching_models.TutorSession.objects.filter(tutor_id=tutor['id'])
         tutoringList = matching_models.Post.objects.filter(tutor_id=tutor['id'], fin_time__isnull=False)
         tutoring_minutes = 0
@@ -493,7 +494,7 @@ def csv_export(request):
                 time_diff = log.fin_time - log.start_time
                 tutoring_minutes += (time_diff.seconds//60)%60
 
-        writer.writerow([tutor['nickname'], tutor.username, cnt, tutoring_minutes])
+        writer.writerow([tutor['nickname'], tutor['username'], cnt, tutoring_minutes])
 
     return response
 
