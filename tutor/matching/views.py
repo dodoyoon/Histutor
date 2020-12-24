@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from django.db.models import F, Q, Count, Max, Sum, Min
 from django.views import generic
 from django.contrib.auth.models import User
 from .forms import PostForm, CommentForm, AcceptReportForm, AccuseForm, ReportForm, TutorReportForm, TutorSessionForm, TutorApplicationForm
@@ -25,6 +24,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.messages.views import SuccessMessageMixin
 from django import forms
 import datetime
+from django.db.models import Count, Max, Sum, Subquery, OuterRef, F, Min, Value, DateTimeField, CharField
 
 
 LOGIN_REDIRECT_URL = "/matching"
@@ -421,8 +421,6 @@ def admin_home(request):
             time_diff = tutoring.fin_time - tutoring.start_time
             QnA_minutes += (time_diff.seconds//60)%60
 
-        print("Tutoring minutes: ", tutoring_minutes)
-        print("Q&A minutes: ", QnA_minutes)
         tutor['TutoringTime'] = '{0}'.format(str(tutoring_minutes))
         tutor['QnATime'] = '{0}'.format(str(QnA_minutes))
 
@@ -462,6 +460,40 @@ def admin_home(request):
 
 
     return render(request, 'matching/admin_tutor_list.html', ctx)
+
+
+@login_required(login_url=LOGIN_REDIRECT_URL)
+@staff_member_required
+def csv_export(request):
+    tutorList = matching_models.User.objects.filter(profile__is_tutor=True)
+    tutorDict = tutorList.values()
+
+    response = HttpResponse(content_type = 'text/csv')
+    response['Content-Disposition'] = 'attachment; filename="student_final.csv"'
+    writer = csv.writer(response, delimiter=',')
+    writer.writerow(['이름', '학번', '응대횟수', '응대시간(분)'])
+
+    for tutor in tutorDict:
+        totalTutoringTime = 0
+        tutor['nickname'] = matching_models.Profile.objects.filter(id=tutor['id']).get().nickname
+        sessionList = matching_models.TutorSession.objects.filter(tutor_id=tutor['id'])
+        tutoringList = matching_models.Post.objects.filter(tutor_id=tutor['id'], fin_time__isnull=False)
+        tutoring_minutes = 0
+        QnA_minutes = 0
+
+        # 튜터세션별 진행시간 합하기
+        cnt = 0
+        for session in sessionList:
+            logList = matching_models.SessionLog.objects.filter(tutor_session_id=session.id, fin_time__isnull=False, is_no_show=False)
+            cnt += len(logList)
+            for log in logList:
+                time_diff = log.fin_time - log.start_time
+                tutoring_minutes += (time_diff.seconds//60)%60
+
+        writer.writerow([tutor.profile.nickname, tutor.username, cnt, tutoring_minutes])
+
+    return response
+
 
 
 @login_required(login_url=LOGIN_REDIRECT_URL)

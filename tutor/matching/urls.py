@@ -36,6 +36,7 @@ urlpatterns = [
   path('admin/tutor-list', views.admin_home, name='admin_home'),
   path('admin/tutee-list/', views.tutee_list, name='tutee_list'),
   path('admin/list', views.userlist, name='userlist'),
+  path('admin/csv-export', views.csv_export, name='csv_export'),
   path('admin/apply-list/', views.apply_list, name='apply_list'),
   path('admin/session-list/', views.admin_session_list, name='admin_session_list'),
   path('admin/session-log-detail/<int:session_pk>', views.session_log_detail, name='session_log_detail'),
