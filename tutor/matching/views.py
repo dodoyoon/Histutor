@@ -416,7 +416,7 @@ def admin_home(request):
             logList = matching_models.SessionLog.objects.filter(tutor_session_id=session.id, fin_time__isnull=False, is_no_show=False)
             for log in logList:
                 time_diff = log.fin_time - log.start_time
-                tutoring_minutes += (time_diff.seconds//60)
+                tutoring_minutes += min(time_diff.seconds//60, 20)
                 
 
         # Q&A별로 진행시간 합하기
