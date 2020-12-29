@@ -416,13 +416,13 @@ def admin_home(request):
             logList = matching_models.SessionLog.objects.filter(tutor_session_id=session.id, fin_time__isnull=False, is_no_show=False)
             for log in logList:
                 time_diff = log.fin_time - log.start_time
-                tutoring_minutes += (time_diff.seconds//60)%60
+                tutoring_minutes += (time_diff.seconds//60)
                 
 
         # Q&A별로 진행시간 합하기
         for tutoring in tutoringList:
             time_diff = tutoring.fin_time - tutoring.start_time
-            QnA_minutes += (time_diff.seconds//60)%60
+            QnA_minutes += (time_diff.seconds//60)
 
         tutor['TutoringTime'] = '{0}'.format(str(tutoring_minutes))
         tutor['QnATime'] = '{0}'.format(str(QnA_minutes))
@@ -1063,7 +1063,7 @@ def mypage_session(request):
             fin_time = log.fin_time
             start_time = log.start_time
             time_diff = fin_time - start_time
-            time_diff_min = (time_diff.seconds % 3600) // 60
+            time_diff_min = time_diff.seconds //60
             total_tutoring_time += time_diff_min
 
         session['total_num_tutoring'] = total_num_tutoring
