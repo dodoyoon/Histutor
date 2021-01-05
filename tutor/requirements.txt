@@ -52,4 +52,5 @@ tablib==3.0.0
 Twisted==20.3.0
 txaio==20.4.1
 urllib3==1.25.9
+uWSGI==2.0.19.1
 zope.interface==5.1.0
