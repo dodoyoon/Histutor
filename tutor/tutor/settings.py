@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '$0+k15+_qw!%t3%t!!^@gy((rnhbch95yxxx0rm8j4uvnr9lg9'
+SECRET_KEY = '' #insert secret key! 
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -87,7 +87,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'tutordb',
         'USER': 'root',
-        'PASSWORD': 'wkdak1317',
+        'PASSWORD': 'password', #enter db password
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -161,7 +161,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [("redis://:AledmaThakd@172.17.0.2:6379/0")],
+            "hosts": [("redis://:password@172.17.0.2:6379/0")],
             # "hosts": [('127.0.0.1', 6379)],
         },
     },
