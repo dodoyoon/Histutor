@@ -37,4 +37,5 @@ TA가 대기하고 있는 방에 들어가면, 일대일로 튜터링을 받을 
 - [jongeunk0613](https://github.com/jongeunk0613)
 - [yejineee](https://github.com/yejineee)
 
-## 📨 Contact Us! histudy@handong.edu
+## 📨 Contact Us! 
+21700083@handong.edu
