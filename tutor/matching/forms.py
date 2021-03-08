@@ -69,8 +69,8 @@ class TutorSessionForm(forms.ModelForm):
         
         print(now, later_time)
         
-        start_time_str = format(now, '%Y-%M-%D %H:00:00')
-        end_time_str = format(later_time, '%Y-%M-%D %H:00:00')
+        start_time_str = format(now, '%Y-%m-%d %H:00:00')
+        end_time_str = format(later_time, '%Y-%m-%d %H:00:00')
         
         print(start_time_str, end_time_str)
 
