@@ -1400,7 +1400,7 @@ def session_detail(request, pk):
             return redirect('matching:waitingroom', pk=pk)
 
     try:
-      current_tutee = matching_models.SessionLog.objects.get(is_waiting=False, start_time__isnull=False, fin_time__isnull=True, tutor_session=session)
+      current_tutee = matching_models.SessionLog.objects.filter(is_waiting=False, start_time__isnull=False, fin_time__isnull=True, tutor_session=session).earliest('start_time')
       ctx['current_tutee'] = current_tutee
     except matching_models.SessionLog.DoesNotExist:
       print("No ongoing tutee")
