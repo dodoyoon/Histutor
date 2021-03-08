@@ -1613,6 +1613,13 @@ def get_next_tutee(request, session, req_user):
         next_tutee = None
 
     if next_tutee:
+        # Exception Handling 
+        current_tutee = matching_models.SessionLog.objects.filter(is_waiting=False, start_time__isnull=False, fin_time__isnull=True, tutor_session=session)
+        if current_tutee:
+            for tutee in current_tutee:
+                tutee.fin_time = timezone.localtime(timezone.now())
+                tutee.save()
+                
         next_tutee.start_time = timezone.localtime(timezone.now())
         next_tutee.is_waiting = False
         next_tutee.save()
@@ -1620,9 +1627,10 @@ def get_next_tutee(request, session, req_user):
 
 def fin_current_tutee(request, session):
     try:
-        current_tutee = matching_models.SessionLog.objects.get(tutor_session=session, is_waiting=False, start_time__isnull=False, fin_time__isnull=True)
-        current_tutee.fin_time = timezone.now()
-        current_tutee.save()
+        current_tutee = matching_models.SessionLog.objects.filter(tutor_session=session, is_waiting=False, start_time__isnull=False, fin_time__isnull=True)
+        for tutee in current_tutee: 
+            tutee.fin_time = timezone.now()
+            tutee.save()
     except:
         current_tutee = None
     return current_tutee
