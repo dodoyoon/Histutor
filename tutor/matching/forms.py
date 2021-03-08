@@ -62,7 +62,7 @@ class TutorSessionForm(forms.ModelForm):
         super(TutorSessionForm, self).__init__(*args, **kwargs)
         now = datetime.datetime.now()
         
-        if int('{%M}'.format(now)) > 10:
+        if int(now.minute) > 10:
             now += timedelta(hours=1)
             
         later_time = now + timedelta(hours=1)
