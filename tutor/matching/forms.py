@@ -67,8 +67,8 @@ class TutorSessionForm(forms.ModelForm):
             
         later_time = now + timedelta(hours=1)
         
-        start_time_str = '{%Y-%M-%D %H:00:00}'.format(now)
-        end_time_str = '{%Y-%M-%D %H:00:00}'.format(later_time)
+        start_time_str = format(now, '%Y-%M-%D %H:00:00')
+        end_time_str = format(later_time, '%Y-%M-%D %H:00:00')
 
         self.fields['start_time'].widget = DateTimePicker(
             options={
