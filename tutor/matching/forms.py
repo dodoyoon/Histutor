@@ -3,6 +3,7 @@ from .models import Post, Report, Comment, TutorSession, TutorApplication
 from django.forms import ModelChoiceField
 from tempus_dominus.widgets import DateTimePicker, TimePicker
 import datetime
+from datetime import timedelta
 
 class AccuseForm(forms.ModelForm):
     class Meta:
@@ -60,15 +61,14 @@ class TutorSessionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(TutorSessionForm, self).__init__(*args, **kwargs)
         now = datetime.datetime.now()
-        year_info = now.strftime('%Y-%m-%d')
-        hour = now.hour
-        min = now.minute
-
-        if min > 10:
-            hour += 1
-
-        start_time_str = year_info + " " + str(hour) + ':00'
-        end_time_str = year_info + " " + str(hour+1) + ':00'
+        
+        if int('{%M}'.format(now)) > 10:
+            now += timedelta(hours=1)
+            
+        later_time = now + timedelta(hours=1)
+        
+        start_time_str = '{%Y-%M-%D %H:00:00}'.format(now)
+        end_time_str = '{%Y-%M-%D %H:00:00}'.format(later_time)
 
         self.fields['start_time'].widget = DateTimePicker(
             options={
