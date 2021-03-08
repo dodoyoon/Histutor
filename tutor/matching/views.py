@@ -24,7 +24,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.messages.views import SuccessMessageMixin
 from django import forms
 import datetime
-from django.db.models import Count, Max, Sum, Subquery, OuterRef, F, Min, Value, DateTimeField, CharField
+from django.db.models import Count, Max, Sum, Subquery, OuterRef, F, Q, Min, Value, DateTimeField, CharField
 #CSV import
 from tablib import Dataset
 import pandas
