@@ -685,14 +685,12 @@
   const no_show_clicked = () => {
     document.getElementById("no_show_no_btn").click();
     let current_tutee = document.getElementById("current_tutee");
-    current_tutee.dataset.tutee_id = "";
     
     start_new_tutoring_ajax("True");
   }
 
   const start_new_tutoring_ajax = (is_no_show) => {
     let current_tutee = document.getElementById("current_tutee");
-    current_tutee.dataset.tutee_id = "";
     $.ajax({
             type: "POST",
             url: "{% url 'matching:start_new_tutoring' session.pk %}",
@@ -726,6 +724,7 @@
                 //window.location.replace("/matching/login/");
             },
         });
+	current_tutee.dataset.tutee_id = "";
   }
 
   {% endif %}
