@@ -1634,3 +1634,22 @@ def fin_current_tutee(request, session):
     except:
         current_tutee = None
     return current_tutee
+
+
+def guideline_main(request):
+    return render(request, 'matching/histutor_guideline_main.html', {})
+
+def guideline_announcement(request):
+    return render(request, 'matching/announcement.html', {})
+
+def tutor_guideline_kor(request):
+    return render(request, 'matching/tutor_guideline_kor.html', {})
+
+def tutor_guideline_eng(request):
+    return render(request, 'matching/tutor_guideline_eng.html', {})
+
+def tutee_guideline_kor(request):
+    return render(request, 'matching/tutee_guideline_kor.html', {})
+
+def tutee_guideline_eng(request):
+    return render(request, 'matching/tutee_guideline_eng.html', {})
