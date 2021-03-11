@@ -1,0 +1,660 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Histutor Guideline [ENG] - Tutor</title><style>
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+{% load static %}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, YuMincho, "Yu Mincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Songti TC", "Songti SC", "SimSun", "Nanum Myeongjo", NanumMyeongjo, Batang, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, YuMincho, "Yu Mincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Songti TC", "Songti SC", "SimSun", "Nanum Myeongjo", NanumMyeongjo, Batang, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.highlight-default {
+}
+.highlight-gray {
+	color: rgb(155,154,151);
+}
+.highlight-brown {
+	color: rgb(100,71,58);
+}
+.highlight-orange {
+	color: rgb(217,115,13);
+}
+.highlight-yellow {
+	color: rgb(223,171,1);
+}
+.highlight-teal {
+	color: rgb(15,123,108);
+}
+.highlight-blue {
+	color: rgb(11,110,153);
+}
+.highlight-purple {
+	color: rgb(105,64,165);
+}
+.highlight-pink {
+	color: rgb(173,26,114);
+}
+.highlight-red {
+	color: rgb(224,62,62);
+}
+.highlight-gray_background {
+	background: rgb(235,236,237);
+}
+.highlight-brown_background {
+	background: rgb(233,229,227);
+}
+.highlight-orange_background {
+	background: rgb(250,235,221);
+}
+.highlight-yellow_background {
+	background: rgb(251,243,219);
+}
+.highlight-teal_background {
+	background: rgb(221,237,234);
+}
+.highlight-blue_background {
+	background: rgb(221,235,241);
+}
+.highlight-purple_background {
+	background: rgb(234,228,242);
+}
+.highlight-pink_background {
+	background: rgb(244,223,235);
+}
+.highlight-red_background {
+	background: rgb(251,228,228);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(55, 53, 47, 0.6);
+	fill: rgba(55, 53, 47, 0.6);
+}
+.block-color-brown {
+	color: rgb(100,71,58);
+	fill: rgb(100,71,58);
+}
+.block-color-orange {
+	color: rgb(217,115,13);
+	fill: rgb(217,115,13);
+}
+.block-color-yellow {
+	color: rgb(223,171,1);
+	fill: rgb(223,171,1);
+}
+.block-color-teal {
+	color: rgb(15,123,108);
+	fill: rgb(15,123,108);
+}
+.block-color-blue {
+	color: rgb(11,110,153);
+	fill: rgb(11,110,153);
+}
+.block-color-purple {
+	color: rgb(105,64,165);
+	fill: rgb(105,64,165);
+}
+.block-color-pink {
+	color: rgb(173,26,114);
+	fill: rgb(173,26,114);
+}
+.block-color-red {
+	color: rgb(224,62,62);
+	fill: rgb(224,62,62);
+}
+.block-color-gray_background {
+	background: rgb(235,236,237);
+}
+.block-color-brown_background {
+	background: rgb(233,229,227);
+}
+.block-color-orange_background {
+	background: rgb(250,235,221);
+}
+.block-color-yellow_background {
+	background: rgb(251,243,219);
+}
+.block-color-teal_background {
+	background: rgb(221,237,234);
+}
+.block-color-blue_background {
+	background: rgb(221,235,241);
+}
+.block-color-purple_background {
+	background: rgb(234,228,242);
+}
+.block-color-pink_background {
+	background: rgb(244,223,235);
+}
+.block-color-red_background {
+	background: rgb(251,228,228);
+}
+.select-value-color-default { background-color: rgba(206,205,202,0.5); }
+.select-value-color-gray { background-color: rgba(155,154,151, 0.4); }
+.select-value-color-brown { background-color: rgba(140,46,0,0.2); }
+.select-value-color-orange { background-color: rgba(245,93,0,0.2); }
+.select-value-color-yellow { background-color: rgba(233,168,0,0.2); }
+.select-value-color-green { background-color: rgba(0,135,107,0.2); }
+.select-value-color-blue { background-color: rgba(0,120,223,0.2); }
+.select-value-color-purple { background-color: rgba(103,36,222,0.2); }
+.select-value-color-pink { background-color: rgba(221,0,129,0.2); }
+.select-value-color-red { background-color: rgba(255,0,26,0.2); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="26bb9a6c-a0e3-4c5c-a310-f8561ac196e3" class="page sans"><header><div class="page-header-icon undefined"><span class="icon">👩‍🏫</span></div><h1 class="page-title">Histutor Guideline [ENG] - Tutor</h1></header><div class="page-body"><p id="15cb8aa2-a265-4ad2-979a-ad048147983d" class="">
+</p><h3 id="e4e3872c-a2f2-46de-8bd4-eb426969361f" class="">👋 Welcome to the Histutor Guideline for <mark class="highlight-yellow_background">tutors</mark>.</h3><p id="0aafbec1-6e68-4c11-a130-2ca87993f9da" class="">
+</p><nav id="60a7f728-6f04-4d4f-9b74-6162e8bc1391" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#e4e3872c-a2f2-46de-8bd4-eb426969361f">👋 Welcome to the Histutor Guideline for <mark class="highlight-yellow_background">tutors</mark>.</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#4a75ec5d-aece-4773-9c43-f3d32b4ee5b7">1. Sign in and Sign up</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#7ddb3558-6bc0-4c1f-9aa7-74f637ff8620">1) Sign in </a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#7bb7b278-bd98-4161-a424-3919833c40c1">2) Sign up</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#170718de-c03f-418a-a489-6fd154f76fc9">2. Apply as tutor</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#6fc6dda3-964d-4474-9055-d88f9eac0ee4">3. Tutoring Recruitment</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#a030701a-529c-4052-a7d4-b635db797b46">1) Create tutoring room</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#9664484b-2355-47d9-b2b7-b1459f160365">2) Start new tutoring</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#d221f286-13ee-440b-973a-51ab2f4d2783">3) End tutoring session</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#8d73d5a9-f723-4e1e-a6a0-94e75bb30e31">4) Write a report</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#bfbc43bc-c69a-4920-bdb3-646642d28a14">5) Check the report</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#69a212b8-a240-4799-a066-b1503409dba6">4. Register offline tutoring</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#140d1bac-3b3f-410e-94d5-2fa17ad5973b">5. Participate on a tutoring</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#3967a8a8-c14e-41ed-aecf-9d1430460472">1) Check the tutoring list</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#0e4e32d9-eedf-4ac4-9578-0932df1e4706">2) Start the tutoring</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#6f8b1b4f-6cbc-4610-af30-0285e3eb04fc">3) Cancel or End tutoring</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#cbd57979-2be3-4a92-94bb-b77ae3bf4c10">4) Write the report</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#449ab118-5a4c-4330-bf21-645d78d99bc6">5) Check the report</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#ec668f76-0bc4-4b62-a0df-1393f230aec7">6. My Page</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#1fc1cd9e-3492-4b18-9f73-6a87452f3930">7. Reply to comments function 🤩</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#fc8bd98c-0dfe-452a-8b5c-a83e170e672e">8. Inquiry 🙋‍♂️🙋‍♀️</a></div></nav><h1 id="4a75ec5d-aece-4773-9c43-f3d32b4ee5b7" class="">1. Sign in and Sign up</h1><h3 id="7ddb3558-6bc0-4c1f-9aa7-74f637ff8620" class="">1) Sign in </h3><p id="ee76cd4c-e440-4a9f-b5bf-eac5ed513f4b" class="">Go to <a href="https://histutor.lifove.net/">https://histutor.lifove.net/</a> and sign in using <mark class="highlight-yellow_background">handong email</mark>.</p><figure id="8993f971-e80b-4e64-be15-d1a498c3f500"><a href="https://histutor.lifove.net/" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title"></div></div><div class="bookmark-href">https://histutor.lifove.net/</div></div></a></figure><figure id="3b4b569c-dd38-4bf0-81ca-ba5e2693b3db" class="image"><a href="tutor_guideline_eng/Untitled.png' %}"><img style="width:336px" src="{% static 'matching/tutor_guideline_eng/Untitled.png' %}"/></a></figure><h3 id="7bb7b278-bd98-4161-a424-3919833c40c1" class="">2) Sign up</h3><p id="469f0066-7143-428f-8cfa-c035ffd42c80" class="">When signing in for the first time, the sign up process is carried out.</p><div id="46847a03-0391-42a5-a817-2d5ea999918c" class="column-list"><div id="b9951079-9b16-4a80-b37a-8b3e2aa7953d" style="width:50%" class="column"><figure id="ac2a7693-c36c-451f-a87a-1c4aed26f7f4" class="image"><a href="tutor_guideline_eng/Untitled1.png' %}"><img style="width:384px" src="{% static 'matching/tutor_guideline_eng/Untitled1.png' %}"/></a></figure></div><div id="39cf451c-3c51-4b09-91b4-d227fe95c406" style="width:49.99999999999999%" class="column"><ul id="67c30d28-5b5a-4f08-8ba1-e9f42459430a" class="bulleted-list"><li>Check and edit student number and name</li></ul><p id="0b672ab9-97fe-4551-a8e5-bc670dbd8ad1" class="">Make sure that your student number and name is correct; otherwise, edit it in the format of student number + name. </p><p id="31e44352-e7e2-44f8-9b06-0192fd431499" class="">Only use the two first numbers of the student number. </p><p id="25e8534d-9172-4317-8856-628fa724752e" class=""><strong>ex) 217***** Jongeun Kim → 17Jongeun Kim</strong></p><p id="87fa8a37-6770-48f9-86b7-4a8ddfd423fe" class="">
+</p><ul id="7d8edd64-e3ca-4b1e-b371-3a86cc6fa72b" class="bulleted-list"><li>Enter your phone number</li></ul><p id="792f49d9-3161-4f26-b3c2-4ef348ba0865" class="">Enter your phone number, and the sign up process is done. </p><p id="4e71b619-cc2c-4616-8f3e-d9678122f1ba" class="">
+</p><p id="4c93492a-b703-4cc0-8ce7-c7a89f12c732" class="">
+</p></div></div><p id="64a6ea05-da77-435a-b337-09ac7e4b580e" class="">
+</p><p id="f3062264-134c-4187-b46c-398679d283fc" class="">
+</p><p id="88c532ef-7ffc-469b-92ee-040b16c56f71" class="">
+</p><h1 id="170718de-c03f-418a-a489-6fd154f76fc9" class="">2. Apply as tutor</h1><ul id="776614b3-6388-407d-9dc9-d13a7240c3f4" class="bulleted-list"><li>Move to MyPage<p id="52d4da99-ec83-4a1c-adf6-94a2bd95653a" class="">Press the <mark class="highlight-yellow_background">MY PAGE</mark> button on the top right of the page. </p><figure id="f838c646-aeaf-45c4-a300-8400e99bb5db" class="image"><a href="tutor_guideline_eng/_2020-09-05__7.32.11.png' %}"><img style="width:576px" src="{% static 'matching/tutor_guideline_eng/_2020-09-05__7.32.11.png' %}"/></a></figure><p id="5ee4bf2c-0144-40f3-828d-0bcb9901be80" class="">
+</p></li></ul><ul id="6f7d12c7-63f9-44ff-bea5-cb88580c5048" class="bulleted-list"><li>Apply for tutor <p id="4953a76f-652d-47e9-9705-489c30dc1f26" class="">Press the <mark class="highlight-yellow_background">Request a tutor</mark> button from the my page. </p><figure id="21375b02-07cc-4435-9abc-85a77fa9e804" class="image"><a href="tutor_guideline_eng/_2020-09-05__7.32.52.png' %}"><img style="width:576px" src="{% static 'matching/tutor_guideline_eng/_2020-09-05__7.32.52.png' %}"/></a></figure><p id="6a34e842-970a-4107-98c1-1e62c2e4cb3b" class="">Write a simple reason of why you are application as tutor.</p><figure id="25f2a83a-a43f-496c-8dd7-f8655a0716e3" class="image"><a href="tutor_guideline_eng/_2020-09-05__7.33.44.png' %}"><img style="width:576px" src="{% static 'matching/tutor_guideline_eng/_2020-09-05__7.33.44.png' %}"/></a></figure></li></ul><p id="6fd00a1c-2781-474c-93c1-4ce6fcffa995" class="">
+</p><ul id="78d47847-eab3-4e40-a354-301732cd0999" class="bulleted-list"><li>Once the administrator approves of your tutor application, you will gain tutor privileges.</li></ul><h1 id="6fc6dda3-964d-4474-9055-d88f9eac0ee4" class="">3. Tutoring Recruitment</h1><p id="d56e8e7e-38d9-4ed6-8f46-c8d543a992f5" class="">Recruit a <mark class="highlight-yellow_background">tutoring session</mark> or a <mark class="highlight-yellow_background">coding hour session</mark>.</p><h3 id="a030701a-529c-4052-a7d4-b635db797b46" class="">1) Create tutoring room</h3><ul id="7f446631-0c97-400e-a2fa-5cc200b53665" class="bulleted-list"><li>Press the <mark class="highlight-yellow_background">Creating a tutoring room</mark> from the top right of the page. </li></ul><figure id="1135a08c-f336-4dd8-b967-cf2fd6c86baf" class="image"><a href="tutor_guideline_eng/_2020-09-05__7.41.40.png' %}"><img style="width:576px" src="{% static 'matching/tutor_guideline_eng/_2020-09-05__7.41.40.png' %}"/></a></figure><ul id="b566d0d6-4eb6-4ed5-b2cd-76ba52e7b499" class="bulleted-list"><li>Press the <mark class="highlight-yellow_background">tutor </mark>button.</li></ul><figure id="d23cc00f-254f-437b-b738-3cbb42d9b80a" class="image"><a href="tutor_guideline_eng/_2020-09-05__7.39.31.png' %}"><img style="width:624px" src="{% static 'matching/tutor_guideline_eng/_2020-09-05__7.39.31.png' %}"/></a></figure><p id="9d074899-faff-45b1-a170-f6a582a67e3a" class="">
+</p><ul id="6a858970-f6d0-4773-a7af-3e12eb54a19b" class="bulleted-list"><li>Enter information about the tutoring.</li></ul><div id="b0aa7763-479b-43b0-babf-3179a17a7b34" class="column-list"><div id="e2e9d62c-15d3-485a-881d-f616ceb9c0eb" style="width:50%" class="column"><figure id="4ed6b558-cf76-41ce-b46f-f53dd99163c2" class="image"><a href="tutor_guideline_eng/_2020-09-05__7.44.23.png' %}"><img style="width:528px" src="{% static 'matching/tutor_guideline_eng/_2020-09-05__7.44.23.png' %}"/></a></figure><p id="f49b657b-0607-4a13-ae42-c60f00ac4af5" class="">
+</p></div><div id="0dae4586-7bcb-4fae-86c1-43fea1083843" style="width:50%" class="column"><ul id="d41b6ffc-0309-4083-b60c-007c6599c1ef" class="bulleted-list"><li>Room name<p id="41bcae62-8fd1-4084-b696-e61cb27afc18" class="">Enter details on what the tutoring is about.</p></li></ul><ul id="9980684b-4714-49fd-bc6c-4a5daa27e480" class="bulleted-list"><li>Session type<p id="6a99f8ac-4090-4e9b-a8e8-d194e7c01e12" class="">Choose among <strong>interview</strong>, <strong>non-face-to-face,</strong> <strong>parallelism.</strong></p><p id="e2c52af0-9f12-4a76-8d13-235f4507c9b9" class="">interview                  → Offline</p><p id="79b4b100-b262-472c-adaf-9e3cff57ba06" class="">non-face-to-face   →  Online</p><p id="bcbbb905-aff5-4c2f-9b55-f047ca5b3e97" class="">parallelism               →  Both</p></li></ul><ul id="fecd94e9-f4b5-462a-832b-0c902c59d80d" class="bulleted-list"><li>Offline place<p id="4d53cb4e-dabd-47b1-962c-057831f98e62" class="">If the tutoring is carried out offline, enter the location.</p></li></ul><ul id="70b29cfa-780e-4ce4-bb5c-c89c532c0fb5" class="bulleted-list"><li>Start time, end itme<p id="c17c3f1c-5615-49bd-8292-b81874b5ed47" class="">Enter the tutoring&#x27;s starting time and ending time.</p></li></ul><p id="07c2b5bc-97e7-4e39-abe2-bea632ee8aee" class="">
+</p></div></div><p id="a602211c-8ccb-4844-8930-2736d5bf68ef" class="">
+</p><ul id="cfa508eb-45e9-4aab-a6b4-ff20d8c38c90" class="bulleted-list"><li>Tutoring room created<p id="6b2d649f-916e-419e-a654-4257d9d71e04" class="">We&#x27;re all set. 👏 </p><p id="bff707b2-0d55-43b3-802c-1cfd3a258b7c" class="">Now, let&#x27;s start tutoring!</p><figure id="2e33b990-d3b9-4758-9c1e-a50758f46e6a" class="image"><a href="tutor_guideline_eng/_2020-09-05__7.55.00.png' %}"><img style="width:720px" src="{% static 'matching/tutor_guideline_eng/_2020-09-05__7.55.00.png' %}"/></a></figure></li></ul><p id="d9aad5c8-19f6-4955-a3a6-9a43831e18ce" class="">
+</p><h3 id="9664484b-2355-47d9-b2b7-b1459f160365" class="">2) Start new tutoring</h3><p id="03e32aa3-6954-4dd1-a832-48aef3ecfda5" class="">Histutor&#x27;s tutoring is carried out in <mark class="highlight-yellow_background">1-on-1.</mark></p><p id="361d5ecf-d168-4343-86af-6356eb8459b3" class="">The <mark class="highlight-yellow_background">number of tutees waiting</mark> tells you how many tutees are currently waiting to participate in this tutoring session. </p><p id="d4134358-b99c-485e-98dd-5b3f846ce2cf" class="">Press the<mark class="highlight-yellow_background"> Start New Tutoring</mark> button, and bring in the waiting tutee!</p><figure id="6c0c9319-30d0-472f-86bf-d8b94c2d94de" class="image"><a href="tutor_guideline_eng/_2020-09-05__8.09.19.png' %}"><img style="width:2880px" src="{% static 'matching/tutor_guideline_eng/_2020-09-05__8.09.19.png' %}"/></a></figure><p id="e5b64df3-652d-4a60-aff0-027380142e20" class="">
+</p><ul id="4e170da2-521f-44c1-9d34-73549957c94e" class="bulleted-list"><li>When pressing the <mark class="highlight-yellow_background"> Start New Tutoring</mark> button again...</li></ul><p id="dd5be956-40bd-48b2-a49e-9f5e9af8773a" class=""> → The previous tutoring <strong>ends </strong>and</p><p id="9c474cec-f30c-45dc-a13f-7386fcdb1ca9" class=""> → A new tutoring <strong>begins</strong> with a new tutee. </p><figure id="10201a99-fa64-4819-a3bd-8fe08b0206e4" class="image"><a href="tutor_guideline_eng/_2020-09-05__8.15.06.png' %}"><img style="width:1758px" src="{% static 'matching/tutor_guideline_eng/_2020-09-05__8.15.06.png' %}"/></a></figure><h3 id="d221f286-13ee-440b-973a-51ab2f4d2783" class="">3) End tutoring session</h3><p id="aed1c274-534f-4262-b2a9-e4eb8d514ccd" class="">When all the tutoring is complete, press the <mark class="highlight-yellow_background">Tutor Session Exit</mark> button to end the tutor session.</p><figure id="07045000-ac35-424f-a944-5bd2e4fed00a" class="image"><a href="tutor_guideline_eng/_2020-09-05__8.17.53.png' %}"><img style="width:432px" src="{% static 'matching/tutor_guideline_eng/_2020-09-05__8.17.53.png' %}"/></a></figure><p id="1217b157-1531-4777-afad-2292c4ecb2ce" class="">
+</p><h3 id="8d73d5a9-f723-4e1e-a6a0-94e75bb30e31" class="">4) Write a report</h3><p id="ec02879c-8f8a-4ba0-9933-c9a468ce3f23" class="">You can write a report about the tutoring.</p><div id="f23c6f31-2b7d-410f-8ab4-68a008c194a0" class="column-list"><div id="8b17339d-e1f7-47da-8762-144ecaac5cda" style="width:50%" class="column"><figure id="68e01bb8-2aea-4c06-9ca2-b7f57b80b10a" class="image"><a href="tutor_guideline_eng/_2020-09-05__8.21.14.png' %}"><img style="width:432px" src="{% static 'matching/tutor_guideline_eng/_2020-09-05__8.21.14.png' %}"/></a></figure></div><div id="7ce780bf-f737-4051-b236-cc1969c09068" style="width:50%" class="column"><p id="d1945e43-5835-44d7-830c-e47b782d8a58" class="">→ Write briefly on <strong>what the tutoring was about</strong></p><p id="db3650a2-00af-43b1-b00e-611ccca657cb" class="">→ Enter how many <strong>minutes the tutoring took.</strong></p><p id="be4cd876-9a70-48fd-9323-2e8c8225a919" class="">
+</p><p id="aa22a95e-0620-48c5-85ed-c0f987b784fc" class="">You can write a report even during tutoring, so it would be good to write it in advance, right? 😉</p><p id="4ed83730-123a-43b4-a841-728d72cd0225" class="">
+</p></div></div><h3 id="bfbc43bc-c69a-4920-bdb3-646642d28a14" class="">5) Check the report</h3><div id="e44c437e-af9f-4b1a-9988-feef91a85106" class="column-list"><div id="57c28624-362d-4ca7-93f0-9e89037d63ce" style="width:50%" class="column"><figure id="861ac429-f779-45a4-83fd-90483f57693b" class="image"><a href="tutor_guideline_eng/_2020-09-05__8.47.07.png' %}"><img style="width:336px" src="{% static 'matching/tutor_guideline_eng/_2020-09-05__8.47.07.png' %}"/></a></figure></div><div id="afea8915-9adf-4378-b44b-57d456819625" style="width:50%" class="column"><ul id="2aac6068-8ed6-40af-819e-c156188d7cea" class="bulleted-list"><li>You can check the list of reports that you have written by pressing the <mark class="highlight-yellow_background">View Report</mark> button inside the tutoring room.</li></ul><ul id="21f67fec-96a0-41b7-a33c-9bbae01f084c" class="bulleted-list"><li>The report can only be viewed by the <mark class="highlight-yellow_background">administrator</mark> and <mark class="highlight-yellow_background">yourself</mark>.</li></ul></div></div><p id="ad457a6b-6637-4f2a-a0cb-8c222cd9dd0f" class="">
+</p><h1 id="69a212b8-a240-4799-a066-b1503409dba6" class="">4. Register offline tutoring</h1><p id="20bcbf69-c7f2-4815-ab2f-570d64d7b27e" class="">Did you do a tutoring offline?</p><p id="3c9b0e04-a42d-4c24-b7a0-327f0085eeec" class="">Then, you can write the report right away!</p><p id="998af271-621f-4bae-bab0-3b49321dbaa6" class=""><mark class="highlight-yellow_background">Create tutoring room</mark>→<mark class="highlight-yellow_background">end tutoring</mark>→<mark class="highlight-yellow_background">write a report</mark> about the tutoring you carried out offline.  🙌</p><p id="684fde72-12c7-4cd8-9cc0-9059f0b4e11c" class="">
+</p><div id="a6df60d1-e0d8-40d1-baf3-2fdf2e851a62" class="column-list"><div id="7dce324f-fba8-4d70-88e9-c94294108489" style="width:39.99999999999998%" class="column"><figure id="f42cb0c6-35d6-4306-8097-ab3ad197e4e9" class="image"><a href="tutor_guideline_eng/_2020-09-05__9.21.10.png' %}"><img style="width:800px" src="{% static 'matching/tutor_guideline_eng/_2020-09-05__9.21.10.png' %}"/></a></figure></div><div id="484d52c0-80ba-4327-9f90-dbe50d335e00" style="width:59.99999999999995%" class="column"><p id="987e50cc-4b18-4f6f-a364-54b51437c36d" class="">➡️  </p><figure id="c4506142-bf2b-47b2-8f69-9b292ca1aa63" class="image"><a href="tutor_guideline_eng/_2020-09-05__9.44.52.png' %}"><img style="width:336px" src="{% static 'matching/tutor_guideline_eng/_2020-09-05__9.44.52.png' %}"/></a></figure><p id="a6b9c783-c688-41da-a796-6d00f96ec093" class="">
+</p></div></div><h1 id="140d1bac-3b3f-410e-94d5-2fa17ad5973b" class="">5. Participate on a tutoring</h1><p id="04b00121-5828-46d5-b978-f6dfa96fef84" class="">You can participate on a tutoring that the tutee has created requesting for help.</p><h3 id="3967a8a8-c14e-41ed-aecf-9d1430460472" class="">1) Check the tutoring list</h3><p id="d3070428-c72a-442e-8701-ac5c209a76ca" class="">On the home page, you can check the tutoring of a tutee asking for help.</p><p id="a938d905-790b-4177-b12f-0f407548cca5" class="">Check for a tutoring in <mark class="highlight-yellow_background">recruiting state</mark>.</p><figure id="27680f6d-acd7-4b48-b6ce-4be96da27c0f" class="image"><a href="tutor_guideline_eng/_2020-09-05__8.22.39.png' %}"><img style="width:720px" src="{% static 'matching/tutor_guideline_eng/_2020-09-05__8.22.39.png' %}"/></a></figure><h3 id="0e4e32d9-eedf-4ac4-9578-0932df1e4706" class="">2) Start the tutoring</h3><p id="9b3cf52e-f97b-41c8-bd6d-1d73db98aafa" class="">After greeting the tutee, start the tutoring by pressing the <mark class="highlight-yellow_background">Start Tutoring</mark> button on the right.</p><figure id="9729c151-d899-4517-a0b5-aae5933a9222" class="image"><a href="tutor_guideline_eng/_2020-09-05__8.25.45.png' %}"><img style="width:1792px" src="{% static 'matching/tutor_guideline_eng/_2020-09-05__8.25.45.png' %}"/></a></figure><p id="7be06cbf-2870-4f05-9d94-68c23361a792" class="">
+</p><h3 id="6f8b1b4f-6cbc-4610-af30-0285e3eb04fc" class="">3) Cancel or End tutoring</h3><p id="6f0a581a-5668-4de4-bb09-03fb11689c3f" class="">If you cancel the tutoring for any reason, press the <mark class="highlight-yellow_background">Cancel Tutoring</mark> button.</p><p id="d50a7af5-bc13-47d8-b22e-8a4d7f7938a1" class="">When the tutoring with the tutee is finished, press the <mark class="highlight-yellow_background">Tutoring Complete</mark> button.</p><figure id="33df5648-bb48-47f8-8799-f533dc3e735e" class="image"><a href="tutor_guideline_eng/_2020-09-05__8.32.49.png' %}"><img style="width:2574px" src="{% static 'matching/tutor_guideline_eng/_2020-09-05__8.32.49.png' %}"/></a></figure><h3 id="cbd57979-2be3-4a92-94bb-b77ae3bf4c10" class="">4) Write the report</h3><p id="66d1d3a5-f710-4a4d-8184-74967afcd53d" class="">Once the tutorial is complete, write a report about the tutorial.</p><div id="53144117-a034-4238-8607-c29561a94331" class="column-list"><div id="639b6b8b-9ac5-4fb2-82ac-4beb4ca810b5" style="width:56.25%" class="column"><figure id="f709705b-d410-4c18-b693-9c8c19614b59" class="image"><a href="tutor_guideline_eng/_2020-09-05__8.37.11.png' %}"><img style="width:336px" src="{% static 'matching/tutor_guideline_eng/_2020-09-05__8.37.11.png' %}"/></a></figure></div><div id="863dda3c-5016-4374-b48d-6bf411bb21ac" style="width:43.75%" class="column"><p id="0600bd56-dade-4e25-b7d5-034f68b3e205" class="">→ Write briefly on <strong>what the tutoring was about</strong></p><p id="d35e15d2-45d7-4914-8d39-4db5a47adbf5" class="">→ Enter how many <strong>minutes the tutoring took.</strong></p><p id="68caa0ef-858b-4e0f-b91e-039041b67451" class="">
+</p><p id="ca4478ac-3718-46ca-919f-0a73b4a13e2e" class="">
+</p></div></div><p id="0b769b21-9b00-4c59-98dc-6041bc6d7328" class="">
+</p><h3 id="449ab118-5a4c-4330-bf21-645d78d99bc6" class="">5) Check the report</h3><div id="78b20893-298a-4cd9-ba33-16b3a2444a7c" class="column-list"><div id="7b8bcf93-7b14-432c-8095-2ede7bf4bcb6" style="width:50%" class="column"><figure id="c83e4254-21c0-4281-93ef-237ea6196968" class="image"><a href="tutor_guideline_eng/_2020-09-05__8.49.46.png' %}"><img style="width:384px" src="{% static 'matching/tutor_guideline_eng/_2020-09-05__8.49.46.png' %}"/></a></figure></div><div id="b611f092-2ada-4ba0-acdf-33248d37c893" style="width:50%" class="column"><ul id="27b42dfc-95de-4cbd-9b54-b8a4b401feb0" class="bulleted-list"><li>You can check the list of reports that you have written by pressing the <mark class="highlight-yellow_background">View Report</mark> button inside the tutoring room.</li></ul><ul id="34cb6a06-4bf1-4c50-b7ca-0b96393a99e5" class="bulleted-list"><li>The report can only be viewed by the <mark class="highlight-yellow_background">administrator</mark> and <mark class="highlight-yellow_background">yourself</mark>.</li></ul><p id="dbddfcf0-f5cd-4ce3-ba1c-7b96a7f232ab" class="">
+</p></div></div><h1 id="ec668f76-0bc4-4b62-a0df-1393f230aec7" class="">6. My Page</h1><p id="fedf6165-bb2e-4099-a697-474b59d2ff36" class="">You can check your tutoring history on the my page. </p><p id="4b4180a9-15ff-452c-b29a-a875ac025e03" class="">Feel proud of yourself for actively participating! 🤗</p><figure id="c60029d0-a7e9-42eb-88ef-4f24010832fd" class="image"><a href="tutor_guideline_eng/_2020-09-05__8.42.26.png' %}"><img style="width:2060px" src="{% static 'matching/tutor_guideline_eng/_2020-09-05__8.42.26.png' %}"/></a></figure><p id="1264f270-d12a-4faa-8f8b-db46c4241e14" class="">
+</p><h1 id="1fc1cd9e-3492-4b18-9f73-6a87452f3930" class="">7. Reply to comments function 🤩</h1><p id="d65ab340-df30-437b-9dfa-1d3eb8000394" class="">We introduce you the<mark class="highlight-yellow_background"> replying to comments</mark> function of Histutor.</p><p id="92a2af79-5efc-4481-a168-8d05893c960d" class="">1) Double click the message</p><p id="f3054283-6dfd-445a-81af-cc6db5694466" class=""><strong>Double-click</strong>✨ the message that you want to reply, and the comment window will show.</p><figure id="692704cf-1488-4f2e-81b1-505fe6ebabd8" class="image"><a href="tutor_guideline_eng/_2020-09-05__11.51.47.png' %}"><img style="width:384px" src="{% static 'matching/tutor_guideline_eng/_2020-09-05__11.51.47.png' %}"/></a></figure><p id="45a5d052-6323-4fcd-b18b-ff1eab7dcfd5" class="">2) Write the reply to the comment</p><p id="40b9a5fe-1d26-4add-bbc5-4d1b5294951d" class="">You can check the pretty comments you have made after writing and sending the reply contents of the message. </p><figure id="13c82ef6-97b7-43ae-9147-c371f39bc97d" class="image"><a href="tutor_guideline_eng/_2020-09-05__11.54.48.png' %}"><img style="width:432px" src="{% static 'matching/tutor_guideline_eng/_2020-09-05__11.54.48.png' %}"/></a></figure><h1 id="fc8bd98c-0dfe-452a-8b5c-a83e170e672e" class="">8. Inquiry 🙋‍♂️🙋‍♀️</h1><ul id="0672e12c-71e5-46be-8b2c-927c5d872029" class="bulleted-list"><li>Contact Histutor staffs via the email below.</li></ul><ul id="631212a0-a464-47a0-a582-ca477b231c73" class="bulleted-list"><li>Feel free to contact us at any time for Histutor bugs😱, questions, or any other kind of inquiries!</li></ul><p id="227ea967-1767-4c65-a902-43ef3418c8c1" class="">
+</p><p id="f3b37e83-31c8-4df1-9ef4-9964b5487737" class="block-color-gray"><strong>Have a question?</strong>  <strong>
+Let us know any bug on our website</strong></p><p id="1af3cfaa-d816-4177-8537-d204348561c7" class="">👉 <a href="mailto:hisystem@handong.edu">hisystem@handong.edu</a></p><p id="39e284df-9564-4b42-9724-93f1d7ceb14f" class="">
+</p></div></article></body></html>

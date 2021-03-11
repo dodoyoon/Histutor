@@ -1,0 +1,656 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Histutor Guideline [ENG] - Tutee</title><style>
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+{% load static %}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, YuMincho, "Yu Mincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Songti TC", "Songti SC", "SimSun", "Nanum Myeongjo", NanumMyeongjo, Batang, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, YuMincho, "Yu Mincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Songti TC", "Songti SC", "SimSun", "Nanum Myeongjo", NanumMyeongjo, Batang, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.highlight-default {
+}
+.highlight-gray {
+	color: rgb(155,154,151);
+}
+.highlight-brown {
+	color: rgb(100,71,58);
+}
+.highlight-orange {
+	color: rgb(217,115,13);
+}
+.highlight-yellow {
+	color: rgb(223,171,1);
+}
+.highlight-teal {
+	color: rgb(15,123,108);
+}
+.highlight-blue {
+	color: rgb(11,110,153);
+}
+.highlight-purple {
+	color: rgb(105,64,165);
+}
+.highlight-pink {
+	color: rgb(173,26,114);
+}
+.highlight-red {
+	color: rgb(224,62,62);
+}
+.highlight-gray_background {
+	background: rgb(235,236,237);
+}
+.highlight-brown_background {
+	background: rgb(233,229,227);
+}
+.highlight-orange_background {
+	background: rgb(250,235,221);
+}
+.highlight-yellow_background {
+	background: rgb(251,243,219);
+}
+.highlight-teal_background {
+	background: rgb(221,237,234);
+}
+.highlight-blue_background {
+	background: rgb(221,235,241);
+}
+.highlight-purple_background {
+	background: rgb(234,228,242);
+}
+.highlight-pink_background {
+	background: rgb(244,223,235);
+}
+.highlight-red_background {
+	background: rgb(251,228,228);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(55, 53, 47, 0.6);
+	fill: rgba(55, 53, 47, 0.6);
+}
+.block-color-brown {
+	color: rgb(100,71,58);
+	fill: rgb(100,71,58);
+}
+.block-color-orange {
+	color: rgb(217,115,13);
+	fill: rgb(217,115,13);
+}
+.block-color-yellow {
+	color: rgb(223,171,1);
+	fill: rgb(223,171,1);
+}
+.block-color-teal {
+	color: rgb(15,123,108);
+	fill: rgb(15,123,108);
+}
+.block-color-blue {
+	color: rgb(11,110,153);
+	fill: rgb(11,110,153);
+}
+.block-color-purple {
+	color: rgb(105,64,165);
+	fill: rgb(105,64,165);
+}
+.block-color-pink {
+	color: rgb(173,26,114);
+	fill: rgb(173,26,114);
+}
+.block-color-red {
+	color: rgb(224,62,62);
+	fill: rgb(224,62,62);
+}
+.block-color-gray_background {
+	background: rgb(235,236,237);
+}
+.block-color-brown_background {
+	background: rgb(233,229,227);
+}
+.block-color-orange_background {
+	background: rgb(250,235,221);
+}
+.block-color-yellow_background {
+	background: rgb(251,243,219);
+}
+.block-color-teal_background {
+	background: rgb(221,237,234);
+}
+.block-color-blue_background {
+	background: rgb(221,235,241);
+}
+.block-color-purple_background {
+	background: rgb(234,228,242);
+}
+.block-color-pink_background {
+	background: rgb(244,223,235);
+}
+.block-color-red_background {
+	background: rgb(251,228,228);
+}
+.select-value-color-default { background-color: rgba(206,205,202,0.5); }
+.select-value-color-gray { background-color: rgba(155,154,151, 0.4); }
+.select-value-color-brown { background-color: rgba(140,46,0,0.2); }
+.select-value-color-orange { background-color: rgba(245,93,0,0.2); }
+.select-value-color-yellow { background-color: rgba(233,168,0,0.2); }
+.select-value-color-green { background-color: rgba(0,135,107,0.2); }
+.select-value-color-blue { background-color: rgba(0,120,223,0.2); }
+.select-value-color-purple { background-color: rgba(103,36,222,0.2); }
+.select-value-color-pink { background-color: rgba(221,0,129,0.2); }
+.select-value-color-red { background-color: rgba(255,0,26,0.2); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="11f4d28c-80bd-47ca-9d0f-fbbbf2109d75" class="page sans"><header><div class="page-header-icon undefined"><span class="icon">🙋</span></div><h1 class="page-title">Histutor Guideline [ENG] - Tutee</h1></header><div class="page-body"><p id="8fda0534-1420-418e-917a-80e2b3292b8e" class="">
+</p><h3 id="65e20fc1-b853-44ab-8e47-fe6eef8492e9" class="">👋 Welcome to the Histutor Guideline for <mark class="highlight-yellow_background">tutees</mark>.</h3><p id="e97cd714-52a4-4298-baf2-95ae7f1d1bd8" class="">
+</p><nav id="cb4b8856-d9b5-4ac6-ab27-b5fe2e6f2416" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#65e20fc1-b853-44ab-8e47-fe6eef8492e9">👋 Welcome to the Histutor Guideline for <mark class="highlight-yellow_background">tutees</mark>.</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#44dcbc3c-4462-4265-ac8c-013bfed0fc6d">1. Sign in and Sign up</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#91e0808c-9749-4f0b-a43a-4b78385737ff">1) Sign in</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#0bd3fadb-e21b-4af2-9516-c4bb1ad94ae6">2) Sign up</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#c9e565ae-1208-429a-8b14-08c166b63ea0">2. Attend tutoring sessions</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#65f41a29-0b60-4999-863a-5838ee99a21c">1) Check tutoring list</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#5a4cacc6-8a4a-4828-8499-37f949ce2c54">2) Waiting room</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#dff9a117-ee03-4bc3-84aa-f89c74135f8e">3) Attend tutoring</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#83bd5878-e294-4552-9385-32797778050c">3. Tutoring Recruitment</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#4f91b673-1fba-48d4-80fc-7678c984e685">1) Create tutoring room</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#e9b0fecb-d261-4a93-978b-485ca68a373a">2) Start tutoring</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#c2414c2d-c6f9-4c10-b21e-4debbd54c4f6">3) Write a review (optional)</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#648662ee-9829-4f4a-a31a-eb369722cf80">4. MyPage</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#1cdd38ff-789e-4c5a-9866-65212d952bc3">5. Reply to comments function 🤩</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#70f2564b-6f7b-4215-9a77-62b727628ec0">6. Inquiry 🙋‍♂️🙋‍♀️</a></div></nav><h1 id="44dcbc3c-4462-4265-ac8c-013bfed0fc6d" class="">1. Sign in and Sign up</h1><h3 id="91e0808c-9749-4f0b-a43a-4b78385737ff" class="">1) Sign in</h3><div id="0185d67b-6276-4435-bf82-7cb637107525" class="column-list"><div id="42f12515-3b2d-4f24-8b53-010044c0b014" style="width:56.25%" class="column"><figure id="f5d35ed5-4381-4f46-ad49-31100ce96bc7" class="image"><a href="tutee_guideline_eng/Untitled-1.png' %}"><img style="width:192px" src="{% static 'matching/tutee_guideline_eng/Untitled-1.png' %}"/></a></figure><h3 id="0bd3fadb-e21b-4af2-9516-c4bb1ad94ae6" class="">2) Sign up</h3><figure id="7fa01f5d-aafe-4ff6-a40e-e1d1558dca0f" class="image"><a href="tutee_guideline_eng/Untitled1-1.png' %}"><img style="width:384px" src="{% static 'matching/tutee_guideline_eng/Untitled1-1.png' %}"/></a></figure></div><div id="1166a32a-0f38-4436-9732-771c9f09b842" style="width:43.75000000000002%" class="column"><ul id="c6befeac-e378-4200-a062-9162e2868497" class="bulleted-list"><li>Go to site<p id="447136ef-c19b-430c-88e3-38e53b47420d" class="">Go to <a href="https://histutor.lifove.net/">https://histutor.lifove.net/</a> and sign in using <mark class="highlight-yellow_background">handong email</mark>.</p><p id="9d1862bc-43df-4199-af86-bbb5089c6aa2" class="">
+</p><p id="820f2190-8882-4775-9d4b-bf034be0ab6f" class="">
+</p><p id="3784734c-7796-40f2-bc10-eebb65a00842" class="">If you try to sign in using another email, it will not work properly, so make sure to sign in using the Handong email.</p></li></ul><p id="a19b88cb-72b3-4bac-90ea-c8b139f81464" class="">
+</p><p id="623b731b-47e9-4b03-8832-a7b2538f5348" class="">
+</p><p id="2b0c0527-616e-49a5-95eb-ce3f50512384" class="">
+</p><p id="67069d39-e723-4e08-88b5-e092d6e1461c" class="">
+</p><p id="6bf9ddc8-9f2f-4b6a-8f92-d06e49c579f7" class="">
+</p><p id="2fae7484-87a9-4432-b587-a1f69f263a1b" class="">
+</p><p id="6dfe5c9e-b190-4e96-8431-0e0ad521379b" class="">
+</p><ul id="724550c8-0129-4795-ad4d-26a84d4488dd" class="bulleted-list"><li>Check and edit student number and name</li></ul><p id="0552df2d-fc47-4e60-979e-73063408c7e7" class="">Make sure that your student number and name is correct; otherwise, edit it in the format of student number + name. </p><p id="47120a8b-5ff8-44bf-8424-f4501b0a81ea" class="">Only use the two first numbers of the student number. </p><p id="048da058-41dd-4507-80c9-7230476decb7" class=""><strong>예) 217***** Jongeun Kim → 17Jongeun Kim</strong></p><p id="23c8a2c3-6bce-440b-a69c-787b76cd38a4" class="">
+</p><ul id="6cd90693-0f8e-454a-83a4-25c3df5358d5" class="bulleted-list"><li>Enter your phone number</li></ul><p id="336d8ae2-862c-40c1-b686-eb032c25cc40" class="">Enter your phone number, and the sign up process is done. </p><p id="76f3b136-1d30-4249-a802-f490dcc41874" class="">
+</p><p id="fa5908e4-487c-47ca-a704-ee629f204374" class="">
+</p><p id="90469855-88e6-411c-a04c-ff4b2fe435d8" class="">
+</p><p id="5cd1957d-681e-4a9a-b025-724c728ffd7f" class="">
+</p><p id="eb728b40-2d5a-4bc7-b2ec-60e4cdfadcae" class="">
+</p></div></div><h1 id="c9e565ae-1208-429a-8b14-08c166b63ea0" class="">2. Attend tutoring sessions</h1><p id="0ecdd10e-2b74-4229-a806-06a343cbebe1" class="">You can attend to <mark class="highlight-yellow_background">tutor sessions</mark> or <mark class="highlight-yellow_background">coding hour </mark>tutoring created by a tutor.</p><h3 id="65f41a29-0b60-4999-863a-5838ee99a21c" class="">1) Check tutoring list</h3><p id="5c3048d7-9c12-4004-870c-99dcad114825" class="">On the main page, press the title of the tutoring that you want to attend from the list of tutorings.</p><figure id="f6938d0c-211b-4f7b-894f-4d0b5a76c002" class="image"><a href="tutee_guideline_eng/Untitled.png' %}"><img style="width:2466px" src="{% static 'matching/tutee_guideline_eng/Untitled.png' %}"/></a></figure><h3 id="5a4cacc6-8a4a-4828-8499-37f949ce2c54" class="">2) Waiting room</h3><p id="eef223c6-7214-4cb3-a20c-0858e5129696" class="">Histutor&#x27;s tutoring is carried out in <mark class="highlight-yellow_background">1-on-1.</mark></p><p id="b36a7361-e63c-49f3-bc85-3564a91a0d7a" class="">Wait until you are called out by the tutor. </p><p id="651b4fbe-a105-4f44-95dd-e424f267973e" class="">You can check the total number of queues (number of tutees waiting), your queueing order, and how the number of tutees waiting in front and behind you.</p><p id="8405fc6b-5fb1-4eec-9e07-eb0c1cc18a67" class="">When it&#x27;s your turn, the screen automatically moves to the tutoring room with a notification that your turn has come.</p><p id="785ea53f-5f93-4c54-80df-f1578db1841f" class="">❗Warning❗ Please note that if you leave or refresh the waiting room page, your waiting order will be pushed back, so please be aware of this.</p><figure id="364aed7d-3723-4a59-b34f-268a872a0a1d" class="image"><a href="tutee_guideline_eng/Untitled1.png' %}"><img style="width:2880px" src="{% static 'matching/tutee_guideline_eng/Untitled1.png' %}"/></a></figure><p id="40ff7b4d-8973-4771-a748-28ffc7e06951" class="">
+</p><h3 id="dff9a117-ee03-4bc3-84aa-f89c74135f8e" class="">3) Attend tutoring</h3><p id="2c2f3755-59a8-4e13-b88c-a290e2cc3026" class="">Now you get to start the tutoring with the tutor! 🥳</p><p id="0e739d56-43c0-4d22-a4f1-9655fea2eada" class="">If you need help or have any questions, please chat about it. 🙌</p><figure id="7f275fd3-03bb-419a-aa9b-c6c2d6b6c98e" class="image"><a href="tutee_guideline_eng/Untitled2.png' %}"><img style="width:2880px" src="{% static 'matching/tutee_guideline_eng/Untitled2.png' %}"/></a></figure><p id="082eb62f-71c1-4f7b-83be-d987af0d4f78" class="">When your turn is over after asking all the questions, you will be exited to the main page by the tutor.</p><h1 id="83bd5878-e294-4552-9385-32797778050c" class="">3. Tutoring Recruitment</h1><h3 id="4f91b673-1fba-48d4-80fc-7678c984e685" class="">1) Create tutoring room</h3><p id="4c0cf8ce-e375-4cdb-8425-207518fd98c0" class="">Create a room to ask tutors for help of your need.</p><div id="0e40aa99-8764-4efa-af35-89d1276fb46b" class="column-list"><div id="64c0495e-f96c-44a6-bcab-5fc22fa24060" style="width:56.25%" class="column"><figure id="c94a9d7a-d59c-4925-b445-03d9069bc82f" class="image"><a href="tutee_guideline_eng/Untitled.png' %}"><img style="width:964px" src="{% static 'matching/tutee_guideline_eng/Untitled.png' %}"/></a></figure><figure id="4a5cf357-b503-4fd9-b0fc-e7edd8112348" class="image"><a href="tutee_guideline_eng/Untitled3.png' %}"><img style="width:1068px" src="{% static 'matching/tutee_guideline_eng/Untitled3.png' %}"/></a></figure><p id="4d3dd3c4-3fa6-4f8f-980a-ad4b6af034d4" class="">
+</p></div><div id="ceb71c44-cf85-48f7-989e-516129c5c93f" style="width:43.75000000000001%" class="column"><p id="c9700089-9ad0-420d-b494-0480aa12e628" class="">
+</p><ul id="e482872b-64a6-43f7-a097-d93d6d607a95" class="bulleted-list"><li>Create tutoring room<p id="259772df-43dd-4115-824b-72025bdb156c" class="">Press the <mark class="highlight-yellow_background">Creating a tutoring room</mark> from the top right of the page. </p></li></ul><p id="b3ce2e81-9595-401d-b9bb-fe526bea0daf" class="">
+</p><p id="a385c680-6786-4b98-b4e7-b964b213ef7e" class="">
+</p><ul id="49683779-8239-49d2-8e7f-d161c1520357" class="bulleted-list"><li>Enter the title<p id="c56bd0e3-3cf3-4844-80a3-cb02dc9316a4" class="">Enter the subject as detailed as possible so that the tutor can know in what part you need help.</p><p id="4b569207-921a-46b9-864e-11cda0dd1e78" class="">예) I need help in accessing my root account after installing MySQL.</p></li></ul><p id="0038c483-9f14-4609-97a9-6bd2e8400110" class="">
+</p></div></div><ul id="debcd906-5a08-4a0b-ac34-18354f712b33" class="bulleted-list"><li>Completed creating tutoring room</li></ul><p id="9f90db62-4d82-4ae5-88e7-6a55cf024172" class="">Now the tutoring room is created!</p><p id="6b21aacb-ddf5-4f77-95ba-44d519be7f70" class="">The room is created and the room status is set to <mark class="highlight-yellow_background">Recruiting Tutor</mark>.</p><figure id="39d84f2f-26bf-4a4a-bec0-661bd934853e" class="image"><a href="tutee_guideline_eng/Untitled4.png' %}"><img style="width:2870px" src="{% static 'matching/tutee_guideline_eng/Untitled4.png' %}"/></a></figure><p id="cab6bc7d-07aa-4341-ac15-429af7a7ae4e" class="">
+</p><h3 id="e9b0fecb-d261-4a93-978b-485ca68a373a" class="">2) Start tutoring</h3><p id="6cad45d7-fb2b-4303-b6ab-19511f51b82d" class="">You can talk with the tutor about the problem you are facing and receive help.</p><p id="c98a40f6-2e90-429e-a55c-b8f8168399ee" class="">If the tutor decides that he/she can help you with the problem, the tutor will assign him/herself as the tutor of the tutoring room and the status of the room will change to <mark class="highlight-yellow_background">Tutoring in Progress</mark>.</p><figure id="4b7e84c1-9fcc-4747-80f5-231ecc719241" class="image"><a href="tutee_guideline_eng/Untitled5.png' %}"><img style="width:2876px" src="{% static 'matching/tutee_guideline_eng/Untitled5.png' %}"/></a></figure><p id="d4626a62-87fe-4274-8adb-83008569cae2" class="">
+</p><p id="d730b7d1-13d1-47f1-8801-39e95dda1e66" class="">Once the problem is solved, the tutor ends the tutoring.</p><h3 id="c2414c2d-c6f9-4c10-b21e-4debbd54c4f6" class="">3) Write a review (optional)</h3><div id="83b48849-a002-480c-8f62-423850d4b1c8" class="column-list"><div id="79496eec-6599-455a-b6b0-faa256a45b31" style="width:56.25%" class="column"><figure id="f494aab8-e452-4a34-ba08-2d6bd0f004e9" class="image"><a href="tutee_guideline_eng/Untitled6.png' %}"><img style="width:1166px" src="{% static 'matching/tutee_guideline_eng/Untitled6.png' %}"/></a></figure></div><div id="2449414b-2752-4548-b961-a3a5f94bcaa6" style="width:43.75000000000001%" class="column"><p id="da0d625e-1e7a-4ac1-afa6-d6ef950b9d1d" class="">Leave a review of the tutoring.</p><p id="44070751-4d99-428f-97ae-dedb803aaf3e" class="">Feel free to fill out the contents. </p><p id="6b0833ff-147c-4de8-9d19-b7e835de5e0a" class="">A simple guide line of the content includes on what you have received help, how the tutor helped you, and how it actually helped you.</p></div></div><h1 id="648662ee-9829-4f4a-a31a-eb369722cf80" class="">4. MyPage</h1><p id="e33d061f-6034-4eea-bc66-3fc4a9dae2d6" class="">On My Page, you can see a list of the tutor sessions that you have recruited or have participated in.</p><figure id="6298160a-3945-49c2-8648-ead4fa382990" class="image"><a href="tutee_guideline_eng/Untitled7.png' %}"><img style="width:2880px" src="{% static 'matching/tutee_guideline_eng/Untitled7.png' %}"/></a></figure><figure id="85b70ffd-da4b-437e-82a2-f0cb5c231a31" class="image"><a href="tutee_guideline_eng/Untitled8.png' %}"><img style="width:2880px" src="{% static 'matching/tutee_guideline_eng/Untitled8.png' %}"/></a></figure><h1 id="1cdd38ff-789e-4c5a-9866-65212d952bc3" class="">5. Reply to comments function 🤩</h1><p id="5f0b68db-8028-4e2b-b07f-1c288e6b67a5" class="">We introduce you the<mark class="highlight-yellow_background"> replying to comments</mark> function of Histutor.</p><p id="c8ea14ee-af24-4d31-9833-a3ef1182a7cf" class="">1) Double click the message</p><p id="67565b0e-f01c-4684-ad33-253fbbea5195" class=""><strong>Double-click</strong>✨ the message that you want to reply, and the comment window will show.</p><figure id="4c909083-d136-4f58-83bd-233e24af45fd" class="image"><a href="tutee_guideline_eng/_2020-09-05__11.51.47.png' %}"><img style="width:384px" src="{% static 'matching/tutee_guideline_eng/_2020-09-05__11.51.47.png' %}"/></a></figure><p id="9306152d-406c-4de0-b96c-399aef45346f" class="">2) Write the reply to the comment</p><p id="4cb667c2-c667-4e84-99d0-92d778aac5f2" class="">You can check the pretty comments you have made after writing and sending the reply contents of the message. </p><figure id="6b4f37a0-9e3a-41fb-81ce-fac039b56488" class="image"><a href="tutee_guideline_eng/_2020-09-05__11.54.48.png' %}"><img style="width:432px" src="{% static 'matching/tutee_guideline_eng/_2020-09-05__11.54.48.png' %}"/></a></figure><h1 id="70f2564b-6f7b-4215-9a77-62b727628ec0" class="">6. Inquiry 🙋‍♂️🙋‍♀️</h1><ul id="34e0731a-608e-4b46-a016-b6b3c6c83007" class="bulleted-list"><li>Contact Histutor staffs via the email below.</li></ul><ul id="8f6673fb-7b0f-40e4-9620-92b91295359e" class="bulleted-list"><li>Feel free to contact us at any time for Histutor bugs😱, questions, or any other kind of inquiries!</li></ul><p id="e38cbd47-e472-4074-a187-fdb4cae6e5c1" class="">
+</p><p id="9a93ead2-5173-4149-9ebf-b9ed57f25556" class="block-color-gray"><strong>Have a question?</strong>  <strong>
+Let us know any bug on our website</strong></p><p id="b98b2e2f-45ce-4f98-85f2-da7f9061b306" class="">👉 <a href="mailto:hisystem@handong.edu">hisystem@handong.edu</a></p><p id="3ded1392-1de2-4fe2-9ba6-9fb3d704c311" class="">Press the <mark class="highlight-yellow_background">Creating a tutoring room</mark> from the top right of the page. </p></div></article></body></html>

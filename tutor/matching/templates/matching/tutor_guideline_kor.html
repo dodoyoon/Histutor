@@ -1,0 +1,664 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Histutor Guideline - Tutor</title><style>
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+{% load static %}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, YuMincho, "Yu Mincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Songti TC", "Songti SC", "SimSun", "Nanum Myeongjo", NanumMyeongjo, Batang, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, YuMincho, "Yu Mincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Songti TC", "Songti SC", "SimSun", "Nanum Myeongjo", NanumMyeongjo, Batang, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.highlight-default {
+}
+.highlight-gray {
+	color: rgb(155,154,151);
+}
+.highlight-brown {
+	color: rgb(100,71,58);
+}
+.highlight-orange {
+	color: rgb(217,115,13);
+}
+.highlight-yellow {
+	color: rgb(223,171,1);
+}
+.highlight-teal {
+	color: rgb(15,123,108);
+}
+.highlight-blue {
+	color: rgb(11,110,153);
+}
+.highlight-purple {
+	color: rgb(105,64,165);
+}
+.highlight-pink {
+	color: rgb(173,26,114);
+}
+.highlight-red {
+	color: rgb(224,62,62);
+}
+.highlight-gray_background {
+	background: rgb(235,236,237);
+}
+.highlight-brown_background {
+	background: rgb(233,229,227);
+}
+.highlight-orange_background {
+	background: rgb(250,235,221);
+}
+.highlight-yellow_background {
+	background: rgb(251,243,219);
+}
+.highlight-teal_background {
+	background: rgb(221,237,234);
+}
+.highlight-blue_background {
+	background: rgb(221,235,241);
+}
+.highlight-purple_background {
+	background: rgb(234,228,242);
+}
+.highlight-pink_background {
+	background: rgb(244,223,235);
+}
+.highlight-red_background {
+	background: rgb(251,228,228);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(55, 53, 47, 0.6);
+	fill: rgba(55, 53, 47, 0.6);
+}
+.block-color-brown {
+	color: rgb(100,71,58);
+	fill: rgb(100,71,58);
+}
+.block-color-orange {
+	color: rgb(217,115,13);
+	fill: rgb(217,115,13);
+}
+.block-color-yellow {
+	color: rgb(223,171,1);
+	fill: rgb(223,171,1);
+}
+.block-color-teal {
+	color: rgb(15,123,108);
+	fill: rgb(15,123,108);
+}
+.block-color-blue {
+	color: rgb(11,110,153);
+	fill: rgb(11,110,153);
+}
+.block-color-purple {
+	color: rgb(105,64,165);
+	fill: rgb(105,64,165);
+}
+.block-color-pink {
+	color: rgb(173,26,114);
+	fill: rgb(173,26,114);
+}
+.block-color-red {
+	color: rgb(224,62,62);
+	fill: rgb(224,62,62);
+}
+.block-color-gray_background {
+	background: rgb(235,236,237);
+}
+.block-color-brown_background {
+	background: rgb(233,229,227);
+}
+.block-color-orange_background {
+	background: rgb(250,235,221);
+}
+.block-color-yellow_background {
+	background: rgb(251,243,219);
+}
+.block-color-teal_background {
+	background: rgb(221,237,234);
+}
+.block-color-blue_background {
+	background: rgb(221,235,241);
+}
+.block-color-purple_background {
+	background: rgb(234,228,242);
+}
+.block-color-pink_background {
+	background: rgb(244,223,235);
+}
+.block-color-red_background {
+	background: rgb(251,228,228);
+}
+.select-value-color-default { background-color: rgba(206,205,202,0.5); }
+.select-value-color-gray { background-color: rgba(155,154,151, 0.4); }
+.select-value-color-brown { background-color: rgba(140,46,0,0.2); }
+.select-value-color-orange { background-color: rgba(245,93,0,0.2); }
+.select-value-color-yellow { background-color: rgba(233,168,0,0.2); }
+.select-value-color-green { background-color: rgba(0,135,107,0.2); }
+.select-value-color-blue { background-color: rgba(0,120,223,0.2); }
+.select-value-color-purple { background-color: rgba(103,36,222,0.2); }
+.select-value-color-pink { background-color: rgba(221,0,129,0.2); }
+.select-value-color-red { background-color: rgba(255,0,26,0.2); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="54d92eb8-7870-4177-88c5-127ab72fa0b7" class="page sans"><header><div class="page-header-icon undefined"><span class="icon">👩‍🏫</span></div><h1 class="page-title">Histutor Guideline - Tutor</h1></header><div class="page-body"><h3 id="7fefcbab-9b85-4937-ad40-6f65a06a17a3" class="">👋 Histutor Guideline에 오신 <mark class="highlight-yellow_background">튜터</mark> 여러분을 환영합니다.</h3><nav id="f7b00beb-e092-40fc-a38e-c67a4ffa3613" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#7fefcbab-9b85-4937-ad40-6f65a06a17a3">👋 Histutor Guideline에 오신 <mark class="highlight-yellow_background">튜터</mark> 여러분을 환영합니다.</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#97d563c3-245d-438c-a1a4-74d5e83f44b3">1. 로그인 및 회원가입</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#9e2bd4e4-eb5d-4eab-9a1f-7386de087936">1) 로그인</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#0f1a9c48-b437-4e81-a95e-bd90d8af5147">2) 회원가입</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#c60be0a9-c521-46ce-8030-c7f8689874a0">2. 튜터 신청</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#a4f6cee2-2c3e-4caa-a6fc-f4bff0302012">3. 튜터링 모집</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#6d29e08c-2f58-4ea3-a87c-cc447d2032a1">1) 튜터링 방 생성</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#9cbb3f7d-3a98-4e07-bd11-599108ff199d">2) 새 튜터링 시작</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#5a34d347-a19f-46e4-a215-bf5989000823">3) 튜터링 종료</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#9ab287f1-b3a8-4467-8d13-0dd4b11ee5dd">4) 보고서 작성</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#07806621-df48-419b-81ab-ba476d0a22be">5) 보고서 확인</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#22b91010-5f9d-4b6c-b798-a3b2ad8598ab">4. 오프라인 튜터링 등록</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#b0dca3eb-68d5-4244-8e57-97cd408a10b1">5. 튜터링 참여</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#79fc8e68-981e-434d-b903-17fe21bef8f7">1) 튜터링 리스트 확인</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#e267224f-22d3-488b-a5e6-1cf9f062a56f">2) 튜터링 시작</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#e0896792-3431-47d4-bf5d-4b8e82e9ab39">3) 튜터링 취소 or 튜터링 완료</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#97162495-9697-4746-bb16-a586a600ebfc">4) 보고서 작성</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#b017c1ee-344d-4815-8a63-ff1c1e92be88">5) 보고서 확인</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#50d6a4e5-da86-4849-b2f4-881ea0694947">6. 마이페이지</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#a28c81a5-f5a7-4285-9941-f748dc05c779">7. 대댓글 기능 🤩</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#adff6433-dc40-4e26-83d7-8c9f5dade193">8. 문의 🙋‍♂️🙋‍♀️</a></div></nav><h1 id="97d563c3-245d-438c-a1a4-74d5e83f44b3" class="">1. 로그인 및 회원가입</h1><h3 id="9e2bd4e4-eb5d-4eab-9a1f-7386de087936" class="">1) 로그인</h3><p id="95621412-709f-4656-af0a-2cec2f5eda8f" class=""><a href="https://histutor.lifove.net/">https://histutor.lifove.net/</a>에 접속해서 <strong><mark class="highlight-yellow_background">한동 이메일</mark></strong>로 로그인 합니다.</p><figure id="d3611fb8-15d9-48d8-b48d-e6b9dd2d9224"><a href="https://histutor.lifove.net/" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title"></div></div><div class="bookmark-href">https://histutor.lifove.net/</div></div></a></figure><figure id="82dbff8e-1ee1-4a98-8413-3b2c1df82f0d" class="image"><a href="tutor_guideline_kor/Untitled.png' %}"><img style="width:336px" src="{% static 'matching/tutor_guideline_kor/Untitled.png' %}"/></a></figure><h3 id="0f1a9c48-b437-4e81-a95e-bd90d8af5147" class="">2) 회원가입</h3><p id="f025f9b3-e5a9-460b-81fd-eae3cb3b5fd0" class="">첫 로그인 시 회원가입 절차가 이루어집니다.</p><div id="cdcd6044-4aa8-47b3-ba5a-c6b1233097e1" class="column-list"><div id="8cdeabd2-8fee-4dae-93af-17220f9e99a8" style="width:50%" class="column"><figure id="882787f3-57ac-4d8c-a9b6-64d07815601c" class="image"><a href="tutor_guideline_kor/Untitled1.png' %}"><img style="width:384px" src="{% static 'matching/tutor_guideline_kor/Untitled1.png' %}"/></a></figure></div><div id="8ad8b9d6-0216-45ca-bdf7-c73da5753407" style="width:49.99999999999999%" class="column"><ul id="f8be932d-2e41-4416-a3fb-903ce439e916" class="bulleted-list"><li>학번 + 이름 확인 및 수정</li></ul><p id="873cb0ac-530e-491a-9b8d-d6cddd500829" class="">자신의 학번과 이름이 맞는지 확인하시고,</p><p id="68e412f7-6d3c-4a05-baa4-3142271defb4" class="">틀렸을 경우 학번+이름 형식으로 수정해주세요.</p><p id="5be52afc-c4f7-4faf-8d82-2804210460d1" class=""><strong>예) 17학번 김종은 → 17김종은</strong></p><p id="3a6790d2-1bc5-491e-b556-6e432466801f" class="">
+</p><ul id="b6ba7265-541d-4212-ac5c-fd72f82e19a5" class="bulleted-list"><li>핸드폰 번호 입력</li></ul><p id="ca3f6afa-9d03-4167-a66b-00368f232b53" class="">핸드폰 번호를 입력하고, 회원가입을 완료합니다.</p><p id="2e97d52a-e754-4120-8bba-4d26e260c78e" class="">
+</p></div></div><p id="705c6069-3acb-40f1-8455-dc55654ad296" class="">
+</p><p id="0169c1af-eb1e-4fd9-b2ad-4001fdff84d6" class="">
+</p><p id="f809e8db-6796-4731-a065-4020c69ae7a1" class="">
+</p><h1 id="c60be0a9-c521-46ce-8030-c7f8689874a0" class="">2. 튜터 신청</h1><ul id="c12b7f0f-2f7e-4b6a-91dc-1dcc43a06add" class="bulleted-list"><li>마이페이지 이동<p id="d9b38c79-8456-4609-9c1c-2b77494da184" class="">상단 오른쪽의 <strong><mark class="highlight-yellow_background">MY PAGE</mark></strong> 버튼을 눌러 마이페이지로 이동합니다.</p><p id="13fc9ede-8859-4cd9-bee1-69cbef223794" class="">
+</p><figure id="436a1868-ec3d-40db-b7ff-6884036258c7" class="image"><a href="tutor_guideline_kor/_2020-09-19__10.26.16.png' %}"><img style="width:576px" src="{% static 'matching/tutor_guideline_kor/_2020-09-19__10.26.16.png' %}"/></a></figure></li></ul><ul id="c4c8d782-c1e6-4b74-a088-2814f51df544" class="bulleted-list"><li>튜터 신청하기 <p id="d7de3095-bf0b-4e67-8140-d07794435a53" class="">마이페이지에서 <strong><mark class="highlight-yellow_background">튜터 신청하기</mark></strong> 버튼을 클릭합니다.</p><figure id="00cccea6-7993-4ce5-a37b-f04cc7150500" class="image"><a href="tutor_guideline_kor/_2020-09-05__7.32.52.png' %}"><img style="width:576px" src="{% static 'matching/tutor_guideline_kor/_2020-09-05__7.32.52.png' %}"/></a></figure><p id="b3b80555-7fd1-4c65-8720-993aa538875d" class="">신청 이유를 간단하게 작성합니다.</p><figure id="73765c10-4cdf-4107-964f-a02949a6a4cc" class="image"><a href="tutor_guideline_kor/_2020-09-05__7.33.44.png' %}"><img style="width:576px" src="{% static 'matching/tutor_guideline_kor/_2020-09-05__7.33.44.png' %}"/></a></figure></li></ul><p id="60b65144-df09-4eab-91ca-48c3d8ea1b35" class="">
+</p><ul id="a9c0bd6c-9b38-40ee-9510-a83c61a52cce" class="bulleted-list"><li>관리자가 신청을 승인하면, 튜터 권한을 얻게 됩니다.</li></ul><h1 id="a4f6cee2-2c3e-4caa-a6fc-f4bff0302012" class="">3. 튜터링 모집</h1><p id="64b73d35-a300-4228-8040-a6a4e4714767" class=""><strong><mark class="highlight-yellow_background">튜터 세션</mark></strong>이나, <strong><mark class="highlight-yellow_background">코딩 아워</mark></strong> 튜터링을 모집합니다.</p><h3 id="6d29e08c-2f58-4ea3-a87c-cc447d2032a1" class="">1) 튜터링 방 생성</h3><ul id="6fa2e206-4738-456f-b5b0-45c78e75776e" class="bulleted-list"><li>상단의 <mark class="highlight-yellow_background"><strong>새로운 방 만들기</strong></mark>를 클릭합니다.</li></ul><figure id="46c890d5-375a-4139-9ce4-55b4c9388080" class="image"><a href="tutor_guideline_kor/_2020-09-19__10.26.16.png' %}"><img style="width:576px" src="{% static 'matching/tutor_guideline_kor/_2020-09-19__10.26.16.png' %}"/></a></figure><ul id="49dc941c-d145-4cd9-94d9-4e1e384dc336" class="bulleted-list"><li><mark class="highlight-yellow_background"><strong>TA세션</strong></mark> 버튼을 클릭합니다.<figure id="457616b2-76d1-4b8a-9528-73b8ed921b92" class="image"><a href="tutor_guideline_kor/_2020-09-19__10.27.30.png' %}"><img style="width:576px" src="{% static 'matching/tutor_guideline_kor/_2020-09-19__10.27.30.png' %}"/></a></figure></li></ul><p id="37e80bcd-fb66-4bf4-8123-a2f2c6941c97" class="">
+</p><ul id="a78121c6-830f-49b1-a47b-041bea11e8a7" class="bulleted-list"><li>튜터링 정보를 입력합니다.</li></ul><div id="88566550-0620-43d2-84ff-18de6bafecf2" class="column-list"><div id="e01674d3-c261-40ec-821b-319b7ebe13d2" style="width:50%" class="column"><figure id="fbae6f8f-6817-426f-b17e-d075da7365f1" class="image"><a href="tutor_guideline_kor/_2020-09-05__7.44.23.png' %}"><img style="width:528px" src="{% static 'matching/tutor_guideline_kor/_2020-09-05__7.44.23.png' %}"/></a></figure><p id="a4940762-6feb-43ce-85dc-bb41900e16e3" class="">
+</p></div><div id="96501521-401d-48ea-b8d1-c06811344d62" style="width:50%" class="column"><ul id="e8022aaa-461d-49ec-b30b-68d49b9fba79" class="bulleted-list"><li>방 이름 <p id="7620d72e-1dd6-4f06-a689-16f07bdfbcdb" class="">어떠한 튜터링인지를 자세하게 입력합니다.</p></li></ul><ul id="e2d10d5c-4334-497c-b3c6-68409473327a" class="bulleted-list"><li>세션 유형<p id="b371f0c5-8f0c-461a-97c7-84bdeda7403d" class=""><strong>대면</strong>, <strong>비대면</strong>, <strong>병행</strong> 중에 선택하세요.</p><p id="a22ba089-e6f5-4ca7-8ccd-5199d9d0d267" class="">대면       → [오프라인]으로 진행</p><p id="d60c296c-00ff-4c0f-a652-9c0ce6841427" class="">비대면   →  [온라인]으로 진행</p><p id="75d26975-b048-45f0-8bb3-b7a8dde9e24d" class="">병행       →  [온라인], [오프라인] 진행</p></li></ul><ul id="8e4b4fdb-b744-4895-9b6d-129c77154604" class="bulleted-list"><li>오프라인 장소<p id="8257eb9b-fd14-49c7-a89a-5d481bc7d1b0" class="">오프라인으로 튜터링을 진행한다면, </p><p id="dd7caf7f-0c6c-4ad8-95b3-18732835e682" class="">장소를 입력합니다.</p></li></ul><ul id="d7d4d90a-8846-4fa8-8c0d-b8637400c601" class="bulleted-list"><li>시작 시간, 종료 시간<p id="9c88d3f0-4806-42a7-9c1a-86d52c169b43" class="">튜터링의 시작 시간과 종료 시간을 </p><p id="a931d6fb-948a-491a-9819-40708f2f7704" class="">입력합니다.</p></li></ul><p id="2a946322-2822-4430-846f-1e6df29cf71a" class="">
+</p></div></div><p id="713cac88-8a12-4001-ac25-af97eb547392" class="">
+</p><ul id="e18d93ee-6710-417f-9aba-156a7fde8162" class="bulleted-list"><li>튜터링 방 생성 완료<p id="ff0edd6c-8bba-4776-b4da-c648640d1eb5" class="">모든 준비를 마쳤습니다 👏 </p><p id="da683dd9-e1e5-4bb7-bf42-bbd389c10b4c" class="">이제 본격적으로 튜터링을 시작해봅시다 !</p><figure id="17acfaae-9881-4ce6-bb08-2314ae6d69f2" class="image"><a href="tutor_guideline_kor/_2020-09-05__7.55.00.png' %}"><img style="width:720px" src="{% static 'matching/tutor_guideline_kor/_2020-09-05__7.55.00.png' %}"/></a></figure></li></ul><p id="c942dbc6-e3a4-4884-b207-aa3dd2bedf2d" class="">
+</p><h3 id="9cbb3f7d-3a98-4e07-bd11-599108ff199d" class="">2) 새 튜터링 시작</h3><p id="08a9b1f8-5541-4c9a-b3ac-d75c5509885f" class="">Histutor의 튜터링은<mark class="highlight-yellow_background"> </mark><strong><mark class="highlight-yellow_background">1대1 방식</mark></strong>으로 이루어집니다.</p><p id="7d0ccdce-5c12-4cc2-bbf2-5aee400f45c7" class=""><strong><mark class="highlight-yellow_background">대기 중인 튜티 수</mark></strong> 에서 현재 이 튜터링에 참여하고자 대기하는 튜티가 몇 명인지 알 수 있습니다.</p><ul id="e5756fd9-e433-4ec5-ae7b-4ef07d546589" class="bulleted-list"><li><strong><mark class="highlight-yellow_background">새 튜터링 시작</mark></strong> 버튼을 눌러, 대기중인 튜티를 불러오세요!</li></ul><figure id="852ef7d8-6634-408b-9bff-4c8d96f60cee" class="image"><a href="tutor_guideline_kor/_2020-09-05__8.09.19.png' %}"><img style="width:2880px" src="{% static 'matching/tutor_guideline_kor/_2020-09-05__8.09.19.png' %}"/></a></figure><p id="c65b2059-20a3-459c-bb80-94a82143cc75" class="">
+</p><ul id="a64173d5-ac7d-4fae-bc49-003e28a40d97" class="bulleted-list"><li><strong><mark class="highlight-yellow_background">새 튜터링 시작</mark></strong><mark class="highlight-yellow_background"> </mark> 버튼을 <strong>다시</strong> 누르면...<p id="d0578891-f03b-4221-b89c-c713e482457d" class=""> → 이전 튜터링이 <strong>종료</strong>되고</p><p id="d1022816-7358-4fcf-b9ef-455c6098ef89" class=""> → 새로운 튜티와의 튜러링이 <strong>시작</strong>됩니다.</p></li></ul><figure id="d140a631-1d47-405e-aca2-41e5f5393be8" class="image"><a href="tutor_guideline_kor/_2020-09-05__8.15.06.png' %}"><img style="width:1758px" src="{% static 'matching/tutor_guideline_kor/_2020-09-05__8.15.06.png' %}"/></a></figure><h3 id="5a34d347-a19f-46e4-a215-bf5989000823" class="">3) 튜터링 종료</h3><p id="84f57285-a514-4947-8f13-87eef75480eb" class="">모든 튜터링이 끝나면, <mark class="highlight-yellow_background"><strong>튜터 세션 종료 </strong></mark><strong> </strong>버튼을 눌러 튜터 세션을 종료합니다. </p><figure id="22be801f-d61f-4652-b65e-562a34007a93" class="image"><a href="tutor_guideline_kor/_2020-09-05__8.17.53.png' %}"><img style="width:432px" src="{% static 'matching/tutor_guideline_kor/_2020-09-05__8.17.53.png' %}"/></a></figure><p id="9065f3d7-f7cd-43d6-96e9-6a11f6e7efbe" class="">
+</p><h3 id="9ab287f1-b3a8-4467-8d13-0dd4b11ee5dd" class="">4) 보고서 작성</h3><div id="d88bcf31-7f6a-46ac-ba17-712a463323bd" class="column-list"><div id="b4f04ca8-9503-4aa0-8890-697eb994df41" style="width:50%" class="column"><figure id="dac2d5a5-ff60-4620-b1a8-19f01bc752f0" class="image"><a href="tutor_guideline_kor/_2020-09-19__10.16.06.png' %}"><img style="width:336px" src="{% static 'matching/tutor_guideline_kor/_2020-09-19__10.16.06.png' %}"/></a></figure></div><div id="edd0710b-ea78-425c-9db0-9b58902b72e6" style="width:50%" class="column"><p id="641489e4-4a9f-4d02-848d-f54d5051307f" class="">튜터링에 대한 보고서를 작성하실 수 있습니다.</p><p id="34e509b8-ddfa-4243-b008-74f96b69e000" class="">→ <strong>간단하게 어떤 내용의 튜터링</strong>이었는지 적어주세요!</p><p id="16126028-3b1d-48ef-9732-8fac50b8ce72" class="">
+</p></div></div><p id="0d0f1339-e375-4365-a23a-8f7939ecda12" class="">
+</p><p id="23601ef9-62ff-4753-8bad-2adfc97ec3e5" class="">
+</p><p id="13f4f106-23cd-492a-a651-88ea77dc81b7" class="">
+</p><p id="ee4d17af-4ebe-49b8-9b47-b04a9ba620ef" class="">
+</p><h3 id="07806621-df48-419b-81ab-ba476d0a22be" class="">5) 보고서 확인</h3><div id="a5a15b2f-def0-4578-b9d1-4140360b85a1" class="column-list"><div id="b632b675-5ec3-4550-9585-7dda52dce30f" style="width:50%" class="column"><figure id="55f4a6e0-3912-4e3f-88df-23bde06a013f" class="image"><a href="tutor_guideline_kor/_2020-09-05__8.47.07.png' %}"><img style="width:336px" src="{% static 'matching/tutor_guideline_kor/_2020-09-05__8.47.07.png' %}"/></a></figure></div><div id="d79652fc-a332-4dbf-8fe0-761ad28d7c1b" style="width:50%" class="column"><ul id="cfb5d6c7-7e62-43c8-85d9-c945a1c73d76" class="bulleted-list"><li>내가 작성한 보고서의 리스트는 <p id="a11f5c14-1664-41b2-ba04-9279b10f8431" class="">튜터링 방 내부에 <mark class="highlight-yellow_background"><strong>보고서 보기 </strong></mark>버튼을 누르면 확인할 수 있습니다.</p></li></ul><ul id="b963c264-a482-4f04-9cd3-dfb63fe55569" class="bulleted-list"><li>보고서는 <strong>관리자</strong>와 <strong>자신</strong>만 확인할 수 있습니다.</li></ul><p id="e1f9fb42-d835-402a-a994-5694cb483cf7" class="">
+</p></div></div><p id="273225d6-202f-44bf-a062-3748d60a1e12" class="">
+</p><h1 id="22b91010-5f9d-4b6c-b798-a3b2ad8598ab" class="">4. 오프라인 튜터링 등록</h1><p id="99c72b3e-460e-4225-a21f-c2d0c91d1c02" class="">오프라인에서 튜터링을 진행하셨나요?</p><p id="cdd05df3-e343-412a-8ec9-66dd9e08cfc1" class="">그렇다면, 바로 보고서를 작성하시면 됩니다!</p><p id="b09a33ce-f34f-482d-aadf-c0f471455d8f" class="">
+</p><p id="ff89162b-ad38-439f-bcaa-e63ac3b528f1" class=""><mark class="highlight-yellow_background">튜터링 방 생성</mark> → <mark class="highlight-yellow_background">튜터링 종료</mark> → <mark class="highlight-yellow_background">보고서 작성</mark> 하여 진행한 튜터링을 남겨주세요 🙌</p><p id="f363fc8f-996d-456c-9861-117951e30949" class="">
+</p><div id="c0c4e734-6b74-4907-bbb5-8964ee85d429" class="column-list"><div id="45f7063e-f9fe-4d91-9fd0-9fa11aee6064" style="width:39.99999999999998%" class="column"><figure id="b89ec114-43a9-4a66-901c-f44cb0c372ee" class="image"><a href="tutor_guideline_kor/_2020-09-05__9.21.10.png' %}"><img style="width:800px" src="{% static 'matching/tutor_guideline_kor/_2020-09-05__9.21.10.png' %}"/></a></figure></div><div id="2c72eb31-b537-4369-8ed3-83d64970ca4d" style="width:59.99999999999995%" class="column"><p id="24a6899d-b5ea-4900-b4a6-80034bd5449c" class="">➡️  </p><p id="2381e053-3468-4465-bb8a-cd632113e027" class="">
+</p><figure id="83a6b446-e18d-40b0-819c-f8f9014c615e" class="image"><a href="tutor_guideline_kor/_2020-09-19__10.16.06.png' %}"><img style="width:336px" src="{% static 'matching/tutor_guideline_kor/_2020-09-19__10.16.06.png' %}"/></a></figure></div></div><h1 id="b0dca3eb-68d5-4244-8e57-97cd408a10b1" class="">5. 튜터링 참여</h1><p id="69949b1e-fb35-4430-a5a6-d8e01b685160" class="">튜티가 도움을 요청하는 튜터링에 참여하실 수 있습니다.</p><h3 id="79fc8e68-981e-434d-b903-17fe21bef8f7" class="">1) 튜터링 리스트 확인</h3><p id="2012c4b7-c9b5-481a-b200-62d93698a688" class="">홈 화면에서 튜티가 도움을 요청하는 튜터링을 확인하실 수 있습니다.</p><p id="084b0886-2c71-4fca-b9c2-f7a4150a8f20" class=""><mark class="highlight-yellow_background"><strong>모집중인 튜터링</strong></mark>이 있는지 확인합니다.</p><p id="b2d201ea-6dcb-4a3c-b893-91d91518515c" class="">
+</p><figure id="ac47010c-f961-43dc-af2d-72fcc6b5a727" class="image"><a href="tutor_guideline_kor/_2020-09-05__8.22.39.png' %}"><img style="width:720px" src="{% static 'matching/tutor_guideline_kor/_2020-09-05__8.22.39.png' %}"/></a></figure><h3 id="e267224f-22d3-488b-a5e6-1cf9f062a56f" class="">2) 튜터링 시작</h3><p id="c69b559d-c6cf-4e17-9154-a9e9f19f0ff6" class="">튜티와 인사를 나누고, 우측의 <strong><mark class="highlight-yellow_background">튜터링 시작 </mark></strong>버튼을 눌러 튜터링을 시작해보세요!</p><figure id="1299d77e-edc3-4f52-a0db-7f412cfc3511" class="image"><a href="tutor_guideline_kor/_2020-09-05__8.25.45.png' %}"><img style="width:1792px" src="{% static 'matching/tutor_guideline_kor/_2020-09-05__8.25.45.png' %}"/></a></figure><p id="d7c2a165-7346-48bb-a5d0-f439c9c45ae9" class="">
+</p><h3 id="e0896792-3431-47d4-bf5d-4b8e82e9ab39" class="">3) 튜터링 취소 or 튜터링 완료</h3><p id="8bb3a37c-9569-463e-8e6e-0a0de2fa2607" class="">어떠한 이유로 튜터링을 취소한다면, <mark class="highlight-yellow_background"><strong>튜터링 취소</strong></mark> 버튼을 눌러주세요.</p><p id="ca649dd8-f1cf-4fb5-9f60-8623fd649817" class="">튜티와의 튜터링이 종료되었다면, <strong><mark class="highlight-yellow_background">튜터링 완료</mark></strong> 버튼을 눌러주세요.</p><figure id="a043555c-87e3-4a6f-81ef-c01c0c329877" class="image"><a href="tutor_guideline_kor/_2020-09-05__8.32.49.png' %}"><img style="width:2574px" src="{% static 'matching/tutor_guideline_kor/_2020-09-05__8.32.49.png' %}"/></a></figure><h3 id="97162495-9697-4746-bb16-a586a600ebfc" class="">4) 보고서 작성</h3><p id="ef81f2db-739f-42f4-bfcd-f9763bb1aa7d" class="">튜터링이 완료되었으면, 튜터링에 대한 보고서를 작성하실 수 있습니다. </p><div id="818c4cc8-5877-4974-9324-3123db084117" class="column-list"><div id="6decd408-73bf-4eaa-b77d-96d2fb898f96" style="width:56.25%" class="column"><figure id="8691e00d-915f-4365-957d-e91360308027" class="image"><a href="tutor_guideline_kor/_2020-09-05__8.37.11.png' %}"><img style="width:336px" src="{% static 'matching/tutor_guideline_kor/_2020-09-05__8.37.11.png' %}"/></a></figure></div><div id="c149bf5b-6ec5-4917-820a-c0b16636a629" style="width:43.75%" class="column"><p id="7d35a8f9-62f0-45e1-8d40-d8c177475bd7" class="">→ <strong>간단하게 어떤 내용의 튜터링</strong>이었는지</p><p id="9b00bb96-a75a-4ee3-b80f-521c56f424ff" class="">→ <strong>몇 분간 진행</strong>하였는지 적어주세요!</p><p id="d397f230-04a8-4bbb-b424-68ad5c477f1b" class="">
+</p><p id="fef776a4-e245-41af-822a-302db986fcc1" class="">
+</p></div></div><p id="828a010f-d95b-4bca-bcf9-11df3aa809a3" class="">
+</p><h3 id="b017c1ee-344d-4815-8a63-ff1c1e92be88" class="">5) 보고서 확인</h3><div id="e9ca7c7a-4342-42f6-aeaf-97f80e69e812" class="column-list"><div id="459e5924-624c-4f72-81e2-dc916797c942" style="width:50%" class="column"><figure id="8fcd4fc0-102d-4e91-86e0-717898001863" class="image"><a href="tutor_guideline_kor/_2020-09-05__8.49.46.png' %}"><img style="width:384px" src="{% static 'matching/tutor_guideline_kor/_2020-09-05__8.49.46.png' %}"/></a></figure></div><div id="a0363f7d-504b-4077-a844-a11804a0df66" style="width:50%" class="column"><ul id="758cb898-0295-48b6-ae6d-e904a9a243fe" class="bulleted-list"><li>내가 작성한 보고서의 리스트는 <p id="97645158-63a2-4495-ba62-afa8bb8239a8" class="">튜터링 방 내부에 <mark class="highlight-yellow_background"><strong>보고서 보기 </strong></mark>버튼을 누르면 확인할 수 있습니다.</p></li></ul><ul id="d3c95646-b697-4cbd-8c4d-ec19c5953f90" class="bulleted-list"><li>보고서는 <strong>관리자</strong>와 <strong>자신</strong>만 확인할 수 있습니다.</li></ul><p id="36b189aa-4741-4246-a962-12d7217be202" class="">
+</p></div></div><h1 id="50d6a4e5-da86-4849-b2f4-881ea0694947" class="">6. 마이페이지</h1><p id="1ce67d81-4598-40f8-825d-a7a571fa6be0" class="">마이페이지에서 그동안의 내 이력을 확인할 수 있습니다.</p><p id="3f90b083-c5b0-4e04-be40-5b183e7708a4" class="">적극적으로 참여한 자신에게 뿌듯함을 느껴보세요 ! 🤗</p><figure id="c0fb1cb7-d06e-44b1-a8a3-30f814f560fa" class="image"><a href="tutor_guideline_kor/_2020-09-19__10.24.41.png' %}"><img style="width:2880px" src="{% static 'matching/tutor_guideline_kor/_2020-09-19__10.24.41.png' %}"/></a></figure><p id="48f60d60-0d12-4ecd-8e56-4f6ec957d87d" class="">
+</p><h1 id="a28c81a5-f5a7-4285-9941-f748dc05c779" class="">7. 대댓글 기능 🤩</h1><p id="c3cbd3f2-da7b-4095-9af6-486a557ac7a0" class="">Histutor의 <strong>대댓글 기능</strong>을 소개합니다.</p><p id="ae3138d2-33a2-4ec7-a00c-4d1bc3f4a9bc" class="">1) 채팅을 더블클릭으로 선택</p><p id="940519c0-436c-4c3f-936a-c6f7475cf0fe" class="">답을 남기고 싶은 채팅에 <strong>더블 클릭</strong>✨을 하면,  대댓글 창이 열리게 됩니다.</p><figure id="62652718-bc16-45c5-a474-6d6517b6ce60" class="image"><a href="tutor_guideline_kor/_2020-09-05__11.51.47.png' %}"><img style="width:384px" src="{% static 'matching/tutor_guideline_kor/_2020-09-05__11.51.47.png' %}"/></a></figure><p id="fecbebbb-cc44-4bdd-aa2a-5557bc761f41" class="">2) 댓글에 대한 답을 작성</p><p id="66e2be2f-7811-47ea-8655-da85059c70b1" class="">남기고 싶은 말을 남겼다면, 이쁜 대댓글을 확인하실 수 있습니다.</p><figure id="2a8f85e4-5d72-43bb-afce-5147d5d4d1c3" class="image"><a href="tutor_guideline_kor/_2020-09-05__11.54.48.png' %}"><img style="width:432px" src="{% static 'matching/tutor_guideline_kor/_2020-09-05__11.54.48.png' %}"/></a></figure><h1 id="adff6433-dc40-4e26-83d7-8c9f5dade193" class="">8. 문의 🙋‍♂️🙋‍♀️</h1><ul id="98dc6942-c9bd-4146-bbcd-4ba84af939f4" class="bulleted-list"><li>아래 이메일을 통해 Histutor에게 연락할 수 있습니다.</li></ul><ul id="b50b9ce9-411e-4247-b49d-47419dc3d7ce" class="bulleted-list"><li>버그😱가 발견되거나, 문의사항이 있으시다면, 언제든지 연락 주세요!</li></ul><p id="3f1abc92-3658-4541-b90f-16ad77ac3525" class="">
+</p><p id="b019d18e-73f1-4700-a2e5-9726a01d0e48" class="block-color-gray"><strong>Have a question?</strong>  <strong>
+Let us know any bug on our website</strong></p><p id="25de4158-57fb-48d0-a2d4-3419eb5dd0c9" class="">👉 <a href="mailto:hisystem@handong.edu">hisystem@handong.edu</a></p><p id="6f565c8a-b753-4050-aa4a-a303a6df354c" class="">
+</p><p id="fe8f842b-0a88-4675-a7b3-45800b4b18f5" class="">
+</p></div></article></body></html>

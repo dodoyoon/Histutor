@@ -1,0 +1,657 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Histutor Guideline - Tutee</title><style>
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+{% load static %}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, YuMincho, "Yu Mincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Songti TC", "Songti SC", "SimSun", "Nanum Myeongjo", NanumMyeongjo, Batang, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, YuMincho, "Yu Mincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Songti TC", "Songti SC", "SimSun", "Nanum Myeongjo", NanumMyeongjo, Batang, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.highlight-default {
+}
+.highlight-gray {
+	color: rgb(155,154,151);
+}
+.highlight-brown {
+	color: rgb(100,71,58);
+}
+.highlight-orange {
+	color: rgb(217,115,13);
+}
+.highlight-yellow {
+	color: rgb(223,171,1);
+}
+.highlight-teal {
+	color: rgb(15,123,108);
+}
+.highlight-blue {
+	color: rgb(11,110,153);
+}
+.highlight-purple {
+	color: rgb(105,64,165);
+}
+.highlight-pink {
+	color: rgb(173,26,114);
+}
+.highlight-red {
+	color: rgb(224,62,62);
+}
+.highlight-gray_background {
+	background: rgb(235,236,237);
+}
+.highlight-brown_background {
+	background: rgb(233,229,227);
+}
+.highlight-orange_background {
+	background: rgb(250,235,221);
+}
+.highlight-yellow_background {
+	background: rgb(251,243,219);
+}
+.highlight-teal_background {
+	background: rgb(221,237,234);
+}
+.highlight-blue_background {
+	background: rgb(221,235,241);
+}
+.highlight-purple_background {
+	background: rgb(234,228,242);
+}
+.highlight-pink_background {
+	background: rgb(244,223,235);
+}
+.highlight-red_background {
+	background: rgb(251,228,228);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(55, 53, 47, 0.6);
+	fill: rgba(55, 53, 47, 0.6);
+}
+.block-color-brown {
+	color: rgb(100,71,58);
+	fill: rgb(100,71,58);
+}
+.block-color-orange {
+	color: rgb(217,115,13);
+	fill: rgb(217,115,13);
+}
+.block-color-yellow {
+	color: rgb(223,171,1);
+	fill: rgb(223,171,1);
+}
+.block-color-teal {
+	color: rgb(15,123,108);
+	fill: rgb(15,123,108);
+}
+.block-color-blue {
+	color: rgb(11,110,153);
+	fill: rgb(11,110,153);
+}
+.block-color-purple {
+	color: rgb(105,64,165);
+	fill: rgb(105,64,165);
+}
+.block-color-pink {
+	color: rgb(173,26,114);
+	fill: rgb(173,26,114);
+}
+.block-color-red {
+	color: rgb(224,62,62);
+	fill: rgb(224,62,62);
+}
+.block-color-gray_background {
+	background: rgb(235,236,237);
+}
+.block-color-brown_background {
+	background: rgb(233,229,227);
+}
+.block-color-orange_background {
+	background: rgb(250,235,221);
+}
+.block-color-yellow_background {
+	background: rgb(251,243,219);
+}
+.block-color-teal_background {
+	background: rgb(221,237,234);
+}
+.block-color-blue_background {
+	background: rgb(221,235,241);
+}
+.block-color-purple_background {
+	background: rgb(234,228,242);
+}
+.block-color-pink_background {
+	background: rgb(244,223,235);
+}
+.block-color-red_background {
+	background: rgb(251,228,228);
+}
+.select-value-color-default { background-color: rgba(206,205,202,0.5); }
+.select-value-color-gray { background-color: rgba(155,154,151, 0.4); }
+.select-value-color-brown { background-color: rgba(140,46,0,0.2); }
+.select-value-color-orange { background-color: rgba(245,93,0,0.2); }
+.select-value-color-yellow { background-color: rgba(233,168,0,0.2); }
+.select-value-color-green { background-color: rgba(0,135,107,0.2); }
+.select-value-color-blue { background-color: rgba(0,120,223,0.2); }
+.select-value-color-purple { background-color: rgba(103,36,222,0.2); }
+.select-value-color-pink { background-color: rgba(221,0,129,0.2); }
+.select-value-color-red { background-color: rgba(255,0,26,0.2); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="ddce134e-2073-421b-9354-2760e173a08e" class="page sans"><header><div class="page-header-icon undefined"><span class="icon">🙋</span></div><h1 class="page-title">Histutor Guideline - Tutee</h1></header><div class="page-body"><p id="159d74f9-5200-4b73-9db6-254c4d6a4aa4" class="">
+</p><h3 id="42872d53-efc2-4ee9-a0b5-15c414b9b550" class="">👋 Histutor Guideline에 오신 <mark class="highlight-yellow_background">튜티</mark> 여러분을 환영합니다.</h3><p id="42746e88-c08f-4f65-b212-68ea0f420be9" class="">
+</p><nav id="ff3a1f4f-32d4-4715-a768-1223f213a5eb" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#42872d53-efc2-4ee9-a0b5-15c414b9b550">👋 Histutor Guideline에 오신 <mark class="highlight-yellow_background">튜티</mark> 여러분을 환영합니다.</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#96c77502-149a-43b1-b385-90a4b07bcc37">1. 로그인 및 회원가입</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#abc87473-9e55-4cd5-912c-2f3818c2b5a5">1) 로그인</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#fcfaf4b0-5d1b-4f49-be60-a063fb334ad6">2) 회원가입</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#64eec812-7651-429d-9360-9737c0b9299c">2. 튜터링 참여</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#ed2e1f50-a740-4bb7-9b37-843690bf4532">1) 튜터링 리스트 확인</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#f65615bd-acd2-4066-9232-581531bd87e9">2) 대기방에서 대기하기</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#4f2981c7-ea01-4d84-935b-b54ccde49e4f">3) 튜터링 참여</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#5716fcda-6f40-4473-8bca-6094feef8a21">3. 튜터링 모집</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#57d949ac-0901-4473-af7c-29140338322e">1) 튜터링 방 생성</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#1ed9037d-f030-4d6c-a681-7f3e9debc726">2) 튜터링 시작</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#b9ea352b-a757-4246-b758-21537d0af799">3) 보고서 작성 → 선택 사항</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#257d0f78-272b-4ec4-b961-f65f53991fb3">4. 마이페이지</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#d012cb83-ae20-4de6-9083-8a2373fb5394">5. 대댓글 기능 🤩</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#80fb120c-d797-49fe-afbf-6ac26d9c5f1d">6. 문의 🙋‍♂️🙋‍♀️</a></div></nav><h1 id="96c77502-149a-43b1-b385-90a4b07bcc37" class="">1. 로그인 및 회원가입</h1><h3 id="abc87473-9e55-4cd5-912c-2f3818c2b5a5" class="">1) 로그인</h3><div id="f60b23cc-cd81-4dc7-8958-d0969a0c238e" class="column-list"><div id="9b1d67a0-8b11-4bc0-927f-da199ec52834" style="width:56.25%" class="column"><figure id="67923ea9-3999-4700-b117-dc787a8f2740" class="image"><a href="tutee_guideline_kor/Untitled-1.png' %}"><img style="width:192px" src="{% static 'matching/tutee_guideline_kor/Untitled-1.png' %}"/></a></figure><h3 id="fcfaf4b0-5d1b-4f49-be60-a063fb334ad6" class="">2) 회원가입</h3><figure id="f05e6446-c234-4cf3-a069-6b9902e802eb" class="image"><a href="tutee_guideline_kor/Untitled1-1.png' %}"><img style="width:384px" src="{% static 'matching/tutee_guideline_kor/Untitled1-1.png' %}"/></a></figure></div><div id="3e336b3f-7d20-4f2e-b765-f88838132d9a" style="width:43.75000000000002%" class="column"><ul id="6ae74233-337e-4454-ab75-83ad4b24f646" class="bulleted-list"><li>사이트 접속<p id="5cd0b478-002c-462e-aafd-8ba14b69dbdf" class=""><a href="https://histutor.lifove.net/">https://histutor.lifove.net/</a>로 접속해서 한동 이메일을 이용해서 로그인 합니다.</p><p id="67d51ad7-2797-4cfb-94a3-6562d0f313ee" class="">
+</p></li></ul><p id="66b1bf89-e416-40c7-8e62-e02754dcab7d" class=""><div class="indented"><p id="79d9cf15-11af-480e-9333-e991c96be999" class="">다른 이메일로 로그인을 시도할 경우 로그인이 정상적으로 이루어지지 않으니 꼭 한동 이메일로 로그인합니다.</p></div></p><p id="19c8eb31-a301-48aa-bc3d-7fb97efe760c" class="">
+</p><p id="c45fe950-836f-4648-a87b-b0fcad92dc8f" class="">
+</p><p id="9bbf10b5-63d4-428c-8d57-2a437b46ea22" class="">
+</p><p id="87a5d907-de30-4f32-9dbf-baa03a7ef949" class="">
+</p><p id="4008a4e8-5384-4b8d-a602-4135dd903893" class="">
+</p><p id="69f2128d-6be8-48b4-abb7-a39d1c3ccb6a" class="">
+</p><p id="c3c84997-d441-4782-9fbf-35404565fd3e" class="">
+</p><ul id="c156172e-af5b-412f-9493-c9da6e4ebb05" class="bulleted-list"><li>회원가입</li></ul><p id="b3afea28-1926-402f-a69b-df55c45b0fed" class="">첫 로그인 시, 회원가입 절차로 바로 넘어갑니다. </p><p id="7ace0d11-268e-4ed3-922d-9820acbd7b2b" class="">
+</p><ul id="d3d7c31b-91d1-4fa5-9ffe-3fdecd14e2fd" class="bulleted-list"><li>학번 + 이름 확인 및 수정</li></ul><p id="f5d1d63b-1b2d-4203-931f-1f01b1ef9c7a" class="">자신의 학번과 이름이 맞는지 확인하시고,</p><p id="2f55bdbb-e194-4c0f-a5a3-29646ca09b3d" class="">틀렸을 경우 학번+이름 형식으로 수정해주세요.</p><p id="619d4ca7-18b2-4a13-b3f1-6883e63b71a4" class=""><strong>예) 17학번 김종은 → 17김종은</strong></p><p id="5c2f5c15-bc18-4fd5-b8db-1649cd22ca5d" class="">
+</p><ul id="6929e310-033f-4a9d-b584-a51496f96639" class="bulleted-list"><li>핸드폰 번호 입력</li></ul><p id="753c04fc-1555-4818-b338-a64459495741" class="">아래 칸에 핸드폰 번호를 입력하고 제출 버튼을 눌러서 회원가입 절차를 마칩니다.</p><p id="c1cd0713-4ea4-4000-84b4-152f74812aa0" class="">
+</p><p id="3187aca5-29f4-4872-b565-1b94c3d2f5b9" class="">
+</p><p id="187e0b02-9e1f-4923-b079-c44937b69c62" class="">
+</p><p id="4950fd9f-aca7-46f2-84c0-fd273894312c" class="">
+</p><p id="f75f5ff7-72a3-45a6-88be-a553eca8d4eb" class="">
+</p></div></div><h1 id="64eec812-7651-429d-9360-9737c0b9299c" class="">2. 튜터링 참여</h1><p id="e5cecb68-a75d-4570-bbb8-5fd8b3b30b5f" class="">튜터가 생성한 <strong><mark class="highlight-yellow_background">튜터 세션</mark></strong>이나 <strong><mark class="highlight-yellow_background">코딩 아워</mark></strong> 튜터링에 참여하실 수 있습니다.</p><h3 id="ed2e1f50-a740-4bb7-9b37-843690bf4532" class="">1) 튜터링 리스트 확인</h3><p id="ee3f9895-c24b-48c0-b8d5-be2f3290409c" class="">메인 화면에서 진행되고 있는 튜터링들 중에서 원하는 튜터링의 제목을 클릭합니다.</p><figure id="0ec31660-0fab-416d-a2b9-6665c5ab1bd5" class="image"><a href="tutee_guideline_kor/Untitled.png' %}"><img style="width:2466px" src="{% static 'matching/tutee_guideline_kor/Untitled.png' %}"/></a></figure><h3 id="f65615bd-acd2-4066-9232-581531bd87e9" class="">2) 대기방에서 대기하기</h3><p id="c4974072-fbe4-44d2-807a-c0f9a8dc105b" class="">Histutor의 튜터링은 <mark class="highlight-yellow_background"><strong>1대1 방식</strong></mark>으로 이루어집니다.</p><p id="64732f4e-937c-48ec-b5a0-7ffac13e039f" class="">튜터가 자신을 부를 때까지 대기방에서 기다립니다. </p><p id="5b518e3d-dc89-44cc-b67d-aed110cc846c" class="">여기서 총 대기자 수, 내 대기 순서 및 내 앞과 뒤에 몇 명의 튜티들이 대기하고 있는지 확인할 수 있습니다. </p><p id="ad9e2ff6-6661-46ef-a310-b76cd92a8685" class="">자신의 차례가 되면 이동한다는 알림과 함께 화면이 튜터링방으로 자동으로 이동됩니다.</p><p id="2651be1a-62e2-449a-b91f-8fc00ed4c824" class="">❗ 주의할 점❗ 대기방을 나가거나 새로고침 할 경우 순서가 밀려나게 되니 이 점 유의해 주세요 !</p><figure id="f4410d66-2a83-4e43-acfa-4f2b094f03a6" class="image"><a href="tutee_guideline_kor/Untitled1.png' %}"><img style="width:2880px" src="{% static 'matching/tutee_guideline_kor/Untitled1.png' %}"/></a></figure><p id="60e18b13-cc53-4600-a63c-9ae33ac8be96" class="">
+</p><h3 id="4f2981c7-ea01-4d84-935b-b54ccde49e4f" class="">3) 튜터링 참여</h3><p id="f3062b60-6b8f-4c75-816e-bba4c934def9" class="">이제 튜터와 튜터링을 시작하게 되었습니다! 🥳</p><p id="712eb316-a19d-4a8a-b1a7-c9ad2bba6cd7" class="">도움이 필요한 부분이나 궁금한 점을 채팅을 통해 물어보세요 🙌</p><figure id="08ea8e31-632f-4225-8561-fbde6672d359" class="image"><a href="tutee_guideline_kor/Untitled2.png' %}"><img style="width:2880px" src="{% static 'matching/tutee_guideline_kor/Untitled2.png' %}"/></a></figure><p id="65533869-3c0a-40fa-aa43-348750bb1538" class="">질문을 다 마치고 자신의 차례가 끝날경우 튜터에 의해서 자동으로 메인화면으로 나가게 됩니다.</p><h1 id="5716fcda-6f40-4473-8bca-6094feef8a21" class="">3. 튜터링 모집</h1><h3 id="57d949ac-0901-4473-af7c-29140338322e" class="">1) 튜터링 방 생성</h3><p id="8864976c-dfe2-4b07-b620-c4812129b268" class="">도움이 필요한 부분에 대해서 튜터들에게 도움을 요청할 수 있는 방을 만듭니다.</p><div id="501daab4-8823-4154-b985-93c7280e9cfb" class="column-list"><div id="e2e28b43-a4bc-4a89-a814-872f63ea109b" style="width:56.25%" class="column"><figure id="f3873c8e-01fb-4fe1-974a-0b8f63d687e7" class="image"><a href="tutee_guideline_kor/_2020-09-19__10.29.21.png' %}"><img style="width:936px" src="{% static 'matching/tutee_guideline_kor/_2020-09-19__10.29.21.png' %}"/></a></figure><figure id="ab345010-92f4-45ca-bdc9-82877f6d89ee" class="image"><a href="tutee_guideline_kor/Untitled3.png' %}"><img style="width:1068px" src="{% static 'matching/tutee_guideline_kor/Untitled3.png' %}"/></a></figure><p id="3f850604-f178-4e75-b271-ece023472f2c" class="">
+</p></div><div id="0b4f3dd2-18e8-404f-9386-c3cc923fa2bc" style="width:43.75000000000001%" class="column"><p id="9df014a3-fabc-4f9d-a281-06fcaf3db770" class="">
+</p><ul id="76704611-ee37-4ecc-a8d9-9165f6fbccce" class="bulleted-list"><li><strong>튜터링 방 만들기</strong><p id="060ed6d6-de12-4657-b9df-c028ac473a86" class="">메인 페이지 상단의 <mark class="highlight-yellow_background"><strong>새로운방 만들기</strong></mark>를</p><p id="78b0f8d2-fecc-45f0-a81c-e51858a1addb" class="">클릭합니다.</p><p id="aac82e1f-312d-4c11-90bd-c6402d870178" class="">
+</p></li></ul><ul id="2c5efb68-25ca-4716-96af-20d7a120f1c5" class="bulleted-list"><li><strong>제목 입력</strong><p id="a6ae8ea4-895e-4d3c-a8af-46e20b5fdb2c" class="">어느 부분에 도움이 필요한지 알 수 있도록 최대한 <strong>자세히</strong> 제목을 입력합니다.</p><p id="a21a85f4-3cd1-4e48-84f7-6c0d519d10b3" class="">예) MySQL 설치 이후 root 계정에 접근이 안되는데 도와주세요.</p><p id="65ab5dc4-4e1c-44a4-9347-b6412566c87f" class="">
+</p></li></ul><p id="51d04ecc-3662-4d58-9cce-f99ad83bbe89" class="">
+</p></div></div><ul id="0255def5-d1a3-4d1d-b0c2-0ede1f5af620" class="bulleted-list"><li><strong>튜터링 방 생성 완료 </strong></li></ul><p id="6f9a3914-9f03-43e3-9619-114455c4a3d2" class="">이제 튜터링 방이 만들어졌습니다!</p><p id="d33c30f9-f3cd-4831-86ed-556395461ae2" class="">방이 생성되고 방의 상태는 튜터를 <strong>모집중</strong>으로 설정됩니다.</p><figure id="2f04fe99-3359-448e-9bee-6437caa54cff" class="image"><a href="tutee_guideline_kor/Untitled4.png' %}"><img style="width:2870px" src="{% static 'matching/tutee_guideline_kor/Untitled4.png' %}"/></a></figure><p id="9bdf670b-a839-4f60-98f5-b5435e7c9bcd" class="">
+</p><h3 id="1ed9037d-f030-4d6c-a681-7f3e9debc726" class="">2) 튜터링 시작</h3><p id="1f6133e4-ba77-4d52-b50e-3811dd45ddf1" class="">도움이 필요한 부분에 대해서 들어온 튜터와 이야기를 나눈 뒤 도움을 받으시면 됩니다. </p><p id="a9ae0027-52b1-4636-80b1-7dac8c55cc31" class="">튜터가 해당 문제에 대해서 도움을 줄 수 있다고 판단하면 해당 채팅방의 튜터로 자신을 지정하게 되고 방의 상태가 튜터링 진행중으로 바뀌게 됩니다.</p><figure id="d7c496bd-624f-4a1a-80a8-e7a5169a3ac3" class="image"><a href="tutee_guideline_kor/Untitled5.png' %}"><img style="width:2876px" src="{% static 'matching/tutee_guideline_kor/Untitled5.png' %}"/></a></figure><p id="b42715db-dc5a-43d5-b50f-cd1e488da85f" class="">
+</p><p id="2a6edd37-822d-459b-8de7-411d11619f04" class="">문제가 해결되고 나면 튜터가 튜터링을 종료합니다. </p><h3 id="b9ea352b-a757-4246-b758-21537d0af799" class="">3) 보고서 작성 → 선택 사항</h3><div id="c73248d2-1f48-4ca3-95b5-e2b3c7dedf51" class="column-list"><div id="ef0aad64-ac85-415b-b6f2-1a8fd0b66e1d" style="width:56.25%" class="column"><figure id="2649dc47-35ba-40ef-887d-9eeaa3c34a4e" class="image"><a href="tutee_guideline_kor/Untitled6.png' %}"><img style="width:1166px" src="{% static 'matching/tutee_guideline_kor/Untitled6.png' %}"/></a></figure></div><div id="62e78bb7-a787-4d2b-b056-ce76d4f369f4" style="width:43.75000000000001%" class="column"><p id="ee84c282-5af4-4779-8bb0-ced98e3dab95" class="">튜터링이 어땠는지 후기를 남겨주세요.</p><p id="5a0b2253-4129-4b2e-917a-078251a847af" class="">내용은 자유롭게 작성하셔도 됩니다. </p><p id="6cdb92e4-fa1f-40b9-903a-194fd5950a10" class="">간단한 가이드 라인으로는 도움 받았던 내용이나 튜터가 어떻게 도와줬는지, 도움이 되는지 등에 대한 내용이 있습니다.</p><p id="e3426655-8124-4c87-b4c2-78462e7917a5" class="">
+</p></div></div><h1 id="257d0f78-272b-4ec4-b961-f65f53991fb3" class="">4. 마이페이지</h1><p id="5b6c522c-d339-4b23-99b7-4d8abe092570" class="">마이페이지에서는 지금까지 내가 모집한 튜터링들 또는 내가 참여한 튜터 세션의 목록을 확인할 수 있습니다. </p><figure id="b4f433cc-1071-42db-a089-9532eda73a85" class="image"><a href="tutee_guideline_kor/Untitled7.png' %}"><img style="width:2880px" src="{% static 'matching/tutee_guideline_kor/Untitled7.png' %}"/></a></figure><figure id="c8f6c77c-132c-4cb4-98eb-d505cee80940" class="image"><a href="tutee_guideline_kor/Untitled8.png' %}"><img style="width:2880px" src="{% static 'matching/tutee_guideline_kor/Untitled8.png' %}"/></a></figure><h1 id="d012cb83-ae20-4de6-9083-8a2373fb5394" class="">5. 대댓글 기능 🤩</h1><p id="0a62980b-4171-46e6-a8e5-dbf5418bf1d7" class="">Histutor의 <strong>대댓글 기능</strong>을 소개합니다.</p><p id="34de26c7-cc24-4ae2-ab95-3debe268f66d" class="">1) 채팅을 더블클릭으로 선택</p><p id="eeeae753-0603-4efa-98a8-7ef9dec203fe" class="">답을 남기고 싶은 채팅에 <strong>더블 클릭</strong>✨을 하면,  대댓글 창이 열리게 됩니다.</p><figure id="a62a39d5-fda1-4f3c-aa97-453e1bd334d5" class="image"><a href="tutee_guideline_kor/_2020-09-05__11.51.47.png' %}"><img style="width:384px" src="{% static 'matching/tutee_guideline_kor/_2020-09-05__11.51.47.png' %}"/></a></figure><p id="5acc35a1-1705-4052-b991-060236c04e9b" class="">2) 댓글에 대한 답을 작성</p><p id="227b0d63-72cd-4a78-a473-83e9d0d9fa62" class="">남기고 싶은 말을 작성하시면, 이쁜 대댓글 창을 확인하실 수 있습니다.</p><figure id="b82a9c84-12f7-41ac-bb9d-47d0a77c0f70" class="image"><a href="tutee_guideline_kor/_2020-09-05__11.54.48.png' %}"><img style="width:432px" src="{% static 'matching/tutee_guideline_kor/_2020-09-05__11.54.48.png' %}"/></a></figure><h1 id="80fb120c-d797-49fe-afbf-6ac26d9c5f1d" class="">6. 문의 🙋‍♂️🙋‍♀️</h1><ul id="11f7ce68-c9a0-4450-96fd-3d3b940a9514" class="bulleted-list"><li>아래 이메일을 통해 Histutor에게 연락할 수 있습니다.</li></ul><ul id="5e206e8e-2281-460c-9d02-c28ebc909e1b" class="bulleted-list"><li>버그😱가 발견되거나, 문의사항이 있으시다면, 언제든지 연락 주세요! </li></ul><p id="9233fe75-103d-4967-a3dc-03bf42778462" class="">
+</p><p id="9130ffd5-12ab-49c5-a334-63a8f0565e1f" class="block-color-gray"><strong>Have a question?</strong>  <strong>
+Let us know any bug on our website</strong></p><p id="7c226db1-8b31-444b-a1f1-b7a13bc819ea" class="">👉 <a href="mailto:hisystem@handong.edu">hisystem@handong.edu</a></p></div></article></body></html>
