@@ -1,0 +1,637 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>[20.09.21] 알림 및 닉네임 수정 업데이트</title><style>
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+{% load static %}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, YuMincho, "Yu Mincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Songti TC", "Songti SC", "SimSun", "Nanum Myeongjo", NanumMyeongjo, Batang, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, YuMincho, "Yu Mincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Songti TC", "Songti SC", "SimSun", "Nanum Myeongjo", NanumMyeongjo, Batang, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.highlight-default {
+}
+.highlight-gray {
+	color: rgb(155,154,151);
+}
+.highlight-brown {
+	color: rgb(100,71,58);
+}
+.highlight-orange {
+	color: rgb(217,115,13);
+}
+.highlight-yellow {
+	color: rgb(223,171,1);
+}
+.highlight-teal {
+	color: rgb(15,123,108);
+}
+.highlight-blue {
+	color: rgb(11,110,153);
+}
+.highlight-purple {
+	color: rgb(105,64,165);
+}
+.highlight-pink {
+	color: rgb(173,26,114);
+}
+.highlight-red {
+	color: rgb(224,62,62);
+}
+.highlight-gray_background {
+	background: rgb(235,236,237);
+}
+.highlight-brown_background {
+	background: rgb(233,229,227);
+}
+.highlight-orange_background {
+	background: rgb(250,235,221);
+}
+.highlight-yellow_background {
+	background: rgb(251,243,219);
+}
+.highlight-teal_background {
+	background: rgb(221,237,234);
+}
+.highlight-blue_background {
+	background: rgb(221,235,241);
+}
+.highlight-purple_background {
+	background: rgb(234,228,242);
+}
+.highlight-pink_background {
+	background: rgb(244,223,235);
+}
+.highlight-red_background {
+	background: rgb(251,228,228);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(55, 53, 47, 0.6);
+	fill: rgba(55, 53, 47, 0.6);
+}
+.block-color-brown {
+	color: rgb(100,71,58);
+	fill: rgb(100,71,58);
+}
+.block-color-orange {
+	color: rgb(217,115,13);
+	fill: rgb(217,115,13);
+}
+.block-color-yellow {
+	color: rgb(223,171,1);
+	fill: rgb(223,171,1);
+}
+.block-color-teal {
+	color: rgb(15,123,108);
+	fill: rgb(15,123,108);
+}
+.block-color-blue {
+	color: rgb(11,110,153);
+	fill: rgb(11,110,153);
+}
+.block-color-purple {
+	color: rgb(105,64,165);
+	fill: rgb(105,64,165);
+}
+.block-color-pink {
+	color: rgb(173,26,114);
+	fill: rgb(173,26,114);
+}
+.block-color-red {
+	color: rgb(224,62,62);
+	fill: rgb(224,62,62);
+}
+.block-color-gray_background {
+	background: rgb(235,236,237);
+}
+.block-color-brown_background {
+	background: rgb(233,229,227);
+}
+.block-color-orange_background {
+	background: rgb(250,235,221);
+}
+.block-color-yellow_background {
+	background: rgb(251,243,219);
+}
+.block-color-teal_background {
+	background: rgb(221,237,234);
+}
+.block-color-blue_background {
+	background: rgb(221,235,241);
+}
+.block-color-purple_background {
+	background: rgb(234,228,242);
+}
+.block-color-pink_background {
+	background: rgb(244,223,235);
+}
+.block-color-red_background {
+	background: rgb(251,228,228);
+}
+.select-value-color-default { background-color: rgba(206,205,202,0.5); }
+.select-value-color-gray { background-color: rgba(155,154,151, 0.4); }
+.select-value-color-brown { background-color: rgba(140,46,0,0.2); }
+.select-value-color-orange { background-color: rgba(245,93,0,0.2); }
+.select-value-color-yellow { background-color: rgba(233,168,0,0.2); }
+.select-value-color-green { background-color: rgba(0,135,107,0.2); }
+.select-value-color-blue { background-color: rgba(0,120,223,0.2); }
+.select-value-color-purple { background-color: rgba(103,36,222,0.2); }
+.select-value-color-pink { background-color: rgba(221,0,129,0.2); }
+.select-value-color-red { background-color: rgba(255,0,26,0.2); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="9c716eb8-d822-4b74-99a1-fcf7e272865a" class="page sans"><header><div class="page-header-icon undefined"><span class="icon">💡</span></div><h1 class="page-title">[20.09.21] 알림 및 닉네임 수정 업데이트</h1></header><div class="page-body"><p id="e2d0f10e-116b-42a4-af9e-195335f6f0e6" class="">2020.09.21 업데이트</p><ol id="2ac84ae1-0267-4ca6-b91f-e14de2ee949b" class="numbered-list" start="1"><li>알림 기능</li></ol><ol id="47e4af76-b67b-492f-84d9-be48f040b473" class="numbered-list" start="2"><li>닉네임 수정 기능</li></ol><ol id="1c4cde89-3536-4e49-b78c-b77dd30311e7" class="numbered-list" start="3"><li>튜티 참여 확인 버튼 추가</li></ol><h1 id="5711bea4-7fb3-4fdc-bb04-332b89214368" class="">1️⃣ 알림 기능</h1><p id="6fa53c2d-6a50-4f50-bef8-bd2a832f002c" class="">→ 내 게시글에 새로운 채팅이 올라온 경우,</p><p id="53a99905-72fb-41d3-81b9-9babfedcbaf5" class="">→ 대기방에서 내 차례가 온 경우,</p><p id="6a0f5d21-9fb3-4ddd-a4e7-fbdafdfb1630" class="">→ 대기방에 새로운 튜티가 들어온 경우,</p><h3 id="65baf77c-26f7-4de1-8026-1baabcce8b2b" class="">🌟<span style="border-bottom:0.05em solid"><strong>알림</strong></span>이 전송되는 기능이 추가되었습니다 !</h3><p id="7db63ece-f7a4-400b-b7de-6b6c7be58460" class="">
+</p><p id="ad115454-7a0c-412b-8b9a-109fa1d448dd" class="">알림 기능을 사용하시려면, 우선 <mark class="highlight-yellow_background"><strong>알림 권한을 설정</strong></mark>해야 합니다.</p><p id="e75488e3-622a-469f-9dc4-8d0696fae9a4" class="">다음 과정을 차근차근 따라해주세요. 🙏</p><p id="ff5190bf-f2cc-4a49-9730-75ef2320e51d" class="">
+</p><ol id="019795fa-a2c7-406f-9aab-bd4308b11eb4" class="numbered-list" start="1"><li>다음과 같은 <strong>권한 요청 창</strong>이 뜰 경우 <mark class="highlight-yellow_background"><strong>[허용]</strong></mark>을 선택해주세요.</li></ol><figure id="58ace02f-8de5-410c-8927-39d5d7abe0d9" class="image"><a href="{% static 'matching/announcement/Untitled.png' %}"><img style="width:432px" src="{% static 'matching/announcement/Untitled.png' %}"/></a></figure><p id="2079b3f8-f966-4224-ae4c-0be71fde0681" class="">2. 브라우저 알림 설정</p><p id="c07c808d-6b97-4fa2-af39-d873ce3d5385" class=""><code>시스템 환경 설정 &gt; 알림 &gt; 브라우저</code> 에서 알림을 <strong><mark class="highlight-yellow_background">[허용]</mark></strong>하고 알림 스타일도 <mark class="highlight-yellow_background"><strong>[알림]</strong></mark>으로 설정해주세요.</p><figure id="bfbbc732-75a9-4062-9057-e169b620b25a" class="image"><a href="{% static 'matching/announcement/Untitled1.png' %}"><img style="width:480px" src="{% static 'matching/announcement/Untitled1.png' %}"/></a></figure><p id="6c2c3373-ffcb-4f0f-9c32-97ac5babf414" class="">3. 이제 브라우저에서 알림이 뜨는 것을 보실 수 있습니다 👏</p><figure id="967ad847-5433-46c8-8bbe-b1b6698518a6" class="image"><a href="{% static 'matching/announcement/Untitled2.png' %}"><img style="width:480px" src="{% static 'matching/announcement/Untitled2.png' %}"/></a></figure><p id="5a5d50fb-7cb0-4d75-8921-01ae69fe01ec" class="">
+</p><h2 id="3a7c130c-c5c2-4f20-9070-84f7b9ca1edf" class="">혹시 실수로 차단을 누르셨나요?!</h2><ol id="000417a4-7ec8-40a8-a303-dcce9be59690" class="numbered-list" start="1"><li>오른쪽 상단의 <code>메뉴(:) &gt; 설정</code> 선택</li></ol><figure id="79e207d9-ff38-473c-a524-09375c8af0e7" class="image"><a href="{% static 'matching/announcement/Untitled3.png' %}"><img style="width:288px" src="{% static 'matching/announcement/Untitled3.png' %}"/></a></figure><p id="9fdc8f7e-eba2-42a7-8256-befb9a920b91" class="">2. <code>사이트 설정</code>을 검색해서 선택</p><figure id="2d6b0070-9aa3-4cae-80c8-902553df2bae" class="image"><a href="{% static 'matching/announcement/Untitled4.png' %}"><img style="width:384px" src="{% static 'matching/announcement/Untitled4.png' %}"/></a></figure><p id="b71f0566-7f72-41f9-a483-1b9e05978462" class="">3. <code><a href="https://histutor.lifove.net/">https://histutor.lifove.net/</a></code>의 알림 허용</p><figure id="8c2f0190-37ca-4671-a695-707efbf43347" class="image"><a href="{% static 'matching/announcement/Untitled5.png' %}"><img style="width:624px" src="{% static 'matching/announcement/Untitled5.png' %}"/></a></figure><figure id="8e2bb289-d524-47a4-89fd-3d06c23b4f80" class="image"><a href="{% static 'matching/announcement/Untitled6.png' %}"><img style="width:624px" src="{% static 'matching/announcement/Untitled6.png' %}"/></a></figure><p id="6e826caa-257d-4d65-a218-e7fd5d8b3314" class="">
+</p><p id="2bd6e42b-38c6-4540-894b-c0b91b0c3bc4" class="">
+</p><h1 id="07471ea0-6246-48a6-b7a8-0df4e0864679" class="">2️⃣ 닉네임 수정</h1><p id="a17cc257-39e2-4db0-92a3-2126956f9e74" class="">닉네임을 수정하고 싶으신 분들 여길 주목해주세요!</p><p id="890801a4-aa9e-4a80-bb4b-321a7bc56cad" class=""><code>MYPAGE -&gt; 닉네임 수정</code> 탭에서 닉네임을 수정하실 수 있습니다!</p><p id="6a54f44c-657f-44d9-b4fb-fb95be20581a" class="">
+</p><figure id="fb869a9a-65ad-449a-97fa-d1a1f0c465e3" class="image"><a href="{% static 'matching/announcement/nickname.png' %}"><img style="width:2496px" src="{% static 'matching/announcement/nickname.png' %}"/></a></figure><p id="76086148-a706-4f11-9309-e78dda8d24a2" class="">
+</p><h1 id="6d022cbe-a1bc-450c-a8d3-56132d293cbb" class="">3️⃣ 튜티 참여 확인</h1><p id="a13c1984-601e-4c59-af79-9aee77c9ef57" class="">튜터님들 주목해주세요 ❗️</p><p id="d88e2442-9a66-4e69-8f26-4007b0ef269e" class=""><code>새 튜터링 시작</code>  버튼을 클릭한 후, 튜티 참여 여부를 확인합니다.</p><p id="ebab75d2-0cf5-4971-b8db-e33552b46264" class="">이전에 참여한 튜티가 세션에 참여했는지 확인해주세요 </p><p id="29e576a3-c767-420f-826a-570f5f60e426" class="">이전 튜티가 <code>no show</code>를 했을 경우 <mark class="highlight-yellow_background"><strong>[NO]</strong></mark> 버튼을 선택해주세요.</p><p id="90aae714-6185-4cc9-98a9-973590dc8c19" class="">
+</p><figure id="d55b8770-1f27-49db-977b-11e300881db5" class="image"><a href="{% static 'matching/announcement/Untitled7.png' %}"><img style="width:480px" src="{% static 'matching/announcement/Untitled7.png' %}"/></a></figure></div></article></body></html>
