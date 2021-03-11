@@ -50,10 +50,11 @@ urlpatterns = [
   path('post-report-list/<int:pk>/', views.post_report_list, name='post_report_list'),
   path('session-report-list/<int:pk>/', views.session_report_list, name='session_report_list'),
   path('report/detail/<int:pk>/', views.ReportDetail.as_view(), name='report_detail'),
-  # path('report/edit/<int:pk>/', views.ReportUpdate.as_view(), name='report_update'),
-  #path('', views.index, name='index'),
-  #path('<str:room_name>/', views.room, name='room'),
   path('main/<showtype>/', views.mainpage, name='mainpage'),
-  #path('post/detail/<int:pk>/waiting/', views.waitingpage, name='waiting_room')
-  # path('post/detail/waiting/', views.waitingroom, name='waiting_room')
+  path('guideline/', views.guideline_main , name='guideline_main'),
+  path('guideline/announcement', views.guideline_announcement , name='guideline_announcement'),
+  path('guideline/tutor/kor', views.tutor_guideline_kor , name='tutor_guideline_kor'),
+  path('guideline/tutor/eng', views.tutor_guideline_eng , name='tutor_guideline_eng'),
+  path('guideline/tutee/kor', views.tutee_guideline_kor , name='tutee_guideline_kor'),
+  path('guideline/tutee/eng', views.tutee_guideline_eng , name='tutee_guideline_eng'),
 ]
