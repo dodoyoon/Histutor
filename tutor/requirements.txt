@@ -13,7 +13,7 @@ constantly==15.1.0
 cryptography==2.9.2
 daphne==2.5.0
 defusedxml==0.6.0
-Django==3.0.8
+Django==3.0.12
 django-allauth==0.42.0
 django-google-translate==1.1
 django-tempus-dominus==5.1.2.13
